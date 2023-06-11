@@ -1,9 +1,9 @@
 # Mc-Pixie Launcher
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/your/github-repo/blob/master/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/your/github-repo.svg)](https://github.com/your/github-repo/releases)
-[![GitHub issues](https://img.shields.io/github/issues/your/github-repo.svg)](https://github.com/your/github-repo/issues)
-[![GitHub stars](https://img.shields.io/github/stars/your/github-repo.svg)](https://github.com/your/github-repo/stargazers)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/Mc-Pixie-Team/Mc-Pixie-Launcher-4.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/releases)
+[![GitHub issues](https://img.shields.io/github/issues/Mc-Pixie-Team/Mc-Pixie-Launcher-4.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/issues)
+[![GitHub stars](https://img.shields.io/github/stars/Mc-Pixie-Team/Mc-Pixie-Launcher-4.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/stargazers)
 
 Welcome to Minecraft Launcher! This launcher is the fastest and most secure launcher you'll ever use. With its powerful features and user-friendly interface, it provides an exceptional experience for launching your favorite Modpacks with ease.
 

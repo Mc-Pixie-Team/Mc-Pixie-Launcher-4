@@ -1,4 +1,4 @@
-# Awesome Launcher
+# Mc-Pixie Launcher
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/your/github-repo/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/your/github-repo.svg)](https://github.com/your/github-repo/releases)

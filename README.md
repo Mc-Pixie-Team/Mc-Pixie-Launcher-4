@@ -5,27 +5,17 @@
 [![GitHub issues](https://img.shields.io/github/issues/your/github-repo.svg)](https://github.com/your/github-repo/issues)
 [![GitHub stars](https://img.shields.io/github/stars/your/github-repo.svg)](https://github.com/your/github-repo/stargazers)
 
-Welcome to Awesome Launcher! This launcher is the fastest and most secure launcher you'll ever use. With its powerful features and user-friendly interface, it provides an exceptional experience for launching your favorite applications with ease.
+Welcome to Minecraft Launcher! This launcher is the fastest and most secure launcher you'll ever use. With its powerful features and user-friendly interface, it provides an exceptional experience for launching your favorite Modpacks with ease.
 
 ## Features
 
-- **Lightning Fast**: Awesome Launcher is optimized for speed, ensuring that you can access your applications quickly and efficiently.
+- **Lightning Fast**: Mc-Pixie Launcher is optimized for speed, ensuring that you can access your applications quickly and efficiently.
 - **Enhanced Security**: With built-in security measures, your personal data and applications are protected from potential threats.
 - **Customization**: Personalize your launcher with various themes, wallpapers, and icon packs to suit your style.
 - **Smart Search**: Find your apps effortlessly with the smart search feature that predicts and suggests applications based on your usage patterns.
 - **App Organization**: Arrange your applications in custom folders and categories for easy navigation and organization.
 - **Gesture Support**: Perform actions and navigate through the launcher using intuitive gestures for a seamless experience.
 
-## Getting Started
-
-To get started with Awesome Launcher, follow these steps:
-
-1. Clone the repository: `git clone https://github.com/your/github-repo.git`
-2. Install the required dependencies.
-3. Build the project.
-4. Run the launcher on your device.
-
-For detailed instructions on installation and usage, please refer to the [Documentation](https://github.com/your/github-repo/wiki).
 
 ## Contributing
 

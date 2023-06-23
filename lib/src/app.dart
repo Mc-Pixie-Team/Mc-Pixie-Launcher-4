@@ -1,23 +1,27 @@
 import 'dart:io';
 import 'theme/colorSchemes.dart';
+import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
 import 'widgets/itemDrawer.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-
-
-
-
+import 'widgets/menuItem.dart';
+import 'widgets/divider.dart' as Div;
 
 class McLauncher extends StatelessWidget {
   const McLauncher({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( 
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-            theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme, typography: Typography()),
-      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
+      theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: lightColorScheme,
+          typography: Typography(black: blackTextSchemes)),
+      darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: darkColorScheme,
+          typography: Typography(black: blackTextSchemes)),
       themeMode: ThemeMode.dark,
-      
       home: MainPage(),
     );
   }
@@ -35,29 +39,76 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Stack(children: [
-      Center(
-          child: Column(
+      Row(
         children: [
-          ItemDrawer(
-            children: [
-              ItemDrawerItem(
-                height: 30,
-              ),
-              ItemDrawerItem(
-                height: 30,
-              ),
-            ],
+          Container(
+            height: double.infinity,
+            width: 200,
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceVariant),
+            child: Column(
+              children: [
+                Container(
+                  height: 28,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 30),
+                  child: MenuItem(
+                    title: 'Profile',
+                    icon: Icon(
+                      Icons.person,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 15,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 30),
+                  child: MenuItem(
+                    title: 'Settings',
+                    icon: Icon(
+                      Icons.settings,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+                Padding(
+                    child: Div.Divider(
+                      size: 20,
+                    ),
+                    padding: EdgeInsets.only(top: 20, bottom: 20)),
+                ItemDrawer(
+                  callback: ( e) {
+                    print(e);
+                  },
+                  title: 'Providers',
+                  children: [
+                  ItemDrawerItem(
+                    
+                    icon: Icon(
+                      Icons.sms,
+                      size: 14,
+                    ),
+                    title: 'Curseforge',
+                  )
+                ])
+              ],
+            ),
           ),
         ],
-      )),
+      ),
       SizedBox(
-            height: 35,
-            child: Align(
-                alignment: Alignment.topLeft,
-                child: Row(
-                  children: [Expanded(child: MoveWindow()), WindowButtons()],
-                )),
-          )
+        height: 35,
+        child: Align(
+            alignment: Alignment.topLeft,
+            child: Row(
+              children: [Expanded(child: MoveWindow()), WindowButtons()],
+            )),
+      )
     ]));
   }
 }

@@ -12,8 +12,8 @@ final blackTextSchemes = TextTheme(
   displayMedium: GoogleFonts.roboto(
      color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w600,
-    fontSize: 45,
-    height: 52 / 45,
+    fontSize: 48,
+    height: 52 / 48,
   ),
   displaySmall: GoogleFonts.roboto(
     color: Color.fromARGB(255, 255, 255, 255),

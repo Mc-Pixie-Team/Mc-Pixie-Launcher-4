@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class Divider extends StatefulWidget {
   double size;
   double thickness;
@@ -15,7 +16,15 @@ class _DividerState extends State<Divider> {
     return Padding(
       padding: EdgeInsets.only(left: widget.size, right: widget.size),
       child: Container(
-        color: Theme.of(context).colorScheme.outline,
+        decoration: ShapeDecoration(
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              width: 0.50,
+              strokeAlign: BorderSide.strokeAlignCenter,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+          ),
+        ),
         width: double.infinity,
         height: widget.thickness,
       ),

@@ -1,21 +1,24 @@
 // ignore_for_file: must_be_immutable, prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import './components/sizeTransitionCustom.dart';
+import './components/selectableAnimationBuilder.dart';
 
 class ItemDrawer extends StatefulWidget {
   double height;
   double width;
   String title;
   List<ItemDrawerItem> children;
-  Function callback;
+  Function(int index) onChange;
 
   ItemDrawer(
       {Key? key,
-      required this.callback,
+      required this.onChange,
       this.title = '',
-      this.height = 230,
+      this.height = 227,
       this.width = 170,
       required this.children})
       : super(key: key);
@@ -25,13 +28,20 @@ class ItemDrawer extends StatefulWidget {
 }
 
 class _ItemDrawerState extends State<ItemDrawer> with TickerProviderStateMixin {
-  int index = 1;
+  int index = 0;
+  late List listcontrollers;
+
+  void onSelectedIndex(int index) {
+      widget.onChange.call(index);
+    setState(() {
+      this.index = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
         clipBehavior: Clip.hardEdge,
-        height: widget.height,
         width: widget.width,
         decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
@@ -55,44 +65,41 @@ class _ItemDrawerState extends State<ItemDrawer> with TickerProviderStateMixin {
             ]),
           ),
           Container(
-            height: 10,
+            height: 12,
           ),
           Column(
             children: List.generate(widget.children.length, (index) {
-              print('reload');
               ItemDrawerItem current = widget.children[index];
-              AnimationController _controller = AnimationController(
-                  vsync: this, duration: Duration(milliseconds: 300));
-              Animation tweenAnimation =
-                  CurveTween(curve: Curves.easeInOut).animate(_controller);
-              current.animation = tweenAnimation;
-              tweenAnimation.addListener(() {
-                print('heleo from controller');
-              });
-
-              if (_controller.isCompleted) {
-                _controller.reverse();
-              } else {
-                if (this.index == index) {
-                  print('starting controller');
-                  _controller.forward();
-                }
-              }
 
               return InkWell(
                   mouseCursor: SystemMouseCursors.click,
-                  onTapUp: (e) => setState(() {
-                        this.index = index;
-                        print('setting index to: ' + index.toString());
-                      }),
+                  onTapUp: (e) => onSelectedIndex(index),
                   child: Padding(
-                      padding: EdgeInsets.only(top: 5, bottom: 5),
-                      child: AnimatedBuilder(
-                        animation: tweenAnimation,
-                        builder: (context, child) => current,
+                      padding: EdgeInsets.only(top: 0, bottom: 10),
+                      child: SelectableAnimatedBuilder(
+                        builder: (BuildContext context,
+                            Animation<double> animation) {
+                         
+                          return AnimatedBuilder(
+                            animation: animation as Animation<double>,
+                            builder: (context, child) {
+                              return ItemDrawerItem(
+                                height: current.height,
+                                width: current.width,
+                                animation: animation,
+                                icon: current.icon,
+                                title: current.title,
+                              );
+                            },
+                          );
+                        },
+                        isSelected: index == this.index,
                       )));
             }),
           ),
+          Container(
+            height: 12,
+          )
         ]));
   }
 }
@@ -105,38 +112,34 @@ class ItemDrawerItem extends StatefulWidget {
   Animation? animation;
   ItemDrawerItem({
     Key? key,
-    this.height = 40,
+    this.height =38,
     this.animation,
     this.width = double.infinity,
     this.icon = const Icon(Icons.abc),
     this.title = "",
-  }) : super (key: key);
+  }) : super(key: key);
 
   @override
   _ItemDrawerItemState createState() => _ItemDrawerItemState();
 }
 
-
-
-  
-
 class _ItemDrawerItemState extends State<ItemDrawerItem> {
-
-
   @override
   void initState() {
-    print('initstate');
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    print('heelo from builder of item');
     return Container(
       height: widget.height,
       width: widget.width,
-      decoration: BoxDecoration(color: Color.fromARGB(40, 114, 114, 114)),
+      decoration: BoxDecoration(
+          color: ColorTween(
+                  begin: Colors.transparent,
+                  end: Color.fromARGB(8, 255, 255, 255))
+              .animate(widget.animation as Animation<double>)
+              .value),
       child: Center(
         child: Align(
             alignment: Alignment.centerLeft,
@@ -155,16 +158,14 @@ class _ItemDrawerItemState extends State<ItemDrawerItem> {
                 Expanded(
                   child: Container(),
                 ),
-                widget.animation != null
-                    ? Sizetransitioncustom(
-                        sizeFactor: widget.animation!.value,
-                        child: Container(
-                          width: 1,
-                          height: double.infinity,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      )
-                    : Container()
+                Sizetransitioncustom(
+                  sizeFactor: widget.animation?.value,
+                  child: Container(
+                    width: 1,
+                    height: double.infinity,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
               ],
             )),
       ),

@@ -1,4 +1,12 @@
 import 'dart:io';
+import 'package:mclauncher4/src/pages/debugpage.dart';
+import 'package:mclauncher4/src/pages/modListPage.dart';
+import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
+import 'package:mclauncher4/tasks/Modrinth.api.dart';
+import 'package:mclauncher4/tasks/forge/handler.dart';
+import 'package:mclauncher4/tasks/minecraft/client.dart';
+import 'package:mclauncher4/tasks/version.dart';
+
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +14,7 @@ import 'widgets/itemDrawer.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'widgets/menuItem.dart';
 import 'widgets/divider.dart' as Div;
+import 'package:animations/animations.dart';
 
 class McLauncher extends StatelessWidget {
   const McLauncher({super.key});
@@ -27,6 +36,20 @@ class McLauncher extends StatelessWidget {
   }
 }
 
+class App extends StatefulWidget {
+  const App({Key? key}) : super(key: key);
+
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -35,96 +58,185 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  int pageIndex = 0;
+  int pageIndex_old = 0;
+  EdgeInsets edgeInsets =
+      EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
+  final List<Widget> _pages = [
+    ModListPage(),
+    Debugpage(),
+    Container(
+      key: Key('3'),
+      color: Color.fromARGB(255, 99, 167, 223),
+    ),
+    Container(
+      key: Key('4'),
+      color: Color.fromARGB(255, 146, 91, 218),
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(onPressed: () async {
+          Map res = await Download().getJson(
+              'https://piston-meta.mojang.com/v1/packages/596ad61fda7612d9edf8881cf81869276bdb7f82/1.16.4.json');
+          // Download().downloadAssets(res);
+
+          // await Download().downloadLibaries(res);
+          // await Download().downloadClient(res);
+          // await Download().downloadAssets(res);
+            Minecraft().run(res,
+                'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
+        }),
         body: Stack(children: [
-      Row(
-        children: [
-          Container(
-            height: double.infinity,
-            width: 200,
-            decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant),
-            child: Column(
-              children: [
-                Container(
-                  height: 28,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 30),
-                  child: MenuItem(
-                    title: 'Profile',
-                    icon: Icon(
-                      Icons.person,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 15,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 30),
-                  child: MenuItem(
-                    title: 'Settings',
-                    icon: Icon(
-                      Icons.settings,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-                Padding(
-                    child: Div.Divider(
-                      size: 20,
-                    ),
-                    padding: EdgeInsets.only(top: 20, bottom: 20)),
-                ItemDrawer(
-                  callback: ( e) {
-                    print(e);
-                  },
-                  title: 'Providers',
+          Row(
+            children: [
+              //   NavigationDrawer(children: children)
+              Container(
+                height: double.infinity,
+                width: 200,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant),
+                child: Column(
                   children: [
-                  ItemDrawerItem(
-                    
-                    icon: Icon(
-                      Icons.sms,
-                      size: 14,
+                    Container(
+                      height: 28,
                     ),
-                    title: 'Curseforge',
-                  )
-                ])
-              ],
-            ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 30),
+                      child: MenuItem(
+                        title: 'Profile',
+                        icon: Icon(
+                          Icons.person,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 30),
+                      child: MenuItem(
+                        title: 'Settings',
+                        icon: Icon(
+                          Icons.settings,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                        child: Div.Divider(
+                          size: 20,
+                        ),
+                        padding: EdgeInsets.only(top: 20, bottom: 20)),
+                    ItemDrawer(
+                        onChange: (index) {
+                          print('change: ' + index.toString());
+                          pageIndex_old = pageIndex;
+
+                          if (index != pageIndex_old) {
+                            setState(() {
+                              pageIndex = index;
+                            });
+                          }
+                        },
+                        title: 'Providers',
+                        children: [
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'Modrinth',
+                          ),
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'Pixie',
+                          ),
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'Curseforge',
+                          ),
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'FTB',
+                          ),
+                        ])
+                  ],
+                ),
+              ),
+              Expanded(
+                  child: PageTransitionSwitcher(
+                duration: const Duration(milliseconds: 400),
+                reverse: pageIndex < pageIndex_old,
+                child: Padding(
+                  key: UniqueKey(),
+                  padding: edgeInsets,
+                  child: _pages![pageIndex],
+                ),
+                transitionBuilder:
+                    (child, primaryAnimation, secondaryAnimation) =>
+                        SharedAxisTransition(
+                  animation: primaryAnimation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: SharedAxisTransitionType.vertical,
+                  fillColor: Colors.transparent,
+                  child: child,
+                ),
+              )),
+              Sizetransitioncustom(
+                axis: Axis.horizontal,
+                sizeFactor: 1,
+                child: Padding(
+                  padding: edgeInsets.copyWith(left: 0, top: 43),
+                  child: Container(
+                      height: double.infinity,
+                      width: 250,
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.asset(
+                        'assets\\images\\backgound_blue.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(18),
+                          color: Theme.of(context).colorScheme.surfaceVariant)),
+                ),
+              )
+
+              // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
+            ],
           ),
-        ],
-      ),
-      SizedBox(
-        height: 35,
-        child: Align(
-            alignment: Alignment.topLeft,
-            child: Row(
-              children: [Expanded(child: MoveWindow()), WindowButtons()],
-            )),
-      )
-    ]));
+          SizedBox(
+            height: 35,
+            child: Align(
+                alignment: Alignment.topLeft,
+                child: Row(
+                  children: [Expanded(child: MoveWindow()), WindowButtons()],
+                )),
+          )
+        ]));
   }
 }
 
 final buttonColors = WindowButtonColors(
-    iconNormal: const Color.fromARGB(255, 0, 0, 0),
-    mouseOver: const Color.fromARGB(255, 233, 30, 98),
-    mouseDown: const Color(0xFFB71C1C), //Code by Mc-PIXIE
+    iconNormal: Color.fromARGB(255, 192, 192, 192),
+    mouseOver: Color.fromARGB(66, 172, 172, 172),
+    mouseDown: Color.fromARGB(0, 92, 92, 92), //Code by Mc-PIXWIE
     iconMouseOver: const Color.fromARGB(255, 255, 255, 255),
-    iconMouseDown: const Color.fromARGB(255, 255, 255, 255));
-
-final closeButtonColors = WindowButtonColors(
-    mouseOver: const Color.fromARGB(126, 117, 185, 194),
-    mouseDown: const Color.fromARGB(43, 0, 187, 212),
-    iconNormal: const Color(0xFFFFB0C8),
-    iconMouseOver: const Color.fromARGB(255, 233, 30, 98));
+    iconMouseDown: Color.fromARGB(255, 153, 153, 153));
 
 class WindowButtons extends StatelessWidget {
   @override
@@ -139,7 +251,7 @@ class WindowButtons extends StatelessWidget {
           colors: buttonColors,
         ),
         CloseWindowButton(
-          colors: closeButtonColors,
+          colors: buttonColors,
           onPressed: () {
             print('close');
             exit(0);

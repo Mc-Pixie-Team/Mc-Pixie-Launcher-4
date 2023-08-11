@@ -3,9 +3,9 @@ import 'package:mclauncher4/src/pages/debugpage.dart';
 import 'package:mclauncher4/src/pages/modListPage.dart';
 import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
 import 'package:mclauncher4/tasks/Modrinth.api.dart';
-import 'package:mclauncher4/tasks/forge/handler.dart';
-import 'package:mclauncher4/tasks/minecraft/client.dart';
-import 'package:mclauncher4/tasks/version.dart';
+import 'package:mclauncher4/src/tasks/utils/downloads.dart';
+import 'package:mclauncher4/src/tasks/minecraft/client.dart';
+import 'package:mclauncher4/src/tasks/version.dart';
 
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
@@ -81,11 +81,11 @@ class _MainPageState extends State<MainPage> {
         floatingActionButton: FloatingActionButton(onPressed: () async {
           Map res = await Download().getJson(
               'https://piston-meta.mojang.com/v1/packages/596ad61fda7612d9edf8881cf81869276bdb7f82/1.16.4.json');
-          // Download().downloadAssets(res);
+        // Download().downloadAssets(res);
 
-          // await Download().downloadLibaries(res);
-          // await Download().downloadClient(res);
-          // await Download().downloadAssets(res);
+          //  await Download().downloadLibaries(res);
+        //await Download().downloadClient(res);
+        //    await Download().downloadAssets(res);
             Minecraft().run(res,
                 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
         }),

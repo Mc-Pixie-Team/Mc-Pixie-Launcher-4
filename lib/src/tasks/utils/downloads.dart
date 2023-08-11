@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:mclauncher4/tasks/version.dart';
+import 'package:mclauncher4/src/tasks/version.dart';
 import 'package:path/path.dart' as path;
+import 'extract.dart';
 import 'package:path_provider/path_provider.dart';
 import '../config/apis.dart';
 
@@ -22,8 +23,11 @@ class Download {
 
     if(current["natives"] != null && current["natives"][os] != null) {
       print('downloading native: '+ current["name"] );
-     await _downloadForLibraries(current["downloads"]["classifiers"][current["natives"][os]], altpath: 'assets\\');
+    
+     await _downloadForLibraries(current["downloads"]["classifiers"][current["natives"][os]]);
+    await  Extract().extractfromjar( current["downloads"]["classifiers"][current["natives"][os]]["path"], profile["id"]);
     }    
+    if(current["downloads"]["artifact"] == null) continue;
     await _downloadForLibraries(current["downloads"]["artifact"]);
       
       
@@ -108,7 +112,7 @@ class Download {
 
     //sorts all hashes to donwloads
     //Sweet spot: 15 || 1:35 || 1.19.2
-    int downloads_at_same_time = 15;
+    int downloads_at_same_time = 10;
     int _totalitems = objects.length;
     for (var i = 0; objects.length > i;) {
       print('generating');

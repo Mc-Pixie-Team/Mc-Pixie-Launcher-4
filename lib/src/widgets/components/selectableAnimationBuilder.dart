@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class SelectableAnimatedBuilder extends StatefulWidget {
   const SelectableAnimatedBuilder({
-    required this.isSelected,
+     this.isSelected = true,
     this.curve = Curves.easeOutExpo,
-    this.duration = const Duration(milliseconds: 500),
+    this.duration = const Duration(milliseconds: 400),
     required this.builder,
   });
 

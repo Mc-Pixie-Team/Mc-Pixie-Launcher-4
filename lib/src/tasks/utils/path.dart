@@ -13,3 +13,13 @@ Future<String> getlibarypath() async{
     
     return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\debug';
   }
+Future<String> getTempForgePath() async {
+  
+  return '${(await getTemporaryDirectory()).path}\\PixieLauncher\\Forge';
+}
+
+Future<String> getTempCommandPath() async {
+  
+  return '${(await getTemporaryDirectory()).path}\\PixieLauncher';
+}
+

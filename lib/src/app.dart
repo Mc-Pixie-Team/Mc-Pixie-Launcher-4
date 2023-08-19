@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:mclauncher4/src/pages/debugpage.dart';
 import 'package:mclauncher4/src/pages/modListPage.dart';
+import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
-import 'package:mclauncher4/tasks/Modrinth.api.dart';
+import 'package:mclauncher4/src/tasks/Modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/minecraft/client.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
@@ -79,15 +80,13 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
-          Map res = await Download().getJson(
-              'https://piston-meta.mojang.com/v1/packages/596ad61fda7612d9edf8881cf81869276bdb7f82/1.16.4.json');
-        // Download().downloadAssets(res);
-
-          //  await Download().downloadLibaries(res);
-        //await Download().downloadClient(res);
-        //    await Download().downloadAssets(res);
-            Minecraft().run(res,
-                'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
+         //    await Minecraft().install('https://piston-meta.mojang.com/v1/packages/7ff864e988a2c29907154d5f9701e87e5d5e554a/1.18.1.json');
+              // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/7ff864e988a2c29907154d5f9701e87e5d5e554a/1.18.1.json');
+              // Minecraft().run(res,
+              //     'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
+            
+         //  Forge().install();
+         Forge().run();
         }),
         body: Stack(children: [
           Row(

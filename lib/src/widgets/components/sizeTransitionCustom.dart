@@ -13,7 +13,7 @@ class Sizetransitioncustom extends StatefulWidget {
     super.key,
     this.axis = Axis.vertical,
     required this.sizeFactor,
-    this.axisAlignment = 0.0,
+    this.axisAlignment = -1.0,
     this.child,
   });
 
@@ -24,6 +24,7 @@ class Sizetransitioncustom extends StatefulWidget {
 class _SizetransitioncustomState extends State<Sizetransitioncustom> {
   @override
   Widget build(BuildContext context) {
+   
     final AlignmentDirectional alignment;
     if (widget.axis == Axis.vertical) {
       alignment = AlignmentDirectional(-1.0, widget.axisAlignment);

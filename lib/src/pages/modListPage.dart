@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart' as apple;
+import 'package:mclauncher4/src/widgets/components/slideInAnimation.dart';
 import '../widgets/searchbar.dart' as Searchbar;
 import 'package:flutter/material.dart';
 import '../widgets/divider.dart' as Divider;
@@ -31,17 +32,17 @@ class _ModListPageState extends State<ModListPage> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 10, left: 30, bottom: 9),
-              child: Text(
+              child: SlideInAnimation(duration: Duration(milliseconds: 1000), child:Text(
                 'Modpacks provided:',
                 style: Theme.of(context).typography.black.bodySmall,
-              ),
+              )),
             ),
             Padding(
               padding: EdgeInsets.only(left: 30, bottom: 28),
-              child: Text(
+              child: SlideInAnimation(child: Text(
                 'Modrinth',
                 style: Theme.of(context).typography.black.displaySmall,
-              ),
+              )), 
             ),
             Divider.Divider(
               size: 14,

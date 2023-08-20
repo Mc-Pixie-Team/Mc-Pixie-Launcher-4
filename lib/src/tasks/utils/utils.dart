@@ -104,7 +104,7 @@ class Utils {
     String packageVersion = mavenString.split(":")[2].split("@")[0];
     String packageVersion2;
     if(mavenString.split(":").length >3){
-      print('adding chard');
+      
       packageVersion2 = '${mavenString.split(":")[2].split("@")[0]}-${mavenString.split(":")[3].split("@")[0]}';
     }else {
       packageVersion2 = packageVersion;
@@ -128,9 +128,9 @@ class Utils {
   }
 
   static String parseMaven(String mavenString) {
-    print(mavenString);
+ 
     List mavenlist = parseMavenList(mavenString);
-    print(mavenlist[0] + "/" +mavenlist[1]);
+    
     return mavenlist[0] + "/" +mavenlist[1];
   }
 }

@@ -81,11 +81,11 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
          //    await Minecraft().install('https://piston-meta.mojang.com/v1/packages/7ff864e988a2c29907154d5f9701e87e5d5e554a/1.18.1.json');
-              // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/7ff864e988a2c29907154d5f9701e87e5d5e554a/1.18.1.json');
-              // Minecraft().run(res,
-              //     'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
+               Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/7ff864e988a2c29907154d5f9701e87e5d5e554a/1.18.1.json');
+               Minecraft().run(res,
+                  'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
             
-         //  Forge().install();
+          // Forge().install();
          Forge().run();
         }),
         body: Stack(children: [

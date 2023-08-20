@@ -113,7 +113,7 @@ class Forge {
         } else if (arg == "LIBRARY_DIR") {
           outputArgs += await getlibarypath() + "\\libraries\\";
         } else {
-          //checkeing if data has information about it
+          //checking if data has information about it
           for (var j = 0; j < data_keys.length; j++) {
             if (data_keys[j] == arg) {
               String argoutput = "${data[arg]["client"]}";
@@ -135,7 +135,7 @@ class Forge {
                 print("found ''");
                 break;
               } else if (argoutput.startsWith("/")) {
-                //this part is mostly calles Patching
+                //this part is mostly called Patching
                 outputArgs +=
                     "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\$argoutput "
                         .replaceAll("/", "\\");
@@ -208,7 +208,9 @@ class Forge {
 
       result.stdout.listen(onHandleStdout);
       result.stderr.listen(onHandleStdout);
+    
       await result.exitCode;
+      
     }
   }
 }

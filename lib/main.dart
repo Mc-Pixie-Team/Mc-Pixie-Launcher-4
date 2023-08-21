@@ -7,7 +7,6 @@ void main() {
   runApp(const McLauncher());
   doWhenWindowReady(() {
     final win = appWindow;
-
     win.alignment = Alignment.center;
     win.title = "Mc-Pixie Launcher";
     win.size = Size(1500, 850);

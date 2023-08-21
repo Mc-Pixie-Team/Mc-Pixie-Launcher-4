@@ -45,44 +45,60 @@ class Minecraft {
       majorVer = javaVer17;
     }
 
-    String launchcommand =
-        '& "$majorVer" "-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump" "-Dos.name=Windows 10" "-Dos.version=10.0" "-Djava.library.path=C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\bin\\${packagejson["id"]}" -cp "$stack" net.minecraft.client.main.Main --username $username --version ${packagejson["id"]} --gameDir ${await getworkpath()} --assetsDir C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\assets --assetIndex ${packagejson["assets"]} --uuid 122334dsgfds --accessToken $accessToken';
     Map args = await getArgs(packagejson, "windows");
-    print(args);
-    // var tempFile = File(
-    //     "${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command.ps1");
-    // await tempFile.create(recursive: true);
-    // await tempFile.writeAsString(launchcommand);
 
-    // var result = await Process.start(
-    //     "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
-    //     runInShell: true);
+    String launchcommand =
+        '& "$majorVer" ${args["jvm"]}${packagejson["mainClass"]} ${args["game"]}';
 
-    // stdout.addStream(result.stdout);
-    // stderr.addStream(result.stderr);
+    print(launchcommand);
+    var tempFile = File(
+        "${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command.ps1");
+    await tempFile.create(recursive: true);
+    await tempFile.writeAsString(launchcommand);
+
+    var result = await Process.start(
+        "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
+        runInShell: true);
+
+    stdout.addStream(result.stdout);
+    stderr.addStream(result.stderr);
   }
 
-  Future<Map> getArgs(Map packagejson, String os) async {
+  Future<Map> getArgs(Map packagejson, String os,) async {
     Map vanillaArgs = packagejson["arguments"];
     String jvmArgs = "";
     String gameArgs = "";
     for (var i = 0; i < vanillaArgs["jvm"].length; i++) {
-      print(vanillaArgs["jvm"][i]);
+      
       if (vanillaArgs["jvm"][i] is String) {
-        jvmArgs += "${vanillaArgs["jvm"][i]} ";
+        if(vanillaArgs["jvm"][i].startsWith("--")) {
+          jvmArgs += '${vanillaArgs["jvm"][i]} ';
+        }else {
+          jvmArgs += '"${vanillaArgs["jvm"][i]}" ';
+        }
+        
       } else {
         if (chechAllowed(
-              (vanillaArgs["jvm"][i]["rules"]),
-              "windows",
-              "x64",
-            ) ==
-            false) {
+          (vanillaArgs["jvm"][i]["rules"]),
+          "windows",
+          "x64",
+        )) {
           if (vanillaArgs["jvm"][i]["value"] is List) {
             for (var j = 0; j < vanillaArgs["jvm"][i]["value"].length; j++) {
-              jvmArgs += "${vanillaArgs["jvm"][i]["value"][i]} ";
+              if(vanillaArgs["jvm"][i]["value"][j].startsWith("--")){
+                jvmArgs += '${vanillaArgs["jvm"][i]["value"][j]} ';
+              }else {
+                jvmArgs += '"${vanillaArgs["jvm"][i]["value"][j]}" ';
+              }
+              
             }
           } else {
-            jvmArgs += "${vanillaArgs["jvm"][i]["value"]} ";
+            if(vanillaArgs["jvm"][i]["value"].startsWith("--")){
+               jvmArgs += '${vanillaArgs["jvm"][i]["value"]} ';
+            }else {
+                 jvmArgs += '"${vanillaArgs["jvm"][i]["value"]}" ';
+            }
+           
           }
         }
       }
@@ -92,17 +108,16 @@ class Minecraft {
         gameArgs += "${vanillaArgs["game"][i]} ";
       } else {
         if (chechAllowed(
-              (vanillaArgs["game"][i]["rules"]),
-              "windows",
-              "x64",
-            ) ==
-            false) {
+          (vanillaArgs["game"][i]["rules"]),
+          "windows",
+          "x64",
+        )) {
           gameArgs += "${vanillaArgs["game"][i]["value"]} ";
         }
       }
     }
     String natives_directory =
-        "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\bin\\${packagejson["id"]}";
+        "${await getworkpath()}\\bin\\${packagejson["id"]}";
     String launcher_name = "Mc-pixie";
     String launcher_version = "4";
     String auth_player_name = "Fridolin";
@@ -110,22 +125,37 @@ class Minecraft {
     String game_directory = await getworkpath();
     String assets_root = "${await getworkpath()}\\assets";
     String assets_index_name = packagejson["assets"];
-   
+    String auth_uuid = "a";
+    String auth_access_token = "a";
+    String clientid = "a";
+    String auth_xuid = "a";
+    String user_type = "a";
+    String version_type = "Pixie";
+    String classpath_separator = "${(os == "windows") ? ";" : ":"}";
 
+    String library_directory = "${await getlibarypath()}\\libraries";
     jvmArgs = jvmArgs
         .replaceAll("\${natives_directory}", natives_directory)
         .replaceAll("\${launcher_name}", launcher_name)
         .replaceAll("\${launcher_version}", launcher_version)
-        .replaceAll("\${classpath}", '"${await getCP(packagejson, os)}"')
-        .replaceAll(
-            "\${auth_player_name}", '"${await getCP(packagejson, os)}"');
+        .replaceAll("\${classpath}", '${await getCP(packagejson, os)}')
+        .replaceAll("\${auth_player_name}", '"${await getCP(packagejson, os)}"')
+        .replaceAll("\${library_directory}", library_directory)
+        .replaceAll("\${classpath_separator}", classpath_separator)
+        .replaceAll("\${version_name}", version_name);
 
     gameArgs = gameArgs
         .replaceAll("\${auth_player_name}", auth_player_name)
         .replaceAll("\${version_name}", version_name)
         .replaceAll("\${game_directory}", game_directory)
         .replaceAll("\${assets_root}", assets_root)
-        .replaceAll("\${assets_index_name}", assets_index_name);
+        .replaceAll("\${assets_index_name}", assets_index_name)
+        .replaceAll("\${auth_uuid}", auth_uuid)
+        .replaceAll("\${auth_access_token}", auth_access_token)
+        .replaceAll("\${clientid}", clientid)
+        .replaceAll("\${auth_xuid}", auth_xuid)
+        .replaceAll("\${user_type}", user_type)
+        .replaceAll("\${version_type}", version_type);
 
     return {
       "jvm": jvmArgs,
@@ -167,7 +197,7 @@ class Minecraft {
     }
 
     if (rules.last["os"] == null) {
-      return true; //Not a really good solution but it will do it
+      return false; //Not a really good solution but it will do it
     }
 
     if (rules.length == 1) {

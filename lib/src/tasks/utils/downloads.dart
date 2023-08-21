@@ -40,6 +40,7 @@ class Download {
     List<int> _bytes = [];
     int total = current["size"], received = 0, receivedControll = 0;
 
+
     http.StreamedResponse? response = await http.Client()
         .send(http.Request('GET', Uri.parse(current["url"])));
     print('downloading: ' + current["path"].toString());
@@ -77,7 +78,7 @@ class Download {
 
     String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
-    await File(filepath).writeAsBytes(utf8.encode(packagejson.toString()));
+    await File(filepath).writeAsBytes(utf8.encode(jsonEncode(packagejson)));
 
     print(packagejson);
     var clientRES =

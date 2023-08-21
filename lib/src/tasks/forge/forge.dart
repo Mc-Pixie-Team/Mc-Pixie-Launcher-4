@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
+import "package:path_provider/path_provider.dart" as path_provider;
 import 'package:mclauncher4/src/tasks/forgeversion.dart';
+import 'package:mclauncher4/src/tasks/minecraft/client.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
@@ -10,43 +11,60 @@ import 'package:path/path.dart' as path;
 import '../utils/path.dart';
 
 class Forge {
-  run() async{
-    Version version = Version(1, 18, 1);
-    ForgeVersion forgeVersion = ForgeVersion(39, 1, 2);
+  //1.19.4-forge-45.1.16
+  run() async {
+    Version version = Version(1, 19, 4);
+    ForgeVersion forgeVersion = ForgeVersion(45, 1, 16);
 
-  Map versionJson = jsonDecode(await File(
+    Map vanillaVersionJson = (jsonDecode(
+        await File("${await getworkpath()}\\versions\\$version\\$version.json")
+            .readAsString()));
+
+    Map versionJson = (jsonDecode(await File(
             "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json")
-        .readAsString());
+        .readAsString()));
 
-  String stack = "";
+    (vanillaVersionJson["arguments"]["jvm"] as List)
+        .addAll(versionJson["arguments"]["jvm"]);
+    (vanillaVersionJson["arguments"]["game"] as List)
+        .addAll(versionJson["arguments"]["game"]);
 
-  for (int i = 0; i < (versionJson["arguments"]["jvm"] as List).length; i++) {
 
-    if(versionJson["arguments"]["jvm"][i].toString().startsWith("--")){
-      stack += '${versionJson["arguments"]["jvm"][i]} ';
-      continue;
+    String javaVer17 =
+        "C:\\Users\\zepat\\AppData\\Roaming\\RPMTW\\RPMLauncher\\RPMLauncher\\data\\jre\\17\\jdk-17.0.4+8-jre\\bin\\java.exe";
+    String javaVer8 =
+        "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\install debug\\runtime\\jre-legacy\\windows-x64\\jre-legacy\\bin\\java.exe";
+    String majorVer = javaVer8;
+
+    if (version > Version(1, 16, 4)) {
+      majorVer = javaVer17;
     }
-      stack += '"${versionJson["arguments"]["jvm"][i]}" ';
-      
-  }
-  stack += versionJson["mainClass"] +" ";
-  for (int i = 0; i < (versionJson["arguments"]["game"] as List).length; i++) {
-      stack += '${versionJson["arguments"]["game"][i]} ';
-  }
-  stack = stack.replaceAll("\${library_directory}","C:/Users/zepat/Documents/PixieLauncherInstances/debug/libraries" ).replaceAll("\${classpath_separator}", ";").replaceAll("\${version_name}", "$version-$forgeVersion");
-  print(stack);
+    Map args = await Minecraft().getArgs(vanillaVersionJson, "windows");
 
+    String launchcommand =
+        '& "$majorVer" ${args["jvm"]}${versionJson["mainClass"]} ${args["game"]}';
+
+    print(launchcommand);
+    var tempFile = File(
+        "${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command.ps1");
+    await tempFile.create(recursive: true);
+    await tempFile.writeAsString(launchcommand);
+
+    var result = await Process.start(
+        "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
+        runInShell: true);
+
+    stdout.addStream(result.stdout);
+    stderr.addStream(result.stderr);
   }
 
   install() async {
-    Version version = Version(1, 18, 1);
-    ForgeVersion forgeVersion = ForgeVersion(39, 1, 2);
-
+    Version version = Version(1, 19, 4);
+    ForgeVersion forgeVersion = ForgeVersion(45, 1, 16);
 
     print("installing now: $version-$forgeVersion");
     //example: https://maven.minecraftforge.net/net/minecraftforge/forge/1.19.4-45.1.16/forge-1.19.4-45.1.16-installer.jar
-    await Download().downloadForgeClient(version, forgeVersion);
-
+    // await Download().downloadForgeClient(version, forgeVersion);
 
     Map install_profileJson = jsonDecode(await File(
             "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\install_profile.json")
@@ -55,20 +73,20 @@ class Forge {
             "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json")
         .readAsString());
 
-
-     await Download().downloadLibaries(install_profileJson);
-     await _processor(install_profileJson, version, forgeVersion);
-     print('install_profile is finished');
+    await Download().downloadLibaries(install_profileJson);
+    await _processor(install_profileJson, version, forgeVersion);
+    print('install_profile is finished');
 
     await Download().downloadLibaries(versionJson);
     await _createVersionDir(versionJson, version, forgeVersion);
     print('version is finished');
   }
 
-  _createVersionDir(Map versionJson, Version version, ForgeVersion forgeVersion) async{
-    
-    String filepath = "${await getworkpath()}\\versions\\$version-forge-$forgeVersion\\$version-forge-$forgeVersion.json";
-     String parentDirectory = path.dirname(filepath);
+  _createVersionDir(
+      Map versionJson, Version version, ForgeVersion forgeVersion) async {
+    String filepath =
+        "${await getworkpath()}\\versions\\$version-forge-$forgeVersion\\$version-forge-$forgeVersion.json";
+    String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
     await File(filepath).writeAsString(jsonEncode(versionJson));
     print('created versionsDir');
@@ -163,7 +181,7 @@ class Forge {
     // alternative individuelle heys
 
     String javaVer17 =
-        "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\install debug\\runtime\\java-runtime-gamma\\windows-x64\\java-runtime-gamma\\bin\\java.exe";
+        "C:\\Program Files\\Java\\jdk-17\\bin\\java.exe";
 
     String javaVer8 =
         "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\install debug\\runtime\\jre-legacy\\windows-x64\\jre-legacy\\bin\\java.exe";
@@ -172,7 +190,7 @@ class Forge {
     for (var i = 0; i < processor.length; i++) {
       Map current = processor[i];
 
-      if (_checkAllowed(current)) continue;
+      //if (_checkAllowed(current)) continue;
 
       print(
           "================================================================================> new processor:" +
@@ -196,8 +214,6 @@ class Forge {
       String command =
           'java -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';
 
-      print(command);
-
       var tempFile = File("${await getTempCommandPath()}temp_command_2.ps1");
       await tempFile.create(recursive: true);
       await tempFile.writeAsString(command);
@@ -205,12 +221,17 @@ class Forge {
       var result = await Process.start(
           "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
           runInShell: true);
+      String filepath = await getworkpath() + '\\${i.toString()}\\log.txt';
+      String parentDirectory = path.dirname(filepath);
+      await Directory(parentDirectory).create(recursive: true);
 
-      result.stdout.listen(onHandleStdout);
+      String log = "";
+
+      result.stdout.listen((i) => {log += String.fromCharCodes(i) + '\n'});
       result.stderr.listen(onHandleStdout);
-    
+
       await result.exitCode;
-      
+      await File(filepath).writeAsString(log);
     }
   }
 }

@@ -10,6 +10,7 @@ class Microsoft {
     String authTokenMicrosoft = await microsoftSignIn(msaToken);
     Map authTokenXboxLive = await xboxSignIn(authTokenMicrosoft);
     String authXSTSToken = await XSTSToken(authTokenXboxLive);
+    Map minecraftUserToken = await minecraftBearerToken(authXSTSToken, authTokenXboxLive["uhs"]);
     return {
       "access_token": "",
       "xbox_username": "",
@@ -47,8 +48,7 @@ class Microsoft {
     http.Response firstAuthResponse = await http.post(
       uri,
       headers: {'Content-Type': "application/x-www-form-urlencoded"},
-      body:
-          "client_id=$clientId&client_secret=$clientSecret&refresh_token=${storage.getItem("microsoftRefreshToken")}&grant_type=refresh_token&redirect_uri=http://localhost:25458",
+      body: "client_id=$clientId&client_secret=$clientSecret&code=$msaToken&grant_type=authorization_code&redirect_uri=http://localhost:25458",
     );
     Map rsp = jsonDecode(firstAuthResponse.body);
     if (firstAuthResponse.statusCode == 200) {
@@ -108,5 +108,20 @@ class Microsoft {
           "error: ${rsp["XErr"]}\nMessage: ${(rsp["XErr"] == 2148916238) ? "account belongs to someone under 18 and needs to be added to a family" : "account has no Xbox account, you must sign up for one first"}");
       return "";
     }
+  }
+
+  Future<Map> minecraftBearerToken(authXSTSToken, xboxUserHash) async {
+    Uri uri = Uri.parse('https://api.minecraftservices.com/authentication/login_with_xbox');
+    print(uri);
+
+    Map data = {"identityToken": "XBL3.0 x=$xboxUserHash;$authXSTSToken", "ensureLegacyEnabled": true};
+
+    http.Response firstAuthResponse =
+        await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
+    print(firstAuthResponse.body);
+    print(firstAuthResponse.statusCode);
+    //Map rsp = jsonDecode(firstAuthResponse.body);
+
+    return {};
   }
 }

@@ -6,10 +6,7 @@ class PixieScrollSimulation extends Simulation {
   final double velocity;
   final double afterPosition;
 
-  PixieScrollSimulation(
-      {required this.initPosition,
-      required this.afterPosition,
-      required this.velocity});
+  PixieScrollSimulation({required this.initPosition, required this.afterPosition, required this.velocity});
 
   @override
   double x(double time) {
@@ -17,8 +14,7 @@ class PixieScrollSimulation extends Simulation {
 
     var max = initPosition + (time * (velocity + timechange * velocity));
     if (afterPosition > initPosition) {
-      max = math.max(
-          initPosition - (time * (velocity + timechange * velocity)), 0.0);
+      max = math.max(initPosition - (time * (velocity + timechange * velocity)), 0.0);
     }
 
     return max;
@@ -51,8 +47,7 @@ class PixieScrollPhysics extends ScrollPhysics {
   }
 
   @override
-  Simulation? createBallisticSimulation(
-      ScrollMetrics position, double velocity) {
+  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
     var oldPixelTemp = oldPixel;
     // print('redo');
 
@@ -73,9 +68,6 @@ class PixieScrollPhysics extends ScrollPhysics {
     //  print(position.extentInside);
     //  print(position.maxScrollExtent);
 
-    return PixieScrollSimulation(
-        afterPosition: oldPixelTemp,
-        initPosition: position.pixels,
-        velocity: 30.0);
+    return PixieScrollSimulation(afterPosition: oldPixelTemp, initPosition: position.pixels, velocity: 30.0);
   }
 }

@@ -1,42 +1,423 @@
-[00:09:39] [Datafixer Bootstrap/INFO]: 180 Datafixer optimizations took 189 milliseconds
-[00:09:40] [main/WARN]: Unrecognized user type: a
-[00:09:41] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
-[00:09:41] [Render thread/ERROR]: Failed to verify authentication
-com.mojang.authlib.exceptions.InvalidCredentialsException: Status: 401
-	at com.mojang.authlib.exceptions.MinecraftClientHttpException.toAuthenticationException(MinecraftClientHttpException.java:56) ~[authlib-3.18.38.jar:?]
-	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:156) ~[authlib-3.18.38.jar:?]
-	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.<init>(YggdrasilUserApiService.java:55) ~[authlib-3.18.38.jar:?]
-	at com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService.createUserApiService(YggdrasilAuthenticationService.java:161) ~[authlib-3.18.38.jar:?]
-	at emh.a(SourceFile:732) ~[1.19.4.jar:?]
-	at emh.<init>(SourceFile:440) ~[1.19.4.jar:?]
-	at net.minecraft.client.main.Main.main(SourceFile:198) ~[1.19.4.jar:?]
-Caused by: com.mojang.authlib.exceptions.MinecraftClientHttpException: Status: 401
-	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:85) ~[authlib-3.18.38.jar:?]
-	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:48) ~[authlib-3.18.38.jar:?]
-	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:129) ~[authlib-3.18.38.jar:?]
+[20:22:27] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:22:33] [Render thread/ERROR]: Failed to verify authentication
+com.mojang.authlib.exceptions.AuthenticationException: com.mojang.authlib.exceptions.MinecraftClientException: Failed to read from https://api.minecraftservices.com/player/attributes due to Connect timed out
+	at com.mojang.authlib.exceptions.MinecraftClientException.toAuthenticationException(MinecraftClientException.java:28) ~[authlib-3.2.38.jar:?]
+	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:136) ~[authlib-3.2.38.jar:?]
+	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.<init>(YggdrasilUserApiService.java:44) ~[authlib-3.2.38.jar:?]
+	at com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService.createUserApiService(YggdrasilAuthenticationService.java:153) ~[authlib-3.2.38.jar:?]
+	at dxo.a(SourceFile:670) [1.18.1.jar:?]
+	at dxo.<init>(SourceFile:424) [1.18.1.jar:?]
+	at net.minecraft.client.main.Main.main(SourceFile:199) [1.18.1.jar:?]
+Caused by: com.mojang.authlib.exceptions.MinecraftClientException: Failed to read from https://api.minecraftservices.com/player/attributes due to Connect timed out
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:86) ~[authlib-3.2.38.jar:?]
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:48) ~[authlib-3.2.38.jar:?]
+	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:113) ~[authlib-3.2.38.jar:?]
 	... 5 more
-[00:09:41] [Render thread/INFO]: Setting user: Fridolin
-[00:09:41] [Render thread/INFO]: Backend library: LWJGL version 3.3.1 build 7
-[00:09:43] [Render thread/INFO]: Reloading ResourceManager: vanilla
-[00:09:43] [Realms Notification Availability checker #1/INFO]: Could not authorize you against Realms server: Invalid session id
-[00:09:46] [Render thread/WARN]: Missing sound for event: minecraft:item.brush.brushing
-[00:09:46] [Render thread/WARN]: Missing sound for event: minecraft:item.brush.brush_sand_completed
-[00:09:46] [Render thread/WARN]: Missing sound for event: minecraft:item.goat_horn.play
-[00:09:46] [Render thread/WARN]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
-[00:09:46] [Render thread/WARN]: Missing sound for event: minecraft:music.overworld.cherry_grove
-[00:09:47] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Line (4- AG06/AG03)
-[00:09:47] [Render thread/INFO]: Sound engine started
-[00:09:47] [Render thread/INFO]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 64x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
-[00:09:47] [Render thread/WARN]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
-[00:09:47] [Render thread/INFO]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
-[00:09:47] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/mob_effects.png-atlas
-[00:10:00] [Render thread/INFO]: Stopping!
+Caused by: java.net.SocketTimeoutException: Connect timed out
+	at sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:546) ~[?:?]
+	at sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:597) ~[?:?]
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327) ~[?:?]
+	at java.net.Socket.connect(Socket.java:633) ~[?:?]
+	at sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304) ~[?:?]
+	at sun.net.NetworkClient.doConnect(NetworkClient.java:178) ~[?:?]
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:498) ~[?:?]
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:603) ~[?:?]
+	at sun.net.www.protocol.https.HttpsClient.<init>(HttpsClient.java:266) ~[?:?]
+	at sun.net.www.protocol.https.HttpsClient.New(HttpsClient.java:380) ~[?:?]
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(AbstractDelegateHttpsURLConnection.java:189) ~[?:?]
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1287) ~[?:?]
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1128) ~[?:?]
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:175) ~[?:?]
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1665) ~[?:?]
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1589) ~[?:?]
+	at java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:529) ~[?:?]
+	at sun.net.www.protocol.https.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:308) ~[?:?]
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readInputStream(MinecraftClient.java:65) ~[authlib-3.2.38.jar:?]
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:48) ~[authlib-3.2.38.jar:?]
+	at com.mojang.authlib.yggdrasil.YggdrasilUserApiService.fetchProperties(YggdrasilUserApiService.java:113) ~[authlib-3.2.38.jar:?]
+	... 5 more
+[20:22:33] [Render thread/INFO]: Setting user: ancientxfire
+[20:22:33] [Render thread/INFO]: Backend library: LWJGL version 3.2.2 build 10
+[20:22:42] [Render thread/INFO]: Narrator library for x64 successfully loaded
+[20:22:43] [Render thread/INFO]: Reloading ResourceManager: Default
+[20:23:00] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on Line (4- AG06/AG03)
+[20:23:00] [Render thread/INFO]: Sound engine started
+[20:23:01] [Render thread/INFO]: Created: 1024x1024x4 minecraft:textures/atlas/blocks.png-atlas
+[20:23:01] [Render thread/INFO]: Created: 256x128x4 minecraft:textures/atlas/signs.png-atlas
+[20:23:01] [Render thread/INFO]: Created: 1024x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[20:23:01] [Render thread/INFO]: Created: 1024x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[20:23:01] [Render thread/INFO]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[20:23:01] [Render thread/INFO]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[20:23:01] [Render thread/INFO]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[20:23:02] [Render thread/INFO]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
+[20:23:02] [Render thread/INFO]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
+[20:23:02] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[20:23:08] [Render thread/INFO]: Connecting to hypixel.net, 25565
+[20:23:09] [Render thread/WARN]: Unknown custom packed identifier: minecraft:register
+[20:23:09] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:23:10] [Render thread/INFO]: [CHAT]                                      
+[20:23:10] [Render thread/INFO]: [CHAT]                          
+[20:23:10] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] ancientxfire§f §6joined the lobby!
+[20:23:11] [Render thread/INFO]: [CHAT] --------------  Guild: Message Of The Day  --------------
+[20:23:11] [Render thread/INFO]: [CHAT] | The Guys
+[20:23:11] [Render thread/INFO]: [CHAT] -----------------------------------------------------
+[20:23:11] [Render thread/WARN]: Unknown custom packed identifier: badlion:mods
+[20:23:11] [Render thread/INFO]: [CHAT] §aYou have §b29 §aunclaimed leveling rewards!
+[20:23:11] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:23:11] [Render thread/INFO]: [CHAT] §aYou have §619 §aunclaimed achievement rewards!
+[20:23:11] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:23:11] [Render thread/INFO]: [CHAT] §e§l????????????????????????????????????????\n§6§lHYPIXEL§e is hosting a §b§lWOOL WARS§e tournament!\n§6Compete, climb the leaderboard and earn free rewards!\n§eTo participate, visit the hall §bon August 25th\n§e§lClick §b§lHERE §e§lto read the announcement!\n§e§l????????????????????????????????????????\n
+[20:23:11] [Render thread/INFO]: [CHAT] §b[MVP§e+§b] NinCat379§f §6joined the lobby!
+[20:23:11] [Render thread/WARN]: Unable to play unknown soundEvent: minecraft:
+[20:23:12] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§2++§6] lexwx§f §6joined the lobby! §a<§c<§b<
+[20:23:28] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§0++§6] Allira§f §6joined the lobby! §a<§c<§b<
+[20:23:34] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] Ryysz§f §6joined the lobby!
+[20:23:40] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] sidbw§f §6joined the lobby!
+[20:23:55] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] Crekki§f §6joined the lobby!
+[20:24:12] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:24:12] [Render thread/WARN]: Received packet for unknown team NPCListShow: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team |||||||||||||||: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team a818-2cf7bcc: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team a999-76d80d5f: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team NPCListHide: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team a90812a65b65: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team a679-491df5f9: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team a679-79569b33: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team rhgo8y27b1: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team egjk4a1l24: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_1: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_11: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_10: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_9: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_8: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_7: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team a828-c831bce: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_6: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team 24h1eye97d: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_5: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_4: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_3: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team team_2: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team a639-572e46c7: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team 47326m49nh: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team a908203421f7: team action: REMOVE, player action: null
+[20:24:12] [Render thread/WARN]: Received packet for unknown team a818536d2b44: team action: REMOVE, player action: null
+[20:24:12] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:24:12] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:24:12] [Render thread/INFO]: [CHAT]                                      
+[20:24:12] [Render thread/INFO]: [CHAT]                          
+[20:24:12] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] ancientxfire§f §6joined the lobby!
+[20:24:12] [Render thread/INFO]: [CHAT] §aYou have §b29 §aunclaimed leveling rewards!
+[20:24:12] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:24:12] [Render thread/INFO]: [CHAT] §aYou have §619 §aunclaimed achievement rewards!
+[20:24:12] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:24:14] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§9++§6] qTrqhxrd3r§f §6joined the lobby! §a<§c<§b<
+[20:24:19] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] TinglyBus235§f §6joined the lobby!
+[20:24:19] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§0++§6] Yedel§f §6joined the lobby! §a<§c<§b<
+[20:24:29] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] EggyBuckle96229§f §6joined the lobby!
+[20:24:40] [Render thread/INFO]: [CHAT] §b[MVP§d+§b] springtrp§f §6joined the lobby!
+[20:24:42] [Render thread/INFO]: [CHAT] ? [MVP+] TinglyBus235 found a Legendary Enderman Pet in a Mystery Box!
+[20:24:46] [Render thread/INFO]: [CHAT] §b[MVP§f+§b] Mommy_Wheaty§f §6joined the lobby!
+[20:24:47] [Render thread/INFO]: [CHAT] §b[MVP§3+§b] dolphaz§f §6joined the lobby!
+[20:25:00] [Render thread/INFO]: [CHAT] §b[MVP§4+§b] YoshiEmpire§f §6joined the lobby!
+[20:25:01] [Render thread/INFO]: [CHAT] §b[MVP§9+§b] TheTelluric§f §6joined the lobby!
+[20:25:07] [Render thread/INFO]: [CHAT] §7[16?] §7SarahB01§7: ww
+[20:25:08] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§4++§6] mcmega§f §6joined the lobby! §a<§c<§b<
+[20:25:12] [Render thread/INFO]: [CHAT] §7[6?] §7xDanyMX§7: sd
+[20:25:12] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§6++§6] KittyLoverEmi731§f §6joined the lobby! §a<§c<§b<
+[20:25:16] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] AroncH101§f §6joined the lobby!
+[20:25:24] [Render thread/INFO]: [CHAT] §b[MVP§a+§b] tagru§f §6joined the lobby!
+[20:25:25] [Render thread/INFO]: [CHAT] §b[MVP§3+§b] warrios§f §6joined the lobby!
+[20:25:26] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§0++§6] qZeta§f §6joined the lobby! §a<§c<§b<
+[20:25:29] [Render thread/INFO]: [CHAT] §7[8?] §b[MVP§c+§b] TinglyBus235§f: can anyone gift me mvp++
+[20:25:32] [Render thread/INFO]: [CHAT] You are not allowed to leave this area!
+[20:25:36] [Render thread/INFO]: [CHAT] §7[33?] §b[MVP§c+§b] ancientxfire§f: jajaja
+[20:25:37] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] walewiadro69§f §6joined the lobby!
+[20:25:39] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§d++§6] NmixxGyujin§f §6joined the lobby! §a<§c<§b<
+[20:25:39] [Render thread/INFO]: [CHAT] §7[9?] §7GodlyCreeper§7: AYO WTH
+[20:25:42] [Render thread/INFO]: [CHAT] §7[8?] §7vTxddiie§7: yeah
+[20:25:44] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§0++§6] mooji§f §6joined the lobby! §a<§c<§b<
+[20:25:44] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§0++§6] baa_bird§f §6joined the lobby! §a<§c<§b<
+[20:25:44] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] Pidi_didi§f §6joined the lobby!
+[20:25:50] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §b[MVP§c++§b] _stephanos_§f §6joined the lobby! §a<§c<§b<
+[20:25:50] [Render thread/INFO]: [CHAT] §b[MVP§f+§b] MEL0NITE§f §6joined the lobby!
+[20:25:50] [Render thread/INFO]: [CHAT] §b[MVP§a+§b] Snake_Master66§f §6joined the lobby!
+[20:26:05] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] Rashion§f §6joined the lobby!
+[20:26:08] [Render thread/INFO]: [CHAT] §7[11?] §7UnBreak8ng§7: plssss this is my birthday plssss gift a vip
+[20:26:08] [Render thread/INFO]: [CHAT] §b[MVP§9+§b] epicwarrior344§f §6joined the lobby!
+[20:26:15] [Render thread/INFO]: [CHAT] §b[MVP§3+§b] dfvgcfel§f §6joined the lobby!
+[20:26:15] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§8++§6] SvenPVPMaster§f §6joined the lobby! §a<§c<§b<
+[20:26:20] [Render thread/WARN]: Received passengers for unknown entity
+[20:26:22] [Render thread/INFO]: [CHAT] §7[9?] §7GodlyCreeper§7: bruh no
+[20:26:24] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] madboygamer§f §6joined the lobby!
+[20:26:29] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] aby7ss§f §6joined the lobby!
+[20:26:31] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] lewlol§f §6joined the lobby!
+[20:26:33] [Render thread/INFO]: [CHAT] §7[11?] §7UnBreak8ng§7: faghir
+[20:26:35] [Render thread/INFO]: [CHAT] §b[MVP§d+§b] Daaanik§f §6joined the lobby!
+[20:26:37] [Render thread/INFO]: [CHAT] §7[15?] §a[VIP] mrwji§f: hello gais wolocom to mi yotob canel
+[20:26:39] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] FutureKhann§f §6joined the lobby!
+[20:26:42] [Render thread/INFO]: [CHAT] §b[MVP§6+§b] GeoVic_§f §6joined the lobby!
+[20:26:44] [Render thread/INFO]: [CHAT] ? KeenoGuy found a ????? Mystery Box!
+[20:26:47] [Render thread/INFO]: [CHAT] §b[MVP§d+§b] FINNNR§f §6joined the lobby!
+[20:26:47] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§3++§6] NickMuffin§f §6joined the lobby! §a<§c<§b<
+[20:26:48] [Render thread/INFO]: [CHAT] §7[76?] §b[MVP§c+§b] FutureKhann§f: Who wants to play bed with me
+[20:26:48] [Render thread/INFO]: [CHAT] §7[7?] §7kz248716§7: dude im back
+[20:26:49] [Render thread/INFO]: [CHAT] §7[45?] §b[MVP§c+§b] Pidi_didi§f: i cant gift you but happy birhtday
+[20:26:59] [Render thread/INFO]: [CHAT] §7[11?] §7UnBreak8ng§7: pidi_didi thanks
+[20:27:00] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§0++§6] ezracks§f §6joined the lobby! §a<§c<§b<
+[20:27:01] [Render thread/INFO]: [CHAT] §b[MVP§d+§b] _Jerp26§f §6joined the lobby!
+[20:27:02] [Render thread/INFO]: [CHAT] §7[7?] §7kz248716§7: xx guy im back
+[20:27:04] [Render thread/INFO]: [CHAT] §b[MVP§f+§b] Kadenze§f §6joined the lobby!
+[20:27:07] [Render thread/INFO]: [CHAT] §b[MVP§9+§b] WSG_Master§f §6joined the lobby!
+[20:27:08] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §b[MVP§8++§b] PastorVanNice§f §6joined the lobby! §a<§c<§b<
+[20:27:08] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§f++§6] BINOUZIEN§f §6joined the lobby! §a<§c<§b<
+[20:27:12] [Render thread/INFO]: [CHAT] §b[MVP§9+§b] DuckMaster2510§f §6joined the lobby!
+[20:27:16] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] __Anubis§f §6joined the lobby!
+[20:27:18] [Render thread/INFO]: [CHAT] Parkour challenge started!
+[20:27:18] [Render thread/INFO]: [CHAT] Use /parkour checkpoint to teleport to the last checkpoint or /parkour cancel to cancel!
+[20:27:23] [Render thread/INFO]: [CHAT] Reset your timer to 00:00! Get to the finish line!
+[20:27:33] [Render thread/INFO]: [CHAT] Reset your timer to 00:00! Get to the finish line!
+[20:27:35] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§3++§6] qBedwars§f §6joined the lobby! §a<§c<§b<
+[20:27:35] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] GuysDontBeRacist§f §6joined the lobby!
+[20:27:39] [Render thread/INFO]: [CHAT] Reset your timer to 00:00! Get to the finish line!
+[20:27:44] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§8++§6] tbhTape§f §6joined the lobby! §a<§c<§b<
+[20:27:45] [Render thread/INFO]: [CHAT] §b[MVP§3+§b] Snole§f §6joined the lobby!
+[20:27:48] [Render thread/INFO]: [CHAT] Reset your timer to 00:00! Get to the finish line!
+[20:27:50] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§2++§6] mathikl§f §6joined the lobby! §a<§c<§b<
+[20:27:51] [Render thread/INFO]: [CHAT] §9[861?] §b[MVP§3+§b] Snole§f: tok
+[20:27:55] [Render thread/INFO]: [CHAT] Parkour challenge cancelled!
+[20:27:57] [Render thread/INFO]: [CHAT] §b[MVP§6+§b] PiggyMcCool5§f §6joined the lobby!
+[20:27:57] [Render thread/INFO]: [CHAT] §3[582?] §6[MVP§1++§6] Tokolish§f: sno
+[20:28:03] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§5++§6] mqfn§f §6joined the lobby! §a<§c<§b<
+[20:28:03] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§3++§6] GZP_Noted§f §6joined the lobby! §a<§c<§b<
+[20:28:03] [Render thread/INFO]: [CHAT] §9[861?] §b[MVP§3+§b] Snole§f: wyd
+[20:28:04] [Render thread/INFO]: [CHAT] §b[MVP§e+§b] Mulpriicka§f §6joined the lobby!
+[20:28:07] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§f++§6] SpookyPiza§f §6joined the lobby! §a<§c<§b<
+[20:28:09] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] Pangsao§f §6joined the lobby!
+[20:28:10] [Render thread/INFO]: [CHAT] §3[582?] §6[MVP§1++§6] Tokolish§f: absolutely
+[20:28:12] [Render thread/INFO]: [CHAT] §3[582?] §6[MVP§1++§6] Tokolish§f: nothing
+[20:28:14] [Render thread/INFO]: [CHAT] §9[861?] §b[MVP§3+§b] Snole§f: amazing
+[20:28:15] [Render thread/INFO]: [CHAT] §3[582?] §6[MVP§1++§6] Tokolish§f: you
+[20:28:18] [Render thread/INFO]: [CHAT] §b[MVP§6+§b] PR3D1C7§f §6joined the lobby!
+[20:28:18] [Render thread/INFO]: [CHAT] §b[MVP§3+§b] dfvgcfel§f §6joined the lobby!
+[20:28:20] [Render thread/INFO]: [CHAT] §9[861?] §b[MVP§3+§b] Snole§f: 2's
+[20:28:20] [Render thread/INFO]: [CHAT] §9[861?] §b[MVP§3+§b] Snole§f: or
+[20:28:22] [Render thread/INFO]: [CHAT] §9[861?] §b[MVP§3+§b] Snole§f: woolwars?
+[20:28:28] [Render thread/INFO]: [CHAT] §b[MVP§4+§b] MidoProGaming§f §6joined the lobby!
+[20:28:28] [Render thread/INFO]: [CHAT] §3[582?] §6[MVP§1++§6] Tokolish§f: can warm up in
+[20:28:30] [Render thread/INFO]: [CHAT] §3[582?] §6[MVP§1++§6] Tokolish§f: wools wars
+[20:28:31] [Render thread/INFO]: [CHAT] §9[861?] §b[MVP§3+§b] Snole§f: ye
+[20:28:44] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §b[MVP§9++§b] prznGulag§f §6joined the lobby! §a<§c<§b<
+[20:28:56] [Render thread/INFO]: [CHAT] §b[MVP§4+§b] BridgeIsEasy§f §6joined the lobby!
+[20:29:01] [Render thread/INFO]: [CHAT] §7[61?] §a[VIP] RealEditzx§f: j
+[20:29:01] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§2++§6] qurved§f §6joined the lobby! §a<§c<§b<
+[20:29:08] [Render thread/INFO]: [CHAT] §b[MVP§9+§b] offpaste§f §6joined the lobby!
+[20:29:12] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] CoziedUp§f §6joined the lobby!
+[20:29:16] [Render thread/INFO]: [CHAT] ? wspginee found a ????? Mystery Box!
+[20:29:17] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] LGnawi§f §6joined the lobby!
+[20:29:19] [Render thread/INFO]: [CHAT] ? Szymon621 found a ????? Mystery Box!
+[20:29:21] [Render thread/INFO]: [CHAT] §b[MVP§f+§b] _Subz0§f §6joined the lobby!
+[20:29:21] [Render thread/INFO]: [CHAT] §b[MVP§4+§b] Conflered§f §6joined the lobby!
+[20:29:22] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§1++§6] Blexi§f §6joined the lobby! §a<§c<§b<
+[20:29:22] [Render thread/INFO]: [CHAT] §b[MVP§5+§b] Zidnie§f §6joined the lobby!
+[20:29:23] [Render thread/INFO]: [CHAT] §b[MVP§6+§b] nitrum§f §6joined the lobby!
+[20:29:25] [Render thread/INFO]: [CHAT] You are not allowed to leave this area!
+[20:29:26] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] CherryBVixey§f §6joined the lobby!
+[20:29:30] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§8++§6] iowo§f §6joined the lobby! §a<§c<§b<
+[20:29:34] [Render thread/INFO]: [CHAT] §b[MVP§0+§b] yummybloblennon§f §6joined the lobby!
+[20:29:35] [Render thread/INFO]: [CHAT] §b[MVP§d+§b] UrDadNotFound§f §6joined the lobby!
+[20:29:35] [Render thread/INFO]: [CHAT] You are not allowed to leave this area!
+[20:29:36] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§d++§6] xLily_§f §6joined the lobby! §a<§c<§b<
+[20:29:50] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §b[MVP§0++§b] Tince§f §6joined the lobby! §a<§c<§b<
+[20:29:51] [Render thread/INFO]: [CHAT] §b[MVP§d+§b] EggsBuns§f §6joined the lobby!
+[20:29:53] [Render thread/INFO]: [CHAT] §b[MVP§1+§b] Masterpvp1233§f §6joined the lobby!
+[20:30:00] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] rabinowfajn3x§f §6joined the lobby!
+[20:30:01] [Render thread/INFO]: [CHAT] §b[MVP§6+§b] Doxonomy§f §6joined the lobby!
+[20:30:06] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] Aquafull§f §6joined the lobby!
+[20:30:06] [Render thread/INFO]: [CHAT] §b[MVP§3+§b] Ferrqt§f §6joined the lobby!
+[20:30:06] [Render thread/INFO]: [CHAT] ? EleanorLeBerry found a ????? Mystery Box!
+[20:30:08] [Render thread/INFO]: [CHAT] §b[MVP§8+§b] Wlnks§f §6joined the lobby!
+[20:30:11] [Render thread/INFO]: [CHAT] ? Tightjimmy found a ????? Mystery Box!
+[20:30:18] [Render thread/INFO]: [CHAT] ? andrea403 found a ????? Mystery Box!
+[20:30:27] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§c++§6] Jacktwix§f §6joined the lobby! §a<§c<§b<
+[20:30:28] [Render thread/INFO]: [CHAT] §7[18?] §6[MVP§c++§6] Jacktwix§f: Looking for a guild? 123 Dont worry do /g join BedwarsAndSkywarsCasual no reqs 123 ? ?
+[20:30:30] [Render thread/INFO]: [CHAT] §b[MVP§f+§b] Shrijicol§f §6joined the lobby!
+[20:30:36] [Render thread/WARN]: Received passengers for unknown entity
+[20:30:39] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§3++§6] yr655§f §6joined the lobby! §a<§c<§b<
+[20:30:47] [Render thread/INFO]: [CHAT] §b[MVP§6+§b] Basy_§f §6joined the lobby!
+[20:30:49] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] dErPLe_bOi§f §6joined the lobby!
+[20:30:51] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §b[MVP§2++§b] valf§f §6joined the lobby! §a<§c<§b<
+[20:30:54] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§9++§6] _Phoenic§f §6joined the lobby! §a<§c<§b<
+[20:30:55] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§9++§6] oVoidless§f §6joined the lobby! §a<§c<§b<
+[20:31:09] [Render thread/INFO]: [CHAT] §b[MVP§d+§b] Bear42§f §6joined the lobby!
+[20:31:09] [Render thread/INFO]: [CHAT] ? Demoniaxel found a ????? Mystery Box!
+[20:31:11] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] xX_LUI§f §6joined the lobby!
+[20:31:15] [Render thread/INFO]: [CHAT] §b[MVP§6+§b] Savrios§f §6joined the lobby!
+[20:31:22] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§0++§6] 420a§f §6joined the lobby! §a<§c<§b<
+[20:31:26] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] _CapCon§f §6joined the lobby!
+[20:31:30] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] manifestdubs§f §6joined the lobby!
+[20:31:36] [Render thread/INFO]: [CHAT] §b[MVP§3+§b] iyada§f §6joined the lobby!
+[20:31:36] [Render thread/WARN]: Received passengers for unknown entity
+[20:31:38] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§8++§6] Gott_aka_Leonard§f §6joined the lobby! §a<§c<§b<
+[20:31:43] [Render thread/INFO]: [CHAT] ? TD_Lettro found a ????? Mystery Box!
+[20:31:46] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§2++§6] SammyBammy100§f §6joined the lobby! §a<§c<§b<
+[20:31:47] [Render thread/INFO]: [CHAT] §7[33?] §b[MVP§c+§b] ancientxfire§f: I enjoy long walks on the beach and playing Hypixel
+[20:31:51] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] Saulid§f §6joined the lobby!
+[20:31:56] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] At0xia§f §6joined the lobby!
+[20:32:00] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§6++§6] GOOFERDOBER11§f §6joined the lobby! §a<§c<§b<
+[20:32:05] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §b[MVP§d++§b] _Catnipp§f §6joined the lobby! §a<§c<§b<
+[20:32:09] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §b[MVP§0++§b] oBots§f §6joined the lobby! §a<§c<§b<
+[20:32:14] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§a++§6] Drnp§f §6joined the lobby! §a<§c<§b<
+[20:32:15] [Render thread/INFO]: [CHAT] §b[MVP§d+§b] _BobCPS§f §6joined the lobby!
+[20:32:18] [Render thread/INFO]: [CHAT] Offer Map Feedback is now disabled!
+[20:32:20] [Render thread/INFO]: [CHAT] Particle Quality is now set to Extreme!
+[20:32:20] [Render thread/INFO]: [CHAT] Auto Queue is now disabled!
+[20:32:21] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:32:21] [Render thread/WARN]: Received packet for unknown team a629-22275ab0: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team be86ozrzfy: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team NPCListShow: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team |||||||||||||||: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team 0y0lbgv0bw: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team q92eb7p328: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team agv9d1g64k: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team p963z91pv8: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team h03b45ou27: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team a999-76d80d5f: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team a8283c9e0dea: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team a8181cda7097: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team NPCListHide: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team a679-79569b33: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team 71pgp88q3b: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team a629274ce990: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team a818-52186a5c: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team 58eu26966r: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team 1n1hk13q6k: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team 4ukd10l2ur: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team 01p7w26o78: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team h5on4a71sf: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team s66o009wza: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team 7r16125044: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team u313kwgsww: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_1: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team 6890xfpvk0: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_15: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_13: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_14: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team a8281ec54af0: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_11: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_12: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_10: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_9: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team 474ujhm44e: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_8: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_7: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_6: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_5: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_4: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_3: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team team_2: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team e35o1sv3jy: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team a828-238b2c3a: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team k96901cgd1: team action: REMOVE, player action: null
+[20:32:21] [Render thread/WARN]: Received packet for unknown team zxnbn9u07j: team action: REMOVE, player action: null
+[20:32:22] [Render thread/WARN]: Received packet for unknown team a908203421f7: team action: REMOVE, player action: null
+[20:32:22] [Render thread/WARN]: Received packet for unknown team a3394dc9fb52: team action: REMOVE, player action: null
+[20:32:22] [Render thread/WARN]: Received packet for unknown team a299-4cbf262d: team action: REMOVE, player action: null
+[20:32:22] [Render thread/WARN]: Received packet for unknown team lcdkr00702: team action: REMOVE, player action: null
+[20:32:22] [Render thread/WARN]: Received packet for unknown team 50z8bii1zs: team action: REMOVE, player action: null
+[20:32:22] [Render thread/WARN]: Received packet for unknown team a8187442ae68: team action: REMOVE, player action: null
+[20:32:22] [Render thread/WARN]: Received packet for unknown team a289-78f2921a: team action: REMOVE, player action: null
+[20:32:22] [Render thread/WARN]: Received packet for unknown team e25v43wurr: team action: REMOVE, player action: null
+[20:32:22] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:32:22] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:32:22] [Render thread/INFO]: [CHAT]                                      
+[20:32:22] [Render thread/INFO]: [CHAT]                          
+[20:32:22] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] ancientxfire§f §6joined the lobby!
+[20:32:22] [Render thread/INFO]: [CHAT] §b[MVP§4+§b] eventiger§f §6joined the lobby!
+[20:32:27] [Render thread/INFO]: Connecting to hypixel.net, 25565
+[20:32:28] [Render thread/WARN]: Unknown custom packed identifier: minecraft:register
+[20:32:31] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:32:32] [Render thread/INFO]: [CHAT]                                      
+[20:32:32] [Render thread/INFO]: [CHAT]                          
+[20:32:32] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] ancientxfire§f §6joined the lobby!
+[20:32:32] [Render thread/INFO]: [CHAT] §aYou have §b29 §aunclaimed leveling rewards!
+[20:32:32] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:32:32] [Render thread/INFO]: [CHAT] §aYou have §619 §aunclaimed achievement rewards!
+[20:32:32] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:32:34] [Render thread/INFO]: Connecting to hypixel.net, 25565
+[20:32:37] [Render thread/INFO]: Connecting to hypixel.net, 25565
+[20:32:40] [Render thread/INFO]: Connecting to hypixel.net, 25565
+[20:32:41] [Render thread/WARN]: Unknown custom packed identifier: minecraft:register
+[20:32:41] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:32:42] [Render thread/INFO]: [CHAT]                                      
+[20:32:42] [Render thread/INFO]: [CHAT]                          
+[20:32:42] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] ancientxfire§f §6joined the lobby!
+[20:32:42] [Render thread/WARN]: Received passengers for unknown entity
+[20:32:42] [Render thread/INFO]: [CHAT] §aYou have §b29 §aunclaimed leveling rewards!
+[20:32:42] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:32:42] [Render thread/INFO]: [CHAT] §aYou have §619 §aunclaimed achievement rewards!
+[20:32:42] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:32:42] [Render thread/INFO]: [CHAT] --------------  Guild: Message Of The Day  --------------
+[20:32:42] [Render thread/INFO]: [CHAT] | The Guys
+[20:32:42] [Render thread/INFO]: [CHAT] -----------------------------------------------------
+[20:32:42] [Render thread/WARN]: Unknown custom packed identifier: badlion:mods
+[20:32:42] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§2++§6] GoodPoh1§f §6joined the lobby! §a<§c<§b<
+[20:32:45] [Render thread/INFO]: [CHAT] §b[MVP§2+§b] BugTrainerJed§f §6joined the lobby!
+[20:32:46] [Render thread/INFO]: [CHAT]  §b>§c>§a>§r §6[MVP§c++§6] 6Fox§f §6joined the lobby! §a<§c<§b<
+[20:32:50] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:32:50] [Render thread/WARN]: Received packet for unknown team 36kl4271do: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a818536d2b44: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a8283dd74ecc: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team NPCListShow: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a3297c78f648: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team |||||||||||||||: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a999-76d80d5f: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a2294fc30bdd: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a828-238b2c3a: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a908-1965f384: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a349-77223012: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a2792195e831: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a8287c2514b1: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a2691ed5b53b: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_1: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a289202d8199: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a679-79569b33: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a679-e605f83: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a3397dfed522: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a279-65cf7da: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a808-7e9f192f: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a818-7800c9b3: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_15: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_13: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_14: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_11: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_12: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a908203421f7: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team NPCListHide: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a818-76500200: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_10: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_9: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_8: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a599-3f7d34ce: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_7: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_6: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_5: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team f168i365z5: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_4: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a2896a8af31b: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_3: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team a619729cd5b7: team action: REMOVE, player action: null
+[20:32:50] [Render thread/WARN]: Received packet for unknown team team_2: team action: REMOVE, player action: null
+[20:32:50] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:32:50] [Render thread/INFO]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[20:32:51] [Render thread/INFO]: [CHAT]                                      
+[20:32:51] [Render thread/INFO]: [CHAT]                          
+[20:32:51] [Render thread/INFO]: [CHAT] §b[MVP§c+§b] ancientxfire§f §6joined the lobby!
+[20:32:51] [Render thread/WARN]: Received passengers for unknown entity
+[20:32:51] [Render thread/INFO]: [CHAT] §aYou have §b29 §aunclaimed leveling rewards!
+[20:32:51] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:32:51] [Render thread/INFO]: [CHAT] §aYou have §619 §aunclaimed achievement rewards!
+[20:32:51] [Render thread/INFO]: [CHAT] §eClick here to view them!
+[20:32:54] [Render thread/INFO]: Connecting to hypixel.net, 25565
+[20:32:55] [Render thread/WARN]: Unknown custom packed identifier: minecraft:register
+[20:33:00] [Render thread/INFO]: Stopping!

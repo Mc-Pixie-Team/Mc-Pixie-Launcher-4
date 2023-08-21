@@ -13,8 +13,8 @@ import '../utils/path.dart';
 class Forge {
   //1.19.4-forge-45.1.16
   run() async {
-    Version version = Version(1, 19, 4);
-    ForgeVersion forgeVersion = ForgeVersion(45, 1, 16);
+    Version version = Version(1, 18, 1);
+    ForgeVersion forgeVersion = ForgeVersion(39, 1, 2);
 
     Map vanillaVersionJson = (jsonDecode(
         await File("${await getworkpath()}\\versions\\$version\\$version.json")
@@ -24,11 +24,11 @@ class Forge {
             "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json")
         .readAsString()));
 
+    (vanillaVersionJson["libraries"] as List).addAll(versionJson["libraries"]);
     (vanillaVersionJson["arguments"]["jvm"] as List)
         .addAll(versionJson["arguments"]["jvm"]);
     (vanillaVersionJson["arguments"]["game"] as List)
         .addAll(versionJson["arguments"]["game"]);
-
 
     String javaVer17 =
         "C:\\Users\\zepat\\AppData\\Roaming\\RPMTW\\RPMLauncher\\RPMLauncher\\data\\jre\\17\\jdk-17.0.4+8-jre\\bin\\java.exe";
@@ -59,8 +59,8 @@ class Forge {
   }
 
   install() async {
-    Version version = Version(1, 19, 4);
-    ForgeVersion forgeVersion = ForgeVersion(45, 1, 16);
+    Version version = Version(1, 18, 1);
+    ForgeVersion forgeVersion = ForgeVersion(39, 1, 2);
 
     print("installing now: $version-$forgeVersion");
     //example: https://maven.minecraftforge.net/net/minecraftforge/forge/1.19.4-45.1.16/forge-1.19.4-45.1.16-installer.jar
@@ -180,8 +180,7 @@ class Forge {
     //NOTE:
     // alternative individuelle heys
 
-    String javaVer17 =
-        "C:\\Program Files\\Java\\jdk-17\\bin\\java.exe";
+    String javaVer17 = "C:\\Program Files\\Java\\jdk-17\\bin\\java.exe";
 
     String javaVer8 =
         "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\install debug\\runtime\\jre-legacy\\windows-x64\\jre-legacy\\bin\\java.exe";
@@ -190,7 +189,7 @@ class Forge {
     for (var i = 0; i < processor.length; i++) {
       Map current = processor[i];
 
-      //if (_checkAllowed(current)) continue;
+      if (_checkAllowed(current)) continue;
 
       print(
           "================================================================================> new processor:" +

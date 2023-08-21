@@ -120,20 +120,22 @@ class Minecraft {
         "${await getworkpath()}\\bin\\${packagejson["id"]}";
     String launcher_name = "Mc-pixie";
     String launcher_version = "4";
-    String auth_player_name = "Fridolin";
+    String auth_player_name = "ancientxfire";
     String version_name = packagejson["id"];
     String game_directory = await getworkpath();
     String assets_root = "${await getworkpath()}\\assets";
     String assets_index_name = packagejson["assets"];
-    String auth_uuid = "a";
-    String auth_access_token = "a";
-    String clientid = "a";
-    String auth_xuid = "a";
-    String user_type = "a";
+    String auth_uuid = "485426a26c314e9290e3beff9f6b4827";
+    String auth_access_token = "eyJraWQiOiJhYzg0YSIsImFsZyI6IkhTMjU2In0.eyJ4dWlkIjoiMjUzNTQzMTcwMTk3MTc0MSIsImFnZyI6IkFkdWx0Iiwic3ViIjoiNGFhYzVjMTgtYTFkMy00MTMxLTk2ZjItNzJiZjhkMTM5OGM4IiwiYXV0aCI6IlhCT1giLCJucyI6ImRlZmF1bHQiLCJyb2xlcyI6W10sImlzcyI6ImF1dGhlbnRpY2F0aW9uIiwiZmxhZ3MiOlsidHdvZmFjdG9yYXV0aCIsIm9yZGVyc18yMDIyIl0sInBsYXRmb3JtIjoiVU5LTk9XTiIsInl1aWQiOiI3ZWI5NjA1NDEzYzVkN2E3ZmVlMWRmNWNmNWFlNjc4ZSIsIm5iZiI6MTY5MjY0MjEwOCwiZXhwIjoxNjkyNzI4NTA4LCJpYXQiOjE2OTI2NDIxMDh9.h9k06ajfRi6EQg78tSDd22mEib5nAbPg4DCbzSd5CKw";
+    String clientid = "";
+    String auth_xuid = "";
+    String user_type = "mojang";
     String version_type = "Pixie";
     String classpath_separator = "${(os == "windows") ? ";" : ":"}";
 
     String library_directory = "${await getlibarypath()}\\libraries";
+    print(jvmArgs);
+    print(gameArgs);
     jvmArgs = jvmArgs
         .replaceAll("\${natives_directory}", natives_directory)
         .replaceAll("\${launcher_name}", launcher_name)

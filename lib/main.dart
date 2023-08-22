@@ -1,9 +1,11 @@
 import 'src/app.dart';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-
+import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 
 void main() {
+  supabaseHelpers().init();
+  Paint.enableDithering = true;
   runApp(const McLauncher());
   doWhenWindowReady(() {
     final win = appWindow;
@@ -13,5 +15,3 @@ void main() {
     win.show();
   });
 }
-
-

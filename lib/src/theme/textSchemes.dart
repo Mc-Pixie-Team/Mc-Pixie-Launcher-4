@@ -10,7 +10,7 @@ final blackTextSchemes = TextTheme(
     letterSpacing: -0.25,
   ),
   displayMedium: GoogleFonts.roboto(
-     color: Color.fromARGB(255, 255, 255, 255),
+    color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w600,
     fontSize: 48,
     height: 52 / 48,
@@ -54,19 +54,19 @@ final blackTextSchemes = TextTheme(
     letterSpacing: 0.1,
   ),
   labelLarge: GoogleFonts.roboto(
-     color: Color.fromARGB(255, 255, 255, 255),
+    color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w300,
     fontSize: 16,
     height: 20 / 16,
   ),
   labelMedium: GoogleFonts.roboto(
-     color: Color.fromARGB(255, 255, 255, 255),
+    color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w300,
     fontSize: 12,
     height: 16 / 12,
   ),
   labelSmall: GoogleFonts.roboto(
-     color: Color.fromARGB(255, 255, 255, 255),
+    color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w200,
     fontSize: 11,
     height: 16 / 11,

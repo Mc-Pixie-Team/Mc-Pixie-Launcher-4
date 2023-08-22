@@ -16,22 +16,16 @@ class Forge {
     Version version = Version(1, 18, 1);
     ForgeVersion forgeVersion = ForgeVersion(39, 1, 2);
 
-    Map vanillaVersionJson = (jsonDecode(
-        await File("${await getworkpath()}\\versions\\$version\\$version.json")
-            .readAsString()));
+    Map vanillaVersionJson = (jsonDecode(await File("${await getworkpath()}\\versions\\$version\\$version.json").readAsString()));
 
-    Map versionJson = (jsonDecode(await File(
-            "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json")
-        .readAsString()));
+    Map versionJson =
+        (jsonDecode(await File("${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json").readAsString()));
 
     (vanillaVersionJson["libraries"] as List).addAll(versionJson["libraries"]);
-    (vanillaVersionJson["arguments"]["jvm"] as List)
-        .addAll(versionJson["arguments"]["jvm"]);
-    (vanillaVersionJson["arguments"]["game"] as List)
-        .addAll(versionJson["arguments"]["game"]);
+    (vanillaVersionJson["arguments"]["jvm"] as List).addAll(versionJson["arguments"]["jvm"]);
+    (vanillaVersionJson["arguments"]["game"] as List).addAll(versionJson["arguments"]["game"]);
 
-    String javaVer17 =
-        "C:\\Users\\zepat\\AppData\\Roaming\\RPMTW\\RPMLauncher\\RPMLauncher\\data\\jre\\17\\jdk-17.0.4+8-jre\\bin\\java.exe";
+    String javaVer17 = "C:\\Users\\ancie\\.jabba\\jdk\\openjdk@1.17.0\\bin\\java.exe";
     String javaVer8 =
         "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\install debug\\runtime\\jre-legacy\\windows-x64\\jre-legacy\\bin\\java.exe";
     String majorVer = javaVer8;
@@ -41,18 +35,14 @@ class Forge {
     }
     Map args = await Minecraft().getArgs(vanillaVersionJson, "windows");
 
-    String launchcommand =
-        '& "$majorVer" ${args["jvm"]}${versionJson["mainClass"]} ${args["game"]}';
+    String launchcommand = '& "$majorVer" ${args["jvm"]}${versionJson["mainClass"]} ${args["game"]}';
 
     print(launchcommand);
-    var tempFile = File(
-        "${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command.ps1");
+    var tempFile = File("${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command.ps1");
     await tempFile.create(recursive: true);
     await tempFile.writeAsString(launchcommand);
 
-    var result = await Process.start(
-        "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
-        runInShell: true);
+    var result = await Process.start("powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path], runInShell: true);
 
     stdout.addStream(result.stdout);
     stderr.addStream(result.stderr);
@@ -66,12 +56,10 @@ class Forge {
     //example: https://maven.minecraftforge.net/net/minecraftforge/forge/1.19.4-45.1.16/forge-1.19.4-45.1.16-installer.jar
     // await Download().downloadForgeClient(version, forgeVersion);
 
-    Map install_profileJson = jsonDecode(await File(
-            "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\install_profile.json")
-        .readAsString());
-    Map versionJson = jsonDecode(await File(
-            "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json")
-        .readAsString());
+    Map install_profileJson =
+        jsonDecode(await File("${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\install_profile.json").readAsString());
+    Map versionJson =
+        jsonDecode(await File("${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json").readAsString());
 
     await Download().downloadLibaries(install_profileJson);
     await _processor(install_profileJson, version, forgeVersion);
@@ -82,18 +70,15 @@ class Forge {
     print('version is finished');
   }
 
-  _createVersionDir(
-      Map versionJson, Version version, ForgeVersion forgeVersion) async {
-    String filepath =
-        "${await getworkpath()}\\versions\\$version-forge-$forgeVersion\\$version-forge-$forgeVersion.json";
+  _createVersionDir(Map versionJson, Version version, ForgeVersion forgeVersion) async {
+    String filepath = "${await getworkpath()}\\versions\\$version-forge-$forgeVersion\\$version-forge-$forgeVersion.json";
     String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
     await File(filepath).writeAsString(jsonEncode(versionJson));
     print('created versionsDir');
   }
 
-  Future<String> _checkkeys(
-      List args, Map data, Version version, ForgeVersion forgeVersion) async {
+  Future<String> _checkkeys(List args, Map data, Version version, ForgeVersion forgeVersion) async {
     String outputArgs = "";
 
     for (var i = 0; i < args.length; i++) {
@@ -106,8 +91,7 @@ class Forge {
         print('downloading');
 
         String path = Utils.parseMaven(arg);
-        Download().downloadSingeFile("https://maven.minecraftforge.net/$path",
-            "${await getlibarypath()}\\libraries\\$path");
+        Download().downloadSingeFile("https://maven.minecraftforge.net/$path", "${await getlibarypath()}\\libraries\\$path");
         outputArgs += "${await getlibarypath()}\\libraries\\$path ";
       } else if (Utils.isSurrounded(arg, "{", "}")) {
         //hier checken wir ob das argument mit {} umklammert ist, wenn ja, dann entfernen wir diese. Wir suchen nun in der "DATA" (gucke in der install_profile.json nach) nach dem passenden schlüssel der gleich bennant ist
@@ -117,8 +101,7 @@ class Forge {
         arg = arg.split("{").join("").split("}").join("");
         List data_keys = data.keys.toList();
         if (arg == "MINECRAFT_JAR") {
-          outputArgs +=
-              await getworkpath() + "\\versions\\$version\\$version.jar ";
+          outputArgs += await getworkpath() + "\\versions\\$version\\$version.jar ";
         } else if (arg == "SIDE") {
           outputArgs += "client ";
         } else if (arg == "MINECRAFT_VERSION") {
@@ -142,9 +125,7 @@ class Forge {
                 //TODO: Mavenparser fixen, andere individuelle, nicht im DATA verhandene KEY hinzufügen (checken). gucken was passiert wenn mit '' umgeben (oftmals ein hash drinn) und direkt den arg zum outputarg hinzufügen
                 //wenn keiner der punkte zu trifft.
 
-                outputArgs +=
-                    "${await getlibarypath()}\\libraries\\${Utils.parseMaven(argoutput)} "
-                        .replaceAll("/", "\\");
+                outputArgs += "${await getlibarypath()}\\libraries\\${Utils.parseMaven(argoutput)} ".replaceAll("/", "\\");
                 print("found []");
                 break;
               } else if (Utils.isSurrounded(argoutput, "'", "'")) {
@@ -154,9 +135,7 @@ class Forge {
                 break;
               } else if (argoutput.startsWith("/")) {
                 //this part is mostly called Patching
-                outputArgs +=
-                    "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\$argoutput "
-                        .replaceAll("/", "\\");
+                outputArgs += "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\$argoutput ".replaceAll("/", "\\");
 
                 print("found /");
                 break;
@@ -175,8 +154,7 @@ class Forge {
     return outputArgs;
   }
 
-  _processor(
-      Map install_profile, Version version, ForgeVersion forgeVersion) async {
+  _processor(Map install_profile, Version version, ForgeVersion forgeVersion) async {
     //NOTE:
     // alternative individuelle heys
 
@@ -191,35 +169,26 @@ class Forge {
 
       if (_checkAllowed(current)) continue;
 
-      print(
-          "================================================================================> new processor:" +
-              current["jar"]);
-      String stack = await _getStack(
-          current["classpath"], install_profile["libraries"], current["jar"]);
-      String processor_jar =
-          await searchforjar(current["jar"], install_profile["libraries"]);
+      print("================================================================================> new processor:" + current["jar"]);
+      String stack = await _getStack(current["classpath"], install_profile["libraries"], current["jar"]);
+      String processor_jar = await searchforjar(current["jar"], install_profile["libraries"]);
       stack += processor_jar;
 
       //Getting the mainclass
-      List<int> byte_MANIFEST = await Utils.extractFilefromjar(processor_jar,
-          "META-INF/MANIFEST.MF"); //TODO: check if succsesfull (error handling)
+      List<int> byte_MANIFEST = await Utils.extractFilefromjar(processor_jar, "META-INF/MANIFEST.MF"); //TODO: check if succsesfull (error handling)
 
-      String mainClass = loadYaml(utf8.decode(byte_MANIFEST))[
-          "Main-Class"]; //TODO: erro handlung einbauen falls loadYAML oder utf8decoder fehlschlägt.
+      String mainClass =
+          loadYaml(utf8.decode(byte_MANIFEST))["Main-Class"]; //TODO: erro handlung einbauen falls loadYAML oder utf8decoder fehlschlägt.
 
-      String _args = await _checkkeys(
-          current["args"], install_profile["data"], version, forgeVersion);
+      String _args = await _checkkeys(current["args"], install_profile["data"], version, forgeVersion);
 
-      String command =
-          'java -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';
+      String command = 'java -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';
 
       var tempFile = File("${await getTempCommandPath()}temp_command_2.ps1");
       await tempFile.create(recursive: true);
       await tempFile.writeAsString(command);
 
-      var result = await Process.start(
-          "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
-          runInShell: true);
+      var result = await Process.start("powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path], runInShell: true);
       String filepath = await getworkpath() + '\\${i.toString()}\\log.txt';
       String parentDirectory = path.dirname(filepath);
       await Directory(parentDirectory).create(recursive: true);

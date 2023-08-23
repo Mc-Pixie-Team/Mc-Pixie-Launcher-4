@@ -1,4 +1,5 @@
 import "package:mclauncher4/src/tasks/forgeversion.dart";
+import "package:mclauncher4/src/tasks/java/java.dart";
 import "package:mclauncher4/src/tasks/version.dart";
 import "package:path_provider/path_provider.dart" as path_provider;
 import "dart:convert";
@@ -27,28 +28,11 @@ class Minecraft {
     Version version = new Version(int.parse(valuesString[0]),
         int.parse(valuesString[1]), int.parse(valuesString[2]));
 
-    if (version < Version(1, 13, 0)) {
-      throw ("Version not compatible");
-    }
 
-    //C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\bin
-    // print(stack);
-    // C:\\Program Files\\Java\\jdk-17\\bin\\java.exe"
 
-    String javaVer17 =
-        "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\install debug\\runtime\\java-runtime-gamma\\windows-x64\\java-runtime-gamma\\bin\\java.exe";
-    String javaVer8 =
-        "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\install debug\\runtime\\jre-legacy\\windows-x64\\jre-legacy\\bin\\java.exe";
-    String majorVer = javaVer8;
+    
 
-    if (version > Version(1, 16, 4)) {
-      majorVer = javaVer17;
-    }
-
-    Map args = await getArgs(packagejson, "windows");
-
-    String launchcommand =
-        '& "$majorVer" ${args["jvm"]}${packagejson["mainClass"]} ${args["game"]}';
+    String launchcommand = await getlaunchCommand(packagejson, os, version);
 
     print(launchcommand);
     var tempFile = File(
@@ -62,6 +46,27 @@ class Minecraft {
 
     stdout.addStream(result.stdout);
     stderr.addStream(result.stderr);
+  }
+
+  getlaunchCommand(Map packagejson, String os, Version version, [ForgeVersion? forgeVersion]) async{
+    String launchcommand;
+    Map args;
+    String majorVer = Java.getJavaJdk(version);
+
+    if (version < Version(1, 13, 0)) { 
+     Map args = await overrideArguments('"-Djava.library.path=\${natives_directory}" -cp "\${classpath}" ', packagejson["minecraftArguments"], packagejson, os);
+       launchcommand =
+        '& "$majorVer" ${args["jvm"]}${packagejson["mainClass"]} ${args["game"]}';
+        return launchcommand;
+    }
+
+    args = await getArgs(packagejson, os);
+
+    launchcommand =
+        '& "$majorVer" ${args["jvm"]}${packagejson["mainClass"]} ${args["game"]}';
+
+    return launchcommand;
+
   }
 
   Future<Map> getArgs(Map packagejson, String os,) async {
@@ -116,7 +121,11 @@ class Minecraft {
         }
       }
     }
-    String natives_directory =
+    return await overrideArguments(jvmArgs, gameArgs, packagejson, os);
+  }
+
+  overrideArguments(String jvmArgs, String gameArgs, packagejson, os) async{
+        String natives_directory =
         "${await getworkpath()}\\bin\\${packagejson["id"]}";
     String launcher_name = "Mc-pixie";
     String launcher_version = "4";
@@ -134,6 +143,7 @@ class Minecraft {
     String classpath_separator = "${(os == "windows") ? ";" : ":"}";
 
     String library_directory = "${await getlibarypath()}\\libraries";
+    String user_properties = '"{}"';
     print(jvmArgs);
     print(gameArgs);
     jvmArgs = jvmArgs
@@ -157,7 +167,7 @@ class Minecraft {
         .replaceAll("\${clientid}", clientid)
         .replaceAll("\${auth_xuid}", auth_xuid)
         .replaceAll("\${user_type}", user_type)
-        .replaceAll("\${version_type}", version_type);
+        .replaceAll("\${version_type}", version_type).replaceAll("\${user_properties}", user_properties);
 
     return {
       "jvm": jvmArgs,
@@ -184,7 +194,7 @@ class Minecraft {
       }
       if (libary["natives"] != null && libary["natives"][os] != null) {
         stack +=
-            "$path/${libary["downloads"]["classifiers"][libary["natives"][os]]["path"]}${(os == "windows") ? ";" : ":"}";
+            "$path/${libary["downloads"]["classifiers"][libary["natives"][os].replaceAll("\${arch}", "64")]["path"]}${(os == "windows") ? ";" : ":"}";
       }
       if (libary["downloads"]["artifact"] == null) continue;
       stack +=

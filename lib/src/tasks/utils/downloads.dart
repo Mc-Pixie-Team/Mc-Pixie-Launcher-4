@@ -15,33 +15,39 @@ class Download {
   int received = 0;
   Download({this.isForge});
   String os = "windows";
+  String arch = "64";
 
-  Future downloadLibaries(Map profile) async {
+  Future downloadLibaries(Map profile, [Version? version, ForgeVersion? forgeVersion]) async {
     List libraries = profile["libraries"];
     print(libraries.length);
     for (int i = 0; i < libraries.length; i++) {
       Map current = libraries[i];
 
+
+
       if (current["natives"] != null && current["natives"][os] != null) {
         print('downloading native: ' + current["name"]);
 
         await _downloadForLibraries(
-            current["downloads"]["classifiers"][current["natives"][os]]);
+            current["downloads"]["classifiers"][current["natives"][os].replaceAll("\${arch}", arch)]);
         await Utils.extractNativesfromjar(
-            current["downloads"]["classifiers"][current["natives"][os]]["path"],
+            current["downloads"]["classifiers"][current["natives"][os].replaceAll("\${arch}", arch)]["path"],
             profile["id"]);
       }
       if (current["downloads"]["artifact"] == null) continue;
-      await _downloadForLibraries(current["downloads"]["artifact"]);
+      await _downloadForLibraries(current["downloads"]["artifact"], version: version, forgeVersion: forgeVersion);
     }
   }
 
-  _downloadForLibraries(Map current, {String? altpath}) async {
+  _downloadForLibraries(Map current, {String? altpath, Version? version, ForgeVersion? forgeVersion}) async {
     List<int> _bytes = [];
     int total = current["size"], received = 0, receivedControll = 0;
-
-
-    http.StreamedResponse? response = await http.Client()
+    
+    if(current["url"] == "" || current["url"] == null){
+      if(version == null || forgeVersion == null) throw "unable to handle version cause it empty.";
+    _bytes = await File('${ await getTempForgePath()}\\$version\\$forgeVersion\\maven\\${current["path"]}').readAsBytes();
+    }else {
+      http.StreamedResponse? response = await http.Client()
         .send(http.Request('GET', Uri.parse(current["url"])));
     print('downloading: ' + current["path"].toString());
     await response.stream.listen((value) {
@@ -53,6 +59,9 @@ class Download {
         receivedControll = 0;
       }
     }).asFuture();
+    }
+
+    
     String filepath =
         '${(await appDocumentsDir).path}\\PixieLauncherInstances\\debug\\libraries\\${altpath != null ? altpath + path.basename(((current["path"] as String).replaceAll('/', '\\'))) : ((current["path"] as String).replaceAll('/', '\\'))}';
 

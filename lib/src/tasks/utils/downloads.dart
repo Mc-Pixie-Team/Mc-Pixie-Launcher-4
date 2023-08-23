@@ -17,51 +17,56 @@ class Download {
   String os = "windows";
   String arch = "64";
 
-  Future downloadLibaries(Map profile, [Version? version, ForgeVersion? forgeVersion]) async {
+  Future downloadLibaries(Map profile,
+      [Version? version, ForgeVersion? forgeVersion]) async {
+       if( profile["libraries"] == null) return;
     List libraries = profile["libraries"];
     print(libraries.length);
     for (int i = 0; i < libraries.length; i++) {
       Map current = libraries[i];
 
-
-
       if (current["natives"] != null && current["natives"][os] != null) {
         print('downloading native: ' + current["name"]);
 
-        await _downloadForLibraries(
-            current["downloads"]["classifiers"][current["natives"][os].replaceAll("\${arch}", arch)]);
+        await _downloadForLibraries(current["downloads"]["classifiers"]
+            [current["natives"][os].replaceAll("\${arch}", arch)]);
         await Utils.extractNativesfromjar(
-            current["downloads"]["classifiers"][current["natives"][os].replaceAll("\${arch}", arch)]["path"],
+            current["downloads"]["classifiers"]
+                [current["natives"][os].replaceAll("\${arch}", arch)]["path"],
             profile["id"]);
       }
       if (current["downloads"]["artifact"] == null) continue;
-      await _downloadForLibraries(current["downloads"]["artifact"], version: version, forgeVersion: forgeVersion);
+      await _downloadForLibraries(current["downloads"]["artifact"],
+          version: version, forgeVersion: forgeVersion);
     }
   }
 
-  _downloadForLibraries(Map current, {String? altpath, Version? version, ForgeVersion? forgeVersion}) async {
+  _downloadForLibraries(Map current,
+      {String? altpath, Version? version, ForgeVersion? forgeVersion}) async {
     List<int> _bytes = [];
     int total = current["size"], received = 0, receivedControll = 0;
-    
-    if(current["url"] == "" || current["url"] == null){
-      if(version == null || forgeVersion == null) throw "unable to handle version cause it empty.";
-    _bytes = await File('${ await getTempForgePath()}\\$version\\$forgeVersion\\maven\\${current["path"]}').readAsBytes();
-    }else {
+
+    if (current["url"] == "" || current["url"] == null) {
+      if (version == null || forgeVersion == null)
+        throw "unable to handle version cause it empty.";
+      _bytes = await File(
+              '${await getTempForgePath()}\\$version\\$forgeVersion\\maven\\${current["path"]}')
+          .readAsBytes();
+    } else {
       http.StreamedResponse? response = await http.Client()
-        .send(http.Request('GET', Uri.parse(current["url"])));
-    print('downloading: ' + current["path"].toString());
-    await response.stream.listen((value) {
-      _bytes.addAll(value);
-      received += value.length;
-      receivedControll += value.length;
-      if (receivedControll > total / 10) {
-        print(((received / total) * 100).toString() + '%');
-        receivedControll = 0;
-      }
-    }).asFuture();
+          .send(http.Request('GET', Uri.parse(current["url"])));
+      print('downloading: ' + current["path"].toString());
+      await response.stream.listen((value) {
+        _bytes.addAll(value);
+        received += value.length;
+        receivedControll += value.length;
+        if (receivedControll > total / 10) {
+          print(((received / total) * 100).toString() + '%');
+          receivedControll = 0;
+        }
+      }).asFuture();
     }
 
-    
     String filepath =
         '${(await appDocumentsDir).path}\\PixieLauncherInstances\\debug\\libraries\\${altpath != null ? altpath + path.basename(((current["path"] as String).replaceAll('/', '\\'))) : ((current["path"] as String).replaceAll('/', '\\'))}';
 
@@ -170,11 +175,12 @@ class Download {
     //   print('done with ' + i.toString());
   }
 
-  downloadForgeClient(Version version, ForgeVersion forgeVersion) async {
+  downloadForgeClient(Version version, ForgeVersion forgeVersion,
+      [String? additional]) async {
     //https://maven.minecraftforge.net/net/minecraftforge/forge/1.19.4-45.1.16/forge-1.19.4-45.1.16-installer.jar
 
     String url =
-        "https://maven.minecraftforge.net/net/minecraftforge/forge/${version.toString()}-${forgeVersion.toString()}/forge-${version.toString()}-${forgeVersion.toString()}-installer.jar";
+        "https://maven.minecraftforge.net/net/minecraftforge/forge/${version.toString()}-${forgeVersion.toString()}${additional == null ? "" : "-" + additional}/forge-${version.toString()}-${forgeVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar";
 
     List<int> _bytes = [];
     int received = 0;

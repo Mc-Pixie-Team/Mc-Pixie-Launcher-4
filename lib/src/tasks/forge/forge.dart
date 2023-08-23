@@ -21,15 +21,15 @@ class Forge {
 
   String os = "windows";
   run() async {
-    Version version = Version(1, 18, 1);
-    ForgeVersion forgeVersion = ForgeVersion(39, 1, 2);
+    Version version = Version(1, 7, 10);
+    ForgeVersion forgeVersion = ForgeVersion(10, 13, 4, 1614);
 
     Map vanillaVersionJson = (jsonDecode(
         await File("${await getworkpath()}\\versions\\$version\\$version.json")
             .readAsString()));
 
     Map versionJson = (jsonDecode(await File(
-            "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json")
+            "${await getworkpath()}\\versions\\$version-forge-$forgeVersion\\$version-forge-$forgeVersion.json")
         .readAsString()));
 
     (vanillaVersionJson["libraries"] as List).addAll(versionJson["libraries"]);
@@ -62,19 +62,29 @@ class Forge {
   }
 
   install() async {
-    Version version = Version(1, 12, 2);
-    ForgeVersion forgeVersion = ForgeVersion(14, 23, 5, 2860);
+    Version version = Version(1, 7, 10);
+    ForgeVersion forgeVersion = ForgeVersion(10, 13, 4, 1614);
+    String? additional = "1.7.10";
+    Map versionJson =  Map();
 
     print("installing now: $version-$forgeVersion");
     //example: https://maven.minecraftforge.net/net/minecraftforge/forge/1.19.4-45.1.16/forge-1.19.4-45.1.16-installer.jar
-    // await Download().downloadForgeClient(version, forgeVersion);
+     await Download().downloadForgeClient(version, forgeVersion, additional);
 
-    Map install_profileJson = jsonDecode(await File(
+   Map install_profileJson = jsonDecode(await File(
             "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\install_profile.json")
         .readAsString());
-    Map versionJson = jsonDecode(await File(
+
+  String versionJsonPath = "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json"; 
+  if(File(versionJsonPath).existsSync()){
+     versionJson = jsonDecode(await File(
             "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\version.json")
         .readAsString());
+  }else {
+    versionJson = Utils.convertLibraries(install_profileJson["versionInfo"]);
+  }
+  
+  print(versionJson);
 
     await Download()
         .downloadLibaries(install_profileJson, version, forgeVersion);
@@ -181,6 +191,8 @@ class Forge {
 
   _processor(
       Map install_profile, Version version, ForgeVersion forgeVersion) async {
+
+        if(install_profile["processors"] == null || install_profile["processors"] == []) return;
     //NOTE:
     // alternative individuelle heys
 

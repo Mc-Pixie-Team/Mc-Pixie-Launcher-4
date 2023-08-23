@@ -1,7 +1,8 @@
-[21:10:53] [main/INFO]: Setting user: ancientxfire
-[21:10:53] [main/INFO]: (Session ID is token:eyJraWQiOiJhYzg0YSIsImFsZyI6IkhTMjU2In0.eyJ4dWlkIjoiMjUzNTQzMTcwMTk3MTc0MSIsImFnZyI6IkFkdWx0Iiwic3ViIjoiNGFhYzVjMTgtYTFkMy00MTMxLTk2ZjItNzJiZjhkMTM5OGM4IiwiYXV0aCI6IlhCT1giLCJucyI6ImRlZmF1bHQiLCJyb2xlcyI6W10sImlzcyI6ImF1dGhlbnRpY2F0aW9uIiwiZmxhZ3MiOlsidHdvZmFjdG9yYXV0aCIsIm9yZGVyc18yMDIyIl0sInBsYXRmb3JtIjoiVU5LTk9XTiIsInl1aWQiOiI3ZWI5NjA1NDEzYzVkN2E3ZmVlMWRmNWNmNWFlNjc4ZSIsIm5iZiI6MTY5MjY0MjEwOCwiZXhwIjoxNjkyNzI4NTA4LCJpYXQiOjE2OTI2NDIxMDh9.h9k06ajfRi6EQg78tSDd22mEib5nAbPg4DCbzSd5CKw:485426a26c314e9290e3beff9f6b4827)
-[21:10:53] [Client thread/INFO]: LWJGL Version: 2.9.1
-[21:10:54] [Client thread/INFO]: Reloading ResourceManager: Default
-[21:10:55] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
-[21:10:55] [Client thread/INFO]: Created: 256x256 textures/items-atlas
-[21:10:55] [Sound Library Loader/INFO]: Sound engine started
+[21:58:36] [main/INFO]: Setting user: ancientxfire
+[21:58:36] [main/INFO]: (Session ID is token:eyJraWQiOiJhYzg0YSIsImFsZyI6IkhTMjU2In0.eyJ4dWlkIjoiMjUzNTQzMTcwMTk3MTc0MSIsImFnZyI6IkFkdWx0Iiwic3ViIjoiNGFhYzVjMTgtYTFkMy00MTMxLTk2ZjItNzJiZjhkMTM5OGM4IiwiYXV0aCI6IlhCT1giLCJucyI6ImRlZmF1bHQiLCJyb2xlcyI6W10sImlzcyI6ImF1dGhlbnRpY2F0aW9uIiwiZmxhZ3MiOlsidHdvZmFjdG9yYXV0aCIsIm9yZGVyc18yMDIyIl0sInBsYXRmb3JtIjoiVU5LTk9XTiIsInl1aWQiOiI3ZWI5NjA1NDEzYzVkN2E3ZmVlMWRmNWNmNWFlNjc4ZSIsIm5iZiI6MTY5MjY0MjEwOCwiZXhwIjoxNjkyNzI4NTA4LCJpYXQiOjE2OTI2NDIxMDh9.h9k06ajfRi6EQg78tSDd22mEib5nAbPg4DCbzSd5CKw:485426a26c314e9290e3beff9f6b4827)
+[21:58:37] [Client thread/INFO]: LWJGL Version: 2.9.1
+[21:58:37] [Client thread/INFO]: Reloading ResourceManager: Default
+[21:58:38] [Sound Library Loader/INFO]: Sound engine started
+[21:58:38] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
+[21:58:38] [Client thread/INFO]: Created: 256x256 textures/items-atlas
+[21:59:53] [Client thread/INFO]: Stopping!

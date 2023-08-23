@@ -27,12 +27,14 @@ class Utils {
   }
 
   static extractForgeInstaller(
-      List<int> _bytes, Version version, ForgeVersion forgeVersion) async {
-          String filepath = await getTempForgePath() +"\\${version.toString()}\\${forgeVersion.toString()}\\${version.toString()}-${forgeVersion.toString()}-installer.jar";
-         String parentDirectory = path.dirname(filepath);
+      List<int> _bytes, Version version, ForgeVersion forgeVersion, [String? additional]) async {
+    String filepath = await getTempForgePath() +
+        "\\${version.toString()}\\${forgeVersion.toString()}\\${version.toString()}-${forgeVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar";
+       
+    String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
-        File(filepath).writeAsBytes(_bytes);
-            
+    File(filepath).writeAsBytes(_bytes);
+
     final archive = ZipDecoder().decodeBytes(_bytes);
     for (var data in archive) {
       final filename = data.name;
@@ -52,27 +54,50 @@ class Utils {
     }
   }
 
-  static Future<List<int>> extractFilefromjar(String filepath, String filepathinjar)  async{
+  static Future<List<int>> extractFilefromjar(
+      String filepath, String filepathinjar) async {
     List<int> _bytes = [];
 
     _bytes = await File(filepath).readAsBytes();
     final archive = ZipDecoder().decodeBytes(_bytes);
- for (var data in archive) {
+    for (var data in archive) {
       final filename = data.name;
       if (data.isFile) {
         final datadir = data.content as List<int>;
-        if(filename == filepathinjar) {
+        if (filename == filepathinjar) {
           return datadir;
         }
-        
-      } 
+      }
     }
-    Exception('unable to find file in jar:' + filepathinjar);
-    return [];
+    throw Exception('unable to find file in jar:' + filepathinjar);
   }
 
   static bool isSurrounded(String str, String prefix, String suffix) {
     return str.startsWith(prefix) && str.endsWith(suffix);
+  }
+
+  static convertLibraries(Map versionJson) {
+    List libraries = versionJson["libraries"];
+    List newlibraries = [];
+    for (int i = 0; i < libraries.length; i++) {
+      Map current = libraries[i];
+
+      if (!(current["clientreq"] == true)) continue;
+      if (current["url"] == null || current["url"] == "") continue;
+
+      newlibraries.add({
+          "name": current["name"],
+          "downloads": {
+            "artifact": {
+              "path": Utils.parseMaven(current["name"]),
+              "url": current["url"] +  Utils.parseMaven(current["name"]),
+              "size" : 100000
+            }
+          }
+      });
+    }
+    versionJson["libraries"] = newlibraries;
+    return versionJson;
   }
 
   static List parseMavenList(String mavenString) {
@@ -103,10 +128,10 @@ class Utils {
     /// 結果: 1.16.5-20210115.111550
     String packageVersion = mavenString.split(":")[2].split("@")[0];
     String packageVersion2;
-    if(mavenString.split(":").length >3){
-      
-      packageVersion2 = '${mavenString.split(":")[2].split("@")[0]}-${mavenString.split(":")[3].split("@")[0]}';
-    }else {
+    if (mavenString.split(":").length > 3) {
+      packageVersion2 =
+          '${mavenString.split(":")[2].split("@")[0]}-${mavenString.split(":")[3].split("@")[0]}';
+    } else {
       packageVersion2 = packageVersion;
     }
 
@@ -114,12 +139,11 @@ class Utils {
     /// ü
     String packageExtension;
 
-    if(mavenString.split("@").length < 2){
+    if (mavenString.split("@").length < 2) {
       packageExtension = "jar";
-    }else {
+    } else {
       packageExtension = mavenString.split("@")[1];
     }
-     
 
     return [
       "$packageGroup/$packageName/$packageVersion",
@@ -128,9 +152,8 @@ class Utils {
   }
 
   static String parseMaven(String mavenString) {
- 
     List mavenlist = parseMavenList(mavenString);
-    
-    return mavenlist[0] + "/" +mavenlist[1];
+
+    return mavenlist[0] + "/" + mavenlist[1];
   }
 }

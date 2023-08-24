@@ -19,7 +19,7 @@ class Download {
 
   Future downloadLibaries(Map profile,
       [Version? version, ForgeVersion? forgeVersion]) async {
-       if( profile["libraries"] == null) return;
+    if (profile["libraries"] == null) return;
     List libraries = profile["libraries"];
     print(libraries.length);
     for (int i = 0; i < libraries.length; i++) {
@@ -76,6 +76,24 @@ class Download {
 
     await File(filepath).writeAsBytes(_bytes);
     _bytes = []; //reset;
+  }
+
+  getOldUniversal(
+      Map install_profileJson, Version version, ForgeVersion forgeVersion) async {
+       
+         if(install_profileJson["install"] == null) return;
+          Map install_profile = install_profileJson["install"];
+      File path = File(
+            '${await getlibarypath()}\\libraries\\${Utils.parseMaven(install_profile["path"])}');
+            print('parsing ${path.path} ');
+
+        if(!(await path.exists())) throw "the file does not exist, mabye you called the method before you installed the libraries";
+    List<int> _bytes = await File(
+            '${await getTempForgePath()}\\$version\\$forgeVersion\\${install_profile["filePath"]}')
+        .readAsBytes();
+    await File(
+            '${await getlibarypath()}\\libraries\\${Utils.parseMaven(install_profile["path"])}')
+        .writeAsBytes(_bytes);
   }
 
   Future<Map> getJson(String url) async {

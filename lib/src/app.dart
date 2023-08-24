@@ -76,12 +76,12 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
-             //   await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
+               await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
               // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
               // Minecraft().run(res, 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries'); 
 
-            // Forge().install();
-            Forge().run(); 
+            await Forge().install();
+            await  Forge().run(); 
           /* Microsoft().authenticate(); */
           // Navigator.push(
           //   context,

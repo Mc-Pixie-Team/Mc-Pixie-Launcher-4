@@ -37,6 +37,7 @@ class Forge {
     if (version < Version(1, 13, 0)) {
       vanillaVersionJson["minecraftArguments"] =
           (versionJson["minecraftArguments"]);
+          
     } else {
       (vanillaVersionJson["arguments"]["jvm"] as List)
           .addAll(versionJson["arguments"]["jvm"]);
@@ -85,13 +86,14 @@ class Forge {
   }
   
   print(versionJson);
-
+   
     await Download()
         .downloadLibaries(install_profileJson, version, forgeVersion);
     await _processor(install_profileJson, version, forgeVersion);
     print('install_profile is finished');
 
     await Download().downloadLibaries(versionJson, version, forgeVersion);
+    await Download().getOldUniversal(install_profileJson, version, forgeVersion);
     await _createVersionDir(versionJson, version, forgeVersion);
     print('version is finished');
   }

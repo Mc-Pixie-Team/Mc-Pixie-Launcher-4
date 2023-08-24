@@ -1,8 +1,28 @@
-[21:58:36] [main/INFO]: Setting user: ancientxfire
-[21:58:36] [main/INFO]: (Session ID is token:eyJraWQiOiJhYzg0YSIsImFsZyI6IkhTMjU2In0.eyJ4dWlkIjoiMjUzNTQzMTcwMTk3MTc0MSIsImFnZyI6IkFkdWx0Iiwic3ViIjoiNGFhYzVjMTgtYTFkMy00MTMxLTk2ZjItNzJiZjhkMTM5OGM4IiwiYXV0aCI6IlhCT1giLCJucyI6ImRlZmF1bHQiLCJyb2xlcyI6W10sImlzcyI6ImF1dGhlbnRpY2F0aW9uIiwiZmxhZ3MiOlsidHdvZmFjdG9yYXV0aCIsIm9yZGVyc18yMDIyIl0sInBsYXRmb3JtIjoiVU5LTk9XTiIsInl1aWQiOiI3ZWI5NjA1NDEzYzVkN2E3ZmVlMWRmNWNmNWFlNjc4ZSIsIm5iZiI6MTY5MjY0MjEwOCwiZXhwIjoxNjkyNzI4NTA4LCJpYXQiOjE2OTI2NDIxMDh9.h9k06ajfRi6EQg78tSDd22mEib5nAbPg4DCbzSd5CKw:485426a26c314e9290e3beff9f6b4827)
-[21:58:37] [Client thread/INFO]: LWJGL Version: 2.9.1
-[21:58:37] [Client thread/INFO]: Reloading ResourceManager: Default
-[21:58:38] [Sound Library Loader/INFO]: Sound engine started
-[21:58:38] [Client thread/INFO]: Created: 512x256 textures/blocks-atlas
-[21:58:38] [Client thread/INFO]: Created: 256x256 textures/items-atlas
-[21:59:53] [Client thread/INFO]: Stopping!
+[17:49:27] [main/INFO]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[17:49:27] [main/INFO]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[17:49:27] [main/INFO]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[17:49:27] [main/INFO]: Forge Mod Loader version 7.99.40.1614 for Minecraft 1.7.10 loading
+[17:49:27] [main/INFO]: Java is Java HotSpot(TM) 64-Bit Server VM, version 1.8.0_51, running on Windows 8.1:amd64:6.3, installed at C:\Users\zepat\Documents\PixieLauncherInstances\install debug\runtime\jre-legacy\windows-x64\jre-legacy
+[17:49:27] [main/INFO]: Loading tweak class name cpw.mods.fml.common.launcher.FMLInjectionAndSortingTweaker
+[17:49:27] [main/INFO]: Loading tweak class name cpw.mods.fml.common.launcher.FMLDeobfTweaker
+[17:49:27] [main/INFO]: Calling tweak class cpw.mods.fml.common.launcher.FMLInjectionAndSortingTweaker
+[17:49:27] [main/INFO]: Calling tweak class cpw.mods.fml.common.launcher.FMLInjectionAndSortingTweaker
+[17:49:27] [main/INFO]: Calling tweak class cpw.mods.fml.relauncher.CoreModManager$FMLPluginWrapper
+[17:49:29] [main/INFO]: Found valid fingerprint for Minecraft Forge. Certificate fingerprint e3c3d50c7c986df74c645c0ac54639741c90a557
+[17:49:29] [main/INFO]: Found valid fingerprint for Minecraft. Certificate fingerprint cd99959656f753dc28d863b46769f7f8fbaefcfc
+[17:49:29] [main/INFO]: Calling tweak class cpw.mods.fml.relauncher.CoreModManager$FMLPluginWrapper
+[17:49:29] [main/INFO]: Calling tweak class cpw.mods.fml.common.launcher.FMLDeobfTweaker
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: java.lang.NoSuchMethodError: com.google.common.io.CharSource.readLines(Lcom/google/common/io/LineProcessor;)Ljava/lang/Object;
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at cpw.mods.fml.common.asm.transformers.AccessTransformer.processATFile(AccessTransformer.java:125)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at cpw.mods.fml.common.asm.transformers.AccessTransformer.readMapFile(AccessTransformer.java:120)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at cpw.mods.fml.common.asm.transformers.AccessTransformer.<init>(AccessTransformer.java:101)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at cpw.mods.fml.common.asm.transformers.AccessTransformer.<init>(AccessTransformer.java:97)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at java.lang.reflect.Constructor.newInstance(Constructor.java:422)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at java.lang.Class.newInstance(Class.java:442)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at net.minecraft.launchwrapper.LaunchClassLoader.registerTransformer(LaunchClassLoader.java:88)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at cpw.mods.fml.common.launcher.FMLDeobfTweaker.injectIntoClassLoader(FMLDeobfTweaker.java:32)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at net.minecraft.launchwrapper.Launch.launch(Launch.java:115)
+[17:49:29] [main/INFO]: [java.lang.Throwable$WrappedPrintStream:println:748]: 	at net.minecraft.launchwrapper.Launch.main(Launch.java:28)

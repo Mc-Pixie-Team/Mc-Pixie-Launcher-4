@@ -79,11 +79,66 @@ class Utils {
   static convertLibraries(Map versionJson) {
     List libraries = versionJson["libraries"];
     List newlibraries = [];
+    List<String> ignoreList = [
+      
+      "net.minecraft:launchwrapper:1.12",
+      "lzma:lzma:0.0.1",
+      "java3d:vecmath:1.5.2"
+    ];
+
+       newlibraries.add({
+          "name":"net.minecraft:launchwrapper:1.12",
+          "downloads": {
+            "artifact": {
+              "path": "net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
+              "url": "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
+              "size" : 32999
+            }
+          }
+      });
+           newlibraries.add({
+          "name":"lzma:lzma:0.0.1",
+          "downloads": {
+            "artifact": {
+              "path": "lzma/lzma/0.0.1/lzma-0.0.1.jar",
+              "url": "https://phoenixnap.dl.sourceforge.net/project/kcauldron/lzma/lzma/0.0.1/lzma-0.0.1.jar",
+              "size" : 100000
+            }
+          }
+      });
+           newlibraries.add({
+          "name":"java3d:vecmath:1.5.2",
+          "downloads": {
+            "artifact": {
+              "path": "java3d/vecmath/1.5.2/vecmath-1.5.2.jar",
+              "url": "https://repo1.maven.org/maven2/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2.jar",
+              "size" : 100000
+            }
+          }
+      });
+
     for (int i = 0; i < libraries.length; i++) {
       Map current = libraries[i];
-
-      if (!(current["clientreq"] == true)) continue;
-      if (current["url"] == null || current["url"] == "") continue;
+  	  if(!(current["clientreq"] == null && current["serverreq"] == null)) {
+       
+      
+      }
+      
+      // if (current["url"] == null || current["url"] == "") continue;
+      if(ignoreList.contains(current["name"])) continue;
+      if(current["serverreq"] == true) {
+          newlibraries.add({
+          "name": current["name"],
+          "downloads": {
+            "artifact": {
+              "path": Utils.parseMaven(current["name"]),
+              "url": "https://repo1.maven.org/maven2/" +  Utils.parseMaven(current["name"]),
+              "size" : 100000
+            }
+          }
+      });
+      continue;
+      }
 
       newlibraries.add({
           "name": current["name"],
@@ -96,6 +151,10 @@ class Utils {
           }
       });
     }
+
+
+    
+
     versionJson["libraries"] = newlibraries;
     return versionJson;
   }

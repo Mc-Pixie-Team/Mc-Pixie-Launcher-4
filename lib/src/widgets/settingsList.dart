@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class SettingsList extends StatefulWidget {
   SettingsList({required this.names, required this.functions, Key? key}) : super(key: key);
-  List<VoidCallback> functions;
-  List names;
+  late final List<VoidCallback> functions;
+  late final List names;
   @override
   _SettingsListState createState() => _SettingsListState();
 }
@@ -12,7 +12,7 @@ class _SettingsListState extends State<SettingsList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           minWidth: 0, // Minimum width
           maxWidth: double.infinity, // Maximum width
           minHeight: 0, // Minimum height
@@ -54,7 +54,7 @@ class _SettingsListState extends State<SettingsList> {
                           padding: EdgeInsets.only(left: 5, right: 5),
                           child: Container(
                             width: 550.66,
-                            decoration: ShapeDecoration(
+                            decoration: const ShapeDecoration(
                               shape: RoundedRectangleBorder(
                                 side: BorderSide(
                                   width: 0.50,

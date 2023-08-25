@@ -2,10 +2,13 @@ import 'dart:io';
 import 'dart:math';
 import 'package:mclauncher4/src/pages/debugpage.dart';
 import 'package:mclauncher4/src/pages/modListPage.dart';
+import 'package:mclauncher4/src/pages/settings_page/settingsPage.dart';
 import 'package:mclauncher4/src/pages/splash/splash.dart';
 import 'package:mclauncher4/src/pages/splash/splashLogin.dart';
+import 'package:mclauncher4/src/pages/user_page/userPage.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
+import 'package:mclauncher4/src/tasks/win32Deleter.dart';
 import 'package:mclauncher4/src/widgets/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
@@ -27,14 +30,8 @@ class McLauncher extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: lightColorScheme,
-          typography: Typography(black: blackTextSchemes)),
-      darkTheme: ThemeData(
-          useMaterial3: true,
-          colorScheme: darkColorScheme,
-          typography: Typography(black: blackTextSchemes)),
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes)),
+      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
       themeMode: ThemeMode.dark,
       home: MainPage(),
     );
@@ -65,8 +62,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int pageIndex = 0;
   int pageIndex_old = 0;
-  EdgeInsets edgeInsets =
-      EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
+  EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
   final List<Widget> _pages = [
     ModListPage(),
     Debugpage(),
@@ -78,24 +74,20 @@ class _MainPageState extends State<MainPage> {
       key: Key('4'),
       color: Color.fromARGB(255, 146, 91, 218),
     ),
+    SettingsPage(),
+    UserPage()
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
-            int random = (Random().nextInt(300) + 100);
-
-            SidePanel().pop(Container( width:random.toDouble() , decoration: BoxDecoration(color: Color.fromARGB(255,random,random,random ), borderRadius: BorderRadius.circular(18) ) ,), random.toDouble());
-           
-        //  print(await ModrinthApi().getRandomModpacks(12));
-
-
-          //       await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
+          await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
           // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
           // Minecraft().run(res, 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
-          //    await Forge().install();
-          // await  Forge().run();
+
+          await Forge().install();
+          await Forge().run();
           /* Microsoft().authenticate(); */
           // Navigator.push(
           //   context,
@@ -109,8 +101,7 @@ class _MainPageState extends State<MainPage> {
               Container(
                 height: double.infinity,
                 width: 200,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant),
+                decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant),
                 child: Column(
                   children: [
                     Container(
@@ -118,12 +109,25 @@ class _MainPageState extends State<MainPage> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 30),
-                      child: MenuItem(
-                        title: 'Profile',
-                        icon: Icon(
-                          Icons.person,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary,
+                      child: Center(
+                        child: MenuItem(
+                          onClick: () {
+                            int index = 5;
+                            print('change: ' + index.toString());
+                            pageIndex_old = pageIndex;
+
+                            if (index != pageIndex_old) {
+                              setState(() {
+                                pageIndex = index;
+                              });
+                            }
+                          },
+                          title: 'Profile',
+                          icon: Icon(
+                            Icons.person,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
                       ),
                     ),
@@ -133,6 +137,17 @@ class _MainPageState extends State<MainPage> {
                     Padding(
                       padding: EdgeInsets.only(left: 30),
                       child: MenuItem(
+                        onClick: () {
+                          int index = 4;
+                          print('change: ' + index.toString());
+                          pageIndex_old = pageIndex;
+
+                          if (index != pageIndex_old) {
+                            setState(() {
+                              pageIndex = index;
+                            });
+                          }
+                        },
                         title: 'Settings',
                         icon: Icon(
                           Icons.settings,
@@ -200,9 +215,7 @@ class _MainPageState extends State<MainPage> {
                   padding: edgeInsets,
                   child: _pages![pageIndex],
                 ),
-                transitionBuilder:
-                    (child, primaryAnimation, secondaryAnimation) =>
-                        SharedAxisTransition(
+                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   transitionType: SharedAxisTransitionType.vertical,
@@ -210,9 +223,7 @@ class _MainPageState extends State<MainPage> {
                   child: child,
                 ),
               )),
-             SidePanel()
-            
-              
+              SidePanel()
 
               // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
             ],

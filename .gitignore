@@ -29,3 +29,5 @@ doc/api/
 
 .fvm*
 .vscode/settings.json
+logs/*
+*.log

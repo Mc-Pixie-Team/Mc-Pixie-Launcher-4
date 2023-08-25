@@ -11,18 +11,28 @@ class PixieScrollSimulation extends Simulation {
   @override
   double x(double time) {
     var timechange = 1 - time;
+    double veloc = -math.pow(time, 2) * velocity;
+    double max;
+/*     print("init: $initPosition");
+    print("after: $afterPosition"); */
 
-    var max = initPosition + (time * (velocity + timechange * velocity));
     if (afterPosition > initPosition) {
-      max = math.max(initPosition - (time * (velocity + timechange * velocity)), 0.0);
+      max = initPosition - veloc;
+    } else {
+      max = initPosition + veloc;
     }
-
+    /* print("max: $max"); */
+    if (max <= 0.0) {
+      max = 0.0;
+    }
     return max;
   }
 
   @override
   double dx(double time) {
-    return velocity;
+    double veloc = -math.pow(time, 2) * velocity;
+
+    return veloc;
   }
 
   @override

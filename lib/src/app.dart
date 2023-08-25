@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'package:mclauncher4/src/pages/debugpage.dart';
 import 'package:mclauncher4/src/pages/modListPage.dart';
+import 'package:mclauncher4/src/pages/settings_page/settingsPage.dart';
 import 'package:mclauncher4/src/pages/splash/splash.dart';
 import 'package:mclauncher4/src/pages/splash/splashLogin.dart';
+import 'package:mclauncher4/src/pages/user_page/userPage.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
+import 'package:mclauncher4/src/tasks/win32Deleter.dart';
 import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
 import 'package:mclauncher4/src/tasks/Modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
@@ -70,18 +73,20 @@ class _MainPageState extends State<MainPage> {
       key: Key('4'),
       color: Color.fromARGB(255, 146, 91, 218),
     ),
+    SettingsPage(),
+    UserPage()
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
-               await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
-              // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
-              // Minecraft().run(res, 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries'); 
+          //await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
+          // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
+          // Minecraft().run(res, 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
 
-            await Forge().install();
-            await  Forge().run(); 
+          /* await Forge().install(); */
+          await Forge().run();
           /* Microsoft().authenticate(); */
           // Navigator.push(
           //   context,
@@ -103,12 +108,25 @@ class _MainPageState extends State<MainPage> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 30),
-                      child: MenuItem(
-                        title: 'Profile',
-                        icon: Icon(
-                          Icons.person,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary,
+                      child: Center(
+                        child: MenuItem(
+                          onClick: () {
+                            int index = 5;
+                            print('change: ' + index.toString());
+                            pageIndex_old = pageIndex;
+
+                            if (index != pageIndex_old) {
+                              setState(() {
+                                pageIndex = index;
+                              });
+                            }
+                          },
+                          title: 'Profile',
+                          icon: Icon(
+                            Icons.person,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
                       ),
                     ),
@@ -118,6 +136,17 @@ class _MainPageState extends State<MainPage> {
                     Padding(
                       padding: EdgeInsets.only(left: 30),
                       child: MenuItem(
+                        onClick: () {
+                          int index = 4;
+                          print('change: ' + index.toString());
+                          pageIndex_old = pageIndex;
+
+                          if (index != pageIndex_old) {
+                            setState(() {
+                              pageIndex = index;
+                            });
+                          }
+                        },
                         title: 'Settings',
                         icon: Icon(
                           Icons.settings,

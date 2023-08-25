@@ -12,4 +12,18 @@ class supabaseHelpers {
 
     return;
   }
+
+  void signoutUser() {
+    final _supabase = Supabase.instance.client;
+    _supabase.auth.signOut();
+  }
+
+  bool isLoggedIn() {
+    final _supabase = Supabase.instance.client;
+    if (_supabase.auth.currentUser != null) {
+      return true;
+    }
+
+    return false;
+  }
 }

@@ -1,12 +1,13 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:mclauncher4/src/pages/debugpage.dart';
 import 'package:mclauncher4/src/pages/modListPage.dart';
 import 'package:mclauncher4/src/pages/splash/splash.dart';
 import 'package:mclauncher4/src/pages/splash/splashLogin.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
+import 'package:mclauncher4/src/widgets/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
-import 'package:mclauncher4/src/tasks/Modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/minecraft/client.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
@@ -26,8 +27,14 @@ class McLauncher extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes)),
-      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
+      theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: lightColorScheme,
+          typography: Typography(black: blackTextSchemes)),
+      darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: darkColorScheme,
+          typography: Typography(black: blackTextSchemes)),
       themeMode: ThemeMode.dark,
       home: MainPage(),
     );
@@ -58,7 +65,8 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int pageIndex = 0;
   int pageIndex_old = 0;
-  EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
+  EdgeInsets edgeInsets =
+      EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
   final List<Widget> _pages = [
     ModListPage(),
     Debugpage(),
@@ -76,12 +84,18 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
-               await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
-              // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
-              // Minecraft().run(res, 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries'); 
+            int random = (Random().nextInt(300) + 100);
 
-            await Forge().install();
-            await  Forge().run(); 
+            SidePanel().pop(Container( width:random.toDouble() , decoration: BoxDecoration(color: Color.fromARGB(255,random,random,random ), borderRadius: BorderRadius.circular(18) ) ,), random.toDouble());
+           
+        //  print(await ModrinthApi().getRandomModpacks(12));
+
+
+          //       await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
+          // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
+          // Minecraft().run(res, 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
+          //    await Forge().install();
+          // await  Forge().run();
           /* Microsoft().authenticate(); */
           // Navigator.push(
           //   context,
@@ -95,7 +109,8 @@ class _MainPageState extends State<MainPage> {
               Container(
                 height: double.infinity,
                 width: 200,
-                decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant),
                 child: Column(
                   children: [
                     Container(
@@ -185,7 +200,9 @@ class _MainPageState extends State<MainPage> {
                   padding: edgeInsets,
                   child: _pages![pageIndex],
                 ),
-                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
+                transitionBuilder:
+                    (child, primaryAnimation, secondaryAnimation) =>
+                        SharedAxisTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   transitionType: SharedAxisTransitionType.vertical,
@@ -193,22 +210,9 @@ class _MainPageState extends State<MainPage> {
                   child: child,
                 ),
               )),
-              Sizetransitioncustom(
-                axis: Axis.horizontal,
-                sizeFactor: 1,
-                child: Padding(
-                  padding: edgeInsets.copyWith(left: 0, top: 43),
-                  child: Container(
-                      height: double.infinity,
-                      width: 250,
-                      clipBehavior: Clip.antiAlias,
-                      child: Image.asset(
-                        'assets\\images\\backgound_blue.jpg',
-                        fit: BoxFit.cover,
-                      ),
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: Theme.of(context).colorScheme.surfaceVariant)),
-                ),
-              )
+             SidePanel()
+            
+              
 
               // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
             ],

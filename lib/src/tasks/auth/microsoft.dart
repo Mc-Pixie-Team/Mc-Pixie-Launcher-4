@@ -2,10 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:localstorage/localstorage.dart';
+import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 
 class Microsoft {
   final storage = new LocalStorage('auth_data.json');
   Future<Map> authenticate() async {
+
+  
+
     String msaToken = await launchMSA();
     String authTokenMicrosoft = await microsoftSignIn(msaToken);
     Map authTokenXboxLive = await xboxSignIn(authTokenMicrosoft);

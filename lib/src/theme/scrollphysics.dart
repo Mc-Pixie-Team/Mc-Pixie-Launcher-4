@@ -71,3 +71,33 @@ class PixieScrollPhysics extends ScrollPhysics {
     return PixieScrollSimulation(afterPosition: oldPixelTemp, initPosition: position.pixels, velocity: 30.0);
   }
 }
+
+class CustomSimulation extends Simulation {
+  final double initPosition;
+  final double velocity;
+
+  CustomSimulation({required this.initPosition, required this.velocity});
+
+  @override
+  double x(double time) {
+    var max =
+        math.max(math.min(initPosition, 0.0), initPosition + velocity * time);
+
+    // print(max.toString());
+
+    return max;
+  }
+
+  @override
+  double dx(double time) {
+    // print(velocity.toString());
+    return velocity;
+  }
+
+  @override
+  bool isDone(double time) {
+    return false;
+  }
+}
+
+

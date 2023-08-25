@@ -1,13 +1,13 @@
 class Version {
   late int release;
   late int major;
-  late int minor;
+  late int? minor;
 
-  Version(this.release, this.major, this.minor);
+  Version(this.release, this.major,[ this.minor]);
 
   int get getRelease => release;
   int get getMajor => major;
-  int get getMinor => minor;
+  int? get getMinor => minor;
   //Code by Mc-Pixie
   
 
@@ -15,7 +15,7 @@ class Version {
   String toString() {
     
 
-    return release.toString() + '.' + major.toString()  + '.' +  minor.toString();
+    return release.toString() + '.' + major.toString()  +'${minor == null ? "" : "."+ minor.toString()}' ;
   }
 
 
@@ -33,7 +33,8 @@ class Version {
   int compareTo(Version other) {
     if (release != other.release) return release.compareTo(other.release);
     if (major != other.major) return major.compareTo(other.major);
-    if (minor != other.minor) return minor.compareTo(other.minor);
+    if(minor == null) return 0;
+    if (minor != other.minor) return (minor as int).compareTo(other.minor as num);
     return 0;
   }
   

@@ -41,7 +41,7 @@ class Download {
     }
   }
 
-  _downloadForLibraries(Map current,
+ _downloadForLibraries(Map current,
       {String? altpath, Version? version, ForgeVersion? forgeVersion}) async {
     List<int> _bytes = [];
     int total = current["size"], received = 0, receivedControll = 0;
@@ -200,6 +200,7 @@ class Download {
     String url =
         "https://maven.minecraftforge.net/net/minecraftforge/forge/${version.toString()}-${forgeVersion.toString()}${additional == null ? "" : "-" + additional}/forge-${version.toString()}-${forgeVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar";
 
+  print(url);
     List<int> _bytes = [];
     int received = 0;
     http.StreamedResponse? response =

@@ -32,7 +32,14 @@ class Forge {
             "${await getworkpath()}\\versions\\$version-forge-$forgeVersion\\$version-forge-$forgeVersion.json")
         .readAsString()));
 
-    (vanillaVersionJson["libraries"] as List).addAll(versionJson["libraries"]);
+
+List testlib = [];
+
+     testlib.addAll(versionJson["libraries"]);
+     testlib.addAll(vanillaVersionJson["libraries"] );
+
+
+    vanillaVersionJson["libraries"] = testlib;
     vanillaVersionJson["mainClass"] = versionJson["mainClass"];
     if (version < Version(1, 13, 0)) {
       vanillaVersionJson["minecraftArguments"] =
@@ -54,9 +61,11 @@ class Forge {
     await tempFile.create(recursive: true);
     await tempFile.writeAsString(launchcommand);
 
+
+
     var result = await Process.start(
         "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
-        runInShell: true);
+        runInShell: true, workingDirectory: "${ await getworkpath()}");
 
     stdout.addStream(result.stdout);
     stderr.addStream(result.stderr);

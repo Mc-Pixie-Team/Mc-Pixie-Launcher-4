@@ -72,6 +72,16 @@ class _UserPageState extends State<UserPage> {
           ), */
           Center(
             child: BarGraph(
+              labels: [
+                "Mo",
+                "Di",
+                "Mi",
+                "Do",
+                "Fr",
+                "Sa",
+                "So",
+              ],
+              barHeight: 220,
               values: [
                 20,
                 40,

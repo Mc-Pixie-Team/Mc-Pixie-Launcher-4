@@ -1,0 +1,10 @@
+[18:13:09] [main/INFO]: Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[18:13:09] [main/INFO]: Using primary tweak class name cpw.mods.fml.common.launcher.FMLTweaker
+[18:13:09] [main/INFO]: Calling tweak class cpw.mods.fml.common.launcher.FMLTweaker
+[18:13:09] [main/INFO]: Forge Mod Loader version 7.99.40.1614 for Minecraft 1.7.10 loading
+[18:13:09] [main/INFO]: Java is OpenJDK 64-Bit Server VM, version 1.8.0_292, running on Windows 10:amd64:10.0, installed at C:\Users\ancie\.jabba\jdk\amazon-corretto@1.8.292-10.1\jre
+[18:13:09] [main/INFO]: Loading tweak class name cpw.mods.fml.common.launcher.FMLInjectionAndSortingTweaker
+[18:13:09] [main/INFO]: Loading tweak class name cpw.mods.fml.common.launcher.FMLDeobfTweaker
+[18:13:09] [main/INFO]: Calling tweak class cpw.mods.fml.common.launcher.FMLInjectionAndSortingTweaker
+[18:13:09] [main/INFO]: Calling tweak class cpw.mods.fml.common.launcher.FMLInjectionAndSortingTweaker
+[18:13:09] [main/INFO]: Calling tweak class cpw.mods.fml.relauncher.CoreModManager$FMLPluginWrapper

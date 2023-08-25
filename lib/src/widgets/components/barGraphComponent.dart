@@ -15,7 +15,7 @@ class _BarGraphComponentState extends State<BarGraphComponent> with SingleTicker
   void initState() {
     // TODO: implement initState
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1500));
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 2000));
     _animation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutExpo));
 
     _animationController.forward();
@@ -23,6 +23,13 @@ class _BarGraphComponentState extends State<BarGraphComponent> with SingleTicker
 
   late AnimationController _animationController;
   late Animation _animation;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     print(lerpDouble(0.0, (widget.barHeight * (widget.value / 100)), (_animation.value).toDouble()));
@@ -44,7 +51,8 @@ class _BarGraphComponentState extends State<BarGraphComponent> with SingleTicker
             ),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(90),
-                color: Color.lerp(Theme.of(context).colorScheme.onPrimary, Theme.of(context).colorScheme.primary, widget.value / 100)),
+                color: Color.lerp(Theme.of(context).colorScheme.onPrimary, Theme.of(context).colorScheme.primary,
+                    (widget.value * (_animation.value).toDouble()) / 100)),
             child: Container(),
             height: lerpDouble(0.0, (widget.barHeight * (widget.value / 100)), (_animation.value).toDouble()),
           );

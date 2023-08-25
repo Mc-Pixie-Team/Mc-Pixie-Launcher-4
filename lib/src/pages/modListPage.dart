@@ -1,6 +1,7 @@
 // ignore_for_file: sort_child_properties_last
 
 import 'package:flutter/cupertino.dart' as apple;
+import 'package:mclauncher4/src/widgets/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/components/slideInAnimation.dart';
 import '../widgets/searchbar.dart' as Searchbar;
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import '../widgets/divider.dart' as Divider;
 import '../theme/scrollphysics.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 class ModListPage extends StatefulWidget {
   const ModListPage({Key? key}) : super(key: key);
 
@@ -137,31 +139,40 @@ class _ModListPageState extends State<ModListPage> {
                                                 .typography
                                                 .black
                                                 .bodyMedium,
-                                          )
+                                          ),
                                         ],
                                       )),
                                       Align(
                                         alignment: Alignment.bottomLeft,
-                                        child:   Padding(
-                                        padding: EdgeInsets.all(10),
-                                        child: Container(
-                                          height: 45,
-                                          width: 95,
-                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
-                                           color: Theme.of(context)
-                                              .colorScheme
-                                              .surfaceVariant,
-                                            
-                                         ),
-                                         child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                          SvgPicture.asset('assets\\svg\\download-icon.svg'),
-                                         ],) 
+                                        child: Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: Container(
+                                              height: 45,
+                                              width: 95,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surfaceVariant,
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  SvgButton(
+                                                    svg: SvgPicture.asset(
+                                                        'assets\\svg\\download-icon.svg'),
+                                                    onpressed: () {},
+                                                  ),
+                                                  SvgPicture.asset(
+                                                      'assets\\svg\\network-icon.svg'),
+                                                ],
+                                              )),
                                         ),
-                                      ),)
-                                    
+                                      )
                                     ],
                                   )));
                         }))))

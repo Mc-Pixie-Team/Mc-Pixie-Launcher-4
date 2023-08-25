@@ -30,7 +30,7 @@ class McLauncher extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes)),
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes), scrollbarTheme: ScrollbarThemeData()),
       darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
       themeMode: ThemeMode.dark,
       home: MainPage(),

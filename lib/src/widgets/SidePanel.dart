@@ -14,7 +14,7 @@ class SidePanel extends StatefulWidget {
   }
 
   SidePanel._internal();
-
+  Widget? currentWidget;
   void pop(Widget parent, double width) {
     state.setNewWidget(parent, width);
   }
@@ -23,8 +23,7 @@ class SidePanel extends StatefulWidget {
   _SidePanelState createState() => state;
 }
 
-class _SidePanelState extends State<SidePanel>
-    with SingleTickerProviderStateMixin {
+class _SidePanelState extends State<SidePanel> with SingleTickerProviderStateMixin {
   bool isdisposed = true;
   bool isanimating = false;
   late Widget oldWidget;
@@ -37,10 +36,8 @@ class _SidePanelState extends State<SidePanel>
   @override
   void initState() {
     isdisposed = false;
-    _controller = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1500));
-    ani = Tween(begin: 1.0, end: 0.0).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutExpo));
+    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 1500));
+    ani = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutExpo));
 
     _controller.addListener(() {
       setState(() {});
@@ -65,9 +62,7 @@ class _SidePanelState extends State<SidePanel>
         'assets\\images\\backgound_blue.jpg',
         fit: BoxFit.cover,
       ),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          color: Color.fromARGB(0, 27, 124, 204)));
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: Color.fromARGB(0, 27, 124, 204)));
 
   startAnimation() {
     _controller.reset();
@@ -76,6 +71,7 @@ class _SidePanelState extends State<SidePanel>
 
   setNewWidget(Widget parent, double width) {
     if (isdisposed || isanimating) return;
+    widget.currentWidget = parent;
     width_old = this.width;
     this.width = width;
     newWidget = parent;
@@ -97,17 +93,14 @@ class _SidePanelState extends State<SidePanel>
     return Padding(
         padding: EdgeInsets.only(left: 0, top: 43, right: 10, bottom: 12),
         child: Container(
-            width: lerpDouble(
-                (width_old ?? 200), (width ?? 200), ((ani.value * -1) + 1)),
+            width: lerpDouble((width_old ?? 200), (width ?? 200), ((ani.value * -1) + 1)),
             height: double.infinity,
             child: ClipRect(
                 child: Stack(
               children: [
                 Opacity(
                   opacity: ani.value,
-                  child: Transform.translate(
-                      offset: Offset(100.0 * ((ani.value * -1) + 1), 0),
-                      child: currentWidget),
+                  child: Transform.translate(offset: Offset(100.0 * ((ani.value * -1) + 1), 0), child: currentWidget),
                 ),
                 Align(
                     alignment: Alignment(1, 1),

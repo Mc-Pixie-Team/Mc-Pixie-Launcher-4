@@ -7,6 +7,7 @@ import 'package:mclauncher4/src/pages/splash/splash.dart';
 import 'package:mclauncher4/src/pages/splash/splashLogin.dart';
 import 'package:mclauncher4/src/pages/user_page/userPage.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
+import 'package:mclauncher4/src/tasks/discordStatus/discordRP.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/win32Deleter.dart';
 import 'package:mclauncher4/src/widgets/SidePanel.dart';
@@ -23,6 +24,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'widgets/menuItem.dart';
 import 'widgets/divider.dart' as Div;
 import 'package:animations/animations.dart';
+import 'package:mclauncher4/src/widgets/SidePanel.dart';
 
 class McLauncher extends StatelessWidget {
   const McLauncher({super.key});
@@ -82,12 +84,17 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
-          await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
+/*           await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json'); */
           // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
           // Minecraft().run(res, 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
-
-          await Forge().install();
-          await Forge().run();
+/*           SidePanel().pop(
+              Container(
+                decoration: BoxDecoration(color: Colors.pinkAccent, borderRadius: BorderRadius.circular(18)),
+              ),
+              550); */
+          DiscordRP().initCS();
+          /* await Forge().install();
+          await Forge().run(); */
           /* Microsoft().authenticate(); */
           // Navigator.push(
           //   context,

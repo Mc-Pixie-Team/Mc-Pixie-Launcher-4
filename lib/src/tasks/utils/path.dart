@@ -23,3 +23,9 @@ Future<String> getTempCommandPath() async {
   return '${(await getTemporaryDirectory()).path}\\PixieLauncher';
 }
 
+Future<String> getInstancePath() async {
+  
+  return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\instance';
+}
+
+

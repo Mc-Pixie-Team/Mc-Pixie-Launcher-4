@@ -142,7 +142,7 @@ class _UserPageState extends State<UserPage> {
                                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                 },
                                 child: Text(
-                                  hasUsername ? supabase.auth.currentUser?.userMetadata!["name"] : "you don't have a username!",
+                                  hasUsername ? supabase.auth.currentUser?.userMetadata!["name"] : "NEIN",
                                   style: Theme.of(context).typography.black.headlineLarge,
                                 ),
                               ),

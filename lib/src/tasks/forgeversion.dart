@@ -20,6 +20,11 @@ class ForgeVersion {
     return release.toString() + '.' + major.toString()  + '.' +  minor.toString() +  '.' + patch.toString() ;
   }
 
+  static parse(String version) {
+    List aftersplit = version.split('.');
+    if(aftersplit.length <4) return ForgeVersion(int.parse(aftersplit[0]),int.parse(aftersplit[1]),int.parse(aftersplit[2]));
+    return ForgeVersion(int.parse(aftersplit[0]),int.parse(aftersplit[1]), int.parse(aftersplit[2]),int.parse(aftersplit[3]));
+  }
 
 
   //operator list

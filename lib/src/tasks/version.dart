@@ -15,7 +15,13 @@ class Version {
   String toString() {
     
 
-    return release.toString() + '.' + major.toString()  +'${minor == null ? "" : "."+ minor.toString()}' ;
+    return release.toString() + '.' + major.toString()  +'${minor == null ? ".0" : "."+ minor.toString()}' ;
+  }
+
+  static parse(String version) {
+    List aftersplit = version.split('.');
+    if(aftersplit.length <3) return Version(int.parse(aftersplit[0]),int.parse(aftersplit[1]));
+    return Version(int.parse(aftersplit[0]),int.parse(aftersplit[1]), int.parse(aftersplit[2]));
   }
 
 

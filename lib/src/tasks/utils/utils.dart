@@ -26,6 +26,43 @@ class Utils {
     }
   }
 
+  static extractZip(List<int> _bytes, String filePath,) {
+    final archive = ZipDecoder().decodeBytes(_bytes);
+
+        for (var data in archive) {
+      final filename = data.name;
+      if (data.isFile) {
+        final datadir = data.content as List<int>;
+        File(filePath +'\\'+
+            filename)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(datadir);
+      } else {
+        Directory(filePath +'\\'+
+                filename)
+            .create(recursive: true);
+      }
+    }
+  }
+
+  static copyDirectory(Directory source, Directory destination) async{
+  /// create destination folder if not exist
+  if (!destination.existsSync()) {
+   await destination.create(recursive: true);
+  }
+  /// get all files from source (recursive: false is important here)
+ await source.list(recursive: false).forEach((entity) async{
+    final newPath = destination.path + Platform.pathSeparator + path.basename(entity.path);
+    if (entity is File) {
+     await entity.copy(newPath);
+    } else if (entity is Directory) {
+     await copyDirectory(entity, Directory(newPath));
+    }
+  });
+}
+
+
+
   static extractForgeInstaller(
       List<int> _bytes, Version version, ForgeVersion forgeVersion, [String? additional]) async {
     String filepath = await getTempForgePath() +

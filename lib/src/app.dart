@@ -6,8 +6,11 @@ import 'package:mclauncher4/src/pages/settings_page/settingsPage.dart';
 import 'package:mclauncher4/src/pages/splash/splash.dart';
 import 'package:mclauncher4/src/pages/splash/splashLogin.dart';
 import 'package:mclauncher4/src/pages/user_page/userPage.dart';
+import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
+import 'package:mclauncher4/src/tasks/forgeversion.dart';
+import 'package:mclauncher4/src/tasks/installController.dart';
 import 'package:mclauncher4/src/tasks/win32Deleter.dart';
 import 'package:mclauncher4/src/widgets/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
@@ -60,6 +63,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+
+
   int pageIndex = 0;
   int pageIndex_old = 0;
   EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
@@ -82,13 +87,13 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
-          await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
-          // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
-          // Minecraft().run(res, 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
+          
 
-          await Forge().install();
-          await Forge().run();
-          /* Microsoft().authenticate(); */
+          // InstallController().install();
+
+          // double ran = 600.0;
+          // SidePanel().pop(Container(width: ran , color: Color.fromARGB(255, 81, 199, 45),),  ran);
+           Microsoft().authenticate(); 
           // Navigator.push(
           //   context,
           //   MaterialPageRoute(builder: (context) => const pixieLoginScreen()),

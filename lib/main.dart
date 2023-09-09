@@ -14,7 +14,7 @@ void main() {
     final win = appWindow;
     win.alignment = Alignment.center;
     win.title = "Mc-Pixie Launcher";
-    win.size = Size(1500, 850);
+    win.size = Size(1530, 900);
     win.show();
   });
 }

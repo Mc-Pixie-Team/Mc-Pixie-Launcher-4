@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mclauncher4/src/tasks/forgeversion.dart';
+import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
 import 'package:path/path.dart' as path;
@@ -9,7 +11,12 @@ import 'utils.dart';
 import 'package:path_provider/path_provider.dart';
 import '../config/apis.dart';
 
-class Download {
+class Download with ChangeNotifier{
+  DownloadState _state = DownloadState.notDownloaded;
+  DownloadState get downloadstate => _state;
+  double _progress = 0.0;
+  double get progress => _progress;
+
   final Future<Directory> appDocumentsDir = getApplicationDocumentsDirectory();
   bool? isForge;
   int received = 0;
@@ -18,15 +25,15 @@ class Download {
   String arch = "64";
 
   Future downloadLibaries(Map profile,
-      [Version? version, ForgeVersion? forgeVersion]) async {
+      [Version? version, ModloaderVersion? modloaderVersion]) async {
     if (profile["libraries"] == null) return;
+    
     List libraries = profile["libraries"];
-    print(libraries.length);
-    for (int i = 0; i < libraries.length; i++) {
+    for (int i = 0; i < libraries.length; ) {
       Map current = libraries[i];
+     // print(current["downloads"]["artifact"]);
 
       if (current["natives"] != null && current["natives"][os] != null) {
-        print('downloading native: ' + current["name"]);
 
         await _downloadForLibraries(current["downloads"]["classifiers"]
             [current["natives"][os].replaceAll("\${arch}", arch)]);
@@ -35,33 +42,37 @@ class Download {
                 [current["natives"][os].replaceAll("\${arch}", arch)]["path"],
             profile["id"]);
       }
-      if (current["downloads"]["artifact"] == null) continue;
-      await _downloadForLibraries(current["downloads"]["artifact"],
-          version: version, forgeVersion: forgeVersion);
+      if (current["downloads"]["artifact"] != null) {
+              await _downloadForLibraries(current["downloads"]["artifact"],
+          version: version, modloaderVersion: modloaderVersion);
+      }
+
+      i++;
+      _progress = (i / libraries.length) * 100;
+      _state = DownloadState.downloadingLibraries;
+      notifyListeners();
     }
   }
 
  _downloadForLibraries(Map current,
-      {String? altpath, Version? version, ForgeVersion? forgeVersion}) async {
+      {String? altpath, Version? version, ModloaderVersion? modloaderVersion}) async {
     List<int> _bytes = [];
     int total = current["size"], received = 0, receivedControll = 0;
 
     if (current["url"] == "" || current["url"] == null) {
-      if (version == null || forgeVersion == null)
+      if (version == null || modloaderVersion == null)
         throw "unable to handle version cause it empty.";
       _bytes = await File(
-              '${await getTempForgePath()}\\$version\\$forgeVersion\\maven\\${current["path"]}')
+              '${await getTempForgePath()}\\$version\\$modloaderVersion\\maven\\${current["path"]}')
           .readAsBytes();
     } else {
       http.StreamedResponse? response = await http.Client()
           .send(http.Request('GET', Uri.parse(current["url"])));
-      print('downloading: ' + current["path"].toString());
       await response.stream.listen((value) {
         _bytes.addAll(value);
         received += value.length;
         receivedControll += value.length;
         if (receivedControll > total / 10) {
-          print(((received / total) * 100).toString() + '%');
           receivedControll = 0;
         }
       }).asFuture();
@@ -79,7 +90,7 @@ class Download {
   }
 
   getOldUniversal(
-      Map install_profileJson, Version version, ForgeVersion forgeVersion) async {
+      Map install_profileJson, Version version, ModloaderVersion modloaderVersion) async {
        
          if(install_profileJson["install"] == null) return;
           Map install_profile = install_profileJson["install"];
@@ -89,20 +100,29 @@ class Download {
 
         if(!(await path.exists())) throw "the file does not exist, mabye you called the method before you installed the libraries";
     List<int> _bytes = await File(
-            '${await getTempForgePath()}\\$version\\$forgeVersion\\${install_profile["filePath"]}')
+            '${await getTempForgePath()}\\$version\\$modloaderVersion\\${install_profile["filePath"]}')
         .readAsBytes();
     await File(
             '${await getlibarypath()}\\libraries\\${Utils.parseMaven(install_profile["path"])}')
         .writeAsBytes(_bytes);
   }
 
-  Future<Map> getJson(String url) async {
+  Future<Map> getJson(Version version) async {
+  late String url;
+    var minecraftManifestRES = await http.get(Uri.parse('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'));
+    List minecraftManifest = jsonDecode(minecraftManifestRES.body)['versions'];
+    
+    for ( Map versionjson in minecraftManifest) {
+        if(versionjson["id"] == "$version") url = versionjson["url"];
+    }
     var packagejsonRES = await http.get(Uri.parse(url));
     Map packagejson = jsonDecode(packagejsonRES.body);
     return packagejson;
   }
 
   Future downloadClient(Map packagejson) async {
+    _state = DownloadState.downloadingClient;
+    notifyListeners();
     String mcversion = packagejson["id"];
 
     String filepath =
@@ -112,7 +132,6 @@ class Download {
     await Directory(parentDirectory).create(recursive: true);
     await File(filepath).writeAsBytes(utf8.encode(jsonEncode(packagejson)));
 
-    print(packagejson);
     var clientRES =
         await http.get(Uri.parse(packagejson["downloads"]["client"]["url"]));
     await File(
@@ -131,6 +150,7 @@ class Download {
   }
 
   Future downloadAssets(Map packagejson) async {
+
     await _writeAssetsjson(packagejson);
 
     int total = packagejson["assetIndex"]["totalSize"];
@@ -139,7 +159,6 @@ class Download {
         (await http.get(Uri.parse(packagejson["assetIndex"]["url"])))
             .body)["objects"];
     List objectEnteries = objects.keys.toList();
-    print(objects[objectEnteries[0]]);
 
     //sorts all hashes to donwloads
     //Sweet spot: 10 || 40 sec || 1.20.1
@@ -148,7 +167,6 @@ class Download {
     int _totalitems = objects.length;
     http.Client client = http.Client();
     for (var i = 0; objects.length > i;) {
-      print('generating');
       Iterable<Future<dynamic>> downloads = Iterable.generate(
           downloads_at_same_time > _totalitems
               ? _totalitems
@@ -158,8 +176,9 @@ class Download {
       await Future.wait(downloads);
       i += downloads_at_same_time;
       _totalitems = _totalitems - downloads_at_same_time;
-      print(((received / total) * 100).roundToDouble().toString() + '%');
-      print(_totalitems);
+      _progress = (received / total) * 100;
+       _state = DownloadState.downloadAssets;
+      notifyListeners();
     }
   }
 
@@ -193,14 +212,16 @@ class Download {
     //   print('done with ' + i.toString());
   }
 
-  downloadForgeClient(Version version, ForgeVersion forgeVersion,
+  downloadForgeClient(Version version, ModloaderVersion modloaderVersion,
       [String? additional]) async {
+
     //https://maven.minecraftforge.net/net/minecraftforge/forge/1.19.4-45.1.16/forge-1.19.4-45.1.16-installer.jar
 
     String url =
-        "https://maven.minecraftforge.net/net/minecraftforge/forge/${version.toString()}-${forgeVersion.toString()}${additional == null ? "" : "-" + additional}/forge-${version.toString()}-${forgeVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar";
+        "https://maven.minecraftforge.net/net/minecraftforge/forge/${version.toString()}-${modloaderVersion.toString()}${additional == null ? "" : "-" + additional}/forge-${version.toString()}-${modloaderVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar";
 
-  print(url);
+        print(url);
+
     List<int> _bytes = [];
     int received = 0;
     http.StreamedResponse? response =
@@ -211,7 +232,7 @@ class Download {
       received += value.length;
     }).asFuture();
 
-    await Utils.extractForgeInstaller(_bytes, version, forgeVersion);
+    await Utils.extractForgeInstaller(_bytes, version, modloaderVersion);
   }
 
   downloadSingeFile(String url, String to) async {

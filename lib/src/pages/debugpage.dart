@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/dropdown.dart';
+import 'package:mclauncher4/src/widgets/dropdownmenu.dart';
 
 class Debugpage extends StatefulWidget {
   const Debugpage({Key? key}) : super(key: key);
@@ -20,7 +21,11 @@ class _DebugpageState extends State<Debugpage> {
       child: Column(
         children: [
          
-          DropDown()
+          DropDown(),
+          SizedBox(
+            height: 30,
+          ),
+          Dropdownmenu(), Dropdownmenu()
         ],
       ),
     );

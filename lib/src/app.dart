@@ -6,9 +6,13 @@ import 'package:mclauncher4/src/pages/settings_page/settingsPage.dart';
 import 'package:mclauncher4/src/pages/splash/splash.dart';
 import 'package:mclauncher4/src/pages/splash/splashLogin.dart';
 import 'package:mclauncher4/src/pages/user_page/userPage.dart';
+import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/tasks/discordStatus/discordRP.dart';
+import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
+import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/installController.dart';
 import 'package:mclauncher4/src/tasks/win32Deleter.dart';
 import 'package:mclauncher4/src/widgets/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
@@ -32,7 +36,7 @@ class McLauncher extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes)),
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes), scrollbarTheme: ScrollbarThemeData()),
       darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
       themeMode: ThemeMode.dark,
       home: MainPage(),
@@ -62,6 +66,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+
+
   int pageIndex = 0;
   int pageIndex_old = 0;
   EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
@@ -79,6 +85,13 @@ class _MainPageState extends State<MainPage> {
     SettingsPage(),
     UserPage()
   ];
+
+
+  OverlayEntry _overlayEntryBuilder() { 
+    return OverlayEntry(builder: (context) {
+        return Align(alignment: Alignment.center, child: Container(height: 30, width: 30, color: Colors.green,));
+    },);
+  }
 
   @override
   Widget build(BuildContext context) {

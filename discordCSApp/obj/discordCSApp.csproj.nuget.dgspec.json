@@ -1,0 +1,71 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\ancie\\Documents\\GitHub\\Mc-Pixie-Launcher-48\\discordCSApp\\discordCSApp.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\ancie\\Documents\\GitHub\\Mc-Pixie-Launcher-48\\discordCSApp\\discordCSApp.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\ancie\\Documents\\GitHub\\Mc-Pixie-Launcher-48\\discordCSApp\\discordCSApp.csproj",
+        "projectName": "discordCSApp",
+        "projectPath": "C:\\Users\\ancie\\Documents\\GitHub\\Mc-Pixie-Launcher-48\\discordCSApp\\discordCSApp.csproj",
+        "packagesPath": "C:\\Users\\ancie\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ancie\\Documents\\GitHub\\Mc-Pixie-Launcher-48\\discordCSApp\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\ancie\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Nerdbank.Streams": {
+              "target": "Package",
+              "version": "[2.10.69, )"
+            },
+            "StreamJsonRpc": {
+              "target": "Package",
+              "version": "[2.16.36, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

@@ -3,7 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mclauncher4/src/pages/user_page/sidePanelWidget.dart';
+import 'package:mclauncher4/src/pages/user_page/textFieldWithEnter.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
+import 'package:mclauncher4/src/tasks/discordStatus/discordRP.dart';
+import 'package:mclauncher4/src/widgets/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/barGraph.dart';
 import 'package:mclauncher4/src/widgets/bluredContainer.dart';
 import 'package:mclauncher4/src/widgets/loginCardSupabase.dart';
@@ -18,7 +22,17 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  late FocusNode _focusNode;
+  late final TextEditingController _textController;
   @override
+  void initState() {
+    _textController = TextEditingController();
+
+    _focusNode = FocusNode();
+
+    super.initState();
+  }
+
   final supabase = Supabase.instance.client;
   @override
   Widget build(BuildContext context) {
@@ -43,204 +57,164 @@ class _UserPageState extends State<UserPage> {
       ),
       child: Stack(
         children: [
-          /* Center(
-            child: SettingsList(
-              names: [
-                "Name, Phone Number",
-                "Password & Security",
-                "Privacy™",
-                "Email",
-                "Subscriptions & Servers",
-              ],
-              functions: [
-                () {
-                  print("a");
-                },
-                () {
-                  print("a");
-                },
-                () {
-                  print("a");
-                },
-                () {
-                  print("a");
-                },
-                () {
-                  print("a");
-                },
-                () {
-                  print("a");
-                },
-                () {
-                  print("a");
-                },
-                () {
-                  print("a");
-                },
-                () {
-                  print("a");
-                },
-              ],
-            ),
-          ), */
+          SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Padding(
+                    padding: EdgeInsetsDirectional.only(start: 20),
+                    child: SizedBox(
+                      width: 500,
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: const Color.fromARGB(19, 255, 255, 255)),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(18),
+                              child: hasPFP
+                                  ? Image.network(
+                                      supabase.auth.currentUser?.userMetadata?["avatar_url"],
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(FontAwesomeIcons.user),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15, top: 20),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Clipboard.setData(
+                                        ClipboardData(text: (hasUsername) ? (supabase.auth.currentUser!.userMetadata?["name"]) : "your_name_here"));
+                                    final snackBar = SnackBar(
+                                      content: Text(
+                                        'Saved to Clipboard',
+                                        style: Theme.of(context)
+                                            .typography
+                                            .black
+                                            .bodyMedium!
+                                            .merge(TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+                                      ),
+                                      backgroundColor: Theme.of(context).colorScheme.primary,
+                                      action: SnackBarAction(
+                                        label: 'OK',
+                                        onPressed: () {
+                                          // Some code to undo the change.
+                                        },
+                                      ),
+                                    );
 
-          Center(
-              child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.only(start: 20),
-                  child: SizedBox(
+                                    // Find the ScaffoldMessenger in the widget tree
+                                    // and use it to show a SnackBar.
+                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                  },
+                                  child: Text(
+                                    hasUsername ? supabase.auth.currentUser?.userMetadata!["name"] : "you don't have a username!",
+                                    style: Theme.of(context).typography.black.headlineLarge,
+                                  ),
+                                ),
+                                Text(
+                                  (supabaseHelpers().isLoggedIn()) ? (supabase.auth.currentUser!.userMetadata?["email"]) : "your_name_here@gmail.com",
+                                  style: Theme.of(context).typography.black.labelMedium!.merge(TextStyle(color: Color.fromARGB(146, 255, 255, 255))),
+                                ),
+                                SizedBox(
+                                  height: 52,
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  SizedBox(
                     width: 500,
                     child: Row(
                       children: [
-                        Container(
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: const Color.fromARGB(19, 255, 255, 255)),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
-                            child: hasPFP
-                                ? Image.network(
-                                    supabase.auth.currentUser?.userMetadata?["avatar_url"],
-                                    fit: BoxFit.cover,
-                                  )
-                                : Icon(FontAwesomeIcons.user),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15, top: 20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Clipboard.setData(
-                                      ClipboardData(text: (hasUsername) ? (supabase.auth.currentUser!.userMetadata?["name"]) : "your_name_here"));
-                                  final snackBar = SnackBar(
-                                    content: Text(
-                                      'Saved to Clipboard',
-                                      style: Theme.of(context)
-                                          .typography
-                                          .black
-                                          .bodyMedium!
-                                          .merge(TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
-                                    ),
-                                    backgroundColor: Theme.of(context).colorScheme.primary,
-                                    action: SnackBarAction(
-                                      label: 'OK',
-                                      onPressed: () {
-                                        // Some code to undo the change.
-                                      },
-                                    ),
-                                  );
-
-                                  // Find the ScaffoldMessenger in the widget tree
-                                  // and use it to show a SnackBar.
-                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                },
-                                child: Text(
-                                  hasUsername ? supabase.auth.currentUser?.userMetadata!["name"] : "NEIN",
-                                  style: Theme.of(context).typography.black.headlineLarge,
-                                ),
-                              ),
-                              Text(
-                                (supabaseHelpers().isLoggedIn()) ? (supabase.auth.currentUser!.userMetadata?["email"]) : "your_name_here@gmail.com",
-                                style: Theme.of(context).typography.black.labelMedium!.merge(TextStyle(color: Color.fromARGB(146, 255, 255, 255))),
-                              ),
-                              SizedBox(
-                                height: 52,
-                              )
-                            ],
-                          ),
+                        Text(
+                          "Account Settings:",
+                          style: Theme.of(context).typography.black.labelSmall,
                         )
                       ],
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                SizedBox(
-                  width: 500,
-                  child: Row(
-                    children: [
-                      Text(
-                        "Account Settings:",
-                        style: Theme.of(context).typography.black.labelSmall,
-                      )
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SettingsList(names: [
+                    "Name, Microsoft",
+                    "Password & Security",
+                    "Privacy",
+                    "Email",
+                    "Subscriptions & Servers"
+                  ], functions: [
+                    () {
+                      SidePanel().pop(SidePanel().currentWidget!, 550);
+                    },
+                    () {
+                      DiscordRP().update();
+                    },
+                    () {},
+                    () {},
+                    () {
+                      SidePanel().pop(
+                          Container(
+                            decoration: BoxDecoration(color: const Color.fromARGB(255, 230, 255, 64), borderRadius: BorderRadius.circular(18)),
+                          ),
+                          550);
+                    },
+                  ]),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  SizedBox(
+                    width: 500,
+                    child: Row(
+                      children: [
+                        Text(
+                          "Usage Stats:",
+                          style: Theme.of(context).typography.black.labelSmall,
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  BarGraph(
+                    labels: [
+                      "Mo",
+                      "Di",
+                      "Mi",
+                      "Do",
+                      "Fr",
+                      "Sa",
+                      "So",
+                    ],
+                    barHeight: 220,
+                    values: [
+                      15,
+                      15,
+                      15,
+                      15,
+                      95,
+                      95,
+                      60,
                     ],
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                SettingsList(names: [
-                  "Name, Microsoft",
-                  "Password & Security",
-                  "Privacy",
-                  "Email",
-                  "Subscriptions & Servers"
-                ], functions: [
-                  () {
-                    print(1);
-                  },
-                  () {
-                    print(2);
-                  },
-                  () {
-                    print(3);
-                  },
-                  () {
-                    print(4);
-                  },
-                  () {
-                    print(5);
-                  },
                 ]),
-                SizedBox(
-                  height: 15,
-                ),
-                SizedBox(
-                  width: 500,
-                  child: Row(
-                    children: [
-                      Text(
-                        "Usage Stats:",
-                        style: Theme.of(context).typography.black.labelSmall,
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                BarGraph(
-                  labels: [
-                    "Mo",
-                    "Di",
-                    "Mi",
-                    "Do",
-                    "Fr",
-                    "Sa",
-                    "So",
-                  ],
-                  barHeight: 220,
-                  values: [
-                    15,
-                    15,
-                    15,
-                    15,
-                    95,
-                    95,
-                    60,
-                  ],
-                ),
-              ]),
+              ),
             ),
-          )),
+          ),
           (supabaseHelpers().isLoggedIn())
               ? Align(
                   alignment: Alignment(0.96, -0.9651111111),

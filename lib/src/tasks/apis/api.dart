@@ -1,28 +1,26 @@
-
-
 class Api {
- 
 
-   getModpack() {
-   
 
-   }
-
-  getRandomModpackList(int count) {
-
+  String getTitlename() {
+    throw "you cannot call api alone";
   }
-  
-  
 
-   downloadModpack() {}
+  // getModpack() {
+  //   // TODO: implement getModpack
+  //   throw "you cannot call api alone";
+  // }
 
-   searchModpack() {}
+  // getModpackVersion() {
+  //   // TODO: implement getModpack
+  //   throw "you cannot call api alone";
+  // }
 
-   searchMod() {}
+   getMMLVersion(modpackVersion, String instanceName, String modloader){}
 
-   hasUpdate() {}
-
-
-
+  getMoreModpacks() {}
+  getAllMV() {}
+  getModpackList() {}
+  getModpack(String id){}
+  getModpackVersion(String version){}
+  downloadModpack(Map modpackVersion, String instanceName) {}
 }
-

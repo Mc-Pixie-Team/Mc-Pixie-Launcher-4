@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:mclauncher4/src/tasks/forgeversion.dart';
+import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
@@ -16,7 +16,7 @@ class Processor with ChangeNotifier {
   double get progress => _progress;
 
 Future<String> _checkkeys(
-      List args, Map data, Version version, ForgeVersion forgeVersion) async {
+      List args, Map data, Version version,ModloaderVersion modloaderVersion) async {
     String outputArgs = "";
 
     for (var i = 0; i < args.length; i++) {
@@ -48,7 +48,7 @@ Future<String> _checkkeys(
           outputArgs += await getworkpath() + " ";
         } else if (arg == "INSTALLER") {
           outputArgs += await getTempForgePath() +
-              "\\${version.toString()}\\${forgeVersion.toString()}\\${version.toString()}-${forgeVersion.toString()}-installer.jar ";
+              "\\${version.toString()}\\${modloaderVersion.toString()}\\${version.toString()}-${modloaderVersion.toString()}-installer.jar ";
         } else if (arg == "LIBRARY_DIR") {
           outputArgs += await getlibarypath() + "\\libraries\\";
         } else {
@@ -76,7 +76,7 @@ Future<String> _checkkeys(
               } else if (argoutput.startsWith("/")) {
                 //this part is mostly called Patching
                 outputArgs +=
-                    "${await getTempForgePath()}\\${version.toString()}\\${forgeVersion.toString()}\\$argoutput "
+                    "${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\$argoutput "
                         .replaceAll("/", "\\");
 
                // print("found /");
@@ -97,7 +97,7 @@ Future<String> _checkkeys(
   }
 
   run(
-      Map install_profile, Version version, ForgeVersion forgeVersion) async {
+      Map install_profile, Version version, ModloaderVersion modloaderVersion) async {
     if (install_profile["processors"] == null ||
         install_profile["processors"].length == 0) return;
     //NOTE:
@@ -129,7 +129,7 @@ Future<String> _checkkeys(
           "Main-Class"]; //TODO: erro handlung einbauen falls loadYAML oder utf8decoder fehlschlägt.
 
       String _args = await _checkkeys(
-          current["args"], install_profile["data"], version, forgeVersion);
+          current["args"], install_profile["data"], version, modloaderVersion);
 
       String command =
           'java -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';

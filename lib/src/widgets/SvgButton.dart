@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class SvgButton extends StatefulWidget {
-  SvgButton.asset(this.asset, {Key? key, required this.onpressed})
+  SvgButton.asset(this.asset, {Key? key, required this.onpressed, this.color})
       : super(key: key);
   String asset;
+  Color? color;
   VoidCallback onpressed;
   @override
   _SvgButtonState createState() => _SvgButtonState();
@@ -31,7 +32,7 @@ class _SvgButtonState extends State<SvgButton>
         onTap: widget.onpressed,
         child: MouseRegion(
           child: SvgPicture.asset(widget.asset,
-              color: Theme.of(context).colorScheme.primary.withOpacity(
+              color:  ( widget.color ?? Theme.of(context).colorScheme.primary).withOpacity(
                   Tween(begin: 1, end: 0.5)
                       .animate(_controller)
                       .value

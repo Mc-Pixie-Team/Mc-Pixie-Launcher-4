@@ -15,11 +15,11 @@ class Api {
   //   throw "you cannot call api alone";
   // }
 
-   getMMLVersion(modpackVersion, String instanceName){}
+   getMMLVersion(modpackVersion, String instanceName, String modloader){}
 
   getMoreModpacks() {}
-
-  getModpackList(int count) {}
+  getAllMV() {}
+  getModpackList() {}
   getModpack(String id){}
   getModpackVersion(String version){}
   downloadModpack(Map modpackVersion, String instanceName) {}

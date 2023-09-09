@@ -81,6 +81,9 @@ flutter:
     - assets\svg\download-icon.svg
     - assets\svg\folder-icon.svg
     - assets\svg\network-icon.svg
+    - assets\svg\add-icon.svg
+    - assets\svg\dropdown-icon.svg
+    - assets\svg\filter-icon.svg
     - assets\redirect.html
      
 

@@ -1,10 +1,10 @@
-class ForgeVersion {
+class ModloaderVersion {
   late int release;
   late int major;
   late int minor;
   late int? patch;
 
-  ForgeVersion(this.release, this.major, this.minor,[ this.patch ]);
+  ModloaderVersion(this.release, this.major, this.minor,[ this.patch ]);
   
   int get getRelease => release;
   int get getMajor => major;
@@ -22,22 +22,22 @@ class ForgeVersion {
 
   static parse(String version) {
     List aftersplit = version.split('.');
-    if(aftersplit.length <4) return ForgeVersion(int.parse(aftersplit[0]),int.parse(aftersplit[1]),int.parse(aftersplit[2]));
-    return ForgeVersion(int.parse(aftersplit[0]),int.parse(aftersplit[1]), int.parse(aftersplit[2]),int.parse(aftersplit[3]));
+    if(aftersplit.length <4) return ModloaderVersion(int.parse(aftersplit[0]),int.parse(aftersplit[1]),int.parse(aftersplit[2]));
+    return ModloaderVersion(int.parse(aftersplit[0]),int.parse(aftersplit[1]), int.parse(aftersplit[2]),int.parse(aftersplit[3]));
   }
 
 
   //operator list
-  bool operator <(ForgeVersion other) => compareTo(other) < 0;
-  bool operator >(ForgeVersion other) => compareTo(other) > 0;
-  bool operator <=(ForgeVersion other) => compareTo(other) <= 0;
-  bool operator >=(ForgeVersion other) => compareTo(other) >= 0;
+  bool operator <(ModloaderVersion other) => compareTo(other) < 0;
+  bool operator >(ModloaderVersion other) => compareTo(other) > 0;
+  bool operator <=(ModloaderVersion other) => compareTo(other) <= 0;
+  bool operator >=(ModloaderVersion other) => compareTo(other) >= 0;
 
  @override
-  bool operator ==( other) => compareTo(other as ForgeVersion) == 0;
+  bool operator ==( other) => compareTo(other as ModloaderVersion) == 0;
 
   //comparison
-  int compareTo(ForgeVersion other) {
+  int compareTo(ModloaderVersion other) {
     if (release != other.release) return release.compareTo(other.release);
     if (major != other.major) return major.compareTo(other.major);
     if (minor != other.minor) return minor.compareTo(other.minor);

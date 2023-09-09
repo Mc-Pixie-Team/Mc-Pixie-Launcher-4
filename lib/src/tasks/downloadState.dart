@@ -8,8 +8,12 @@ enum DownloadState {
 enum ForgeInstallState {
   downloadingClient,
   downloadingLibraries,
-  downloadAssets,
   patching,
+  finished,
+}
+
+enum FabricInstallState {
+  downloadingLibraries,
   finished,
 }
 

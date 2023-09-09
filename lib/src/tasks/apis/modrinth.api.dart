@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/forgeversion.dart';
+import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
@@ -15,9 +15,9 @@ class ModrinthApi implements Api {
   int offset = 50;
 
   @override
-  getModpackList(int count) async {
+  getModpackList() async {
     var res = await http.get(Uri.parse(
-        'https://api.modrinth.com/v2/search?facets=[["project_type:modpack"], ["categories:forge"]]&index=relevance&limit=$limit'));
+        'https://api.modrinth.com/v2/search?facets=[["project_type:modpack"], ["categories:forge", "categories:fabric"]]&index=relevance&limit=$limit'));
 
     return jsonDecode(utf8.decode(res.bodyBytes))["hits"];
   }
@@ -25,7 +25,7 @@ class ModrinthApi implements Api {
   @override
   getMoreModpacks() async {
     var res = await http.get(Uri.parse(
-        'https://api.modrinth.com/v2/search?offset=$offset&facets=[["project_type:modpack"], ["categories:forge"]]&index=relevance&limit=$limit'));
+        'https://api.modrinth.com/v2/search?offset=$offset&facets=[["project_type:modpack"], ["categories:forge", "categories:fabric"]]&index=relevance&limit=$limit'));
     offset += limit;
     return jsonDecode(utf8.decode(res.bodyBytes))["hits"];
   }
@@ -49,18 +49,22 @@ class ModrinthApi implements Api {
   }
 
   @override
-  getMMLVersion(modpackVersion, String instanceName) async {
+  getMMLVersion(modpackVersion, String instanceName, String modloader) async {
     Map return_value = {};
+    late ModloaderVersion modloaderVersion;
+    String destination =
+        '${await getInstancePath()}\\$instanceName\\modrinth.index.json';
+    Map depend =
+        (jsonDecode(await File(destination).readAsString()))["dependencies"];
+    Version _version = Version.parse(depend['minecraft']);
 
-    if (modpackVersion["loaders"].first == "forge") {
-      String destination =
-          '${await getInstancePath()}\\$instanceName\\modrinth.index.json';
-      Map depend =
-          (jsonDecode(await File(destination).readAsString()))["dependencies"];
-      Version _version = Version.parse(depend['minecraft']);
-      ForgeVersion _forgeVersion = ForgeVersion.parse(depend["forge"]);
-      return_value = {"version": _version, "modloader": _forgeVersion};
+    if (modloader == "forge") {
+      modloaderVersion = ModloaderVersion.parse(depend["forge"]);
     }
+    if (modloader == "fabric") {
+      modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
+    }
+    return_value = {"version": _version, "modloader": modloaderVersion};
     return return_value;
   }
 
@@ -72,20 +76,20 @@ class ModrinthApi implements Api {
     for (var dependence in modpackVersion["dependencies"]) {
       var res = await http.get(Uri.parse(
           'https://api.modrinth.com/v2/version/${dependence["version_id"]}'));
-          print(dependence["version_id"]);
-          if(dependence["version_id"] == null) continue;
+      print(dependence["version_id"]);
+      if (dependence["version_id"] == null) continue;
       Map dependenceJson = jsonDecode(utf8.decode(res.bodyBytes));
       print(dependenceJson);
       await _downloadFiles(dependenceJson["files"], instanceName);
-      if(dependenceJson["dependencies"].length > 0) {
-        
-      }
+      if (dependenceJson["dependencies"].length > 0) {}
     }
   }
 
   _downloadFiles(List files, String instanceName) async {
     for (var file in files) {
       print(file["url"]);
+
+      if (!(file["primary"])) continue;
       int total = file["size"];
       int received = 0;
 
@@ -118,6 +122,24 @@ class ModrinthApi implements Api {
         await File(filepath2).writeAsBytes(_bytes);
       }
     }
+  }
+
+  @override
+  getAllMV() async {
+    var res = await http
+        .get(Uri.parse('https://api.modrinth.com/v2/tag/game_version'));
+
+    List allMCversions = jsonDecode(utf8.decode(res.bodyBytes));
+    List return_value = [];
+
+    for (var i in allMCversions){
+       if (i["major"]) {
+        return_value.add(i);
+      }
+      continue;
+    }
+  
+    return return_value;
   }
 
   @override

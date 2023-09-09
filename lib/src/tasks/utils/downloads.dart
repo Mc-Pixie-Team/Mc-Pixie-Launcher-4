@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/downloadState.dart';
-import 'package:mclauncher4/src/tasks/forgeversion.dart';
+import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
 import 'package:path/path.dart' as path;
@@ -25,13 +25,13 @@ class Download with ChangeNotifier{
   String arch = "64";
 
   Future downloadLibaries(Map profile,
-      [Version? version, ForgeVersion? forgeVersion]) async {
+      [Version? version, ModloaderVersion? modloaderVersion]) async {
     if (profile["libraries"] == null) return;
     
     List libraries = profile["libraries"];
     for (int i = 0; i < libraries.length; ) {
       Map current = libraries[i];
-      print(current["downloads"]["artifact"]);
+     // print(current["downloads"]["artifact"]);
 
       if (current["natives"] != null && current["natives"][os] != null) {
 
@@ -44,7 +44,7 @@ class Download with ChangeNotifier{
       }
       if (current["downloads"]["artifact"] != null) {
               await _downloadForLibraries(current["downloads"]["artifact"],
-          version: version, forgeVersion: forgeVersion);
+          version: version, modloaderVersion: modloaderVersion);
       }
 
       i++;
@@ -55,15 +55,15 @@ class Download with ChangeNotifier{
   }
 
  _downloadForLibraries(Map current,
-      {String? altpath, Version? version, ForgeVersion? forgeVersion}) async {
+      {String? altpath, Version? version, ModloaderVersion? modloaderVersion}) async {
     List<int> _bytes = [];
     int total = current["size"], received = 0, receivedControll = 0;
 
     if (current["url"] == "" || current["url"] == null) {
-      if (version == null || forgeVersion == null)
+      if (version == null || modloaderVersion == null)
         throw "unable to handle version cause it empty.";
       _bytes = await File(
-              '${await getTempForgePath()}\\$version\\$forgeVersion\\maven\\${current["path"]}')
+              '${await getTempForgePath()}\\$version\\$modloaderVersion\\maven\\${current["path"]}')
           .readAsBytes();
     } else {
       http.StreamedResponse? response = await http.Client()
@@ -90,7 +90,7 @@ class Download with ChangeNotifier{
   }
 
   getOldUniversal(
-      Map install_profileJson, Version version, ForgeVersion forgeVersion) async {
+      Map install_profileJson, Version version, ModloaderVersion modloaderVersion) async {
        
          if(install_profileJson["install"] == null) return;
           Map install_profile = install_profileJson["install"];
@@ -100,7 +100,7 @@ class Download with ChangeNotifier{
 
         if(!(await path.exists())) throw "the file does not exist, mabye you called the method before you installed the libraries";
     List<int> _bytes = await File(
-            '${await getTempForgePath()}\\$version\\$forgeVersion\\${install_profile["filePath"]}')
+            '${await getTempForgePath()}\\$version\\$modloaderVersion\\${install_profile["filePath"]}')
         .readAsBytes();
     await File(
             '${await getlibarypath()}\\libraries\\${Utils.parseMaven(install_profile["path"])}')
@@ -212,13 +212,13 @@ class Download with ChangeNotifier{
     //   print('done with ' + i.toString());
   }
 
-  downloadForgeClient(Version version, ForgeVersion forgeVersion,
+  downloadForgeClient(Version version, ModloaderVersion modloaderVersion,
       [String? additional]) async {
 
     //https://maven.minecraftforge.net/net/minecraftforge/forge/1.19.4-45.1.16/forge-1.19.4-45.1.16-installer.jar
 
     String url =
-        "https://maven.minecraftforge.net/net/minecraftforge/forge/${version.toString()}-${forgeVersion.toString()}${additional == null ? "" : "-" + additional}/forge-${version.toString()}-${forgeVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar";
+        "https://maven.minecraftforge.net/net/minecraftforge/forge/${version.toString()}-${modloaderVersion.toString()}${additional == null ? "" : "-" + additional}/forge-${version.toString()}-${modloaderVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar";
 
         print(url);
 
@@ -232,7 +232,7 @@ class Download with ChangeNotifier{
       received += value.length;
     }).asFuture();
 
-    await Utils.extractForgeInstaller(_bytes, version, forgeVersion);
+    await Utils.extractForgeInstaller(_bytes, version, modloaderVersion);
   }
 
   downloadSingeFile(String url, String to) async {

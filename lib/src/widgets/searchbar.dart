@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 
 class Searchbar extends StatefulWidget {
-  Function? onchange;
-   Searchbar({Key? key, this.onchange}) : super(key: key);
+  final Function(String text)? onchange;
+  final Function? onsubmit;
+   Searchbar({Key? key, this.onchange, this.onsubmit}) : super(key: key);
 
   @override
   _SearchbarState createState() => _SearchbarState();
@@ -19,7 +20,6 @@ class _SearchbarState extends State<Searchbar>
   late FocusNode _focusNode;
   late final TextEditingController _textController;
   bool isfocused = false;
-  String _searchInput = "";
 
   @override
   void initState() {
@@ -47,13 +47,16 @@ class _SearchbarState extends State<Searchbar>
     _textController = TextEditingController();
     if(widget.onchange != null) {
       _textController.addListener(() { 
-        widget.onchange!.call();
+        widget.onchange!.call(_textController.text);
       });
     }
     _focusNode = FocusNode();
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
         setSelectedState();
+       if(widget.onchange != null) {
+        widget.onsubmit!.call();
+       }
       }
     });
     super.initState();
@@ -93,6 +96,7 @@ class _SearchbarState extends State<Searchbar>
                           cursorHeight: 20,
                           cursorOffset: Offset(0, 2),
                           controller: _textController,
+                          
                           backgroundCursorColor:
                               Color.fromARGB(0, 168, 14, 14),
                           focusNode: _focusNode,

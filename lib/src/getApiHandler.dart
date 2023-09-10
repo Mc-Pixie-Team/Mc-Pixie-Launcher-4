@@ -3,7 +3,7 @@ import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 
 class ApiHandler {
 
-  Map<String, Api> _handlers = {
+   Map<String, Api> _handlers = {
     "modrinth": ModrinthApi(),
   };
 

@@ -89,6 +89,8 @@ flutter:
     - assets\svg\add-icon.svg
     - assets\svg\dropdown-icon.svg
     - assets\svg\filter-icon.svg
+    - assets\svg\play-icon.svg
+    - assets\svg\cancel-icon.svg
     - assets\redirect.html
      
 

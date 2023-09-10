@@ -14,14 +14,22 @@ import 'package:mclauncher4/src/tasks/version.dart';
 import 'package:path/path.dart' as path;
 import "package:path_provider/path_provider.dart" as path_provider;
 
-class Fabric extends Modloader  {
+class Fabric with ChangeNotifier implements Modloader  {
   FabricInstallState _state = FabricInstallState.downloadingLibraries;
   @override
   FabricInstallState get installstate => _state;
   double _progress = 0.0;
   @override
   double get progress => _progress;
+  double _mainprogress = 0.0; 
+  double get mainprogress => _mainprogress;
   
+   @override
+   getsteps(Version version, [ModloaderVersion? modloaderVersion]) {
+    return 1;
+   }
+
+
   @override
   getSafeDir(Version version, ModloaderVersion modloaderVersion) async{
     return "${await getworkpath()}\\versions\\fabric-loader-$modloaderVersion-$version\\fabric-loader-$modloaderVersion-$version.json";
@@ -88,6 +96,7 @@ class Fabric extends Modloader  {
     Download _downloader = Download();
     _downloader.addListener(() {
       if (_downloader.downloadstate == DownloadState.downloadingLibraries) {
+         _mainprogress = _downloader.progress;
         _progress = _downloader.progress;
         _state = FabricInstallState.downloadingLibraries;
         notifyListeners();

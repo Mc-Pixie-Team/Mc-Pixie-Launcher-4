@@ -16,17 +16,34 @@ class Minecraft with ChangeNotifier {
   ClientInstallState get installstate => _state;
   double _progress = 0.0;
   double get progress => _progress;
+  double _mainprogress = 0.0; 
+  double get mainprogress => _mainprogress;
   Download _downloader = Download();
 
+
+   getsteps(Version? version, [ModloaderVersion? modloaderVersion]) {
+    return 2;
+   }
+
   install(Version version) async {
+      var _1 = 0.0;
+      var _2 = 0.0;
+      var _raw = 0.0;
     _downloader.addListener(() {
       if (_downloader.downloadstate == DownloadState.downloadingLibraries) {
+        _raw  += _downloader.progress - _1;
+        _1 = _downloader.progress;
         _progress = _downloader.progress;
         _state = ClientInstallState.downloadingLibraries;
+        _mainprogress =  _raw / getsteps(version);
         notifyListeners();
       } else if (_downloader.downloadstate == DownloadState.downloadAssets) {
+         _raw  += _downloader.progress - _2;
+        _2 = _downloader.progress;
         _progress = _downloader.progress;
         _state = ClientInstallState.downloadAssets;
+        
+         _mainprogress = _raw / getsteps(version);
         notifyListeners();
       }
     });

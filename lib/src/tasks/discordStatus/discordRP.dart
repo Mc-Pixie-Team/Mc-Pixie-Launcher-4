@@ -14,10 +14,10 @@ class DiscordRP {
   Process? csharpProcess;
 
   Future<void> initCS() async {
-    var serviceExecutable = 'C:/Program Files/dotnet/dotnet.exe'; // literally the .NET CLI
+    var serviceExecutable = 'C:\\Program Files\\dotnet\\dotnet.exe'; // literally the .NET CLI
     var serviceArgs = ['run']; // or .EXE if on Windows...
     csharpProcess =
-        await Process.start(serviceExecutable, serviceArgs, workingDirectory: "C:/Users/ancie/Documents/GitHub/Mc-Pixie-Launcher-48/discordCSApp");
+        await Process.start(serviceExecutable, serviceArgs, workingDirectory: "C:\\Users\\zepat\\Mc-Pixie-Launcher-4\\discordCSApp");
     print(csharpProcess);
 // Parse messages incoming from C# -> Dart
     dynamic onDataReceived(event) {

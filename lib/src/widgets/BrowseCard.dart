@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
+import 'package:mclauncher4/src/tasks/forge/forge.dart';
+import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/version.dart';
 import 'package:mclauncher4/src/widgets/SvgButton.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class BrowseCard extends StatefulWidget {
   Map modpacklist;
   final double progress;
-  final DownloadState state;
   final VoidCallback onDownload;
   final VoidCallback onCancel;
   final VoidCallback onOpen;
+  final MainState mainSate;
+  final double mainprogress;
+  final installState;
 
   BrowseCard({
     Key? key,
+    required this.mainprogress,
     required this.modpacklist,
     required this.progress,
-    required this.state,
+    required this.mainSate,
+    required this.installState,
     required this.onDownload,
     required this.onCancel,
     required this.onOpen,
@@ -27,6 +35,45 @@ class BrowseCard extends StatefulWidget {
 
 class _BrowseCardState extends State<BrowseCard> {
   bool ishover = false;
+
+  Widget getButton() {
+    if (widget.mainSate == MainState.downloadingMinecraft ||
+        widget.mainSate == MainState.downloadingML ||
+        widget.mainSate == MainState.downloadingMods) {
+      print(
+          'state: ${widget.mainSate}, progress: ${widget.mainprogress / 100}');
+      return SizedBox(
+          height: 18,
+          width: 18,
+          child: CircularProgressIndicator(
+            value: widget.mainprogress / 100,
+          ));
+    }
+    if (widget.mainSate == MainState.running) {
+      return SvgButton.asset(
+        'assets\\svg\\cancel-icon.svg',
+        onpressed: () {
+          widget.onCancel.call();
+        },
+      );
+    }
+    if(widget.mainSate == MainState.installed){
+      return SvgButton.asset(
+        'assets\\svg\\play-icon.svg',
+        onpressed: () {
+          widget.onOpen.call();
+        },
+      );
+    
+    }
+
+    return SvgButton.asset(
+      'assets\\svg\\download-icon.svg',
+      onpressed: () {
+        widget.onDownload.call();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +136,8 @@ class _BrowseCardState extends State<BrowseCard> {
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).typography.black.bodyMedium,
                     ),
-                    Text('test')
+                    Text(
+                        'MainState: ${widget.mainSate}, progress: ${widget.progress}')
                   ],
                 )),
                 Align(
@@ -107,12 +155,7 @@ class _BrowseCardState extends State<BrowseCard> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            SvgButton.asset(
-                              'assets\\svg\\download-icon.svg',
-                              onpressed: () {
-                                widget.onDownload.call();
-                              },
-                            ),
+                            getButton(),
                             SvgButton.asset(
                               'assets\\svg\\network-icon.svg',
                               onpressed: () {},

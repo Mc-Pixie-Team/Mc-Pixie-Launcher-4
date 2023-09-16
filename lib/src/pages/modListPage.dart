@@ -34,9 +34,11 @@ class ModListPage extends StatefulWidget {
 
 class _ModListPageState extends State<ModListPage> {
   late ScrollController _scrollController;
-  Api _handler = ApiHandler().getApi("modrinth");
-  List modpacklist = [];
 
+  GlobalKey key = new GlobalKey();
+  List installContollers = [];
+  List modpacklist = [];
+  Api _handler = ApiHandler().getApi("modrinth");
   Future<dynamic> get mv async {
     return await _handler.getAllMV();
   }
@@ -46,13 +48,15 @@ class _ModListPageState extends State<ModListPage> {
   }
 
   bool iscalled = false;
-
+  String querytext = "";
   getMoreData() async {
     if (iscalled) return;
     iscalled = true;
     print('getmore data');
-    modpacklist.addAll(await _handler.getMoreModpacks());
-    print(modpacklist);
+    List rawModpacks = await _handler.getMoreModpacks();
+    modpacklist.addAll(rawModpacks);
+    installContollers.addAll(
+        List.generate(rawModpacks.length, (index) => InstallController()));
     setState(() {});
     iscalled = false;
   }
@@ -115,43 +119,68 @@ class _ModListPageState extends State<ModListPage> {
                 builder: (context, controller, physics) {
                   _scrollController = controller;
                   return FutureBuilder(
+                      key: key,
                       future: modpacklistfuture,
                       builder: (context, snapshot) {
-                        print('look up');
                         if (!snapshot.hasData) {
                           return Container();
                         }
 
                         if (snapshot.hasData) {
-                          if (modpacklist.toString() == "[]") {
+                          if (modpacklist.length < 1) {
                             modpacklist = snapshot.data ?? [];
-                            print('Ä');
+                            installContollers = List.generate(
+                                modpacklist.length,
+                                (index) => InstallController());
                           }
 
-                          return ListView.builder(
+                          return SlideInAnimation(child: ListView.builder(
                               physics: physics,
                               controller: controller,
                               itemCount: modpacklist.length,
                               itemBuilder: ((context, index) {
-                                return BrowseCard(
-                                  modpacklist: modpacklist[index],
-                                  onCancel: () {},
-                                  onDownload: () async {
-                                    Map modpackproject =
-                                        await _handler.getModpack(
-                                            modpacklist[index]["project_id"]);
-                                    Map modpackversion =
-                                        await _handler.getModpackVersion(
-                                            (modpackproject["versions"] as List)
-                                                .last);
-                                    InstallController()
-                                        .install(_handler, modpackversion);
-                                  },
-                                  onOpen: () {},
-                                  state: DownloadState.notDownloaded,
-                                  progress: 0.0,
-                                );
-                              }));
+                                InstallController installcontroller =
+                                    installContollers[index];
+                                return AnimatedBuilder(
+                                    key: Key(modpacklist[index]["project_id"]),
+                                    animation: installcontroller,
+                                    builder: (context, child) => BrowseCard(
+                                          mainprogress:
+                                              installcontroller.mainprogress,
+                                          modpacklist: modpacklist[index],
+                                          mainSate: installcontroller.mainState,
+                                          installState:
+                                              installcontroller.installState,
+                                          progress: installcontroller.progress,
+                                          onCancel: () {},
+                                          onDownload: () async {
+                                            Map modpackproject = await _handler
+                                                .getModpack(modpacklist[index]
+                                                    ["project_id"]);
+                                            Map modpackversion = await _handler
+                                                .getModpackVersion(
+                                                    (modpackproject["versions"]
+                                                            as List)
+                                                        .last);
+                                            installcontroller.install(
+                                              _handler,
+                                              modpackversion,
+                                            );
+                                          },
+                                          onOpen: () async {
+                                            Map modpackproject = await _handler
+                                                .getModpack(modpacklist[index]
+                                                    ["project_id"]);
+                                            Map modpackversion = await _handler
+                                                .getModpackVersion(
+                                                    (modpackproject["versions"]
+                                                            as List)
+                                                        .last);
+                                            installcontroller.start(
+                                                _handler, modpackversion);
+                                          },
+                                        ));
+                              })));
                         }
                         return Container();
                       });
@@ -169,14 +198,20 @@ class _ModListPageState extends State<ModListPage> {
                 FutureBuilder(
                     future: mv,
                     builder: (context, snapshot) {
-                      print(snapshot.data);
                       if (snapshot.hasData) {
                         return Dropdownmenu(
                           useOverlay: false,
                           registry: snapshot.data,
+                          onchange: (text) {
+                            key = new GlobalKey();
+
+                            setState(() {
+                              _handler.version = text;
+                              modpacklist = [];
+                            });
+                          },
                         );
                       }
-                      print('trsd<y');
                       return Container();
                     }),
                 SizedBox(
@@ -184,10 +219,15 @@ class _ModListPageState extends State<ModListPage> {
                 ),
                 Searchbar.Searchbar(
                   onchange: (text) {
-                    print(text);
+                    querytext = text;
                   },
                   onsubmit: () {
-                    print('submitted');
+                    key = new GlobalKey();
+                    print('querytext: $querytext');
+                    setState(() {
+                      _handler.query = querytext;
+                      modpacklist = [];
+                    });
                   },
                 )
               ],

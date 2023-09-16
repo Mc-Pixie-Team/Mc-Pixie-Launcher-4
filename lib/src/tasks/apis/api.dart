@@ -1,6 +1,10 @@
+import 'package:flutter/material.dart';
+
 class Api {
 
-
+    
+    String version = "";
+    String query ="";
   String getTitlename() {
     throw "you cannot call api alone";
   }
@@ -22,5 +26,7 @@ class Api {
   getModpackList() {}
   getModpack(String id){}
   getModpackVersion(String version){}
-  downloadModpack(Map modpackVersion, String instanceName) {}
+  getDownloaderObject() {
+    throw '';
+  }
 }

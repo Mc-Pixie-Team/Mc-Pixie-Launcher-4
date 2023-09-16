@@ -1,4 +1,6 @@
-enum DownloadState {
+
+
+  enum DownloadState {
   notDownloaded,
   downloadingClient,
   downloadingLibraries,
@@ -17,10 +19,28 @@ enum FabricInstallState {
   finished,
 }
 
+
 enum ClientInstallState {
   downloadingClient,
   downloadingLibraries,
   downloadAssets,
   finished,
 }
+
+enum MainState {
+  downloadingMods,
+  downloadingMinecraft,
+  downloadingML,
+  running,
+  installed,
+  notinstalled,
+}
+
+enum Modinstall {
+  downloadingMod,
+  getML,
+}
+
+
+
 

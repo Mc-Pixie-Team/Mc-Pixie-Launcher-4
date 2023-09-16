@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
-
-
 class Searchbar extends StatefulWidget {
   final Function(String text)? onchange;
   final Function? onsubmit;
-   Searchbar({Key? key, this.onchange, this.onsubmit}) : super(key: key);
+  final String label;
+  Searchbar({Key? key, this.onchange, this.onsubmit, this.label = ""}) : super(key: key);
 
   @override
   _SearchbarState createState() => _SearchbarState();
@@ -13,8 +12,6 @@ class Searchbar extends StatefulWidget {
 
 class _SearchbarState extends State<Searchbar>
     with SingleTickerProviderStateMixin {
-
-  
   late AnimationController _controller;
   late Animation<double> animation;
   late FocusNode _focusNode;
@@ -23,6 +20,7 @@ class _SearchbarState extends State<Searchbar>
 
   @override
   void initState() {
+
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 400),
@@ -45,18 +43,26 @@ class _SearchbarState extends State<Searchbar>
         .drive(Tween(begin: 40, end: 200));
 
     _textController = TextEditingController();
-    if(widget.onchange != null) {
-      _textController.addListener(() { 
+    if (widget.onchange != null) {
+      _textController.addListener(() {
         widget.onchange!.call(_textController.text);
       });
     }
     _focusNode = FocusNode();
+
+    _focusNode.onKeyEvent = (node, event) {
+      if (event.logicalKey.keyLabel == "Enter") {
+        if (_focusNode.hasFocus) {
+          setSelectedState();
+
+          widget.onsubmit!.call();
+        }
+      }
+      return KeyEventResult.ignored;
+    };
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
         setSelectedState();
-       if(widget.onchange != null) {
-        widget.onsubmit!.call();
-       }
       }
     });
     super.initState();
@@ -92,13 +98,14 @@ class _SearchbarState extends State<Searchbar>
                         height: 25,
                         width: 135,
                         child: EditableText(
-                        selectionColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                          selectionColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.3),
                           cursorHeight: 20,
                           cursorOffset: Offset(0, 2),
                           controller: _textController,
-                          
-                          backgroundCursorColor:
-                              Color.fromARGB(0, 168, 14, 14),
+                          backgroundCursorColor: Color.fromARGB(0, 168, 14, 14),
                           focusNode: _focusNode,
                           cursorColor: Theme.of(context).colorScheme.primary,
                           style: TextStyle(
@@ -107,7 +114,8 @@ class _SearchbarState extends State<Searchbar>
                                   .typography
                                   .black
                                   .labelMedium!
-                                  .color!.withOpacity(0.86)),
+                                  .color!
+                                  .withOpacity(0.86)),
                         )))
                 : Container(),
             GestureDetector(

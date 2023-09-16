@@ -51,6 +51,6 @@ late AnimationController _controller;
   @override
   Widget build(BuildContext context) {
     
-    return Opacity(opacity: 1 - animation.value, child: Transform.translate(offset: Offset(animation.value * 60, 0), child: widget.child,));
+    return  Transform.translate(offset: Offset(animation.value * 60, 0), child: widget.child,);
   }
 }

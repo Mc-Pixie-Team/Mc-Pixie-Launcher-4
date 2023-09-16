@@ -14,17 +14,29 @@ import 'package:yaml/yaml.dart';
 import 'package:path/path.dart' as path;
 import '../utils/path.dart';
 
-class Forge extends Modloader{
+class Forge with ChangeNotifier implements Modloader{
   ForgeInstallState _state = ForgeInstallState.downloadingClient;
   @override
   ForgeInstallState get installstate => _state;
   double _progress = 0.0;
   @override
   double get progress => _progress;
+  double _mainprogress = 0.0; 
+  double get mainprogress => _mainprogress;
+
     @override
     getSafeDir(Version version, ModloaderVersion modloaderVersion) async{
     return '${await getworkpath()}\\versions\\$version-forge-$modloaderVersion\\$version-forge-$modloaderVersion.json';
   }
+
+  @override
+   getsteps(Version version, [ModloaderVersion? modloaderVersion]) {
+    if (version > Version(1, 12, 2)) {
+      return 3;
+    }
+    return 2;
+   }
+  
 
   //1.19.4-forge-45.1.16
 
@@ -163,17 +175,27 @@ class Forge extends Modloader{
     // print(versionJson);
     Download _downloader = Download();
     Processor _processor = Processor();
+      var _1 = 0.0;
+      var _2 = 0.0;
+      var _raw = 0.0;
     _downloader.addListener(() {
       if (_downloader.downloadstate == DownloadState.downloadingLibraries) {
+        print(getsteps(version));
+        _raw += _downloader.progress - _1;
+        _1 = _downloader.progress;
         _progress = _downloader.progress;
         _state = ForgeInstallState.downloadingLibraries;
+         _mainprogress = _raw / getsteps(version);
         notifyListeners();
       }
     });
 
     _processor.addListener(() {
       if (_state == ForgeInstallState.patching) {
+         _raw += _downloader.progress - _2;
+        _2 = _downloader.progress;
         _progress = _processor.progress;
+        _mainprogress = _raw / getsteps(version);
         notifyListeners();
       }
     });
@@ -186,6 +208,7 @@ class Forge extends Modloader{
     //install_profile is finished
 
     _state = ForgeInstallState.downloadingLibraries;
+    _1 = 0.0;
     await _downloader.downloadLibaries(versionJson, version, modloaderVersion);
     await _downloader.getOldUniversal(
         install_profileJson, version, modloaderVersion);

@@ -5,13 +5,15 @@ import 'package:mclauncher4/src/widgets/components/sizeTransitionCustom.dart';
 
 class Dropdownmenu extends StatefulWidget {
   final Function(String text)? onchange;
-  final Function? onsubmit;
   bool useOverlay;
- List? registry;
-  Dropdownmenu({Key? key, this.useOverlay = true, this.onchange, this.onsubmit, this.registry})
-      : super(key: key);
 
- 
+  List? registry;
+  Dropdownmenu(
+      {Key? key,
+      this.useOverlay = true,
+      this.onchange,
+      this.registry})
+      : super(key: key);
 
   @override
   _DropdownmenuState createState() => _DropdownmenuState();
@@ -24,6 +26,7 @@ class _DropdownmenuState extends State<Dropdownmenu>
   late OverlayEntry? overlayEntry;
   late FocusNode _focusNode;
   late TextEditingController _textController;
+  RenderBox? box;
   GlobalKey key = GlobalKey();
   double? gly;
   double? glx;
@@ -32,7 +35,6 @@ class _DropdownmenuState extends State<Dropdownmenu>
   bool iscompleted = false;
   bool isanimating = false;
   bool secmenu = false;
-  RenderBox? box;
 
   @override
   void initState() {
@@ -121,7 +123,6 @@ class _DropdownmenuState extends State<Dropdownmenu>
       gly = position.dy + box!.size.height - 2;
       glx = position.dx;
     }
-    print(widget.registry);
     return AnimatedBuilder(
         animation: _animation,
         builder: (context, child) => Container(
@@ -134,17 +135,28 @@ class _DropdownmenuState extends State<Dropdownmenu>
               child: Sizetransitioncustom(
                   sizeFactor: (1.0 * (1 - _animation.value)),
                   child: Container(
-                    height: 300,
-                    width: boxsize!.width,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.elliptical(20, 20),
-                            bottomRight: Radius.elliptical(20, 20))),
-                    child: ListView.builder(itemCount: widget.registry!.length, itemBuilder: (context,index) {
-                      return Text((widget.registry![index]["version"]).toString());
-                    })
-                  )),
+                      clipBehavior: Clip.antiAlias,
+                      height: 300,
+                      width: boxsize!.width,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.elliptical(20, 20),
+                              bottomRight: Radius.elliptical(20, 20))),
+                      child: ListView.builder(
+                          itemCount: widget.registry!.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(onTap: () => widget.onchange!.call(widget.registry![index]["version"]), child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 14, left: 16, bottom: 5),
+                                child: Text(
+                                  widget.registry![index]["version"],
+                                  style: Theme.of(context)
+                                      .typography
+                                      .black
+                                      .labelLarge,
+                                )));
+                          }))),
             ));
   }
 

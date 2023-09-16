@@ -15,9 +15,9 @@ import 'package:path/path.dart' as path;
 import "package:path_provider/path_provider.dart" as path_provider;
 
 class Fabric with ChangeNotifier implements Modloader  {
-  FabricInstallState _state = FabricInstallState.downloadingLibraries;
+  ModloaderInstallState _state = ModloaderInstallState.downloadingLibraries;
   @override
-  FabricInstallState get installstate => _state;
+  ModloaderInstallState get installstate => _state;
   double _progress = 0.0;
   @override
   double get progress => _progress;
@@ -98,7 +98,7 @@ class Fabric with ChangeNotifier implements Modloader  {
       if (_downloader.downloadstate == DownloadState.downloadingLibraries) {
          _mainprogress = _downloader.progress;
         _progress = _downloader.progress;
-        _state = FabricInstallState.downloadingLibraries;
+        _state = ModloaderInstallState.downloadingLibraries;
         notifyListeners();
       }
     });

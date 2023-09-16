@@ -86,7 +86,7 @@ final blackTextSchemes = TextTheme(
   bodySmall: GoogleFonts.roboto(
     color: Color.fromARGB(255, 168, 168, 168),
     fontWeight: FontWeight.w400,
-    fontSize: 12,
-    height: 16 / 12,
+    fontSize: 11,
+    height: 16 / 11,
   ),
 );

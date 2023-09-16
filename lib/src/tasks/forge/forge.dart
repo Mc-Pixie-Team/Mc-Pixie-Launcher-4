@@ -15,9 +15,9 @@ import 'package:path/path.dart' as path;
 import '../utils/path.dart';
 
 class Forge with ChangeNotifier implements Modloader{
-  ForgeInstallState _state = ForgeInstallState.downloadingClient;
+  ModloaderInstallState _state = ModloaderInstallState.downloadingClient;
   @override
-  ForgeInstallState get installstate => _state;
+  ModloaderInstallState get installstate => _state;
   double _progress = 0.0;
   @override
   double get progress => _progress;
@@ -184,14 +184,14 @@ class Forge with ChangeNotifier implements Modloader{
         _raw += _downloader.progress - _1;
         _1 = _downloader.progress;
         _progress = _downloader.progress;
-        _state = ForgeInstallState.downloadingLibraries;
+        _state = ModloaderInstallState.downloadingLibraries;
          _mainprogress = _raw / getsteps(version);
         notifyListeners();
       }
     });
 
     _processor.addListener(() {
-      if (_state == ForgeInstallState.patching) {
+      if (_state == ModloaderInstallState.patching) {
          _raw += _downloader.progress - _2;
         _2 = _downloader.progress;
         _progress = _processor.progress;
@@ -200,21 +200,21 @@ class Forge with ChangeNotifier implements Modloader{
       }
     });
 
-    _state = ForgeInstallState.downloadingLibraries;
+    _state = ModloaderInstallState.downloadingLibraries;
     await _downloader.downloadLibaries(
         install_profileJson, version, modloaderVersion);
-    _state = ForgeInstallState.patching;
+    _state = ModloaderInstallState.patching;
     await _processor.run(install_profileJson, version, modloaderVersion);
     //install_profile is finished
 
-    _state = ForgeInstallState.downloadingLibraries;
+    _state = ModloaderInstallState.downloadingLibraries;
     _1 = 0.0;
     await _downloader.downloadLibaries(versionJson, version, modloaderVersion);
     await _downloader.getOldUniversal(
         install_profileJson, version, modloaderVersion);
     await _createVersionDir(versionJson, version, modloaderVersion);
     //version is finished
-    _state = ForgeInstallState.finished;
+    _state = ModloaderInstallState.finished;
     notifyListeners();
   }
 

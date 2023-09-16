@@ -13,9 +13,11 @@ import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/installController.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
 import 'package:mclauncher4/src/widgets/BrowseCard.dart';
+import 'package:mclauncher4/src/widgets/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/components/slideInAnimation.dart';
 import 'package:mclauncher4/src/widgets/dropdownmenu.dart';
+import 'package:mclauncher4/src/widgets/taskwidget.dart';
 import '../widgets/searchbar.dart' as Searchbar;
 import 'package:flutter/material.dart';
 import '../widgets/divider.dart' as Divider;
@@ -78,6 +80,7 @@ class _ModListPageState extends State<ModListPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      clipBehavior: Clip.antiAlias,
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
@@ -141,8 +144,9 @@ class _ModListPageState extends State<ModListPage> {
                               itemBuilder: ((context, index) {
                                 InstallController installcontroller =
                                     installContollers[index];
+
                                 return AnimatedBuilder(
-                                    key: Key(modpacklist[index]["project_id"]),
+                                    key: Key(installcontroller.processId),
                                     animation: installcontroller,
                                     builder: (context, child) => BrowseCard(
                                           mainprogress:
@@ -152,19 +156,15 @@ class _ModListPageState extends State<ModListPage> {
                                           installState:
                                               installcontroller.installState,
                                           progress: installcontroller.progress,
-                                          onCancel: () {},
+                                          onCancel: () {
+                                            installcontroller.cancel();
+                                          },
                                           onDownload: () async {
-                                            Map modpackproject = await _handler
-                                                .getModpack(modpacklist[index]
-                                                    ["project_id"]);
-                                            Map modpackversion = await _handler
-                                                .getModpackVersion(
-                                                    (modpackproject["versions"]
-                                                            as List)
-                                                        .last);
+                                            Map modpackData = modpacklist[index];
                                             installcontroller.install(
                                               _handler,
-                                              modpackversion,
+                                              modpackData
+                                
                                             );
                                           },
                                           onOpen: () async {

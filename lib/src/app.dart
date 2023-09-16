@@ -19,6 +19,7 @@ import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/minecraft/client.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/widgets/taskwidget.dart';
 
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
@@ -93,9 +94,11 @@ class _MainPageState extends State<MainPage> {
     },);
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        
         floatingActionButton: FloatingActionButton(onPressed: () async {
 /*           await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json'); */
           // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
@@ -105,7 +108,11 @@ class _MainPageState extends State<MainPage> {
                 decoration: BoxDecoration(color: Colors.pinkAccent, borderRadius: BorderRadius.circular(18)),
               ),
               550); */
+        //  DiscordRP().initCS();
+       // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
 
+  
+     // SidePanel().addToTaskWidget();
           /* await Forge().install();
           await Forge().run(); */
           /* Microsoft().authenticate(); */
@@ -115,6 +122,7 @@ class _MainPageState extends State<MainPage> {
           // );
         }),
         body: Stack(children: [
+        
           Row(
             children: [
               //   NavigationDrawer(children: children)
@@ -255,7 +263,12 @@ class _MainPageState extends State<MainPage> {
                 child: Row(
                   children: [Expanded(child: MoveWindow()), WindowButtons()],
                 )),
-          )
+          ),
+          FloatingActionButton(onPressed: () {
+           SidePanel().removeSecondary();
+          }),
+         Center(child: SizedBox(height: 130, width: 130,))
+         
         ]));
   }
 }

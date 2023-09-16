@@ -10,8 +10,6 @@ import "../utils/downloads.dart";
 import '../utils/path.dart';
 
 class Minecraft with ChangeNotifier {
-  final Future<Directory> appDocumentsDir =
-      path_provider.getApplicationDocumentsDirectory();
   ClientInstallState _state = ClientInstallState.downloadingLibraries;
   ClientInstallState get installstate => _state;
   double _progress = 0.0;
@@ -48,7 +46,8 @@ class Minecraft with ChangeNotifier {
       }
     });
     Map res = await _downloader.getJson(version);
-    await Future.wait([_downloader.downloadLibaries(res), _downloader.downloadClient(res),_downloader.downloadAssets(res) ]);
+    await Future.wait([_downloader.downloadLibaries(res),_downloader.downloadAssets(res) ]);
+    await _downloader.downloadClient(res);
   
 
     // await _downloader.downloadLibaries(res);

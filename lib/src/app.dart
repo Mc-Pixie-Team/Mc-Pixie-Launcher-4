@@ -105,7 +105,7 @@ class _MainPageState extends State<MainPage> {
                 decoration: BoxDecoration(color: Colors.pinkAccent, borderRadius: BorderRadius.circular(18)),
               ),
               550); */
-          DiscordRP().initCS();
+
           /* await Forge().install();
           await Forge().run(); */
           /* Microsoft().authenticate(); */

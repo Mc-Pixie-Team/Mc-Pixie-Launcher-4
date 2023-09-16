@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -161,10 +162,21 @@ class _UserPageState extends State<UserPage> {
                       SidePanel().pop(SidePanel().currentWidget!, 550);
                     },
                     () {
-                      DiscordRP().update();
+                      DiscordRP().update(RitchPresence(
+                          details: "Idaling...",
+                          state: "",
+                          type: RitchPresenceType(
+                            RitchPresenceType.listening,
+                          ),
+                          assets: RitchPresenceAssets(LargeImage: "https://thispersondoesnotexist.com/", LargeText: "ancientxfire"),
+                          timestamps: RitchPresenceTimestamp(Start: DateTime.now().millisecondsSinceEpoch)));
                     },
-                    () {},
-                    () {},
+                    () {
+                      DiscordRP().clear();
+                    },
+                    () {
+                      DiscordRP().terminate();
+                    },
                     () {
                       SidePanel().pop(
                           Container(

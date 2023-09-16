@@ -11,13 +11,13 @@ public class MyJsonRpcService
     public string Ping(string ping) => $"Pong: {ping}";
 
 
-    private static Discord.Discord discord = new Discord.Discord(1143558810200461372, (UInt64)Discord.CreateFlags.Default);
-    private static Discord.ActivityManager activityManager = discord.GetActivityManager();
+    private static Discord.Discord discord;
+    private static Discord.ActivityManager activityManager;
     public string RemoveRP(string json) => RemoveRPFunc(json);
 
     static string RemoveRPFunc(string data)
     {
-        string callbackMSG = "";
+        string callbackMSG = "OK";
         activityManager.ClearActivity((res) =>
         {
 
@@ -28,28 +28,14 @@ public class MyJsonRpcService
     }
 
     public string SetRP(string data) => SetRPFunc(data);
-    static string SetRPFunc(string data)
+    static string SetRPFunc(string json)
     {
         string callbackMSG = "OK";
 
-        var json = "{'Details':'Hello from C#','State':'Playing with Megulicious','Timestamps':{'Start':1672533067},'Assets':{'LargeImage':'test','LargeText':'ancientxfire','SmallImage':'test','SmallText':'smol'},'Secrets':{'Match':'ae488379-351d-4a4f-ad32-2b9b01c91657-2','Join':'MTI4NzM0OjFpMmhuZToxMjMxMjM='},'Party':{'Id':'ae488379-351d-4a4f-ad32-2b9b01c91657','Size':{'CurrentSize':10,'MaxSize':100},'Privacy':2}}";
+
 
         var activity = JsonConvert.DeserializeObject<Discord.Activity>(json);
-        activityManager.OnActivityJoinRequest += (ref Discord.User user) =>
-        {
-            activityManager.SendInvite(userId: user.Id, content: "du hast gfragt", type: Discord.ActivityActionType.Join
-            , callback: (e) =>
-        {
-            Console.WriteLine(e);
-        });
-        };
 
-        activityManager.UpdateActivity(activity, (res) =>
-        {
-
-            Console.WriteLine(res);
-            if (res != Discord.Result.Ok) Console.WriteLine("Failed connecting to Discord!");
-        });
         activityManager.UpdateActivity(activity, (res) =>
         {
 
@@ -61,11 +47,25 @@ public class MyJsonRpcService
 
     static async Task Main(string[] args)
     {
+
+        if (args.Length < 1)
+        {
+            Console.WriteLine("No appID provided! Exiting!");
+            System.Environment.Exit(-1);
+        }
+        try
+        {
+            var appID = args[0];
+            long.TryParse(appID, out long zahlAlsLong);
+            discord = new Discord.Discord(zahlAlsLong, (UInt64)Discord.CreateFlags.Default);
+            activityManager = discord.GetActivityManager();
+        }
+        catch
+        {
+            Console.WriteLine("No appID provided! Exiting!");
+            System.Environment.Exit(-1);
+        }
         Timer timer = new Timer(TimerCallback, null, 0, 500); // TimerCallback will be called every 500ms (0.5 second)
-
-        // Keep the program running until the user presses a key
-
-
         discord.SetLogHook(Discord.LogLevel.Debug, (level, message) =>
         {
             Console.WriteLine(level + message);
@@ -76,7 +76,14 @@ public class MyJsonRpcService
 
         Console.WriteLine(activityManager);
 
-
+        activityManager.OnActivityJoinRequest += (ref Discord.User user) =>
+        {
+            activityManager.SendInvite(userId: user.Id, content: "du hast gfragt", type: Discord.ActivityActionType.Join
+            , callback: (e) =>
+        {
+            Console.WriteLine(e);
+        });
+        };
         Console.WriteLine("Hello World!");
         var stream = FullDuplexStream.Splice(
           Console.OpenStandardInput(),

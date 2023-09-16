@@ -7,7 +7,7 @@ import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 
 void main() {
   supabaseHelpers().init();
-
+  DiscordRP().initCS("1144740158374158366");
   Paint.enableDithering = true;
   runApp(const McLauncher());
   doWhenWindowReady(() {

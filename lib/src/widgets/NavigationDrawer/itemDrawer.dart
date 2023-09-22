@@ -4,8 +4,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import './components/sizeTransitionCustom.dart';
-import './components/selectableAnimationBuilder.dart';
+import '../components/sizeTransitionCustom.dart';
+import '../components/selectableAnimationBuilder.dart';
 
 class ItemDrawer extends StatefulWidget {
   double height;

@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/downloadState.dart';
-import 'package:mclauncher4/src/widgets/SvgButton.dart';
-import './divider.dart' as divider;
+import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
+import '../divider.dart' as divider;
 
 class TaskWidget extends StatefulWidget {
   final Map items;
@@ -36,6 +36,7 @@ class _TaskpageState extends State<TaskWidget> {
 
 class TaskwidgetItem extends StatefulWidget {
   MainState mainState = MainState.notinstalled;
+  
   double progress = 0.0;
   double mainprogress = 0.0;
   var installState;
@@ -56,6 +57,10 @@ class TaskwidgetItem extends StatefulWidget {
 }
 
 class _TaskwidgetItemState extends State<TaskwidgetItem> {
+
+
+  String titleText = "Installing";
+
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisSize: MainAxisSize.min, children: [
@@ -106,7 +111,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: 'The Revenge',
+                        text: titleText,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -116,7 +121,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                         ),
                       ),
                       TextSpan(
-                        text: ': 69%',
+                        text: ': ${widget.mainprogress.ceil()}%',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,

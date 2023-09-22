@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mclauncher4/src/app.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
-import 'package:mclauncher4/src/widgets/autoGradient.dart';
-import 'package:mclauncher4/src/widgets/gradiantText.dart';
+import 'package:mclauncher4/src/widgets/components/autoGradient.dart';
+import 'package:mclauncher4/src/widgets/components/gradiantText.dart';
 import "package:mclauncher4/src/tasks/auth/supabase.dart";
 
 class SplashScreen extends StatefulWidget {

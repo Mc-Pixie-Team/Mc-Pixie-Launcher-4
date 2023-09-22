@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/pages/installedModpacks.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.download.dart';
@@ -15,8 +16,8 @@ import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/tasks/startMessage.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
-import 'package:mclauncher4/src/widgets/SidePanel.dart';
-import 'package:mclauncher4/src/widgets/taskwidget.dart';
+import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
+import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
 import 'package:uuid/uuid.dart';
 
 class InstallController with ChangeNotifier {
@@ -59,9 +60,10 @@ class InstallController with ChangeNotifier {
     notifyListeners();
   }
 
+
   void cancel() async {
     sendPort.send(IsolateBreaker());
-
+    Modpacks.globalinstallContollers.removeLast();
     if (await Directory('${await getInstancePath()}\\$processId').exists()) {
       try {
         await Directory('${await getInstancePath()}\\$processId')
@@ -98,6 +100,12 @@ class InstallController with ChangeNotifier {
     setTaskWidget();
     _mainState = MainState.downloadingML;
     _callnotifiers();
+
+
+        Map modpackproject = await _handler.getModpack(_modpackData["project_id"]);
+    Map modpackVersion = await _handler
+        .getModpackVersion((modpackproject["versions"] as List).last);
+
     ReceivePort receivePort = ReceivePort();
     ReceivePort exitPort = ReceivePort();
 
@@ -107,7 +115,7 @@ class InstallController with ChangeNotifier {
           receivePort.sendPort,
           StartMessage(
               handler: _handler,
-              modpackData: _modpackData,
+              modpackData: modpackVersion,
               processId: _processId)
         ],
         onExit: exitPort.sendPort);
@@ -177,14 +185,12 @@ class Installer {
         startMessage.getProcessId);
   }
 
-  install(Api _handler, Map modpacData, String _processId) async {
-    Map modpackproject = await _handler.getModpack(modpacData["project_id"]);
-    Map modpackVersion = await _handler
-        .getModpackVersion((modpackproject["versions"] as List).last);
+  install(Api _handler, Map modpackData, String _processId) async {
+
 
     var downloader = _handler.getDownloaderObject();
-    String mloaderS = modpackVersion["loaders"].first;
-    Version version = Version.parse(modpackVersion["game_versions"].first);
+    String mloaderS = modpackData["loaders"].first;
+    Version version = Version.parse(modpackData["game_versions"].first);
 
     if (mloaderS == "forge") {
       _modloader = Forge();
@@ -218,9 +224,9 @@ class Installer {
       sendMessage();
     });
 
-    await downloader.downloadModpack(modpackVersion, _processId);
+    await downloader.downloadModpack(modpackData, _processId);
     Map versions =
-        await ModrinthApi().getMMLVersion(modpackVersion, _processId, mloaderS);
+        await ModrinthApi().getMMLVersion(modpackData, _processId, mloaderS);
 
     version = versions["version"];
     ModloaderVersion modloaderVersion = versions["modloader"];

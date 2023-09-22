@@ -3,7 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/widgets/taskwidget.dart';
+import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
 import 'package:vector_math/vector_math.dart' as vec;
 
 class SidePanel extends StatefulWidget {
@@ -53,7 +53,7 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
   late Animation ani2;
   double? width;
   double? width_old;
-  double defaultHeight = 280.0;
+  double defaultHeight = 320.0;
   double defaultWidth = 280.0;
 
   @override
@@ -64,9 +64,8 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
     ani = Tween(begin: 1.0, end: 0.0).animate(
         CurvedAnimation(parent: _controller, curve: Curves.easeOutExpo));
     _controllersec = AnimationController(
-        reverseDuration: Duration(milliseconds: 1500),
         vsync: this,
-        duration: Duration(milliseconds: 1500));
+        duration: Duration(milliseconds: 1000));
     ani2 = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
         reverseCurve: Curves.easeInExpo,
         parent: _controllersec,
@@ -146,7 +145,7 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
   }
 
   setNewWidget(Widget parent, double width) {
-    if (isdisposed || isanimating) return;
+   // if (isdisposed || isanimating) return;
     widget.currentWidget = parent;
     width_old = this.width;
     this.width = width;

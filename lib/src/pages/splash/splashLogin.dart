@@ -2,8 +2,8 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mclauncher4/src/app.dart';
-import 'package:mclauncher4/src/widgets/autoGradient.dart';
-import 'package:mclauncher4/src/widgets/gradiantText.dart';
+import 'package:mclauncher4/src/widgets/components/autoGradient.dart';
+import 'package:mclauncher4/src/widgets/components/gradiantText.dart';
 import 'package:mclauncher4/src/widgets/loginCardSupabase.dart';
 
 class pixieLoginScreen extends StatefulWidget {

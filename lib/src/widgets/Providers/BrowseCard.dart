@@ -7,25 +7,26 @@ import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
-import 'package:mclauncher4/src/widgets/SvgButton.dart';
+import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
+import 'package:mclauncher4/src/widgets/Buttons/downloadButton.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class BrowseCard extends StatefulWidget {
   Map modpacklist;
-  final double progress;
   final VoidCallback onDownload;
   final VoidCallback onCancel;
   final VoidCallback onOpen;
-  final MainState mainSate;
+  final MainState mainState;
   final double mainprogress;
   final installState;
+    final double progress;
 
   BrowseCard({
     Key? key,
     required this.mainprogress,
     required this.modpacklist,
     required this.progress,
-    required this.mainSate,
+    required this.mainState,
     required this.installState,
     required this.onDownload,
     required this.onCancel,
@@ -37,71 +38,7 @@ class BrowseCard extends StatefulWidget {
 }
 
 class _BrowseCardState extends State<BrowseCard> {
-  late bool _isDownloading;
-  late bool _isFetching;
-  late double downloadProgress;
 
-  void _onPressed() {
-    if (_isDownloading) widget.onCancel();
-    if (_isFetching) widget.onCancel();
-    if (widget.mainSate == MainState.running) widget.onCancel();
-    if (widget.mainSate == MainState.installed) widget.onOpen();
-    if (widget.mainSate == MainState.notinstalled) widget.onDownload();
-  }
-
-  Widget getButton() {
-    _isDownloading = widget.mainSate == MainState.downloadingMinecraft ||
-        widget.mainSate == MainState.downloadingML ||
-        widget.mainSate == MainState.downloadingMods;
-    _isFetching = false;
-    downloadProgress = widget.mainprogress;
-    return SizedBox(
-      height: 22,
-      width: 22,
-      child: Stack(
-        children: [
-          Center(child:
-          AnimatedOpacity(
-              duration: Duration(milliseconds: 200),
-               curve: Curves.easeOut,
-              opacity: _isDownloading || _isFetching ? 0.0 : 1.0,
-              child: SvgButton.asset('assets\\svg\\download-icon.svg',
-                  onpressed: _onPressed)),),
-          Positioned.fill(
-            child: AnimatedOpacity(
-              duration: Duration(milliseconds: 300),
-              opacity: _isDownloading || _isFetching ? 1.0 : 0.0,
-              curve: Curves.easeOut,
-              child: GestureDetector(
-                onTap: _onPressed,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    ProgressIndicatorWidget(
-                      downloadProgress: downloadProgress,
-                      isDownloading: _isDownloading,
-                      isFetching: _isFetching,
-                    ),
-                    if (_isDownloading)
-                      Padding(
-                        padding: EdgeInsets.only(
-                          right: 0.5,
-                        ),
-                        child: Icon(
-                          Icons.stop,
-                          size: 12,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      )
-                  ],
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +98,7 @@ class _BrowseCardState extends State<BrowseCard> {
                       style: Theme.of(context).typography.black.bodyMedium,
                     ),
                     Text(
-                        'MainState: ${widget.mainSate}, progress: ${widget.progress}')
+                        'MainState: ${widget.mainState}, progress: ${widget.progress}')
                   ],
                 )),
                 Align(
@@ -178,7 +115,7 @@ class _BrowseCardState extends State<BrowseCard> {
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              getButton(),
+                              DownloadButton(mainState: widget.mainState, mainprogress: widget.mainprogress, onOpen: widget.onOpen, onCancel: widget.onCancel, onDownload: widget.onDownload),
                               SvgButton.asset('assets\\svg\\network-icon.svg',
                                   onpressed: () {})
                             ]),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/debugpage.dart';
 import 'package:mclauncher4/src/pages/modListPage.dart';
 import 'package:mclauncher4/src/pages/settings_page/settingsPage.dart';
@@ -36,7 +37,8 @@ class McLauncher extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes), scrollbarTheme: ScrollbarThemeData()),
+      theme: ThemeData(
+          useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes), scrollbarTheme: ScrollbarThemeData()),
       darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
       themeMode: ThemeMode.dark,
       home: MainPage(),
@@ -66,8 +68,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
-
   int pageIndex = 0;
   int pageIndex_old = 0;
   EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
@@ -86,11 +86,18 @@ class _MainPageState extends State<MainPage> {
     UserPage()
   ];
 
-
-  OverlayEntry _overlayEntryBuilder() { 
-    return OverlayEntry(builder: (context) {
-        return Align(alignment: Alignment.center, child: Container(height: 30, width: 30, color: Colors.green,));
-    },);
+  OverlayEntry _overlayEntryBuilder() {
+    return OverlayEntry(
+      builder: (context) {
+        return Align(
+            alignment: Alignment.center,
+            child: Container(
+              height: 30,
+              width: 30,
+              color: Colors.green,
+            ));
+      },
+    );
   }
 
   @override
@@ -113,6 +120,7 @@ class _MainPageState extends State<MainPage> {
           //   context,
           //   MaterialPageRoute(builder: (context) => const pixieLoginScreen()),
           // );
+          print((await MinecraftAccountUtils().getStandard())!.username);
         }),
         body: Stack(children: [
           Row(

@@ -2,30 +2,46 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:localstorage/localstorage.dart';
+import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 
 class Microsoft {
-  final storage = new LocalStorage('auth_data.json');
   Future<Map> authenticate() async {
-
-  
-
     String msaToken = await launchMSA();
-    String authTokenMicrosoft = await microsoftSignIn(msaToken);
-    Map authTokenXboxLive = await xboxSignIn(authTokenMicrosoft);
+    Map authResponseMicrosoft = await microsoftSignIn(msaToken, false);
+    print(authResponseMicrosoft.toString());
+    Map authTokenXboxLive = await xboxSignIn(authResponseMicrosoft["access_token"]);
     String authXSTSToken = await XSTSToken(authTokenXboxLive);
     Map minecraftUserToken = await minecraftBearerToken(authXSTSToken, authTokenXboxLive["uhs"]);
+    Map userDetail = await minecraftUserDetails(minecraftUserToken["access_token"]);
     return {
-      "access_token": "",
+      "refreshToken": authResponseMicrosoft["refreshToken"],
+      "uuid": userDetail["id"],
+      "username": userDetail["name"],
       "xbox_username": "",
+    };
+  }
+
+  Future<Map> reAuthenticate(MinecraftAccount account) async {
+    Map authResponseMicrosoft = await microsoftSignIn(account.refreshToken, true);
+    Map authTokenXboxLive = await xboxSignIn(authResponseMicrosoft["access_token"]);
+    String authXSTSToken = await XSTSToken(authTokenXboxLive);
+    Map minecraftUserToken = await minecraftBearerToken(authXSTSToken, authTokenXboxLive["uhs"]);
+    Map userDetail = await minecraftUserDetails(minecraftUserToken["access_token"]);
+    return {
+      "authToken": minecraftUserToken["access_token"],
+      "refreshToken": authTokenXboxLive["refreshToken"],
+      "uuid": userDetail["id"],
+      "username": userDetail["name"],
+      "xbox_username": ""
     };
   }
 
   Future<String> launchMSA() async {
     var result = await Process.run("rundll32", [
       'url.dll,FileProtocolHandler',
-      'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED'
+      'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
     ]);
     String token = "";
     var server = await HttpServer.bind(InternetAddress.anyIPv6, 25458, shared: true);
@@ -42,25 +58,33 @@ class Microsoft {
     return token;
   }
 
-  Future<String> microsoftSignIn(msaToken) async {
-    await http.get(Uri.parse("https://1.1.1.1"));
-
+  Future<Map> microsoftSignIn(token, bool isReauth) async {
     Uri uri = Uri.parse('https://login.live.com/oauth20_token.srf');
     print(uri);
     String clientId = "91f49b7b-7e40-461f-9eb0-2389c32c0cd6";
     String clientSecret = "-.O8Q~BCSm2qhiKjPkN9oHbTT6q2ZzD1Kj8V9ax.";
 
-    http.Response firstAuthResponse = await http.post(
-      uri,
-      headers: {'Content-Type': "application/x-www-form-urlencoded"},
-      body: "client_id=$clientId&client_secret=$clientSecret&code=$msaToken&grant_type=authorization_code&redirect_uri=http://localhost:25458",
-    );
-    Map rsp = jsonDecode(firstAuthResponse.body);
-    if (firstAuthResponse.statusCode == 200) {
-      storage.setItem("microsoftRefreshToken", rsp["refresh_token"]);
+    if (!isReauth) {
+      http.Response firstAuthResponse = await http.post(
+        uri,
+        headers: {'Content-Type': "application/x-www-form-urlencoded"},
+        body: "client_id=$clientId&client_secret=$clientSecret&code=$token&grant_type=authorization_code&redirect_uri=http://localhost:25458",
+      );
+      Map rsp = jsonDecode(firstAuthResponse.body);
+
+      return {"access_token": rsp["access_token"], "refreshToken": rsp["refresh_token"]};
+    } else if (isReauth) {
+      http.Response firstAuthResponse = await http.post(
+        uri,
+        headers: {'Content-Type': "application/x-www-form-urlencoded"},
+        body: "client_id=$clientId&client_secret=$clientSecret&refresh_token=$token&grant_type=refresh_token&redirect_uri=http://localhost:25458",
+      );
+      print(firstAuthResponse.reasonPhrase);
+      Map rsp = jsonDecode(firstAuthResponse.body);
+
+      return {"access_token": rsp["access_token"], "refreshToken": rsp["refresh_token"]};
     }
-    print(storage.getItem("microsoftRefreshToken"));
-    return rsp["access_token"];
+    return {"access_token": "", "refreshToken": ""};
   }
 
   Future<Map> xboxSignIn(authTokenMicrosoft) async {
@@ -127,6 +151,21 @@ class Microsoft {
     print(firstAuthResponse.statusCode);
     //Map rsp = jsonDecode(firstAuthResponse.body);
 
-    return {};
+    return jsonDecode(firstAuthResponse.body);
+  }
+
+  Future<Map> minecraftUserDetails(minecraftAuthToken) async {
+    Uri uri = Uri.parse('https://api.minecraftservices.com/minecraft/profile');
+    print(uri);
+    print('Bearer $minecraftAuthToken');
+    http.Response firstAuthResponse = await http.get(
+      uri,
+      headers: {"Authorization": 'Bearer $minecraftAuthToken'},
+    );
+    print(firstAuthResponse.body);
+    print(firstAuthResponse.statusCode);
+    //Map rsp = jsonDecode(firstAuthResponse.body);
+
+    return jsonDecode(firstAuthResponse.body);
   }
 }

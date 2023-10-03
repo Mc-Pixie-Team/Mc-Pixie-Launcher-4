@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mclauncher4/src/pages/user_page/sidePanelWidget.dart';
+import 'package:mclauncher4/src/pages/user_page/subPages/userAndMSPage.dart';
 import 'package:mclauncher4/src/pages/user_page/textFieldWithEnter.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 import 'package:mclauncher4/src/tasks/discordStatus/discordRP.dart';
@@ -116,7 +117,7 @@ class _UserPageState extends State<UserPage> {
                                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                   },
                                   child: Text(
-                                    hasUsername ? supabase.auth.currentUser?.userMetadata!["name"] : "you don't have a username!",
+                                    hasUsername ? supabase.auth.currentUser?.userMetadata!["name"] : "no username!",
                                     style: Theme.of(context).typography.black.headlineLarge,
                                   ),
                                 ),
@@ -159,28 +160,33 @@ class _UserPageState extends State<UserPage> {
                     "Subscriptions & Servers"
                   ], functions: [
                     () {
-                      SidePanel().pop(SidePanel().currentWidget!, 550);
-                    },
-                    () {
-                      DiscordRP().update(RitchPresence(
-                          details: "Idaling...",
-                          state: "",
-                          type: RitchPresenceType(
-                            RitchPresenceType.listening,
-                          ),
-                          assets: RitchPresenceAssets(LargeImage: "https://thispersondoesnotexist.com/", LargeText: "ancientxfire"),
-                          timestamps: RitchPresenceTimestamp(Start: DateTime.now().millisecondsSinceEpoch)));
-                    },
-                    () {
-                      DiscordRP().clear();
-                    },
-                    () {
-                      DiscordRP().terminate();
+                      SidePanel().pop(UserAndMSPage(), 550);
                     },
                     () {
                       SidePanel().pop(
                           Container(
-                            decoration: BoxDecoration(color: const Color.fromARGB(255, 230, 255, 64), borderRadius: BorderRadius.circular(18)),
+                            color: Colors.teal,
+                          ),
+                          550);
+                    },
+                    () {
+                      SidePanel().pop(
+                          Container(
+                            color: Colors.teal,
+                          ),
+                          550);
+                    },
+                    () {
+                      SidePanel().pop(
+                          Container(
+                            color: Colors.teal,
+                          ),
+                          550);
+                    },
+                    () {
+                      SidePanel().pop(
+                          Container(
+                            color: Colors.teal,
                           ),
                           550);
                     },

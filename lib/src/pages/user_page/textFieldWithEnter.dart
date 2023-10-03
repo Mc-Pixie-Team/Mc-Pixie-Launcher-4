@@ -16,7 +16,7 @@ class TextFieldWithEnter extends StatefulWidget {
 class _TextFieldWithEnterState extends State<TextFieldWithEnter> {
   late FocusNode _focusNode;
   late final TextEditingController _textController;
-
+  late String setValue = widget.presetValue;
   @override
   void initState() {
     bool _focusEventOverride = false;
@@ -28,6 +28,7 @@ class _TextFieldWithEnterState extends State<TextFieldWithEnter> {
             widget.maxLenght >= _textController.text.length &&
             widget.minLenght <= _textController.text.length) {
           _focusEventOverride = true;
+          setValue = _textController.text;
           Function.apply(widget.onSubmit, []);
         } else if (event.logicalKey.debugName == "Enter") {
           Function.apply(widget.onError, []);
@@ -39,12 +40,14 @@ class _TextFieldWithEnterState extends State<TextFieldWithEnter> {
     );
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus && _focusEventOverride == false) {
-        if (widget.maxLenght >= _textController.text.length && widget.minLenght <= _textController.text.length) {
+        /* if (widget.maxLenght >= _textController.text.length && widget.minLenght <= _textController.text.length) {
           _focusEventOverride = true;
           Function.apply(widget.onSubmit, []);
         } else {
           Function.apply(widget.onError, []);
-        }
+        } */
+        _textController.text = setValue;
+        _focusEventOverride = true;
       }
       if (_focusNode.hasFocus && _focusEventOverride == true) {
         _focusEventOverride = false;

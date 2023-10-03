@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mclauncher4/src/pages/installedModpacks.dart';
+import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/Carousel/Carousel.dart';
 import 'package:mclauncher4/src/widgets/InstalledCard.dart';
+import 'package:mclauncher4/src/widgets/Providers/BrowseCard.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -30,8 +33,19 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
+  bool get isEmpty => Modpacks.globalinstallContollers.value.length < 1;
 
- bool get isEmpty =>  Modpacks.globalinstallContollers.value.length < 1;
+
+bool checkforDouble(Widget widget){
+  
+                        for(Widget tempWidgets in Modpacks.globalinstallContollers.value){
+                          if(widget.key == tempWidgets.key){
+                            return false;
+                          }
+
+                        }
+                        return true;
+ }
 
   @override
   Widget build(BuildContext context) {
@@ -45,66 +59,109 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Stack(alignment: Alignment.center, children: [
           Positioned.fill(
-              child: DynMouseScroll(
-                  animationCurve: Curves.easeOutExpo,
-                  scrollSpeed: 1.0,
-                  durationMS: 650,
-                  builder: (context, _scrollController, physics) =>
-                      SingleChildScrollView(
-                          physics: physics,
-                          controller: _scrollController,
-                          child: SizedBox(
-                            width: 800,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: isEmpty ? 100 : 71,
-                                ),
-                                Carousel(items: items),
-                                ValueListenableBuilder(
-                                    valueListenable:
-                                        Modpacks.globalinstallContollers,
-                                    builder: (context, value, child) =>
-                                      isEmpty ?
-                                     Padding(padding: EdgeInsets.only(top: 200), child: Center(child: Text('Nothing found :(', style: Theme.of(context).typography.black.bodyLarge,)),) :
-                                     Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 40, top: 30),
-                                                child: Text(
-                                                  'Installed :',
-                                                  style: Theme.of(context)
-                                                      .typography
-                                                      .black
-                                                      .headlineSmall,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Padding(
-                                                  padding: EdgeInsets.all(38),
-                                                  child: Align(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Wrap(
-                                                          key: GlobalKey(),
-                                                          alignment:
-                                                              WrapAlignment
-                                                                  .start,
-                                                          spacing:
-                                                              40.0, // gap between adjacent chips
-                                                          runSpacing: 60.0,
-                                                          children: value)))
-                                            ]))
-                              ],
-                            ),
-                          )))),
+            child: FutureBuilder(
+                future: Modpacks.getPacksformManifest(),
+                builder: (context, snapshot) {
+                   
+                  if (snapshot.hasData) {
+                    
+               
+                      for (Widget widget in snapshot.data!){
+
+                       if(checkforDouble(widget)) {
+                        print(widget.toString() + ' is allowed');
+                        Modpacks.globalinstallContollers.value.add(widget);
+                       }
+                      
+                     }
+                 
+                    return DynMouseScroll(
+                        animationCurve: Curves.easeOutExpo,
+                        scrollSpeed: 1.0,
+                        durationMS: 650,
+                        builder: (context, _scrollController, physics) =>
+                            SingleChildScrollView(
+                                physics: physics,
+                                controller: _scrollController,
+                                child: SizedBox(
+                                  width: 800,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height: isEmpty ? 100 : 71,
+                                      ),
+                                      Carousel(items: items),
+                                      ValueListenableBuilder(
+                                          valueListenable:
+                                              Modpacks.globalinstallContollers,
+                                          builder: (context, value, child) =>
+                                              isEmpty
+                                                  ? Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 200),
+                                                      child: Center(
+                                                          child: Text(
+                                                        'Nothing found :(',
+                                                        style: Theme.of(context)
+                                                            .typography
+                                                            .black
+                                                            .bodyLarge,
+                                                      )),
+                                                    )
+                                                  : Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 40,
+                                                                    top: 30),
+                                                            child: Text(
+                                                              'Installed :',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .typography
+                                                                  .black
+                                                                  .headlineSmall,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 15,
+                                                          ),
+                                                          Padding(
+                                                              padding:
+                                                                  EdgeInsets.all(
+                                                                      38),
+                                                              child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  child: Wrap(
+                                                                      key:
+                                                                          GlobalKey(),
+                                                                      alignment:
+                                                                          WrapAlignment
+                                                                              .start,
+                                                                      spacing:
+                                                                          40.0, // gap between adjacent chips
+                                                                      runSpacing:
+                                                                          60.0,
+                                                                      children:
+                                                                          value)))
+                                                        ]))
+                                    ],
+                                  ),
+                                )));
+                  } else {
+                    return Container();
+                  }
+                }),
+          ),
           Positioned.fill(
               child: Align(
                   alignment: Alignment.topLeft,
@@ -153,11 +210,13 @@ class _HomePageState extends State<HomePage> {
                                     shape: BoxShape.circle,
                                     color:
                                         Theme.of(context).colorScheme.surface),
-                                child: FadeInImage.memoryNetwork(
+                                child: GestureDetector(
+                                  onTap: () => Microsoft().authenticate(),
+                                  child: FadeInImage.memoryNetwork(
                                     placeholder: kTransparentImage,
                                     image:
                                         'https://lh3.googleusercontent.com/a/ACg8ocLlOn3NroVB-AMQehydBqWLd8IaWRozFcPEm2_lcw3fkw=s288-c-no'),
-                              ),
+                              )),
                               SizedBox(
                                 width: 15,
                               )

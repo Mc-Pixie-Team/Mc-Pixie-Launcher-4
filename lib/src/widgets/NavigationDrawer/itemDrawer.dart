@@ -11,15 +11,18 @@ class ItemDrawer extends StatefulWidget {
   double height;
   double width;
   String title;
+  int offset;
   List<ItemDrawerItem> children;
   Function(int index) onChange;
 
   ItemDrawer(
       {Key? key,
       required this.onChange,
+      this.offset = 0,
       this.title = '',
       this.height = 227,
       this.width = 170,
+
       required this.children})
       : super(key: key);
 
@@ -30,6 +33,15 @@ class ItemDrawer extends StatefulWidget {
 class _ItemDrawerState extends State<ItemDrawer> with TickerProviderStateMixin {
   int index = 0;
   late List listcontrollers;
+
+
+  @override
+  void initState() {
+   
+    super.initState();
+  this.index = widget.offset;
+
+  }
 
   void onSelectedIndex(int index) {
       widget.onChange.call(index);
@@ -140,10 +152,11 @@ class _ItemDrawerItemState extends State<ItemDrawerItem> {
                   end: Color.fromARGB(8, 255, 255, 255))
               .animate(widget.animation as Animation<double>)
               .value),
-      child: Center(
+      
         child: Align(
             alignment: Alignment.centerLeft,
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -168,7 +181,7 @@ class _ItemDrawerItemState extends State<ItemDrawerItem> {
                 ),
               ],
             )),
-      ),
+      
     );
   }
 }

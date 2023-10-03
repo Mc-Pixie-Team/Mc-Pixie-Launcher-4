@@ -59,7 +59,14 @@ class TaskwidgetItem extends StatefulWidget {
 class _TaskwidgetItemState extends State<TaskwidgetItem> {
 
 
-  String titleText = "Installing";
+ 
+
+
+  String get titleText {
+
+    if(widget.mainState == MainState.running) return "Running";
+    return "Installing";
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
@@ -14,7 +16,7 @@ class Modloader with ChangeNotifier{
       [additional]) {
     throw 'dont call this method, the Modloader class is just an example class ';
   }
-    Future<dynamic> run(String instanceName, Version version,
+    Future<Process> run(String instanceName, Version version,
       ModloaderVersion modloaderVersion) {
     throw 'dont call this method, the Modloader class is just an example class';
   }

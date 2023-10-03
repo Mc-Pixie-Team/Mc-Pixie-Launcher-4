@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
@@ -21,13 +22,19 @@ import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
 import 'package:uuid/uuid.dart';
 
 class InstallController with ChangeNotifier {
-  Modloader? _modloader;
-  MainState _mainState = MainState.notinstalled;
-  ChangeNotifier _notifierforTask = ChangeNotifier();
 
+  InstallController([processid, MainState? mainstate]) {
+    _mainState = mainstate ?? MainState.notinstalled;
+    _processId = processid ?? Uuid().v1();
+  }
+
+  Modloader? _modloader;
+  late MainState _mainState;
+  ChangeNotifier _notifierforTask = ChangeNotifier();
+  Process? result;
   double _progress = 0.0;
   double _mainprogress = 0.0;
-  final String _processId = Uuid().v1();
+  late String _processId;
   var _installState;
   late SendPort sendPort;
 
@@ -42,8 +49,8 @@ class InstallController with ChangeNotifier {
         AnimatedBuilder(
             animation: _notifierforTask,
             builder: (context, child) => TaskwidgetItem(
-                cancel: cancel,
-                 mainState: mainState,
+                  cancel: cancel,
+                  mainState: mainState,
                   installState: installState,
                   mainprogress: mainprogress,
                   progress: progress,
@@ -60,18 +67,25 @@ class InstallController with ChangeNotifier {
     notifyListeners();
   }
 
-
   void cancel() async {
+    if (result != null) {
+      print('trying to kill process =============>');
+      result!.stdin.writeln("/stop");
+      print(result!.kill());
+      result!.exitCode.then((value) {
+        removeTaskWidget();
+        _mainState = MainState.installed;
+      });
+    } else {
+      print('process cannot be killed');
+    }
     sendPort.send(IsolateBreaker());
-    Modpacks.globalinstallContollers.removeLast();
+    Modpacks.globalinstallContollers.removeKeyFromAnimatedBuilder(_processId);
     if (await Directory('${await getInstancePath()}\\$processId').exists()) {
       try {
         await Directory('${await getInstancePath()}\\$processId')
-          .delete(recursive: true);
-      }catch (e) {
-        
-      }
-      
+            .delete(recursive: true);
+      } catch (e) {}
     }
 
     _mainState = MainState.notinstalled;
@@ -79,6 +93,7 @@ class InstallController with ChangeNotifier {
   }
 
   start(Api _handler, Map modpackVersion) async {
+    setTaskWidget();
     String mloaderS = modpackVersion["loaders"].first;
     if (mloaderS == "forge") {
       _modloader = Forge();
@@ -93,7 +108,10 @@ class InstallController with ChangeNotifier {
     ModloaderVersion modloaderVersion = versions["modloader"];
     _mainState = MainState.running;
     _callnotifiers();
-    _modloader!.run(_processId, version, modloaderVersion);
+    Process _result =
+        await _modloader!.run(_processId, version, modloaderVersion);
+
+    this.result = _result;
   }
 
   void install(Api _handler, Map _modpackData) async {
@@ -101,8 +119,7 @@ class InstallController with ChangeNotifier {
     _mainState = MainState.downloadingML;
     _callnotifiers();
 
-
-        Map modpackproject = await _handler.getModpack(_modpackData["project_id"]);
+    Map modpackproject = await _handler.getModpack(_modpackData["project_id"]);
     Map modpackVersion = await _handler
         .getModpackVersion((modpackproject["versions"] as List).last);
 
@@ -133,8 +150,23 @@ class InstallController with ChangeNotifier {
       }
     });
 
-    exitPort.listen((message) {
+    exitPort.listen((message) async {
+      receivePort.close();
       removeTaskWidget();
+
+      if (_mainState == MainState.installed) {
+        List mainfest = jsonDecode(
+            File('${await getInstancePath()}\\manifest.json')
+                .readAsStringSync());
+        mainfest.add(  {
+          "name": await _handler.getModpackName(_modpackData),
+          "provider": _handler.getidname,
+          "processId": _processId,
+          "providerArgs": modpackVersion
+        });
+        await File('${await getInstancePath()}\\manifest.json')
+            .writeAsString(jsonEncode(mainfest));
+      }
     });
   }
 }
@@ -160,6 +192,7 @@ class Installer {
       receivePort.listen((message) {
         if (message is IsolateBreaker) {
           print('suicide Isolate: ${message.getmessage}');
+
           Isolate.exit();
         }
       });
@@ -186,8 +219,6 @@ class Installer {
   }
 
   install(Api _handler, Map modpackData, String _processId) async {
-
-
     var downloader = _handler.getDownloaderObject();
     String mloaderS = modpackData["loaders"].first;
     Version version = Version.parse(modpackData["game_versions"].first);
@@ -226,7 +257,7 @@ class Installer {
 
     await downloader.downloadModpack(modpackData, _processId);
     Map versions =
-        await ModrinthApi().getMMLVersion(modpackData, _processId, mloaderS);
+        await _handler.getMMLVersion(modpackData, _processId, mloaderS);
 
     version = versions["version"];
     ModloaderVersion modloaderVersion = versions["modloader"];

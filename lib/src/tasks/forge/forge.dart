@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/java/java.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
 import '../modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/forge/processor.dart';
@@ -48,7 +49,7 @@ class Forge with ChangeNotifier implements Modloader{
 
   String os = "windows";
   @override
-  run(String instanceName, Version version,
+Future<Process> run(String instanceName, Version version,
       ModloaderVersion ModloaderVersion) async {
     Map vanillaVersionJson = (jsonDecode(
         await File("${await getworkpath()}\\versions\\$version\\$version.json")
@@ -79,7 +80,7 @@ class Forge with ChangeNotifier implements Modloader{
       }
     }
 
-    String launchcommand = await Minecraft().getlaunchCommand(
+   List<String> launchcommand = await Minecraft().getlaunchCommand(
       instanceName,
       vanillaVersionJson,
       os,
@@ -88,18 +89,18 @@ class Forge with ChangeNotifier implements Modloader{
     );
 
     print(launchcommand);
-    var tempFile = File(
-        "${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command.ps1");
-    await tempFile.create(recursive: true);
-    await tempFile.writeAsString(launchcommand);
+    // var tempFile = File(
+    //     "${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command.ps1");
+    // await tempFile.create(recursive: true);
+    // await tempFile.writeAsString(launchcommand);
 
     var result = await Process.start(
-        "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
-        runInShell: true,
+        Java.getJavaJdk(version), launchcommand,
         workingDirectory: '${await getInstancePath()}\\$instanceName');
 
     stdout.addStream(result.stdout);
     stderr.addStream(result.stderr);
+    return result;
   }
   @override
   install(Version version, ModloaderVersion modloaderVersion,

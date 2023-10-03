@@ -4,12 +4,17 @@ import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/components/sizeTransitionCustom.dart';
 
 class Dropdownmenu extends StatefulWidget {
-  final Function(String text)? onchange;
+  final Function(String text, String oldtext)? onchange;
+  final Function(String text)? onremove;
   bool useOverlay;
-
+  bool isRemovalIcon;
+  Widget? child;
   List? registry;
   Dropdownmenu(
       {Key? key,
+      this.child,
+      this.onremove,
+      this.isRemovalIcon = false,
       this.useOverlay = true,
       this.onchange,
       this.registry})
@@ -35,7 +40,8 @@ class _DropdownmenuState extends State<Dropdownmenu>
   bool iscompleted = false;
   bool isanimating = false;
   bool secmenu = false;
-
+  String elementname = "";
+  String elementnameOld = "";
   @override
   void initState() {
     overlayEntry = null;
@@ -116,6 +122,18 @@ class _DropdownmenuState extends State<Dropdownmenu>
     }
   }
 
+  void setElement(String element) {
+    this.elementnameOld = this.elementname;
+    this.elementname = element;
+    widget.onchange!.call(element, this.elementnameOld);
+
+    _textController.text = element;
+  }
+
+  void removeElement() {
+    widget.onremove!.call(this.elementname);
+  }
+
   Widget _getDropDownWidget() {
     if (this.box != null) {
       Offset position =
@@ -146,16 +164,19 @@ class _DropdownmenuState extends State<Dropdownmenu>
                       child: ListView.builder(
                           itemCount: widget.registry!.length,
                           itemBuilder: (context, index) {
-                            return InkWell(onTap: () => widget.onchange!.call(widget.registry![index]["version"]), child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 14, left: 16, bottom: 5),
-                                child: Text(
-                                  widget.registry![index]["version"],
-                                  style: Theme.of(context)
-                                      .typography
-                                      .black
-                                      .labelLarge,
-                                )));
+                            return InkWell(
+                                onTap: () =>
+                                    setElement(widget.registry![index]),
+                                child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 14, left: 16, bottom: 5),
+                                    child: Text(
+                                      widget.registry![index],
+                                      style: Theme.of(context)
+                                          .typography
+                                          .black
+                                          .labelLarge,
+                                    )));
                           }))),
             ));
   }
@@ -242,6 +263,7 @@ class _DropdownmenuState extends State<Dropdownmenu>
                                   height: 25,
                                   width: 135,
                                   child: EditableText(
+                                    readOnly: true,
                                     selectionColor: Theme.of(context)
                                         .colorScheme
                                         .primary
@@ -266,10 +288,25 @@ class _DropdownmenuState extends State<Dropdownmenu>
                           Expanded(
                             child: Container(),
                           ),
-                          SvgPicture.asset(
-                            'assets\\svg\\filter-icon.svg',
-                            color: Theme.of(context).textTheme.bodySmall!.color,
-                          ),
+                          widget.isRemovalIcon
+                              ? GestureDetector(
+                                  onTap: () => removeElement(),
+                                  child: widget.child ??
+                                      SvgPicture.asset(
+                                        'assets\\svg\\filter-icon.svg',
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .color,
+                                      ))
+                              : widget.child ??
+                                  SvgPicture.asset(
+                                    'assets\\svg\\filter-icon.svg',
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .color,
+                                  ),
                           SizedBox(
                             width: 16,
                           ),

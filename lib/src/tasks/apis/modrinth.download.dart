@@ -27,9 +27,11 @@ class ModrinthApiDownloader with ChangeNotifier{
     downloadModpack(Map modpackVersion, String instanceName) async {
     _state = Modinstall.downloadingMod;
     notifyListeners();
-    print('trying to download');
+
     int _total = modpackVersion["dependencies"].length + 1;
     int _received = 0;
+
+
     await _downloadFiles(modpackVersion["files"], instanceName);
     _received++;
     
@@ -51,10 +53,12 @@ class ModrinthApiDownloader with ChangeNotifier{
   }
 
   _downloadFiles(List files, String instanceName) async {
+    
     for (var file in files) {
+     
       // print(file["url"]);
 
-      if (!(file["primary"])) continue;
+    
       int total = file["size"];
       int received = 0;
 
@@ -67,18 +71,19 @@ class ModrinthApiDownloader with ChangeNotifier{
         received += value.length;
       }).asFuture();
 
-      print((received / total) * 100);
-
+     
       String filepath = '${await getTempCommandPath()}\\$instanceName';
       String destination = '${await getInstancePath()}\\$instanceName';
-
+     
       if (file["filename"].split('.').last == 'mrpack') {
+    
         await Utils.extractZip(_bytes, filepath);
         await Utils.copyDirectory(
             Directory(filepath + '\\overrides'), Directory(destination));
         await File(destination + '\\modrinth.index.json').writeAsBytes(
             await File(filepath + '\\modrinth.index.json').readAsBytes());
       } else if (file["url"].split('.').last == 'jar') {
+          if (!(file["primary"])) continue;
         String filepath2 = destination + '\\mods\\${file["filename"]}';
         String parentDirectory = path.dirname(filepath2);
 

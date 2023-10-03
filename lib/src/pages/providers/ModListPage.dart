@@ -1,32 +1,19 @@
 // ignore_for_file: sort_child_properties_last
 
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart' as apple;
 import 'package:mclauncher4/src/getApiHandler.dart';
 import 'package:mclauncher4/src/pages/installedModpacks.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/downloadState.dart';
-import 'package:mclauncher4/src/tasks/forge/forge.dart';
-import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/installController.dart';
-import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/widgets/Buttons/circularButton.dart';
 import 'package:mclauncher4/src/widgets/InstalledCard.dart';
 import 'package:mclauncher4/src/widgets/Providers/BrowseCard.dart';
-import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
-import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/components/slideInAnimation.dart';
 import 'package:mclauncher4/src/widgets/Providers/dropdownmenu.dart';
-import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
 import 'package:mclauncher4/src/widgets/searchbar.dart' as Searchbar;
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as Divider;
-import 'package:mclauncher4/src/theme/scrollphysics.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
-import 'package:transparent_image/transparent_image.dart';
 
 class ModListPage extends StatefulWidget {
   const ModListPage({Key? key}) : super(key: key);
@@ -37,7 +24,8 @@ class ModListPage extends StatefulWidget {
 
 class _ModListPageState extends State<ModListPage> {
   late ScrollController _scrollController;
-
+  ScrollController _secondController = ScrollController();
+  late Widget addButton;
   GlobalKey key = new GlobalKey();
   List installContollers = [];
   List modpacklist = [];
@@ -52,6 +40,7 @@ class _ModListPageState extends State<ModListPage> {
 
   bool iscalled = false;
   String querytext = "";
+  List filterStrings = [];
   getMoreData() async {
     if (iscalled) return;
     iscalled = true;
@@ -64,8 +53,64 @@ class _ModListPageState extends State<ModListPage> {
     iscalled = false;
   }
 
+  void removeAtIndex(int index) {
+
+    setState(() {
+      filters.removeAt(
+        index,
+      );
+      filters.insert(index, SizedBox());
+    });
+  }
+
   @override
   void initState() {
+    addButton = CircularButton(
+      child: Icon(
+        Icons.add,
+        color: Colors.grey,
+      ),
+      height: 40,
+      width: 40,
+      onClick: () {
+  
+        int index = filters.length - 1;
+
+        setState(() {
+          filters.insert(
+            index,
+            Padding(
+                padding: EdgeInsets.only(left: 5, right: 10),
+                child: Dropdownmenu(
+                  isRemovalIcon: true,
+                  child: SvgPicture.asset(
+                    'assets\\svg\\cancel-icon.svg',
+                    color: Theme.of(context).textTheme.bodySmall!.color,
+                  ),
+                  onremove: (text) {
+                    key = new GlobalKey();
+                    modpacklist = [];
+                    _handler.removeCategory(text);
+                    removeAtIndex(index);
+                  },
+                  useOverlay: false,
+                  registry: filterStrings,
+                  onchange: (text, oldtext) {
+                    key = new GlobalKey();
+
+                    _handler.addCategory(text, oldtext);
+                    setState(() {
+                      modpacklist = [];
+                    });
+                  },
+                )),
+          );
+        });
+      },
+    );
+
+    filters.insert(0, addButton);
+
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       _scrollController.addListener(() async {
         if (_scrollController.position.pixels >=
@@ -77,6 +122,8 @@ class _ModListPageState extends State<ModListPage> {
 
     super.initState();
   }
+
+  List<Widget> filters = [];
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +164,8 @@ class _ModListPageState extends State<ModListPage> {
               ),
               Expanded(
                   child: DynMouseScroll(
-                animationCurve: Curves.easeOutExpo,
-                scrollSpeed: 1.0,
+                animationCurve: Curves.easeOutQuart,
+                scrollSpeed: 1.2,
                 durationMS: 650,
                 builder: (context, controller, physics) {
                   _scrollController = controller;
@@ -127,10 +174,17 @@ class _ModListPageState extends State<ModListPage> {
                       future: modpacklistfuture,
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return Container();
+                          return Center(
+                            child: SizedBox(
+                              height: 50,
+                              width: 50,
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
                         }
 
                         if (snapshot.hasData) {
+                          print('rebuld in ModList');
                           if (modpacklist.length < 1) {
                             modpacklist = snapshot.data ?? [];
                             installContollers = List.generate(
@@ -139,6 +193,8 @@ class _ModListPageState extends State<ModListPage> {
                           }
 
                           return SlideInAnimation(
+                              curve: Curves.easeInOutQuart,
+                              duration: Duration(milliseconds: 750),
                               child: ListView.builder(
                                   physics: physics,
                                   controller: controller,
@@ -151,6 +207,8 @@ class _ModListPageState extends State<ModListPage> {
                                         key: Key(installcontroller.processId),
                                         animation: installcontroller,
                                         builder: (context, child) => BrowseCard(
+                                              processId:
+                                                  installcontroller.processId,
                                               mainprogress: installcontroller
                                                   .mainprogress,
                                               modpacklist: modpacklist[index],
@@ -174,6 +232,9 @@ class _ModListPageState extends State<ModListPage> {
                                                   animation: installcontroller,
                                                   builder: (context, child) =>
                                                       InstalledCard(
+                                                    processId: installcontroller
+                                                        .processId,
+                                                    name: modpackData["title"],
                                                     mainState: installcontroller
                                                         .mainState,
                                                     mainprogress:
@@ -226,51 +287,88 @@ class _ModListPageState extends State<ModListPage> {
               ))
             ],
           ),
-          Positioned(
-            top: 12,
-            right: 12,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FutureBuilder(
-                    future: mv,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Dropdownmenu(
-                          useOverlay: false,
-                          registry: snapshot.data,
-                          onchange: (text) {
-                            key = new GlobalKey();
+          Positioned.fill(
+              top: 12,
+              right: 12,
+              child: Container(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: FutureBuilder(
+                                future: _handler.getCategories(),
+                                builder: ((context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    filterStrings = snapshot.data!;
+                                    return SingleChildScrollView(
+                                        controller: _secondController,
+                                        reverse: true,
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: filters,
+                                        ));
+                                  } else {
+                                    return Container(
+                                      width: double.infinity,
+                                    );
+                                  }
+                                })))),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    FutureBuilder(
+                        future: mv,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return SizedBox(
+                                width: 235,
+                                child: Dropdownmenu(
+                                  useOverlay: false,
+                                  registry: snapshot.data,
+                                  onchange: (text, oldtext) {
+                                    key = new GlobalKey();
 
-                            setState(() {
-                              _handler.version = text;
-                              modpacklist = [];
-                            });
-                          },
-                        );
-                      }
-                      return Container();
-                    }),
-                SizedBox(
-                  width: 10,
+                                    _handler.searchMV(text);
+                                    setState(() {
+                                      
+                                      modpacklist = [];
+                                    });
+                                  },
+                                ));
+                          }
+                          return SizedBox(
+                            width: 235,
+                          );
+                        }),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Searchbar.Searchbar(
+                      onchange: (text) {
+                        querytext = text;
+                      },
+                      onsubmit: () {
+                        key = new GlobalKey();
+                        print('querytext: $querytext');
+                        setState(() {
+                          _handler.query = querytext;
+                          modpacklist = [];
+                        });
+                      },
+                    ),
+                  ],
                 ),
-                Searchbar.Searchbar(
-                  onchange: (text) {
-                    querytext = text;
-                  },
-                  onsubmit: () {
-                    key = new GlobalKey();
-                    print('querytext: $querytext');
-                    setState(() {
-                      _handler.query = querytext;
-                      modpacklist = [];
-                    });
-                  },
-                )
-              ],
-            ),
-          ),
+              )),
         ]));
   }
 }

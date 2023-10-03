@@ -24,9 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        Navigator.pop(context);
-      }),
+     
       body: Stack(children: [
         Container(
             height: double.infinity,
@@ -42,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GradientTextWidget(
-                      text: "Hello, ||mumslyer_2023_yt||?",
+                      text: "Hello, ||Fist Time||?",
                       gradient: LinearGradient(
                           //stops: [0, 1],
                           begin: Alignment.topLeft,
@@ -72,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen> {
                               height: 20,
                               color: Theme.of(context).colorScheme.outline,
                             )),
-                        Text("MC-Pixie inc ©", style: Theme.of(context).typography.black.bodyLarge),
+                        Text("MC-Pixie ©", style: Theme.of(context).typography.black.bodyLarge),
                         Padding(
                             padding: EdgeInsets.only(left: 10, right: 10),
                             child: Container(
@@ -85,14 +83,8 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ))
             ])),
-        SizedBox(
-          height: 35,
-          child: Align(
-              alignment: Alignment.topLeft,
-              child: Row(
-                children: [Expanded(child: MoveWindow()), WindowButtons()],
-              )),
-        )
+       
+        
       ]),
     );
   }

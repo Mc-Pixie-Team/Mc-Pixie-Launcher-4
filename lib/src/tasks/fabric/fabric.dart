@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/java/java.dart';
 import 'package:mclauncher4/src/tasks/minecraft/client.dart';
 import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
@@ -35,7 +36,7 @@ class Fabric with ChangeNotifier implements Modloader  {
     return "${await getworkpath()}\\versions\\fabric-loader-$modloaderVersion-$version\\fabric-loader-$modloaderVersion-$version.json";
   }
   @override
-  run(String instanceName, Version version,
+  Future<Process> run(String instanceName, Version version,
       ModloaderVersion modloaderVersion) async {
     Map vanillaVersionJson = (jsonDecode(
         await File("${await getworkpath()}\\versions\\$version\\$version.json")
@@ -62,7 +63,7 @@ class Fabric with ChangeNotifier implements Modloader  {
           .addAll(versionJson["arguments"]["game"]);
     }
 
-    String launchcommand = await Minecraft().getlaunchCommand(
+    List<String> launchcommand = await Minecraft().getlaunchCommand(
       instanceName,
       vanillaVersionJson,
       "windows",
@@ -71,18 +72,32 @@ class Fabric with ChangeNotifier implements Modloader  {
     );
 
     print(launchcommand);
-    var tempFile = File(
-        "${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command3.ps1");
-    await tempFile.create(recursive: true);
-    await tempFile.writeAsString(launchcommand);
+    // var tempFile = File(
+    //     "${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command3.ps1");
+    // await tempFile.create(recursive: true);
+    // await tempFile.
+    // writeAsString(launchcommand);
+
+
+  String exec = Java.getJavaJdk(version);
+      print(exec);
 
     var result = await Process.start(
-        "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
-        runInShell: true,
+        exec, launchcommand,
         workingDirectory: '${await getInstancePath()}\\$instanceName');
 
-    stdout.addStream(result.stdout);
-    stderr.addStream(result.stderr);
+     stdout.addStream(result.stdout);
+     stderr.addStream(result.stderr);
+
+     print(result.pid);
+
+
+    //  Future.delayed(Duration(seconds: 15)).then((value) {
+    //   print('trying to kill with pid');
+    //   Process.killPid(result.pid);
+    //  });
+
+    return result;
   }
   @override
   install(Version version, ModloaderVersion modloaderVersion, [additional]) async {

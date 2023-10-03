@@ -19,10 +19,11 @@ class BrowseCard extends StatefulWidget {
   final MainState mainState;
   final double mainprogress;
   final installState;
-    final double progress;
-
+  final double progress;
+  final String processId;
   BrowseCard({
     Key? key,
+    required this.processId,
     required this.mainprogress,
     required this.modpacklist,
     required this.progress,
@@ -32,6 +33,8 @@ class BrowseCard extends StatefulWidget {
     required this.onCancel,
     required this.onOpen,
   }) : super(key: key);
+
+  String get process_id => processId;
 
   @override
   _BrowseCardState createState() => _BrowseCardState();

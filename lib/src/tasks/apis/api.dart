@@ -9,6 +9,11 @@ class Api {
     throw "you cannot call api alone";
   }
 
+  get getidname => throw "";
+
+
+
+
   // getModpack() {
   //   // TODO: implement getModpack
   //   throw "you cannot call api alone";
@@ -18,15 +23,21 @@ class Api {
   //   // TODO: implement getModpack
   //   throw "you cannot call api alone";
   // }
-
+ void removeCategory(String name){}
    getMMLVersion(modpackVersion, String instanceName, String modloader){}
+   void addCategory(String name, String oldtext) {}
+     void searchMV(String version) {
 
+  }
   getMoreModpacks() {}
-  getAllMV() {}
+ Future<String> getModpackName(Map v) { throw "";}
+Future<List<String>> getAllMV() { throw "";}
   getModpackList() {}
   getModpack(String id){}
   getModpackVersion(String version){}
   getDownloaderObject() {
     throw '';
   }
+ Future<List<String>>  getCategories() {throw "";}
+
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/HomePage.dart';
 import 'package:mclauncher4/src/pages/debugpage.dart';
@@ -33,32 +34,39 @@ import 'widgets/divider.dart' as Div;
 import 'package:animations/animations.dart';
 import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
 
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
+}
+
 class McLauncher extends StatelessWidget {
   const McLauncher({super.key});
+
+  Future<String> get customWait async {
+    await Future.delayed(Duration(seconds: 10));
+    return "done!";
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes), scrollbarTheme: ScrollbarThemeData()),
-      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
-      themeMode: ThemeMode.dark,
-      home: MainPage(),
-    );
-  }
-}
-
-class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
-
-  @override
-  _AppState createState() => _AppState();
-}
-
-class _AppState extends State<App> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+        scrollBehavior: MyCustomScrollBehavior(),
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: lightColorScheme,
+            typography: Typography(black: blackTextSchemes),
+            scrollbarTheme: ScrollbarThemeData()),
+        darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: darkColorScheme,
+            typography: Typography(black: blackTextSchemes)),
+        themeMode: ThemeMode.dark,
+        home: MainPage());
   }
 }
 
@@ -70,19 +78,28 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int pageIndex = 0;
-  int pageIndex_old = 0;
-  EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
+
+
+  bool shouldSplashedDisplayed = true;
+  bool isSplashed = true;
+  int pageIndex = 1;
+  int pageIndex_old = 1;
+  EdgeInsets edgeInsets =
+      EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
   final List<Widget> _pages = [
+    HomePage(),
     ModListPage(),
     Debugpage(),
-    HomePage(),
     Container(
       key: Key('4'),
       color: Color.fromARGB(255, 146, 91, 218),
     ),
+    Container(
+      key: Key('5'),
+      color: Color.fromARGB(255, 146, 91, 218),
+    ),
     SettingsPage(),
-    UserPage()
+    UserPage(),
   ];
 
   OverlayEntry _overlayEntryBuilder() {
@@ -129,53 +146,28 @@ class _MainPageState extends State<MainPage> {
           //   context,
           //   MaterialPageRoute(builder: (context) => const pixieLoginScreen()),
           // );
-          print((await MinecraftAccountUtils().getStandard())!.username);
+           
         }),
         body: Stack(children: [
-          Row(
-            children: [
-              //   NavigationDrawer(children: children)
-              Container(
-                height: double.infinity,
-                width: 200,
-                decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 28,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 30),
-                      child: Center(
-                        child: MenuItem(
-                          onClick: () {
-                            int index = 5;
-                            print('change: ' + index.toString());
-                            pageIndex_old = pageIndex;
-
-                            if (index != pageIndex_old) {
-                              setState(() {
-                                pageIndex = index;
-                              });
-                            }
-                          },
-                          title: 'Profile',
-                          icon: Icon(
-                            Icons.person,
-                            size: 20,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 15,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 30),
+      Row(
+          children: [
+            //   NavigationDrawer(children: children)
+            Container(
+              height: double.infinity,
+              width: 200,
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceVariant),
+              child: Column(
+                children: [
+                  Container(
+                    height: 28,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 30),
+                    child: Align(
                       child: MenuItem(
                         onClick: () {
-                          int index = 4;
+                          int index = 6;
                           print('change: ' + index.toString());
                           pageIndex_old = pageIndex;
 
@@ -185,103 +177,191 @@ class _MainPageState extends State<MainPage> {
                             });
                           }
                         },
-                        title: 'Settings',
+                        title: 'Profile',
                         icon: Icon(
-                          Icons.settings,
+                          Icons.person,
                           size: 20,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
-                    Padding(
-                        child: Div.Divider(
-                          size: 20,
+                  ),
+                  Container(
+                    height: 15,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 30),
+                    child: MenuItem(
+                      onClick: () {
+                        int index = 5;
+                        print('change: ' + index.toString());
+                        pageIndex_old = pageIndex;
+
+                        if (index != pageIndex_old) {
+                          setState(() {
+                            pageIndex = index;
+                          });
+                        }
+                      },
+                      title: 'Settings',
+                      icon: Icon(
+                        Icons.settings,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                      child: Div.Divider(
+                        size: 20,
+                      ),
+                      padding: EdgeInsets.only(top: 20, bottom: 20)),
+                  ItemDrawer(
+                      offset: 0,
+                      onChange: (index) {
+                        index = index + 1;
+                        print('change: ' + index.toString());
+                        pageIndex_old = pageIndex;
+
+                        if (index != pageIndex_old) {
+                          setState(() {
+                            pageIndex = index;
+                          });
+                        }
+                      },
+                      title: 'Providers',
+                      children: [
+                        ItemDrawerItem(
+                          icon: Icon(
+                            Icons.sms,
+                            size: 14,
+                          ),
+                          title: 'Modrinth',
                         ),
-                        padding: EdgeInsets.only(top: 20, bottom: 20)),
-                    ItemDrawer(
-                        onChange: (index) {
-                          print('change: ' + index.toString());
-                          pageIndex_old = pageIndex;
+                        ItemDrawerItem(
+                          icon: Icon(
+                            Icons.sms,
+                            size: 14,
+                          ),
+                          title: 'Pixie',
+                        ),
+                        ItemDrawerItem(
+                          icon: Icon(
+                            Icons.sms,
+                            size: 14,
+                          ),
+                          title: 'Curseforge',
+                        ),
+                        ItemDrawerItem(
+                          icon: Icon(
+                            Icons.sms,
+                            size: 14,
+                          ),
+                          title: 'FTB',
+                        ),
+                      ]),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: 15, right: 15, top: 10, bottom: 17),
+                      child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius:
+                                  BorderRadius.all(Radius.elliptical(18, 18))),
+                          width: double.infinity,
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: 15,
+                                right: 15,
+                              ),
+                              child: MenuItem(
+                                width: 140,
+                                onClick: () {
+                                  int index = 0;
+                                  print('change: ' + index.toString());
+                                  pageIndex_old = pageIndex;
 
-                          if (index != pageIndex_old) {
-                            setState(() {
-                              pageIndex = index;
-                            });
-                          }
-                        },
-                        title: 'Providers',
-                        children: [
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
+                                  if (index != pageIndex_old) {
+                                    setState(() {
+                                      pageIndex = index;
+                                    });
+                                  }
+                                },
+                                title: 'My Modpacks',
+                                icon: Icon(
+                                  Icons.folder,
+                                  size: 20,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
                             ),
-                            title: 'Modrinth',
-                          ),
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'Pixie',
-                          ),
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'Curseforge',
-                          ),
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'FTB',
-                          ),
-                        ])
-                  ],
-                ),
+                          ))),
+                  Div.Divider(
+                    size: 20,
+                  ),
+                  SizedBox(
+                    height: 17,
+                  ),
+                ],
               ),
-              Expanded(
-                  child: PageTransitionSwitcher(
-                duration: const Duration(milliseconds: 400),
-                reverse: pageIndex < pageIndex_old,
-                child: Padding(
-                  key: UniqueKey(),
-                  padding: edgeInsets,
-                  child: _pages![pageIndex],
-                ),
-                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
-                  animation: primaryAnimation,
-                  secondaryAnimation: secondaryAnimation,
-                  transitionType: SharedAxisTransitionType.vertical,
-                  fillColor: Colors.transparent,
-                  child: child,
-                ),
-              )),
-              SidePanel()
+            ),
+            Expanded(
+                child: PageTransitionSwitcher(
+              duration: const Duration(milliseconds: 400),
+              reverse: pageIndex < pageIndex_old,
+              child: Padding(
+                key: UniqueKey(),
+                padding: edgeInsets,
+                child: _pages![pageIndex],
+              ),
+              transitionBuilder:
+                  (child, primaryAnimation, secondaryAnimation) =>
+                      SharedAxisTransition(
+                animation: primaryAnimation,
+                secondaryAnimation: secondaryAnimation,
+                transitionType: SharedAxisTransitionType.vertical,
+                fillColor: Colors.transparent,
+                child: child,
+              ),
+            )),
+            SidePanel()
 
-              // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
-            ],
-          ),
-          SizedBox(
-            height: 35,
-            child: Align(
-                alignment: Alignment.topLeft,
-                child: Row(
-                  children: [Expanded(child: MoveWindow()), WindowButtons()],
-                )),
-          ),
-          FloatingActionButton(onPressed: () {
-            SidePanel().removeSecondary();
-          }),
-          Center(
-              child: SizedBox(
-            height: 130,
-            width: 130,
-          ))
-        ]));
+            // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
+          ],
+        ),
+      
+      // shouldSplashedDisplayed
+      //     ? AnimatedOpacity(
+      //         onEnd: () {
+      //           setState(() {
+      //             shouldSplashedDisplayed = false;
+      //           });
+                
+      //         },
+      //         opacity: isSplashed ? 1.0 : 0.0,
+      //         curve: Curves.easeOutExpo,
+      //         duration: Duration(milliseconds: 800),
+      //         child: Container(
+      //           height: double.infinity,
+      //           width: double.infinity,
+      //           color: Theme.of(context).colorScheme.background,
+      //           child: SplashScreen(),
+      //         ),
+      //       )
+      //     : Container(),
+      SizedBox(
+        height: 35,
+        child: Align(
+            alignment: Alignment.topLeft,
+            child: Row(
+              children: [Expanded(child: MoveWindow()), WindowButtons()],
+            )),
+      ),
+    
+    ]));
   }
 }
 

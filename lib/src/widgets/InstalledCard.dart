@@ -8,13 +8,19 @@ class InstalledCard extends StatefulWidget {
   final double mainprogress;
   final VoidCallback onCancel;
   final VoidCallback onOpen;
+  final String name;
+  final String processId;
   InstalledCard(
       {Key? key,
+      required this.processId,
+      required this.name,
       required this.mainState,
       required this.mainprogress,
       required this.onCancel,
       required this.onOpen})
       : super(key: key);
+
+  String get process_id => processId;
 
   @override
   _InstalledCardState createState() => _InstalledCardState();
@@ -79,7 +85,7 @@ class _InstalledCardState extends State<InstalledCard> {
                                   Padding(
                                       padding: EdgeInsets.only(left: 12),
                                       child: Text(
-                                        'N/A',
+                                        widget.name,
                                         style: Theme.of(context)
                                             .typography
                                             .black

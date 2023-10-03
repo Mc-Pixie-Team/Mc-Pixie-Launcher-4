@@ -21,9 +21,10 @@ class _MenuItemState extends State<MenuItem> {
       child: SizedBox(
           height: widget.height,
           width: widget.width,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: Row(children: [
+         
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
               Padding(
                 padding: EdgeInsets.only(right: 10),
                 child: widget.icon,
@@ -33,7 +34,7 @@ class _MenuItemState extends State<MenuItem> {
                 style: Theme.of(context).typography.black.titleMedium,
               )
             ]),
-          )),
+          ),
     );
   }
 }

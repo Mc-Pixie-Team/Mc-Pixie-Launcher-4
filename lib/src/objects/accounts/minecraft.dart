@@ -74,6 +74,7 @@ class MinecraftAccountUtils {
     }
     if (newAcc) {
       accList.add(account);
+      MinecraftAccountUtils().setStandard(account);
       MinecraftAccountUtils().saveAccounts(accList);
     } else {
       print("account already exists! Doing nothing.");
@@ -135,7 +136,11 @@ class MinecraftAccountUtils {
   }
 
   Future<void> initOnFirstStart() async {
-    await MinecraftAccountUtils().saveAccounts([]);
+    try {
+      SecureStorage().readSecureData("standardAccount");
+    } catch (e) {
+      await MinecraftAccountUtils().saveAccounts([]);
+    }
   }
 }
 

@@ -5,21 +5,24 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart' as apple;
 import 'package:mclauncher4/src/getApiHandler.dart';
-import 'package:mclauncher4/src/pages/modpacklist.dart';
+import 'package:mclauncher4/src/pages/installedModpacks.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/downloadState.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/installController.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
-import 'package:mclauncher4/src/widgets/BrowseCard.dart';
-import 'package:mclauncher4/src/widgets/SvgButton.dart';
+import 'package:mclauncher4/src/widgets/InstalledCard.dart';
+import 'package:mclauncher4/src/widgets/Providers/BrowseCard.dart';
+import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
+import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/components/slideInAnimation.dart';
-import 'package:mclauncher4/src/widgets/dropdownmenu.dart';
-import '../widgets/searchbar.dart' as Searchbar;
+import 'package:mclauncher4/src/widgets/Providers/dropdownmenu.dart';
+import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
+import 'package:mclauncher4/src/widgets/searchbar.dart' as Searchbar;
 import 'package:flutter/material.dart';
-import '../widgets/divider.dart' as Divider;
-import '../theme/scrollphysics.dart';
+import 'package:mclauncher4/src/widgets/divider.dart' as Divider;
+import 'package:mclauncher4/src/theme/scrollphysics.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
@@ -78,6 +81,7 @@ class _ModListPageState extends State<ModListPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        clipBehavior: Clip.antiAlias,
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
@@ -134,53 +138,87 @@ class _ModListPageState extends State<ModListPage> {
                                 (index) => InstallController());
                           }
 
-                          return SlideInAnimation(child: ListView.builder(
-                              physics: physics,
-                              controller: controller,
-                              itemCount: modpacklist.length,
-                              itemBuilder: ((context, index) {
-                                InstallController installcontroller =
-                                    installContollers[index];
-                                return AnimatedBuilder(
-                                    key: Key(modpacklist[index]["project_id"]),
-                                    animation: installcontroller,
-                                    builder: (context, child) => BrowseCard(
-                                          mainprogress:
-                                              installcontroller.mainprogress,
-                                          modpacklist: modpacklist[index],
-                                          mainSate: installcontroller.mainState,
-                                          installState:
-                                              installcontroller.installState,
-                                          progress: installcontroller.progress,
-                                          onCancel: () {},
-                                          onDownload: () async {
-                                            Map modpackproject = await _handler
-                                                .getModpack(modpacklist[index]
-                                                    ["project_id"]);
-                                            Map modpackversion = await _handler
-                                                .getModpackVersion(
-                                                    (modpackproject["versions"]
-                                                            as List)
-                                                        .last);
-                                            installcontroller.install(
-                                              _handler,
-                                              modpackversion,
-                                            );
-                                          },
-                                          onOpen: () async {
-                                            Map modpackproject = await _handler
-                                                .getModpack(modpacklist[index]
-                                                    ["project_id"]);
-                                            Map modpackversion = await _handler
-                                                .getModpackVersion(
-                                                    (modpackproject["versions"]
-                                                            as List)
-                                                        .last);
-                                            installcontroller.start(
-                                                _handler, modpackversion);
-                                          },
-                                        ));
-                              })));
+                          return SlideInAnimation(
+                              child: ListView.builder(
+                                  physics: physics,
+                                  controller: controller,
+                                  itemCount: modpacklist.length,
+                                  itemBuilder: ((context, index) {
+                                    InstallController installcontroller =
+                                        installContollers[index];
+
+                                    return AnimatedBuilder(
+                                        key: Key(installcontroller.processId),
+                                        animation: installcontroller,
+                                        builder: (context, child) => BrowseCard(
+                                              mainprogress: installcontroller
+                                                  .mainprogress,
+                                              modpacklist: modpacklist[index],
+                                              mainState:
+                                                  installcontroller.mainState,
+                                              installState: installcontroller
+                                                  .installState,
+                                              progress:
+                                                  installcontroller.progress,
+                                              onCancel: () {
+                                                installcontroller.cancel();
+                                              },
+                                              onDownload: () async {
+                                                Map modpackData =
+                                                    modpacklist[index];
+
+                                                Modpacks.globalinstallContollers
+                                                    .add(AnimatedBuilder(
+                                                  key: Key(installcontroller
+                                                      .processId),
+                                                  animation: installcontroller,
+                                                  builder: (context, child) =>
+                                                      InstalledCard(
+                                                    mainState: installcontroller
+                                                        .mainState,
+                                                    mainprogress:
+                                                        installcontroller
+                                                            .mainprogress,
+                                                    onCancel: installcontroller
+                                                        .cancel,
+                                                    onOpen: () async {
+                                                      Map modpackproject =
+                                                          await _handler.getModpack(
+                                                              modpacklist[index]
+                                                                  [
+                                                                  "project_id"]);
+                                                      Map modpackversion = await _handler
+                                                          .getModpackVersion(
+                                                              (modpackproject[
+                                                                          "versions"]
+                                                                      as List)
+                                                                  .last);
+                                                      installcontroller.start(
+                                                          _handler,
+                                                          modpackversion);
+                                                    },
+                                                  ),
+                                                ));
+
+                                                installcontroller.install(
+                                                    _handler, modpackData);
+                                              },
+                                              onOpen: () async {
+                                                Map modpackproject =
+                                                    await _handler.getModpack(
+                                                        modpacklist[index]
+                                                            ["project_id"]);
+                                                Map modpackversion = await _handler
+                                                    .getModpackVersion(
+                                                        (modpackproject[
+                                                                    "versions"]
+                                                                as List)
+                                                            .last);
+                                                installcontroller.start(
+                                                    _handler, modpackversion);
+                                              },
+                                            ));
+                                  })));
                         }
                         return Container();
                       });

@@ -19,6 +19,13 @@ enum FabricInstallState {
   finished,
 }
 
+enum ModloaderInstallState {
+    downloadingClient,
+  downloadingLibraries,
+  patching,
+  finished,
+}
+
 
 enum ClientInstallState {
   downloadingClient,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/widgets/gradiantText.dart';
+import 'package:mclauncher4/src/widgets/components/gradiantText.dart';
 
 class GradientTextWidget extends StatelessWidget {
   final String text;

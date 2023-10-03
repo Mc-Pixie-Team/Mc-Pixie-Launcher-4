@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
+import 'package:mclauncher4/src/pages/HomePage.dart';
 import 'package:mclauncher4/src/pages/debugpage.dart';
-import 'package:mclauncher4/src/pages/modListPage.dart';
+import 'package:mclauncher4/src/pages/providers/ModListPage.dart';
 import 'package:mclauncher4/src/pages/settings_page/settingsPage.dart';
 import 'package:mclauncher4/src/pages/splash/splash.dart';
 import 'package:mclauncher4/src/pages/splash/splashLogin.dart';
@@ -15,21 +16,22 @@ import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/installController.dart';
 import 'package:mclauncher4/src/tasks/win32Deleter.dart';
-import 'package:mclauncher4/src/widgets/SidePanel.dart';
+import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/minecraft/client.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
 
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
-import 'widgets/itemDrawer.dart';
+import 'widgets/NavigationDrawer/itemDrawer.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'widgets/menuItem.dart';
+import 'widgets/NavigationDrawer/menuItem.dart';
 import 'widgets/divider.dart' as Div;
 import 'package:animations/animations.dart';
-import 'package:mclauncher4/src/widgets/SidePanel.dart';
+import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
 
 class McLauncher extends StatelessWidget {
   const McLauncher({super.key});
@@ -74,10 +76,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     ModListPage(),
     Debugpage(),
-    Container(
-      key: Key('3'),
-      color: Color.fromARGB(255, 99, 167, 223),
-    ),
+    HomePage(),
     Container(
       key: Key('4'),
       color: Color.fromARGB(255, 146, 91, 218),
@@ -100,9 +99,11 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        
         floatingActionButton: FloatingActionButton(onPressed: () async {
 /*           await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json'); */
           // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
@@ -112,7 +113,11 @@ class _MainPageState extends State<MainPage> {
                 decoration: BoxDecoration(color: Colors.pinkAccent, borderRadius: BorderRadius.circular(18)),
               ),
               550); */
+        //  DiscordRP().initCS();
+       // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
 
+  
+     // SidePanel().addToTaskWidget();
           /* await Forge().install();
           await Forge().run(); */
           /* Microsoft().authenticate(); */
@@ -123,6 +128,7 @@ class _MainPageState extends State<MainPage> {
           print((await MinecraftAccountUtils().getStandard())!.username);
         }),
         body: Stack(children: [
+        
           Row(
             children: [
               //   NavigationDrawer(children: children)
@@ -263,7 +269,12 @@ class _MainPageState extends State<MainPage> {
                 child: Row(
                   children: [Expanded(child: MoveWindow()), WindowButtons()],
                 )),
-          )
+          ),
+          FloatingActionButton(onPressed: () {
+           SidePanel().removeSecondary();
+          }),
+         Center(child: SizedBox(height: 130, width: 130,))
+         
         ]));
   }
 }

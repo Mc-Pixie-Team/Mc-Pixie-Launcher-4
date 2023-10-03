@@ -33,8 +33,8 @@ final blackTextSchemes = TextTheme(
   ),
   headlineSmall: GoogleFonts.roboto(
     fontWeight: FontWeight.w400,
-    fontSize: 24,
-    height: 32 / 24,
+    fontSize: 20,
+    height: 32 / 20,
   ),
   titleLarge: GoogleFonts.roboto(
     fontWeight: FontWeight.w700,
@@ -86,7 +86,7 @@ final blackTextSchemes = TextTheme(
   bodySmall: GoogleFonts.roboto(
     color: Color.fromARGB(255, 168, 168, 168),
     fontWeight: FontWeight.w400,
-    fontSize: 12,
-    height: 16 / 12,
+    fontSize: 11,
+    height: 16 / 11,
   ),
 );

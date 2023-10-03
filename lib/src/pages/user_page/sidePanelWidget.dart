@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/widgets/bluredContainer.dart';
+import 'package:mclauncher4/src/widgets/components/bluredContainer.dart';
 
 class SidePanelWidget extends StatefulWidget {
   SidePanelWidget({Key? key, required this.title, required this.child}) : super(key: key);

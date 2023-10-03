@@ -1,28 +1,32 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/downloadState.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
-import 'package:mclauncher4/src/widgets/SvgButton.dart';
+import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
+import 'package:mclauncher4/src/widgets/Buttons/downloadButton.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class BrowseCard extends StatefulWidget {
   Map modpacklist;
-  final double progress;
   final VoidCallback onDownload;
   final VoidCallback onCancel;
   final VoidCallback onOpen;
-  final MainState mainSate;
+  final MainState mainState;
   final double mainprogress;
   final installState;
+    final double progress;
 
   BrowseCard({
     Key? key,
     required this.mainprogress,
     required this.modpacklist,
     required this.progress,
-    required this.mainSate,
+    required this.mainState,
     required this.installState,
     required this.onDownload,
     required this.onCancel,
@@ -34,46 +38,7 @@ class BrowseCard extends StatefulWidget {
 }
 
 class _BrowseCardState extends State<BrowseCard> {
-  bool ishover = false;
 
-  Widget getButton() {
-    if (widget.mainSate == MainState.downloadingMinecraft ||
-        widget.mainSate == MainState.downloadingML ||
-        widget.mainSate == MainState.downloadingMods) {
-      print(
-          'state: ${widget.mainSate}, progress: ${widget.mainprogress / 100}');
-      return SizedBox(
-          height: 18,
-          width: 18,
-          child: CircularProgressIndicator(
-            value: widget.mainprogress / 100,
-          ));
-    }
-    if (widget.mainSate == MainState.running) {
-      return SvgButton.asset(
-        'assets\\svg\\cancel-icon.svg',
-        onpressed: () {
-          widget.onCancel.call();
-        },
-      );
-    }
-    if(widget.mainSate == MainState.installed){
-      return SvgButton.asset(
-        'assets\\svg\\play-icon.svg',
-        onpressed: () {
-          widget.onOpen.call();
-        },
-      );
-    
-    }
-
-    return SvgButton.asset(
-      'assets\\svg\\download-icon.svg',
-      onpressed: () {
-        widget.onDownload.call();
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,18 +68,14 @@ class _BrowseCardState extends State<BrowseCard> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(18),
                           color: Theme.of(context).colorScheme.surfaceVariant),
-                      child: AnimatedScale(
-                          scale: ishover ? 1.2 : 1,
-                          duration: Duration(milliseconds: 700),
-                          curve: Curves.easeOutExpo,
-                          child: FadeInImage.memoryNetwork(
-                            fit: BoxFit.fill,
-                            fadeOutDuration: Duration(milliseconds: 1),
-                            fadeInDuration: Duration(milliseconds: 300),
-                            fadeInCurve: Curves.easeOutQuad,
-                            placeholder: kTransparentImage,
-                            image: widget.modpacklist["icon_url"],
-                          ))),
+                      child: FadeInImage.memoryNetwork(
+                        fit: BoxFit.fill,
+                        fadeOutDuration: Duration(milliseconds: 1),
+                        fadeInDuration: Duration(milliseconds: 300),
+                        fadeInCurve: Curves.easeOutQuad,
+                        placeholder: kTransparentImage,
+                        image: widget.modpacklist["icon_url"],
+                      )),
                 ),
                 Expanded(
                     child: Column(
@@ -137,14 +98,14 @@ class _BrowseCardState extends State<BrowseCard> {
                       style: Theme.of(context).typography.black.bodyMedium,
                     ),
                     Text(
-                        'MainState: ${widget.mainSate}, progress: ${widget.progress}')
+                        'MainState: ${widget.mainState}, progress: ${widget.progress}')
                   ],
                 )),
                 Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Container(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Container(
                         height: 45,
                         width: 95,
                         decoration: BoxDecoration(
@@ -152,19 +113,52 @@ class _BrowseCardState extends State<BrowseCard> {
                           color: Theme.of(context).colorScheme.surfaceVariant,
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            getButton(),
-                            SvgButton.asset(
-                              'assets\\svg\\network-icon.svg',
-                              onpressed: () {},
-                            ),
-                          ],
-                        )),
-                  ),
-                )
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              DownloadButton(mainState: widget.mainState, mainprogress: widget.mainprogress, onOpen: widget.onOpen, onCancel: widget.onCancel, onDownload: widget.onDownload),
+                              SvgButton.asset('assets\\svg\\network-icon.svg',
+                                  onpressed: () {})
+                            ]),
+                      ),
+                    ))
               ],
             )));
+  }
+}
+
+@immutable
+class ProgressIndicatorWidget extends StatelessWidget {
+  const ProgressIndicatorWidget({
+    super.key,
+    required this.downloadProgress,
+    required this.isDownloading,
+    required this.isFetching,
+  });
+
+  final double downloadProgress;
+  final bool isDownloading;
+  final bool isFetching;
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: downloadProgress),
+        duration: const Duration(milliseconds: 200),
+        builder: (context, progress, child) {
+          return CircularProgressIndicator(
+            backgroundColor: isDownloading
+                ? Theme.of(context).colorScheme.outline
+                : Colors.white.withOpacity(0),
+            valueColor: AlwaysStoppedAnimation(isFetching
+                ? CupertinoColors.lightBackgroundGray
+                : Theme.of(context).colorScheme.primary),
+            strokeWidth: 2,
+            value: isFetching ? null : progress / 100,
+          );
+        },
+      ),
+    );
   }
 }

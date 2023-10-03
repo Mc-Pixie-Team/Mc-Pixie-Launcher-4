@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mclauncher4/src/app.dart';
-import 'package:mclauncher4/src/widgets/autoGradient.dart';
+import 'package:mclauncher4/src/widgets/components/autoGradient.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mclauncher4/src/widgets/circularButton.dart';
+import 'package:mclauncher4/src/widgets/Buttons/circularButton.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginCardSupabase extends StatefulWidget {

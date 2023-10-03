@@ -17,7 +17,6 @@ class Download with ChangeNotifier{
   double _progress = 0.0;
   double get progress => _progress;
 
-  final Future<Directory> appDocumentsDir = getApplicationDocumentsDirectory();
   bool? isForge;
   int received = 0;
   Download({this.isForge});
@@ -79,7 +78,7 @@ class Download with ChangeNotifier{
     }
 
     String filepath =
-        '${(await appDocumentsDir).path}\\PixieLauncherInstances\\debug\\libraries\\${altpath != null ? altpath + path.basename(((current["path"] as String).replaceAll('/', '\\'))) : ((current["path"] as String).replaceAll('/', '\\'))}';
+        '${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\libraries\\${altpath != null ? altpath + path.basename(((current["path"] as String).replaceAll('/', '\\'))) : ((current["path"] as String).replaceAll('/', '\\'))}';
 
     String parentDirectory = path.dirname(filepath);
 
@@ -126,7 +125,7 @@ class Download with ChangeNotifier{
     String mcversion = packagejson["id"];
 
     String filepath =
-        '${(await appDocumentsDir).path}\\PixieLauncherInstances\\debug\\versions\\$mcversion\\$mcversion.json';
+        '${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\versions\\$mcversion\\$mcversion.json';
 
     String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
@@ -135,13 +134,13 @@ class Download with ChangeNotifier{
     var clientRES =
         await http.get(Uri.parse(packagejson["downloads"]["client"]["url"]));
     await File(
-            '${(await appDocumentsDir).path}\\PixieLauncherInstances\\debug\\versions\\$mcversion\\$mcversion.jar')
+            '${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\versions\\$mcversion\\$mcversion.jar')
         .writeAsBytes(clientRES.bodyBytes);
   }
 
   _writeAssetsjson(Map packagejson) async {
     String filepath =
-        '${(await appDocumentsDir).path}\\PixieLauncherInstances\\debug\\assets\\indexes\\${packagejson["assets"]}.json';
+        '${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\assets\\indexes\\${packagejson["assets"]}.json';
     await Directory(path.dirname(filepath)).create(recursive: true);
     await File(filepath).create(recursive: true);
     await File(filepath).writeAsBytes(
@@ -202,7 +201,7 @@ class Download with ChangeNotifier{
     }).asFuture();
 
     String filepath =
-        '${(await appDocumentsDir).path}\\PixieLauncherInstances\\debug\\assets\\objects\\' +
+        '${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\assets\\objects\\' +
             objects[objectEnteries[i]]["hash"].substring(0, 2) +
             '\\' +
             objects[objectEnteries[i]]["hash"];

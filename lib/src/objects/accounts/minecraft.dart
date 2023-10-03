@@ -133,6 +133,10 @@ class MinecraftAccountUtils {
     MinecraftAccount? account = await MinecraftAccountUtils().getAccountByUUID(standardAccUUID);
     return account;
   }
+
+  Future<void> initOnFirstStart() async {
+    await MinecraftAccountUtils().saveAccounts([]);
+  }
 }
 
 class MinecraftHead extends StatelessWidget {

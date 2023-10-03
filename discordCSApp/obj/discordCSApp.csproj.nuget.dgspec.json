@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\zepat\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj": {}
+    "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\zepat\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj": {
+    "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\zepat\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj",
+        "projectUniqueName": "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj",
         "projectName": "discordCSApp",
-        "projectPath": "C:\\Users\\zepat\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj",
-        "packagesPath": "C:\\Users\\zepat\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\zepat\\Mc-Pixie-Launcher-4\\discordCSApp\\obj\\",
+        "projectPath": "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj",
+        "packagesPath": "C:\\Users\\ancie\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\zepat\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ancie\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

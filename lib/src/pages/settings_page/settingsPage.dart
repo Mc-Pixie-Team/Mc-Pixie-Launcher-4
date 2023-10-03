@@ -26,14 +26,11 @@ class _SettingsPageState extends State<SettingsPage> {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        color: Theme.of(context).colorScheme.error,
-      ),
       child: Align(
-        child: SizedBox(
-          width: 550,
-          child: UserAndMSPage(),
+        alignment: Alignment.center,
+        child: Text(
+          "Somebody has to implement this 🤔🤔🤔🤔🤔",
+          style: Theme.of(context).typography.black.headlineLarge,
         ),
       ),
     );

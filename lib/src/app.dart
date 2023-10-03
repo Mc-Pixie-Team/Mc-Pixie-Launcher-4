@@ -99,25 +99,29 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    MinecraftAccountUtils().initOnFirstStart();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        
         floatingActionButton: FloatingActionButton(onPressed: () async {
 /*           await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json'); */
           // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
-          // Minecraft().run(res, 'C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\debug\\libraries');
+          // Minecraft().run(res, 'C:\\Users\\ancie\\Documents\\PixieLauncherInstances\\debug\\libraries');
 /*           SidePanel().pop(
               Container(
                 decoration: BoxDecoration(color: Colors.pinkAccent, borderRadius: BorderRadius.circular(18)),
               ),
               550); */
-        //  DiscordRP().initCS();
-       // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
+          //  DiscordRP().initCS();
+          // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
 
-  
-     // SidePanel().addToTaskWidget();
+          // SidePanel().addToTaskWidget();
           /* await Forge().install();
           await Forge().run(); */
           /* Microsoft().authenticate(); */
@@ -128,7 +132,6 @@ class _MainPageState extends State<MainPage> {
           print((await MinecraftAccountUtils().getStandard())!.username);
         }),
         body: Stack(children: [
-        
           Row(
             children: [
               //   NavigationDrawer(children: children)
@@ -271,10 +274,13 @@ class _MainPageState extends State<MainPage> {
                 )),
           ),
           FloatingActionButton(onPressed: () {
-           SidePanel().removeSecondary();
+            SidePanel().removeSecondary();
           }),
-         Center(child: SizedBox(height: 130, width: 130,))
-         
+          Center(
+              child: SizedBox(
+            height: 130,
+            width: 130,
+          ))
         ]));
   }
 }

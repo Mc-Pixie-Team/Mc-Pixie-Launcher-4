@@ -25,6 +25,7 @@ static String getUsername() {
 }
 
 
+
 Future<String> getbinpath() async {
   // return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\debug\\bin';
   return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents\\PixieLauncherInstances\\debug\\bin';

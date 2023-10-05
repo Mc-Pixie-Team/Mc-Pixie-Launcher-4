@@ -57,7 +57,7 @@ class ModrinthApi implements Api {
       List typesmirror = [];
       typesmirror.addAll(types);
       for (String stringType in typesmirror) {
-        print(stringType);
+    
         if(types.length == 0){
           _facet.remove(types);
         }
@@ -78,8 +78,8 @@ class ModrinthApi implements Api {
 
   @override
   getModpackList() async {
-    print(
-        'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit');
+    // print(
+    //     'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit');
     var res = await http.get(Uri.parse(
         'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit'));
 

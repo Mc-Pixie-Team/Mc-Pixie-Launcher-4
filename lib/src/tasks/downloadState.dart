@@ -5,6 +5,7 @@
   downloadingClient,
   downloadingLibraries,
   downloadAssets,
+  customDownload,
 }
 
 enum ForgeInstallState {

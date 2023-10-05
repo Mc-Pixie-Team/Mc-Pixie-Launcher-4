@@ -235,15 +235,71 @@ class Download with ChangeNotifier{
   }
 
   downloadSingeFile(String url, String to) async {
+
+    
     List<int> _bytes = [];
+
+    http.Response head_response = await http.head(Uri.parse(url));
+
+    int _totalsize = int.parse(head_response.headers["content-length"] ?? "");
+     int received = 0;
+     int receivedControll = 0;
+    print(_totalsize);
+
     http.StreamedResponse? response =
         await http.Client().send(http.Request('GET', Uri.parse(url)));
 
     await response.stream.listen((value) {
       _bytes.addAll(value);
+        received += value.length;
+        receivedControll += value.length;
+        if (receivedControll > _totalsize / 100) {
+          _progress = received / _totalsize;
+          _state = DownloadState.customDownload;
+          notifyListeners();
+          receivedControll = 0;
+        }
+      
+     
     }).asFuture();
+
     String parentDirectory = path.dirname(to);
     await Directory(parentDirectory).create(recursive: true);
     await File(to).writeAsBytes(_bytes);
+    _bytes = [];
+
+  }
+ Future<List<int>> downloadSingeFileAsBytes(String url) async {
+
+    
+    List<int> _bytes = [];
+
+    http.Response head_response = await http.head(Uri.parse(url));
+
+    int _totalsize = int.parse(head_response.headers["content-length"] ?? "");
+     int received = 0;
+     int receivedControll = 0;
+    print(_totalsize);
+
+    http.StreamedResponse? response =
+        await http.Client().send(http.Request('GET', Uri.parse(url)));
+
+    await response.stream.listen((value) {
+        _bytes.addAll(value);
+        received += value.length;
+        receivedControll += value.length;
+        if (receivedControll > _totalsize / 100) {
+          _progress = received / _totalsize;
+          _state = DownloadState.customDownload;
+          notifyListeners();
+          receivedControll = 0;
+        }
+      
+     
+    }).asFuture();
+
+    
+    return _bytes;
+
   }
 }

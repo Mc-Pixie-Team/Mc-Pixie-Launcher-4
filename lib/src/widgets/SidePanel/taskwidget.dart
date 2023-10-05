@@ -39,12 +39,14 @@ class TaskwidgetItem extends StatefulWidget {
   
   double progress = 0.0;
   double mainprogress = 0.0;
+  String name = "";
   var installState;
 
   VoidCallback cancel;
 
   TaskwidgetItem(
       {Key? key,
+      required this.name,
       required this.cancel,
       required this.mainState,
       required this.progress,
@@ -59,13 +61,20 @@ class TaskwidgetItem extends StatefulWidget {
 class _TaskwidgetItemState extends State<TaskwidgetItem> {
 
 
- 
+ String get getName {
+  if(widget.name.length > 8){
+   widget.name = widget.name.replaceRange(8, widget.name.length, "");
+   widget.name = '${widget.name}...';
+   return widget.name;
+  }
+  return widget.name;
+ }
 
 
   String get titleText {
 
-    if(widget.mainState == MainState.running) return "Running";
-    return "Installing";
+    if(widget.mainState == MainState.running) return "Running: $getName";
+    return "Installing: $getName";
   }
 
   @override
@@ -128,7 +137,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                         ),
                       ),
                       TextSpan(
-                        text: ': ${widget.mainprogress.ceil()}%',
+                        text: ' ${widget.mainprogress.ceil()}%',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,

@@ -77,6 +77,7 @@ class MinecraftAccountUtils {
       MinecraftAccountUtils().setStandard(account);
       MinecraftAccountUtils().saveAccounts(accList);
     } else {
+      
       print("account already exists! Doing nothing.");
     }
   }

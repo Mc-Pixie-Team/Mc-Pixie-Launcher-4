@@ -291,10 +291,10 @@ class DownloadButton extends StatelessWidget {
                     isFetching: _isFetching,
                   ),
                   if (_isDownloading)
-                    const Icon(
+                   Icon(
                       Icons.stop,
                       size: 14,
-                      color: CupertinoColors.activeBlue,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                 ],
               ),

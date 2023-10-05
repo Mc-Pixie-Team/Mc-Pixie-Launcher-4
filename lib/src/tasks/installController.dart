@@ -23,11 +23,10 @@ import 'package:uuid/uuid.dart';
 
 class InstallController with ChangeNotifier {
 
-  InstallController([processid, MainState? mainstate]) {
+  InstallController([processid, MainState? mainstate]  ) {
     _mainState = mainstate ?? MainState.notinstalled;
     _processId = processid ?? Uuid().v1();
   }
-
   Modloader? _modloader;
   late MainState _mainState;
   ChangeNotifier _notifierforTask = ChangeNotifier();
@@ -44,11 +43,13 @@ class InstallController with ChangeNotifier {
   double get mainprogress => _mainprogress;
   MainState get mainState => _mainState;
 
-  void setTaskWidget() {
+  void setTaskWidget(Api _handler, Map modpackdata) async{
+    String name = await _handler.getModpackName(modpackdata);
     SidePanel().addToTaskWidget(
         AnimatedBuilder(
             animation: _notifierforTask,
             builder: (context, child) => TaskwidgetItem(
+                  name: name,
                   cancel: cancel,
                   mainState: mainState,
                   installState: installState,
@@ -80,7 +81,12 @@ class InstallController with ChangeNotifier {
       print('process cannot be killed');
     }
     sendPort.send(IsolateBreaker());
-    Modpacks.globalinstallContollers.removeKeyFromAnimatedBuilder(_processId);
+    if(_mainState != MainState.running) {
+      Modpacks.globalinstallContollers.removeKeyFromAnimatedBuilder(_processId);
+       _mainState = MainState.notinstalled;
+    }else {
+      _mainState = MainState.installed;
+    }
     if (await Directory('${await getInstancePath()}\\$processId').exists()) {
       try {
         await Directory('${await getInstancePath()}\\$processId')
@@ -88,12 +94,13 @@ class InstallController with ChangeNotifier {
       } catch (e) {}
     }
 
-    _mainState = MainState.notinstalled;
+   
     _callnotifiers();
   }
 
   start(Api _handler, Map modpackVersion) async {
-    setTaskWidget();
+ 
+    setTaskWidget(_handler, modpackVersion );
     String mloaderS = modpackVersion["loaders"].first;
     if (mloaderS == "forge") {
       _modloader = Forge();
@@ -115,8 +122,9 @@ class InstallController with ChangeNotifier {
   }
 
   void install(Api _handler, Map _modpackData) async {
-    setTaskWidget();
+    setTaskWidget(_handler, _modpackData );
     _mainState = MainState.downloadingML;
+    _progress = 0.0;
     _callnotifiers();
 
     Map modpackproject = await _handler.getModpack(_modpackData["project_id"]);

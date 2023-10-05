@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/tasks/downloadState.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
@@ -41,7 +42,16 @@ class BrowseCard extends StatefulWidget {
 }
 
 class _BrowseCardState extends State<BrowseCard> {
-
+  String capitalize(String myString) {
+    myString = myString
+        .replaceAll(RegExp(' +'), ' ')
+        .split(' ')
+        .map((capitalizedString) =>
+            capitalizedString.substring(0, 1).toUpperCase() +
+            capitalizedString.substring(1))
+        .join(' ');
+    return myString;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +96,7 @@ class _BrowseCardState extends State<BrowseCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 33,
+                      height: 25,
                     ),
                     Text(
                       widget.modpacklist["title"],
@@ -96,12 +106,105 @@ class _BrowseCardState extends State<BrowseCard> {
                     ),
                     Text(
                       widget.modpacklist["description"],
-                      maxLines: 3,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).typography.black.bodyMedium,
                     ),
-                    Text(
-                        'MainState: ${widget.mainState}, progress: ${widget.progress}')
+                    Expanded(
+                      child: Container(),
+                    ),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          'assets\\svg\\heart-icon.svg',
+                          width: 12,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          widget.modpacklist["follows"] > 999
+                              ? (((widget.modpacklist["follows"] / 1000)
+                                              as double)
+                                          .round())
+                                      .toString() +
+                                  'k'
+                              : widget.modpacklist["follows"].toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        SvgPicture.asset(
+                          'assets\\svg\\download-full-icon.svg',
+                          width: 14,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          widget.modpacklist["downloads"] > 999
+                              ? (((widget.modpacklist["downloads"] / 1000)
+                                              as double)
+                                          .round())
+                                      .toString() +
+                                  'k'
+                              : widget.modpacklist["downloads"].toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w400,
+                            height: 0,
+                          ),
+                        ),
+                        SizedBox(width: 15),
+                        Expanded(
+                            child: SizedBox(
+                                height: 17,
+                                child: ListView.separated(
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 5, right: 5),
+                                          child: Text(
+                                            capitalize(
+                                                widget.modpacklist["categories"]
+                                                    [index]),
+                                            style: TextStyle(
+                                              color: Color.fromARGB(132, 226, 226, 226),
+                                              fontSize: 13,
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.w500,
+                                              height: 0,
+                                            ),
+                                          ));
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return Container(
+                                        width: 5.0,
+                                        height: 5.0,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .outline),
+                                      );
+                                    },
+                                    itemCount: widget
+                                        .modpacklist["categories"].length)))
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    )
                   ],
                 )),
                 Align(
@@ -118,7 +221,12 @@ class _BrowseCardState extends State<BrowseCard> {
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              DownloadButton(mainState: widget.mainState, mainprogress: widget.mainprogress, onOpen: widget.onOpen, onCancel: widget.onCancel, onDownload: widget.onDownload),
+                              DownloadButton(
+                                  mainState: widget.mainState,
+                                  mainprogress: widget.mainprogress,
+                                  onOpen: widget.onOpen,
+                                  onCancel: widget.onCancel,
+                                  onDownload: widget.onDownload),
                               SvgButton.asset('assets\\svg\\network-icon.svg',
                                   onpressed: () {})
                             ]),

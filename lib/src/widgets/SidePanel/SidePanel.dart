@@ -89,7 +89,7 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
   Widget? get secondaryWidget => _secondaryWidget;
   Widget currentWidget = Container(
       height: double.infinity,
-      width: double.infinity,
+      width: 280.0,
       clipBehavior: Clip.antiAlias,
       child: Image.asset(
         'assets\\images\\backgound_blue.jpg',
@@ -210,7 +210,7 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
                         opacity: ani.value,
                         child: Transform.translate(
                             offset: Offset(100.0 * ((ani.value * -1) + 1), 0),
-                            child: currentWidget),
+                            child:   currentWidget),
                       ),
                       Align(
                           alignment: Alignment(1, 1),
@@ -246,7 +246,7 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
                               child: secondaryWidget ?? Container()),
                           Transform.translate(
                             offset: Offset(0, defaultHeight * ani2.value),
-                            child: secNewWidget ?? Container(),
+                            child:    secNewWidget ?? Container(),
                           ),
                         ],
                       ),

@@ -35,6 +35,22 @@ class _UserPageState extends State<UserPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    SidePanel().pop(Container(
+      height: double.infinity,
+      width: double.infinity,
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset(
+        'assets\\images\\backgound_blue.jpg',
+        fit: BoxFit.cover,
+      ),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Color.fromARGB(0, 27, 124, 204))), 280.0);
+    super.dispose();
+  }
+
   final supabase = Supabase.instance.client;
   @override
   Widget build(BuildContext context) {
@@ -160,7 +176,7 @@ class _UserPageState extends State<UserPage> {
                     "Subscriptions & Servers"
                   ], functions: [
                     () {
-                      SidePanel().pop(UserAndMSPage(), 550);
+                      SidePanel().pop( Align(alignment: Alignment.topLeft, child: UserAndMSPage(),), 555);
                     },
                     () {
                       SidePanel().pop(

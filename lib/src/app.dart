@@ -78,8 +78,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
-
   bool shouldSplashedDisplayed = true;
   bool isSplashed = true;
   int pageIndex = 1;
@@ -130,11 +128,47 @@ class _MainPageState extends State<MainPage> {
 /*           await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json'); */
           // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
           // Minecraft().run(res, 'C:\\Users\\ancie\\Documents\\PixieLauncherInstances\\debug\\libraries');
-/*           SidePanel().pop(
-              Container(
-                decoration: BoxDecoration(color: Colors.pinkAccent, borderRadius: BorderRadius.circular(18)),
+
+          SidePanel().pop(
+            Container(
+                  width: 700,
+                  
+                  child: Builder(builder:(context) {
+                    
+                    return SingleChildScrollView(
+                      child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        height: 300,
+                        child: Text('test'),
+                        color: Color.fromARGB(255, 255, 19, 110),
+                      ),
+                      Container(
+                        height: 300,
+                        color: Colors.green,
+                      ),
+                      Container(
+                        height: 300,
+                        color: Color.fromARGB(255, 224, 24, 250),
+                      ),
+                      Container(
+                        height: 300,
+                        color: Colors.green,
+                      ),
+                      Container(
+                        height: 300,
+                        color: Color.fromARGB(255, 32, 90, 177),
+                      ),
+                      Container(
+                        height: 300,
+                        color: Colors.green,
+                      )
+                    ],
+                  ));})
+                
               ),
-              550); */
+              550);
           //  DiscordRP().initCS();
           // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
 
@@ -146,28 +180,53 @@ class _MainPageState extends State<MainPage> {
           //   context,
           //   MaterialPageRoute(builder: (context) => const pixieLoginScreen()),
           // );
-           
         }),
         body: Stack(children: [
-      Row(
-          children: [
-            //   NavigationDrawer(children: children)
-            Container(
-              height: double.infinity,
-              width: 200,
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant),
-              child: Column(
-                children: [
-                  Container(
-                    height: 28,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 30),
-                    child: Align(
+          Row(
+            children: [
+              //   NavigationDrawer(children: children)
+              Container(
+                height: double.infinity,
+                width: 200,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 28,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 30),
+                      child: Align(
+                        child: MenuItem(
+                          onClick: () {
+                            int index = 6;
+                            print('change: ' + index.toString());
+                            pageIndex_old = pageIndex;
+
+                            if (index != pageIndex_old) {
+                              setState(() {
+                                pageIndex = index;
+                              });
+                            }
+                          },
+                          title: 'Profile',
+                          icon: Icon(
+                            Icons.person,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 30),
                       child: MenuItem(
                         onClick: () {
-                          int index = 6;
+                          int index = 5;
                           print('change: ' + index.toString());
                           pageIndex_old = pageIndex;
 
@@ -177,191 +236,165 @@ class _MainPageState extends State<MainPage> {
                             });
                           }
                         },
-                        title: 'Profile',
+                        title: 'Settings',
                         icon: Icon(
-                          Icons.person,
+                          Icons.settings,
                           size: 20,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
-                  ),
-                  Container(
-                    height: 15,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 30),
-                    child: MenuItem(
-                      onClick: () {
-                        int index = 5;
-                        print('change: ' + index.toString());
-                        pageIndex_old = pageIndex;
+                    Padding(
+                        child: Div.Divider(
+                          size: 20,
+                        ),
+                        padding: EdgeInsets.only(top: 20, bottom: 20)),
+                    ItemDrawer(
+                        offset: 0,
+                        onChange: (index) {
+                          index = index + 1;
+                          print('change: ' + index.toString());
+                          pageIndex_old = pageIndex;
 
-                        if (index != pageIndex_old) {
-                          setState(() {
-                            pageIndex = index;
-                          });
-                        }
-                      },
-                      title: 'Settings',
-                      icon: Icon(
-                        Icons.settings,
-                        size: 20,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                      child: Div.Divider(
-                        size: 20,
-                      ),
-                      padding: EdgeInsets.only(top: 20, bottom: 20)),
-                  ItemDrawer(
-                      offset: 0,
-                      onChange: (index) {
-                        index = index + 1;
-                        print('change: ' + index.toString());
-                        pageIndex_old = pageIndex;
+                          if (index != pageIndex_old) {
+                            setState(() {
+                              pageIndex = index;
+                            });
+                          }
+                        },
+                        title: 'Providers',
+                        children: [
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'Modrinth',
+                          ),
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'Pixie',
+                          ),
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'Curseforge',
+                          ),
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'FTB',
+                          ),
+                        ]),
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, top: 10, bottom: 17),
+                        child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.all(
+                                    Radius.elliptical(18, 18))),
+                            width: double.infinity,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: 15,
+                                  right: 15,
+                                ),
+                                child: MenuItem(
+                                  width: 140,
+                                  onClick: () {
+                                    int index = 0;
+                                    print('change: ' + index.toString());
+                                    pageIndex_old = pageIndex;
 
-                        if (index != pageIndex_old) {
-                          setState(() {
-                            pageIndex = index;
-                          });
-                        }
-                      },
-                      title: 'Providers',
-                      children: [
-                        ItemDrawerItem(
-                          icon: Icon(
-                            Icons.sms,
-                            size: 14,
-                          ),
-                          title: 'Modrinth',
-                        ),
-                        ItemDrawerItem(
-                          icon: Icon(
-                            Icons.sms,
-                            size: 14,
-                          ),
-                          title: 'Pixie',
-                        ),
-                        ItemDrawerItem(
-                          icon: Icon(
-                            Icons.sms,
-                            size: 14,
-                          ),
-                          title: 'Curseforge',
-                        ),
-                        ItemDrawerItem(
-                          icon: Icon(
-                            Icons.sms,
-                            size: 14,
-                          ),
-                          title: 'FTB',
-                        ),
-                      ]),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          left: 15, right: 15, top: 10, bottom: 17),
-                      child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
-                              borderRadius:
-                                  BorderRadius.all(Radius.elliptical(18, 18))),
-                          width: double.infinity,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: 15,
-                                right: 15,
-                              ),
-                              child: MenuItem(
-                                width: 140,
-                                onClick: () {
-                                  int index = 0;
-                                  print('change: ' + index.toString());
-                                  pageIndex_old = pageIndex;
-
-                                  if (index != pageIndex_old) {
-                                    setState(() {
-                                      pageIndex = index;
-                                    });
-                                  }
-                                },
-                                title: 'My Modpacks',
-                                icon: Icon(
-                                  Icons.folder,
-                                  size: 20,
-                                  color: Theme.of(context).colorScheme.primary,
+                                    if (index != pageIndex_old) {
+                                      setState(() {
+                                        pageIndex = index;
+                                      });
+                                    }
+                                  },
+                                  title: 'My Modpacks',
+                                  icon: Icon(
+                                    Icons.folder,
+                                    size: 20,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ))),
-                  Div.Divider(
-                    size: 20,
-                  ),
-                  SizedBox(
-                    height: 17,
-                  ),
-                ],
+                            ))),
+                    Div.Divider(
+                      size: 20,
+                    ),
+                    SizedBox(
+                      height: 17,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-                child: PageTransitionSwitcher(
-              duration: const Duration(milliseconds: 400),
-              reverse: pageIndex < pageIndex_old,
-              child: Padding(
-                key: UniqueKey(),
-                padding: edgeInsets,
-                child: _pages![pageIndex],
-              ),
-              transitionBuilder:
-                  (child, primaryAnimation, secondaryAnimation) =>
-                      SharedAxisTransition(
-                animation: primaryAnimation,
-                secondaryAnimation: secondaryAnimation,
-                transitionType: SharedAxisTransitionType.vertical,
-                fillColor: Colors.transparent,
-                child: child,
-              ),
-            )),
-            SidePanel()
+              Expanded(
+                  child: PageTransitionSwitcher(
+                duration: const Duration(milliseconds: 400),
+                reverse: pageIndex < pageIndex_old,
+                child: Padding(
+                  key: UniqueKey(),
+                  padding: edgeInsets,
+                  child: _pages![pageIndex],
+                ),
+                transitionBuilder:
+                    (child, primaryAnimation, secondaryAnimation) =>
+                        SharedAxisTransition(
+                  animation: primaryAnimation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: SharedAxisTransitionType.vertical,
+                  fillColor: Colors.transparent,
+                  child: child,
+                ),
+              )),
+              SidePanel()
 
-            // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
-          ],
-        ),
-      
-      // shouldSplashedDisplayed
-      //     ? AnimatedOpacity(
-      //         onEnd: () {
-      //           setState(() {
-      //             shouldSplashedDisplayed = false;
-      //           });
-                
-      //         },
-      //         opacity: isSplashed ? 1.0 : 0.0,
-      //         curve: Curves.easeOutExpo,
-      //         duration: Duration(milliseconds: 800),
-      //         child: Container(
-      //           height: double.infinity,
-      //           width: double.infinity,
-      //           color: Theme.of(context).colorScheme.background,
-      //           child: SplashScreen(),
-      //         ),
-      //       )
-      //     : Container(),
-      SizedBox(
-        height: 35,
-        child: Align(
-            alignment: Alignment.topLeft,
-            child: Row(
-              children: [Expanded(child: MoveWindow()), WindowButtons()],
-            )),
-      ),
-    
-    ]));
+              // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
+            ],
+          ),
+
+          // shouldSplashedDisplayed
+          //     ? AnimatedOpacity(
+          //         onEnd: () {
+          //           setState(() {
+          //             shouldSplashedDisplayed = false;
+          //           });
+
+          //         },
+          //         opacity: isSplashed ? 1.0 : 0.0,
+          //         curve: Curves.easeOutExpo,
+          //         duration: Duration(milliseconds: 800),
+          //         child: Container(
+          //           height: double.infinity,
+          //           width: double.infinity,
+          //           color: Theme.of(context).colorScheme.background,
+          //           child: SplashScreen(),
+          //         ),
+          //       )
+          //     : Container(),
+          SizedBox(
+            height: 35,
+            child: Align(
+                alignment: Alignment.topLeft,
+                child: Row(
+                  children: [Expanded(child: MoveWindow()), WindowButtons()],
+                )),
+          ),
+        ]));
   }
 }
 

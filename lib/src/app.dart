@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/HomePage.dart';
 import 'package:mclauncher4/src/pages/debugpage.dart';
@@ -40,6 +41,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   Set<PointerDeviceKind> get dragDevices => {
         PointerDeviceKind.touch,
         PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad
       };
 }
 
@@ -129,46 +131,10 @@ class _MainPageState extends State<MainPage> {
           // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
           // Minecraft().run(res, 'C:\\Users\\ancie\\Documents\\PixieLauncherInstances\\debug\\libraries');
 
-          SidePanel().pop(
-            Container(
-                  width: 700,
-                  
-                  child: Builder(builder:(context) {
-                    
-                    return SingleChildScrollView(
-                      child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        height: 300,
-                        child: Text('test'),
-                        color: Color.fromARGB(255, 255, 19, 110),
-                      ),
-                      Container(
-                        height: 300,
-                        color: Colors.green,
-                      ),
-                      Container(
-                        height: 300,
-                        color: Color.fromARGB(255, 224, 24, 250),
-                      ),
-                      Container(
-                        height: 300,
-                        color: Colors.green,
-                      ),
-                      Container(
-                        height: 300,
-                        color: Color.fromARGB(255, 32, 90, 177),
-                      ),
-                      Container(
-                        height: 300,
-                        color: Colors.green,
-                      )
-                    ],
-                  ));})
-                
-              ),
-              550);
+         final FlutterSecureStorage storage = FlutterSecureStorage();
+
+
+         storage.deleteAll();
           //  DiscordRP().initCS();
           // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
 

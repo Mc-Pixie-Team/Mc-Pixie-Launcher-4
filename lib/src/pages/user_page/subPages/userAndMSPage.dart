@@ -159,6 +159,8 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
           child: FutureBuilder(
             future: MinecraftAccountUtils().getAccounts(),
             builder: (context, snapshot) {
+            
+              print(snapshot.error);
               if (snapshot.hasData) {
                 List<MinecraftAccount> accounts = snapshot.data ?? [];
                 return ListView.separated(
@@ -271,6 +273,7 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                   child: LinearProgressIndicator(),
                 );
               }
+         
             },
           ),
         ),

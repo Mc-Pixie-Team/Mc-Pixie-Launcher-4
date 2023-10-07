@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/tasks/storrage/secureStorrage.dart';
 
@@ -137,11 +138,9 @@ class MinecraftAccountUtils {
   }
 
   Future<void> initOnFirstStart() async {
-    try {
-      SecureStorage().readSecureData("standardAccount");
-    } catch (e) {
-      await MinecraftAccountUtils().saveAccounts([]);
-    }
+
+    if ( !(await SecureStorage().isKeyRegistered("accounts"))) await MinecraftAccountUtils().saveAccounts([]);
+      
   }
 }
 

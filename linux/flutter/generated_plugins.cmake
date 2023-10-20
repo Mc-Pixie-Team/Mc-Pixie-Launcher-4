@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   bitsdojo_window_linux
   dart_discord_rpc
+  desktop_drop
   flutter_secure_storage_linux
   url_launcher_linux
 )

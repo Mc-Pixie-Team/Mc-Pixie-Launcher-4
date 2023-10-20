@@ -10,6 +10,13 @@ import 'package:mclauncher4/src/widgets/InstalledCard.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 
 class Modpacks {
+  static generateManifest() async {
+    File manifest = File("${await getInstancePath()}\\manifest.json");
+    if (manifest.existsSync()) return;
+    manifest.createSync(recursive: true);
+    manifest.writeAsStringSync("[]");
+  }
+
   static ValueNotifierList<Widget> globalinstallContollers =
       ValueNotifierList([]);
   static Future<List<Widget>> getPacksformManifest() async {
@@ -27,7 +34,7 @@ class Modpacks {
         key: Key(manifest[index]["processId"]),
         builder: (context, child) => InstalledCard(
           processId: manifest[index]["processId"],
-          name: manifest[index]["name"],
+          modpackData: manifest[index],
           mainState: installcontroller.mainState,
           mainprogress: installcontroller.mainprogress,
           onCancel: installcontroller.cancel,

@@ -18,12 +18,16 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
   bool get isDownloading =>
       _downloader.downloadstate == DownloadState.customDownload;
 
+  int installStep = 1;
+  int stepAmount = 2;
+
   install() async {
     List<int> _bytes = await _downloader.downloadSingeFileAsBytes(
         "https://cdn.azul.com/zulu/bin/zulu8.72.0.17-ca-jdk8.0.382-win_x64.zip");
 
     Utils.extractZip(_bytes, '${await getinstances()}');
     _bytes = [];
+    installStep++;
     _bytes = await _downloader.downloadSingeFileAsBytes(
         "https://cdn.azul.com/zulu/bin/zulu17.44.53-ca-jdk17.0.8.1-win_x64.zip");
 
@@ -40,7 +44,7 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
             boxShadow: [
               BoxShadow(color: Color.fromARGB(90, 0, 0, 0), blurRadius: 16)
             ],
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(18)),
         height: 200,
         width: 400,
@@ -73,7 +77,13 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     isDownloading
-                        ? Container()
+                        ? DefaultTextStyle(
+                            style: TextStyle(),
+                            child: Text(
+                              '$stepAmount/$installStep',
+                              style:
+                                  Theme.of(context).typography.black.bodyLarge,
+                            ))
                         : TextButton(
                             onPressed: () => Navigator.pop(context),
                             child: Text(
@@ -85,18 +95,16 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
                       height: 15,
                     ),
                     isDownloading
-                        ? SizedBox(
-                            height: 25,
-                            width: 25,
-                            child: DownloadButton(
-                              mainprogress: _downloader.progress * 100,
-                              mainState: MainState.downloadingML,
-                              onDownload: () {},
-                              onCancel: () {},
-                              onOpen: () {},
-                            ))
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: SizedBox(
+                                width: 280,
+                                child: LinearProgressIndicator(
+                                  backgroundColor: Theme.of(context).colorScheme.background,
+                                  value: _downloader.progress,
+                                )))
                         : TextButton(
-                            onPressed: () => install(),
+                            onPressed: install,
                             child: Text(
                               'Install',
                               style:

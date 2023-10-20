@@ -2,9 +2,11 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/HomePage.dart';
 import 'package:mclauncher4/src/pages/debugpage.dart';
+import 'package:mclauncher4/src/pages/installedModpacks.dart';
 import 'package:mclauncher4/src/pages/providers/ModListPage.dart';
 import 'package:mclauncher4/src/pages/settings_page/settingsPage.dart';
 import 'package:mclauncher4/src/pages/splash/splash.dart';
@@ -18,13 +20,15 @@ import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/installController.dart';
 import 'package:mclauncher4/src/tasks/win32Deleter.dart';
+import 'package:mclauncher4/src/widgets/ImportField.dart';
 import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/minecraft/client.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
 import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
-
+import 'package:desktop_drop/desktop_drop.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +38,7 @@ import 'widgets/NavigationDrawer/menuItem.dart';
 import 'widgets/divider.dart' as Div;
 import 'package:animations/animations.dart';
 import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
-
+import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
@@ -120,6 +124,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     // TODO: implement initState
     MinecraftAccountUtils().initOnFirstStart();
+    Modpacks.generateManifest();
     super.initState();
   }
 
@@ -131,10 +136,8 @@ class _MainPageState extends State<MainPage> {
           // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
           // Minecraft().run(res, 'C:\\Users\\ancie\\Documents\\PixieLauncherInstances\\debug\\libraries');
 
-         final FlutterSecureStorage storage = FlutterSecureStorage();
+          supabaseHelpers().signoutUser();
 
-
-         storage.deleteAll();
           //  DiscordRP().initCS();
           // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
 
@@ -305,6 +308,18 @@ class _MainPageState extends State<MainPage> {
                     SizedBox(
                       height: 17,
                     ),
+                    Expanded(child: SizedBox.expand()),
+                    Align(
+                      alignment: Alignment(-0.7, 0.2),
+                      child: Text(
+                        'Import Modpacks:',
+                        style: Theme.of(context).typography.black.bodySmall,
+                      ),
+                    ),
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, bottom: 20, top: 8),
+                        child: ImportField())
                   ],
                 ),
               ),

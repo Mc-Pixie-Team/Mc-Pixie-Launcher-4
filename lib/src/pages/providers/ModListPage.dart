@@ -295,7 +295,7 @@ class _ModListPageState extends State<ModListPage> {
                                                         processId:
                                                             installcontroller
                                                                 .processId,
-                                                        name: modpackData[
+                                                        modpackData: modpackData[
                                                             "title"],
                                                         mainState:
                                                             installcontroller

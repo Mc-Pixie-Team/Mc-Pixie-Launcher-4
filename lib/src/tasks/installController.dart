@@ -57,6 +57,7 @@ class InstallController with ChangeNotifier {
                   progress: progress,
                 )),
         processId);
+        
   }
 
   void removeTaskWidget() {
@@ -72,7 +73,6 @@ class InstallController with ChangeNotifier {
     if (result != null) {
       print('trying to kill process =============>');
       result!.stdin.writeln("/stop");
-      print(result!.kill());
       result!.exitCode.then((value) {
         removeTaskWidget();
         _mainState = MainState.installed;
@@ -93,7 +93,12 @@ class InstallController with ChangeNotifier {
             .delete(recursive: true);
       } catch (e) {}
     }
-
+        if (await Directory(await getTempCommandPath() + "\\$processId").exists()) {
+      try {
+        await Directory(await getTempCommandPath() + "\\$processId")
+            .delete(recursive: true);
+      } catch (e) {}
+    }
    
     _callnotifiers();
   }
@@ -229,6 +234,7 @@ class Installer {
   install(Api _handler, Map modpackData, String _processId) async {
     var downloader = _handler.getDownloaderObject();
     String mloaderS = modpackData["loaders"].first;
+    print(modpackData);
     Version version = Version.parse(modpackData["game_versions"].first);
 
     if (mloaderS == "forge") {
@@ -288,7 +294,7 @@ class Installer {
     _mainState = MainState.installed;
     sendMessage();
     print('installed is done');
-
+    Directory(await getTempCommandPath() + "\\$_processId").deleteSync(recursive:  true);
     // _modloader!.run(modpackVersion["id"], version, modloaderVersion);
     Isolate.exit();
   }

@@ -9,6 +9,7 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
 
 class UserAndMSPage extends StatefulWidget {
   const UserAndMSPage({Key? key}) : super(key: key);
@@ -23,10 +24,27 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
     super.initState();
   }
 
+
+  onReturn() {
+    print('return');
+     SidePanel().pop(Container(
+      height: double.infinity,
+      width: double.infinity,
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset(
+        'assets\\images\\backgound_blue.jpg',
+        fit: BoxFit.cover,
+      ),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Color.fromARGB(0, 27, 124, 204))), 280.0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SidePanelWidget(
       title: "Name, Microsoft",
+      onpressed: onReturn,
       child: Align(
         alignment: Alignment.topCenter,
         child: Column(children: [

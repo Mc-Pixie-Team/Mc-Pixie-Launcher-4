@@ -104,12 +104,13 @@ class _BrowseCardState extends State<BrowseCard> {
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).typography.black.headlineSmall,
                     ),
+                    SizedBox(width: 400, child:
                     Text(
                       widget.modpacklist["description"],
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).typography.black.bodyMedium,
-                    ),
+                    )),
                     Expanded(
                       child: Container(),
                     ),

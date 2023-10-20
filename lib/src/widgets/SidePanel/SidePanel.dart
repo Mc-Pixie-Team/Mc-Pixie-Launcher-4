@@ -6,7 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
 import 'package:vector_math/vector_math.dart' as vec;
 
+
+
+
 class SidePanel extends StatefulWidget {
+
+
+
+
   var state = _SidePanelState();
   static final SidePanel _instance = SidePanel._internal();
 
@@ -195,6 +202,9 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return Padding(
         padding: EdgeInsets.only(left: 0, top: 43, right: 10, bottom: 12),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -203,21 +213,21 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
                   width: lerpDouble((width_old ?? defaultWidth),
                       (width ?? defaultWidth), ((ani.value * -1) + 1)),
                   height: double.infinity,
-                  child: ClipRect(
+                  child: OverflowBox(
                       child: Stack(
                     children: [
                       Opacity(
                         opacity: ani.value,
                         child: Transform.translate(
                             offset: Offset(100.0 * ((ani.value * -1) + 1), 0),
-                            child:   currentWidget),
+                            child:  SingleChildScrollView(scrollDirection: Axis.horizontal, child: SizedBox(width: (this.width_old ?? defaultWidth), child: currentWidget),)),
                       ),
                       Align(
                           alignment: Alignment(1, 1),
                           child: Transform.translate(
                             offset:
                                 Offset((width ?? defaultWidth) * ani.value, 0),
-                            child: newWidget == null ? Container() : newWidget,
+                            child: newWidget == null ? Container() : SingleChildScrollView(scrollDirection: Axis.horizontal, child: SizedBox(width: (width ?? defaultWidth), child: newWidget),),
                           )),
                     ],
                   )))),

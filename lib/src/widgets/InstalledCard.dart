@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/IOController.dart';
+import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/Buttons/downloadButton.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -8,12 +10,12 @@ class InstalledCard extends StatefulWidget {
   final double mainprogress;
   final VoidCallback onCancel;
   final VoidCallback onOpen;
-  final String name;
+  final Map modpackData;
   final String processId;
   InstalledCard(
       {Key? key,
       required this.processId,
-      required this.name,
+      required this.modpackData,
       required this.mainState,
       required this.mainprogress,
       required this.onCancel,
@@ -33,7 +35,8 @@ class _InstalledCardState extends State<InstalledCard> {
   bool get _isDownloading =>
       widget.mainState == MainState.downloadingMinecraft ||
       widget.mainState == MainState.downloadingML ||
-      widget.mainState == MainState.downloadingMods || widget.mainState == MainState.running;
+      widget.mainState == MainState.downloadingMods ||
+      widget.mainState == MainState.running;
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +88,7 @@ class _InstalledCardState extends State<InstalledCard> {
                                   Padding(
                                       padding: EdgeInsets.only(left: 12),
                                       child: Text(
-                                        widget.name,
+                                        widget.modpackData["name"],
                                         style: Theme.of(context)
                                             .typography
                                             .black
@@ -113,37 +116,45 @@ class _InstalledCardState extends State<InstalledCard> {
                                 child: Padding(
                                     padding: EdgeInsets.all(10)
                                         .copyWith(top: 15, bottom: 15),
-                                    child: Container(
-                                        height: double.infinity,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .surfaceVariant),
-                                        child: Center(
-                                            child: widget.mainState ==
-                                                    MainState.installed 
-                                                ? GestureDetector(onTap: widget.onOpen, child: Text(
-                                                    'Play',
-                                                    style: Theme.of(context)
-                                                        .typography
-                                                        .black
-                                                        .titleMedium,
-                                                  ))
-                                                : SizedBox(
-                                                    height: 23,
-                                                    width: 23,
-                                                    child: DownloadButton(
-                                                      mainState:
-                                                          widget.mainState,
-                                                      mainprogress:
-                                                          widget.mainprogress,
-                                                      onCancel: widget.onCancel,
-                                                      onOpen: widget.onOpen,
-                                                      onDownload: () {},
-                                                    )))))))
+                                    child: GestureDetector(
+                                        onTap: widget.onOpen,
+                                        child: Container(
+                                            height: double.infinity,
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surfaceVariant),
+                                            child: Center(
+                                                child: widget.mainState ==
+                                                        MainState.installed
+                                                    ? Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                                                      Text(
+                                                        'Play',
+                                                        style: Theme.of(context)
+                                                            .typography
+                                                            .black
+                                                            .titleMedium,
+                                                      ),
+                                                      SvgButton.asset('assets/svg/cancel-icon.svg', onpressed: () => {
+                                                        ImportExportController().export(widget.processId)
+                                                      })
+                                                    ],)
+                                                    : SizedBox(
+                                                        height: 23,
+                                                        width: 23,
+                                                        child: DownloadButton(
+                                                          mainState:
+                                                              widget.mainState,
+                                                          mainprogress: widget
+                                                              .mainprogress,
+                                                          onCancel:
+                                                              widget.onCancel,
+                                                          onOpen: widget.onOpen,
+                                                          onDownload: () {},
+                                                        ))))))))
                       ]))))
         ]));
   }

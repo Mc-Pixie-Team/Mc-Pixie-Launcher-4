@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/apis/api.dart';
@@ -181,9 +182,16 @@ class ModrinthApi implements Api {
     return return_value;
   }
 
+  @override
   Map convertToUMF(Map modpackData) {
     modpackData["name"] = modpackData["name"] ?? modpackData["title"];
     return modpackData; 
+  }
+
+  Future<String> getIcon(Map modpackData) async {
+    if(modpackData["icon_url"] != null) return modpackData["icon_url"];
+    Map project = await getModpack(modpackData["project_id"]);
+    return  project["icon_url"];
   }
 
   @override

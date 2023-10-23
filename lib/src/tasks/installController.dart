@@ -174,7 +174,7 @@ class InstallController with ChangeNotifier {
         mainfest.add(  {
           "name": await _handler.getModpackName(_modpackData),
           "provider": _handler.getidname,
-          "processId": _processId,
+          "processId": processId,
           "providerArgs": modpackVersion
         });
         await File('${await getInstancePath()}\\manifest.json')
@@ -234,6 +234,7 @@ class Installer {
   install(Api _handler, Map modpackData, String _processId) async {
     var downloader = _handler.getDownloaderObject();
     String mloaderS = modpackData["loaders"].first;
+    print("from installer:");
     print(modpackData);
     Version version = Version.parse(modpackData["game_versions"].first);
 
@@ -250,6 +251,7 @@ class Installer {
       _progress = downloader.progress;
       sendMessage();
     });
+    print(modpackData);
 
     _minecraft.addListener(() {
       // print('${_minecraft.installstate} ${_minecraft.progress}');

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/downloadState.dart';
 import 'package:mclauncher4/src/tasks/IOController.dart';
+import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/Buttons/downloadButton.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -38,6 +41,19 @@ class _InstalledCardState extends State<InstalledCard> {
       widget.mainState == MainState.downloadingMods ||
       widget.mainState == MainState.running;
 
+
+  Widget iconhandler() {
+    if(widget.modpackData["icon_url"] != null) {
+      return FadeInImage.memoryNetwork(
+                          fit: BoxFit.cover,
+                          placeholder: kTransparentImage,
+                          image:
+                              widget.modpackData["icon_url"]);
+    }
+    return Image.memory(File("${getInstancePathSync()}\\${widget.processId}\\icon.png").readAsBytesSync(),  fit: BoxFit.cover,);
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -58,11 +74,7 @@ class _InstalledCardState extends State<InstalledCard> {
                       clipBehavior: Clip.hardEdge,
                       decoration:
                           BoxDecoration(borderRadius: BorderRadius.circular(8)),
-                      child: FadeInImage.memoryNetwork(
-                          fit: BoxFit.cover,
-                          placeholder: kTransparentImage,
-                          image:
-                              'https://images.unsplash.com/photo-1622737133809-d95047b9e673?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1932&q=80')))),
+                      child:iconhandler() ))),
           Expanded(
               child: MouseRegion(
                   onEnter: (e) => setState(() {

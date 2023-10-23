@@ -61,6 +61,10 @@ Future<String> getInstancePath() async {
   //return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\instance';
   return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents\\PixieLauncherInstances\\instance';
 }
+String getInstancePathSync(){
+  //return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\instance';
+  return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents\\PixieLauncherInstances\\instance';
+}
 
 Future<String> getDocumentsPath() async {
   return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents';

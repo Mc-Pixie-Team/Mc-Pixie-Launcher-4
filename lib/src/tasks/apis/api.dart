@@ -109,6 +109,11 @@ class Api {
         "Do not call the normal API class, this is just a Template function!");
   }
 
+   Future<String> getIcon(Map modpackData) async {
+    throw Exception(
+        "Do not call the normal API class, this is just a Template function!");
+   }
+
   Map convertToUMF(Map modpackData) {
         throw Exception(
         "Do not call the normal API class, this is just a Template function!");

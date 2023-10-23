@@ -15,6 +15,7 @@ import 'package:mclauncher4/src/tasks/minecraft/client.dart';
 import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/tasks/startMessage.dart';
+import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/version.dart';
 import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
@@ -270,8 +271,12 @@ class Installer {
       _progress = _modloader!.progress;
       sendMessage();
     });
+    //TODO: better solution is needed
+  Download().downloadSingeFile( await _handler.getIcon(modpackData), await getInstancePath() + "\\$_processId\\icon.png");
 
     await downloader.downloadModpack(modpackData, _processId);
+
+
     Map versions =
         await _handler.getMMLVersion(modpackData, _processId, mloaderS);
 

@@ -22,7 +22,7 @@ class DiscordRP {
     }
     var serviceExecutable = 'C:/Program Files/dotnet/dotnet.exe'; // literally the .NET CLI
     var serviceArgs = ['run', appID]; // or .EXE if on Windows...
-    csharpProcess = await Process.start(serviceExecutable, serviceArgs, workingDirectory: "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp");
+  //  csharpProcess = await Process.start(serviceExecutable, serviceArgs, workingDirectory: "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp");
     print(csharpProcess);
 // Parse messages incoming from C# -> Dart
     dynamic onDataReceived(event) {
@@ -61,8 +61,8 @@ class DiscordRP {
       //TODO: handle the payload of the JSON RPC message "result"
     }
 
-    csharpProcess!.stdout.forEach(onDataReceived);
-    csharpProcess!.stderr.forEach(onErrorReceived);
+   // csharpProcess!.stdout.forEach(onDataReceived);
+   // csharpProcess!.stderr.forEach(onErrorReceived);
 // Format outgoing messages
     Map message = {
       "jsonrpc": "2.0",
@@ -73,7 +73,7 @@ class DiscordRP {
     var jsonEncodedBody = jsonEncode(message);
     var contentLengthHeader = 'Content-Length: ${jsonEncodedBody.length}';
     var messagePayload = contentLengthHeader + '\r\n\r\n${jsonEncodedBody}';
-    (csharpProcess!).stdin.write(messagePayload);
+    //(csharpProcess!).stdin.write(messagePayload);
 // TODO: track the message ID if replies are important
   }
 
@@ -93,7 +93,7 @@ class DiscordRP {
     var jsonEncodedBody = jsonEncode(message);
     var contentLengthHeader = 'Content-Length: ${jsonEncodedBody.length}';
     var messagePayload = contentLengthHeader + '\r\n\r\n${jsonEncodedBody}';
-    (csharpProcess!).stdin.write(messagePayload);
+   // (csharpProcess!).stdin.write(messagePayload);
     return true;
   }
 

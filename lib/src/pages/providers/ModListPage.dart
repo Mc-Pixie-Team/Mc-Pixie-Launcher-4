@@ -277,10 +277,11 @@ class _ModListPageState extends State<ModListPage> {
                                                     installcontroller.cancel();
                                                   },
                                                   onDownload: () async {
-                                                    if (checkForJava() == false)
-                                                      return;
-                                                    Map modpackData =
-                                                        modpacklist[index];
+                                                    if (checkForJava() == false) return;
+                                                      
+                                                    Map modpackData = _handler.convertToUMF(modpacklist[index]);
+                                                        print(modpackData);
+
 
                                                     Modpacks
                                                         .globalinstallContollers
@@ -295,8 +296,7 @@ class _ModListPageState extends State<ModListPage> {
                                                         processId:
                                                             installcontroller
                                                                 .processId,
-                                                        modpackData: modpackData[
-                                                            "title"],
+                                                        modpackData: modpackData,
                                                         mainState:
                                                             installcontroller
                                                                 .mainState,

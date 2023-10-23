@@ -1317,24 +1317,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ancie\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\jhonz\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj",
+      "projectUniqueName": "C:\\Users\\jhonz\\Documents\\GitHub\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj",
       "projectName": "discordCSApp",
-      "projectPath": "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj",
-      "packagesPath": "C:\\Users\\ancie\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp\\obj\\",
+      "projectPath": "C:\\Users\\jhonz\\Documents\\GitHub\\Mc-Pixie-Launcher-4\\discordCSApp\\discordCSApp.csproj",
+      "packagesPath": "C:\\Users\\jhonz\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\jhonz\\Documents\\GitHub\\Mc-Pixie-Launcher-4\\discordCSApp\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\ancie\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\jhonz\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1385,7 +1380,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

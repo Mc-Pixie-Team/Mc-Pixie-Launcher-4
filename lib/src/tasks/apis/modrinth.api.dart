@@ -99,9 +99,6 @@ class ModrinthApi implements Api {
     offset += limit;
     return jsonDecode(utf8.decode(res.bodyBytes))["hits"];
   }
-  //2022-06-03T01:09:54.072846Z
-  //2022-06-16T17:45:30.690271Z
-  //2023-07-27T18:48:11.519091Z
 
   @override
   getModpack(String id) async {
@@ -111,7 +108,7 @@ class ModrinthApi implements Api {
   }
 
   @override
-  getModpackVersion(String version) async {
+  Future<Map<String, dynamic>> getModpackVersion(String version) async {
     var res = await http
         .get(Uri.parse('https://api.modrinth.com/v2/version/$version'));
     // TODO: implement getModpack
@@ -119,7 +116,7 @@ class ModrinthApi implements Api {
   }
 
   @override
-  getMMLVersion(modpackVersion, String instanceName, String modloader) async {
+  Future<Map> getMMLVersion(modpackVersion, String instanceName, String modloader) async {
     Map return_value = {};
     late ModloaderVersion modloaderVersion;
     String destination =
@@ -182,6 +179,11 @@ class ModrinthApi implements Api {
     }
 
     return return_value;
+  }
+
+  Map convertToUMF(Map modpackData) {
+    modpackData["name"] = modpackData["name"] ?? modpackData["title"];
+    return modpackData; 
   }
 
   @override

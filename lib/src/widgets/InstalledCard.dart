@@ -97,7 +97,7 @@ class _InstalledCardState extends State<InstalledCard> {
                                   Padding(
                                       padding: EdgeInsets.only(left: 12),
                                       child: Text(
-                                        'by ATM Team',
+                                        'by N/A',
                                         style: Theme.of(context)
                                             .typography
                                             .black

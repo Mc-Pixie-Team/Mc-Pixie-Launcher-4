@@ -31,7 +31,7 @@ class InstallController with ChangeNotifier {
   Modloader? _modloader;
   late MainState _mainState;
   ChangeNotifier _notifierforTask = ChangeNotifier();
-  Process? result;
+  Process? _result;
   double _progress = 0.0;
   double _mainprogress = 0.0;
   late String _processId;
@@ -43,7 +43,7 @@ class InstallController with ChangeNotifier {
   double get progress => _progress;
   double get mainprogress => _mainprogress;
   MainState get mainState => _mainState;
-
+  Process? get result => _result;
   void setTaskWidget(Api _handler, Map modpackdata) async{
     String name = await _handler.getModpackName(modpackdata);
     SidePanel().addToTaskWidget(
@@ -121,10 +121,10 @@ class InstallController with ChangeNotifier {
     ModloaderVersion modloaderVersion = versions["modloader"];
     _mainState = MainState.running;
     _callnotifiers();
-    Process _result =
+    Process result =
         await _modloader!.run(_processId, version, modloaderVersion);
 
-    this.result = _result;
+    this._result = result;
   }
 
   void install(Api _handler, Map _modpackData) async {
@@ -134,8 +134,12 @@ class InstallController with ChangeNotifier {
     _callnotifiers();
 
     Map modpackproject = await _handler.getModpack(_modpackData["project_id"]);
-    Map modpackVersion = await _handler
+     Map modpackVersion = _modpackData;
+    if(_modpackData["game_versions"] == null) {
+       modpackVersion = await _handler
         .getModpackVersion((modpackproject["versions"] as List).last);
+    }
+ 
 
     ReceivePort receivePort = ReceivePort();
     ReceivePort exitPort = ReceivePort();
@@ -236,7 +240,6 @@ class Installer {
     var downloader = _handler.getDownloaderObject();
     String mloaderS = modpackData["loaders"].first;
     print("from installer:");
-    print(modpackData);
     Version version = Version.parse(modpackData["game_versions"].first);
 
     if (mloaderS == "forge") {

@@ -45,14 +45,14 @@ class Utils {
     }
   }
 
-  static copyDirectory(Directory source, Directory destination) async {
+  static Future copyDirectory(Directory source, Directory destination) async {
     /// create destination folder if not exist
     if (!destination.existsSync()) {
       await destination.create(recursive: true);
     }
 
     /// get all files from source (recursive: false is important here)
-    await source.list(recursive: false).forEach((entity) async {
+   await for (var entity in  source.list(recursive: false)){
       final newPath = destination.path +
           Platform.pathSeparator +
           path.basename(entity.path);
@@ -61,7 +61,7 @@ class Utils {
       } else if (entity is Directory) {
         await copyDirectory(entity, Directory(newPath));
       }
-    });
+    }
   }
 
   static extractForgeInstaller(

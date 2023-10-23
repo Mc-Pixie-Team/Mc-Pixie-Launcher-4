@@ -103,7 +103,6 @@ class Api {
         "Do not call the normal API class, this is just a Template function!");
   }
 
-  //Should return a List of Strings of all catergories or tags the provider has to provide.
   Future<List<String>> getCategories() {
     throw Exception(
         "Do not call the normal API class, this is just a Template function!");
@@ -118,4 +117,8 @@ class Api {
         throw Exception(
         "Do not call the normal API class, this is just a Template function!");
   }
+    Future exportModpack(String processId, Map modpack, String pathTo) async {
+         throw Exception(
+        "Do not call the normal API class, this is just a Template function!");
+    }
 }

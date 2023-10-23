@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:file_picker/file_picker.dart';
 import 'package:archive/archive_io.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
@@ -24,33 +24,30 @@ class ImportExportController {
       Map pixieIndexJson = jsonDecode(File(path + "\\pixie.index.json").readAsStringSync());
       pixieIndexJson["processId"] = process_id;
 
-      Utils.copyDirectory(Directory(path + pixieIndexJson["override"]), Directory(await getinstances() + "\\instance\\${process_id}"));
+      await Utils.copyDirectory(Directory(path + pixieIndexJson["override"]), Directory("${await getinstances()}\\instance\\$process_id"));
 
     Api api = ApiHandler().getApi(pixieIndexJson["provider"]);
-
+    print(pixieIndexJson["providerArgs"]);
     installController.install(api, pixieIndexJson["providerArgs"]);
 
   }
   void export(String processId) async{
    List manifest = jsonDecode( File(await getinstances() + "\\instance\\manifest.json").readAsStringSync());
     
+
+
     for (Map modpack in manifest) {
       if( modpack["processId"] == processId) {
-       
-        _compareMods(modpack);
+       String? pathTo = await FilePicker.platform.saveFile(dialogTitle: "Save your project", fileName: "project.mcmp");
+       if(pathTo == null) return;
+      
+         Api _handler = ApiHandler().getApi(modpack["provider"]);
+         _handler.exportModpack(processId, modpack, pathTo);
       }
     }
 
   }
 
-  void _compareMods(Map modpack) {
-     var encoder = ZipFileEncoder();
 
-   Api _handler = ApiHandler().getApi(modpack["provider"]);
-
-
-    
-
-  }
 
 }

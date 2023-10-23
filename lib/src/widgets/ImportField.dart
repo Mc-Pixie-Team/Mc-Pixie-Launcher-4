@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:desktop_drop/desktop_drop.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/getApiHandler.dart';
@@ -20,34 +22,20 @@ class ImportField extends StatefulWidget {
 }
 
 class _ImportFieldState extends State<ImportField> {
-
-
   int alpha = 255;
 
-  ondownload(DropDoneDetails details) async{
-    if( !(details.files.first.path.split(".").last == "zip")) return;
+  ondownload(DropDoneDetails details) async {
+    if (!(details.files.first.path.split(".").last == "zip") ||
+        !(details.files.first.path.split(".").last == "mcmp")) return;
 
-  
-  
-   ImportExportController().import(details.files.first.path);
-  
-
-
-    
-  // Map json = jsonDecode( File(  details.files.first.path).readAsStringSync());
    
-
-
-  //  print(json);
-
-
+   ImportExportController().import(details.files.first.path);
   }
-
 
   @override
   Widget build(BuildContext context) {
     return DropTarget(
-      onDragExited: (details) {
+        onDragExited: (details) {
           setState(() {
             alpha = 255;
           });

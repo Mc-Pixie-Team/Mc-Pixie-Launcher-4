@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/downloadState.dart';
 import 'package:mclauncher4/src/tasks/IOController.dart';
@@ -52,6 +54,62 @@ class _InstalledCardState extends State<InstalledCard> {
     }
     return Image.memory(File("${getInstancePathSync()}\\${widget.processId}\\icon.png").readAsBytesSync(),  fit: BoxFit.cover,);
     
+  }
+
+  onExport() {
+    showGeneralDialog(
+      barrierLabel: 'Java not installed',
+      barrierColor: Colors.black38,
+      transitionDuration: Duration(milliseconds: 200),
+      pageBuilder: (ctx, anim1, anim2) => Center(
+        child: Container(
+          height: 600,
+          width: 500,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: Theme.of(context).colorScheme.surfaceVariant),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 40,
+              ),
+              DefaultTextStyle(style: TextStyle(), child:  Text(
+                "Export...",
+                style: Theme.of(context).typography.black.displaySmall,
+              ),),
+             
+              Expanded(child: SizedBox.expand()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CupertinoButton.filled(
+                    onPressed: () =>
+                        ImportExportController().export(widget.processId),
+                    child: Text('Export'),
+                  ),
+                  CupertinoButton.filled(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('Cancel'),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+            ],
+          ),
+        ),
+      ),
+      transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+        child: FadeTransition(
+          child: child,
+          opacity: anim1,
+        ),
+      ),
+      context: context,
+    );
   }
 
   @override
@@ -142,18 +200,25 @@ class _InstalledCardState extends State<InstalledCard> {
                                             child: Center(
                                                 child: widget.mainState ==
                                                         MainState.installed
-                                                    ? Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                                                      Text(
-                                                        'Play',
-                                                        style: Theme.of(context)
-                                                            .typography
-                                                            .black
-                                                            .titleMedium,
-                                                      ),
-                                                      SvgButton.asset('assets/svg/cancel-icon.svg', onpressed: () => {
-                                                        ImportExportController().export(widget.processId)
-                                                      })
-                                                    ],)
+                                                    ? Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        children: [
+                                                          Text(
+                                                            'Play',
+                                                            style: Theme.of(
+                                                                    context)
+                                                                .typography
+                                                                .black
+                                                                .titleMedium,
+                                                          ),
+                                                          SvgButton.asset(
+                                                              'assets/svg/cancel-icon.svg',
+                                                              onpressed:
+                                                                  onExport)
+                                                        ],
+                                                      )
                                                     : SizedBox(
                                                         height: 23,
                                                         width: 23,

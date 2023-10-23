@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
+import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/apis/api.dart';
@@ -40,13 +41,12 @@ class ModrinthApi implements Api {
 
   @override
   void searchMV(String version) {
-    if((_facet.first.last).startsWith("versions:")){
+    if ((_facet.first.last).startsWith("versions:")) {
       _facet.removeAt(0);
     }
-    if(version != ""){
-        _facet.insert(0, ["versions:$version"]);
+    if (version != "") {
+      _facet.insert(0, ["versions:$version"]);
     }
-  
   }
 
   @override
@@ -58,23 +58,18 @@ class ModrinthApi implements Api {
       List typesmirror = [];
       typesmirror.addAll(types);
       for (String stringType in typesmirror) {
-    
-        if(types.length == 0){
+        if (types.length == 0) {
           _facet.remove(types);
         }
         if (stringType == "categories:$name") {
           types.remove(stringType);
-          if(types.length == 0){
-          _facet.remove(types);
+          if (types.length == 0) {
+            _facet.remove(types);
+          }
+          return;
         }
-        return;
-        }
-        
-        
       }
-  
     }
-
   }
 
   @override
@@ -117,7 +112,8 @@ class ModrinthApi implements Api {
   }
 
   @override
-  Future<Map> getMMLVersion(modpackVersion, String instanceName, String modloader) async {
+  Future<Map> getMMLVersion(
+      modpackVersion, String instanceName, String modloader) async {
     Map return_value = {};
     late ModloaderVersion modloaderVersion;
     String destination =
@@ -192,6 +188,29 @@ class ModrinthApi implements Api {
     if(modpackData["icon_url"] != null) return modpackData["icon_url"];
     Map project = await getModpack(modpackData["project_id"]);
     return  project["icon_url"];
+  }
+
+  @override
+  Future exportModpack(String processId, Map modpack, String pathTo) async {
+    print('exportModpack in modrinth');
+    var encoder = ZipFileEncoder();
+    String path = await getTempCommandPath() + "\\export-$processId";
+    await Utils.copyDirectory(
+        Directory(await getInstancePath() + "\\$processId"),
+        Directory(path + "\\override"));
+
+    File pixieIndex = File(path + "\\pixie.index.json");
+    modpack["override"] = "/override";
+    pixieIndex.createSync();
+    pixieIndex.writeAsStringSync(jsonEncode(modpack));
+   
+    encoder.create(
+        pathTo);
+
+   await encoder.addDirectory(Directory(path), includeDirName: false);
+    encoder.close();
+
+     await  Directory(path).delete(recursive: true);
   }
 
   @override

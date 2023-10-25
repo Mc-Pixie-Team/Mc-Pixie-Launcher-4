@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Api {
+abstract class Api {
 
 
   /// if you want to change anything here, that's allowed, (MIT)

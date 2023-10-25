@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -36,7 +37,6 @@ class InstalledCard extends StatefulWidget {
 class _InstalledCardState extends State<InstalledCard> {
   bool ishovered = false;
   late bool isDownloading;
-
   bool get _isDownloading =>
       widget.mainState == MainState.downloadingMinecraft ||
       widget.mainState == MainState.downloadingML ||
@@ -44,7 +44,19 @@ class _InstalledCardState extends State<InstalledCard> {
       widget.mainState == MainState.running;
 
 
+   AsyncSnapshot<Uint8List> snapshot = AsyncSnapshot.nothing();
+ 
+
+  @override
+  void initState() {
+    print('init');
+    super.initState();
+  }
+
   Widget iconhandler() {
+
+    
+
     if(widget.modpackData["icon_url"] != null) {
       return FadeInImage.memoryNetwork(
                           fit: BoxFit.cover,
@@ -52,7 +64,10 @@ class _InstalledCardState extends State<InstalledCard> {
                           image:
                               widget.modpackData["icon_url"]);
     }
-    return Image.memory(File("${getInstancePathSync()}\\${widget.processId}\\icon.png").readAsBytesSync(),  fit: BoxFit.cover,);
+
+    return Image.memory(File("${getInstancePathSync()}\\${widget.processId}\\icon.png").readAsBytesSync(), gaplessPlayback: true,);
+      
+    
     
   }
 

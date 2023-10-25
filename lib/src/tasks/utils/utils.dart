@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:path/path.dart' as path;
 import 'package:archive/archive_io.dart';
 import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
@@ -50,6 +51,7 @@ class Utils {
     if (!destination.existsSync()) {
       await destination.create(recursive: true);
     }
+    
 
     /// get all files from source (recursive: false is important here)
    await for (var entity in  source.list(recursive: false)){

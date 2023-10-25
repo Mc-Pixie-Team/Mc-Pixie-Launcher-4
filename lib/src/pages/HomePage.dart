@@ -142,8 +142,7 @@ bool checkforDouble(Widget widget){
                                                                       Alignment
                                                                           .center,
                                                                   child: Wrap(
-                                                                      key:
-                                                                          GlobalKey(),
+                                                                    
                                                                       alignment:
                                                                           WrapAlignment
                                                                               .start,

@@ -25,10 +25,10 @@ class _ImportFieldState extends State<ImportField> {
   int alpha = 255;
 
   ondownload(DropDoneDetails details) async {
-    if (!(details.files.first.path.split(".").last == "zip") ||
+    if (!(details.files.first.path.split(".").last == "zip") &&
         !(details.files.first.path.split(".").last == "mcmp")) return;
 
-   
+   print("start IMPORT");
    ImportExportController().import(details.files.first.path);
   }
 

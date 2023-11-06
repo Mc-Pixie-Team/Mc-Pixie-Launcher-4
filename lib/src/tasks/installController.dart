@@ -240,7 +240,6 @@ class Installer {
     var downloader = _handler.getDownloaderObject();
     String mloaderS = modpackData["loaders"].first;
     print("from installer:");
-    Version version = Version.parse(modpackData["game_versions"].first);
 
     if (mloaderS == "forge") {
       _modloader = Forge();
@@ -283,7 +282,7 @@ class Installer {
     Map versions =
         await _handler.getMMLVersion(modpackData, _processId, mloaderS);
 
-    version = versions["version"];
+  Version   version = versions["version"];
     ModloaderVersion modloaderVersion = versions["modloader"];
 
     String mfilePath =
@@ -293,7 +292,7 @@ class Installer {
         '${await getworkpath()}\\versions\\$version\\$version.json')) {
       print('need to install minecraft: $version');
       print(mfilePath);
-      await _minecraft.install(version!);
+      await _minecraft.install(version);
     }
 
     if (_checkForInstall(

@@ -59,6 +59,7 @@ class Minecraft with ChangeNotifier {
   }
 
   void run(Map packagejson, String instanceName) async {
+  
     String os = "windows";
     String accessToken = "3423423jdisgjsdf";
     String username = "Fridolin";

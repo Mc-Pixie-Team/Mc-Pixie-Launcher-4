@@ -9,6 +9,7 @@ import 'package:mclauncher4/src/tasks/IOController.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/Buttons/downloadButton.dart';
+import 'package:mclauncher4/src/widgets/ExportField.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class InstalledCard extends StatefulWidget {
@@ -73,48 +74,12 @@ class _InstalledCardState extends State<InstalledCard> {
 
   onExport() {
     showGeneralDialog(
+      barrierDismissible: true,
       barrierLabel: 'Java not installed',
       barrierColor: Colors.black38,
       transitionDuration: Duration(milliseconds: 200),
       pageBuilder: (ctx, anim1, anim2) => Center(
-        child: Container(
-          height: 600,
-          width: 500,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              color: Theme.of(context).colorScheme.surfaceVariant),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 40,
-              ),
-              DefaultTextStyle(style: TextStyle(), child:  Text(
-                "Export...",
-                style: Theme.of(context).typography.black.displaySmall,
-              ),),
-             
-              Expanded(child: SizedBox.expand()),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  CupertinoButton.filled(
-                    onPressed: () =>
-                        ImportExportController().export(widget.processId),
-                    child: Text('Export'),
-                  ),
-                  CupertinoButton.filled(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text('Cancel'),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-            ],
-          ),
-        ),
+        child: DefaultTextStyle(style: TextStyle(), child: ExportField(processId: widget.processId,))
       ),
       transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),

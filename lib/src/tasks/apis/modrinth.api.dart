@@ -192,25 +192,7 @@ class ModrinthApi implements Api {
 
   @override
   Future exportModpack(String processId, Map modpack, String pathTo) async {
-    print('exportModpack in modrinth');
-    var encoder = ZipFileEncoder();
-    String path = await getTempCommandPath() + "\\export-$processId";
-    await Utils.copyDirectory(
-        Directory(await getInstancePath() + "\\$processId"),
-        Directory(path + "\\override"));
 
-    File pixieIndex = File(path + "\\pixie.index.json");
-    modpack["override"] = "/override";
-    pixieIndex.createSync();
-    pixieIndex.writeAsStringSync(jsonEncode(modpack));
-   
-    encoder.create(
-        pathTo);
-
-   await encoder.addDirectory(Directory(path), includeDirName: false);
-    encoder.close();
-
-     await  Directory(path).delete(recursive: true);
   }
 
   @override

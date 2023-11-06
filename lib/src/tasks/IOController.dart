@@ -13,41 +13,59 @@ import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 
 class ImportExportController {
-  void import(filepath) async{
+  void import(filepath) async {
+    String process_id = Uuid().v1();
+    String path = await getTempCommandPath() + "\\$process_id";
+    InstallController installController = InstallController(process_id);
 
-     String process_id = Uuid().v1();
-     String path = await getTempCommandPath() + "\\$process_id";
-     InstallController installController = InstallController(process_id);
+    print("extracting");
+    Utils.extractZip(File(filepath).readAsBytesSync(), path);
+    Map pixieIndexJson =
+        jsonDecode(File(path + "\\pixie.index.json").readAsStringSync());
+    pixieIndexJson["processId"] = process_id;
 
-      print("extracting");
-      Utils.extractZip(File(filepath).readAsBytesSync(),  path);
-      Map pixieIndexJson = jsonDecode(File(path + "\\pixie.index.json").readAsStringSync());
-      pixieIndexJson["processId"] = process_id;
-
-      await Utils.copyDirectory(Directory(path + pixieIndexJson["override"]), Directory("${await getinstances()}\\instance\\$process_id"));
+    await Utils.copyDirectory(Directory(path + pixieIndexJson["override"]),
+        Directory("${await getinstances()}\\instance\\$process_id"));
 
     Api api = ApiHandler().getApi(pixieIndexJson["provider"]);
     print(pixieIndexJson["providerArgs"]);
     installController.install(api, pixieIndexJson["providerArgs"]);
-
   }
-  void export(String processId) async{
-   List manifest = jsonDecode( File(await getinstances() + "\\instance\\manifest.json").readAsStringSync());
-    
 
+  void export(String processId, List<String> filePaths) async {
+    List manifest = jsonDecode(
+        File(await getinstances() + "\\instance\\manifest.json")
+            .readAsStringSync());
 
     for (Map modpack in manifest) {
-      if( modpack["processId"] == processId) {
-       String? pathTo = await FilePicker.platform.saveFile(dialogTitle: "Save your project", fileName: "project.mcmp");
-       if(pathTo == null) return;
-      
-         Api _handler = ApiHandler().getApi(modpack["provider"]);
-         _handler.exportModpack(processId, modpack, pathTo);
+      if (modpack["processId"] == processId) {
+        String? pathTo = await FilePicker.platform.saveFile(
+            dialogTitle: "Save your project", fileName: "project.mcmp");
+        if (pathTo == null) return;
+
+        print('exportModpack in modrinth');
+        var encoder = ZipFileEncoder();
+        String path = await getTempCommandPath() + "\\export-$processId";
+
+        for (String filePath in filePaths){
+          File(path + (filePath.replaceFirst(await getInstancePath() + "\\$processId", ""))).writeAsBytes(await File(filePath).readAsBytes() ); 
+        }
+        // await Utils.copyDirectory(
+        //     Directory(await getInstancePath() + "\\$processId"),
+        //     Directory(path + "\\override"));
+
+        File pixieIndex = File(path + "\\pixie.index.json");
+        modpack["override"] = "/override";
+        pixieIndex.createSync();
+        pixieIndex.writeAsStringSync(jsonEncode(modpack));
+
+        encoder.create(pathTo);
+
+        await encoder.addDirectory(Directory(path), includeDirName: false);
+        encoder.close();
+
+        await Directory(path).delete(recursive: true);
       }
     }
-
   }
-
-
-
 }

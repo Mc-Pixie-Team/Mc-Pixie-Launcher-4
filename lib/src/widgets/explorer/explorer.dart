@@ -20,52 +20,47 @@ class _ExplorerState extends State<Explorer> {
 
   @override
   void initState() {
+    FileList.files = [];
     Directory mainDir = Directory(
         "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\instance\\5f303592-e94e-1d7f-945f-cbebbd90c4bd");
-        ValueNotifier<bool> notifier = ValueNotifier(startvalue);
+
+    ValueNotifier<bool> notifier = ValueNotifier(startvalue);
     this.entityWidgets = getDirectoryItems(mainDir, notifier);
-    FileList.files = convertToString(mainDir, "");
-    
+
     super.initState();
   }
 
-  List<String> convertToString(Directory directory, String additional) {
-     List<String> result = [];
-
-    List<FileSystemEntity> entities = directory.listSync();
-
-    for(FileSystemEntity entity in entities){
-      if(entity is Directory) {
-        result.add(entity.path);
-        result.addAll(convertToString(entity, additional));
-        continue;
-      }
-      result.add(entity.path);
-    }
-  return result;
-  }
-
-  List<Widget> getDirectoryItems(Directory directory, ValueNotifier<bool> isEnabled) {
+  List<Widget> getDirectoryItems(
+      Directory directory, ValueNotifier<bool> isEnabled) {
     List<Widget> result = [];
 
     List<FileSystemEntity> entities = directory.listSync();
 
     for (FileSystemEntity entity in entities) {
+      FileList.files.add(entity);
       if (entity is Directory) {
-        if((entity as Directory).listSync().length < 1){
-           result.add(FileWidget(path: entity.path, isEnabled: isEnabled,));
-           continue;
+        if ((entity as Directory).listSync().length < 1) {
+      
+          result.add(FileWidget(
+            fileEntity: entity,
+            isEnabled: isEnabled,
+          ));
+          continue;
         }
 
         ValueNotifier<bool> notifier = ValueNotifier(startvalue);
         result.add(DirectoryWidget(
             upperNotifier: isEnabled,
             lowerNotifier: notifier,
-            path: entity.path,
+            fileEntity: entity,
             children: getDirectoryItems(entity, notifier)));
         continue;
       }
-      result.add(FileWidget(path: entity.path, isEnabled: isEnabled,));
+    
+      result.add(FileWidget(
+        fileEntity: entity as File,
+        isEnabled: isEnabled,
+      ));
     }
     return result;
   }

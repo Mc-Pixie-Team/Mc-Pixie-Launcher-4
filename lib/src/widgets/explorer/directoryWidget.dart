@@ -1,19 +1,24 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mclauncher4/src/widgets/components/slideInAnimation.dart';
 import 'package:mclauncher4/src/widgets/explorer/fileListController.dart';
+import 'package:mclauncher4/src/widgets/explorer/fileWidget.dart';
 
 class DirectoryWidget extends StatefulWidget {
-  String path;
+  FileSystemEntity get getEntity => fileEntity;
+  List<Widget> get getChildren => children;
+
+  FileSystemEntity fileEntity;
   List<Widget> children;
   ValueNotifier<bool> upperNotifier;
   ValueNotifier<bool> lowerNotifier;
   DirectoryWidget(
       {Key? key,
-      required this.path,
+      required this.fileEntity,
       required this.children,
       required this.upperNotifier,
       required this.lowerNotifier})
@@ -27,6 +32,7 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
   double turns = -0.25;
   bool isExpanded = false;
   bool isEnabled = false;
+  bool isDisposed = true;
   List<String> overflow = [];
   void toggelexpand() {
     setState(() {
@@ -36,15 +42,15 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
   }
 
   @override
+  void dispose() {
+    isDisposed = true;
+    super.dispose();
+  }
+
+  @override
   void initState() {
     isEnabled = widget.upperNotifier.value; //init standart value
-    overflow =
-        List.from(FileList.files.where((str) => str.startsWith(widget.path)));
-    /*
-    Calculate all children widgets Path. 
-    This means that if they are no longer rendered, the paths can still be restored or deleted
-    */
-
+    isDisposed = false;
     widget.upperNotifier.addListener(() {
       this.isEnabled = widget.upperNotifier.value;
       handleFile();
@@ -65,18 +71,39 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
   }
 
   void handleFile() {
+    if(isDisposed) return;
     if (!isEnabled) {
-      FileList.files.remove(widget.path);
-      if (!isExpanded) {
-        FileList.files.removeWhere((str) => str.startsWith(widget.path));
+        FileList.files.remove(widget.fileEntity);
+      } else {
+        FileList.files.add(widget.fileEntity);
       }
-    } else {
-      FileList.files.add(widget.path);
-      if (!isExpanded) {
-        FileList.files.addAll(overflow);
-      }
+
+    if (!isExpanded) {
+      
+     handleDirectory(widget.children);
+    
     }
     print(FileList.files);
+  }
+
+  void handleDirectory(List<Widget> inwidgets){
+      for (var inwidget in inwidgets) {
+        if (inwidget is FileWidget) {
+          if (!isEnabled) {
+            FileList.files.remove(inwidget.getEntity);
+          }else {
+             FileList.files.add(inwidget.fileEntity);
+          }
+        } else if (inwidget is DirectoryWidget) {
+
+          handleDirectory(inwidget.getChildren);
+          if (!isEnabled) {
+            FileList.files.remove(inwidget.getEntity);
+          }else {
+             FileList.files.add(inwidget.fileEntity);
+          }
+        }
+      }
   }
 
   @override
@@ -132,7 +159,7 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
                                         ),
                                       ))),
                           Text(
-                            "/" + widget.path.split("\\").last,
+                            "/" + widget.fileEntity.path.split("\\").last,
                             style: Theme.of(context).typography.black.bodyLarge,
                           ),
                         ],

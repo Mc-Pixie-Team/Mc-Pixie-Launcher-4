@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -7,9 +8,12 @@ import 'package:mclauncher4/src/widgets/explorer/fileListController.dart';
 
 // ignore: must_be_immutable
 class FileWidget extends StatefulWidget {
-  String path;
+
+  FileSystemEntity get getEntity => fileEntity;
+
+  FileSystemEntity fileEntity;
   ValueNotifier<bool> isEnabled;
-  FileWidget({Key? key, required this.path, required this.isEnabled})
+  FileWidget({Key? key, required this.fileEntity, required this.isEnabled})
       : super(key: key);
 
   @override
@@ -18,11 +22,19 @@ class FileWidget extends StatefulWidget {
 
 class _FileWidgetState extends State<FileWidget> {
   bool isEnabled = false;
+  bool isDisposed = true;
+
+  @override
+  void dispose() {
+    isDisposed = true;
+    super.dispose();
+  }
 
   @override
   void initState() {
+    print('init');
     isEnabled = widget.isEnabled.value;
-
+    isDisposed = false;
     widget.isEnabled.addListener(() {
       isEnabled = widget.isEnabled.value;
       handleFile();
@@ -41,10 +53,11 @@ class _FileWidgetState extends State<FileWidget> {
   }
 
   void handleFile() {
+    if(isDisposed) return;
        if(!isEnabled){
-      FileList.files.remove(widget.path);
+      FileList.files.remove(widget.fileEntity);
     }else {
-      FileList.files.add(widget.path);
+      FileList.files.add(widget.fileEntity);
     }
     print(FileList.files);
   }
@@ -76,7 +89,7 @@ class _FileWidgetState extends State<FileWidget> {
                                     shape: OvalBorder(),
                                   )))),
                   Text(
-                    widget.path.split("\\").last,
+                    widget.fileEntity.path.split("\\").last,
                     style: Theme.of(context).typography.black.bodyLarge,
                   )
                 ],

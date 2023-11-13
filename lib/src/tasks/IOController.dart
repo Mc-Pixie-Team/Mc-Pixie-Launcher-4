@@ -10,6 +10,7 @@ import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/installController.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
+import 'package:path/path.dart' as pathbase;
 import 'package:uuid/uuid.dart';
 
 class ImportExportController {
@@ -32,7 +33,7 @@ class ImportExportController {
     installController.install(api, pixieIndexJson["providerArgs"]);
   }
 
-  void export(String processId, List<String> filePaths) async {
+  void export(String processId, List<FileSystemEntity> files) async {
     List manifest = jsonDecode(
         File(await getinstances() + "\\instance\\manifest.json")
             .readAsStringSync());
@@ -45,10 +46,28 @@ class ImportExportController {
 
         print('exportModpack in modrinth');
         var encoder = ZipFileEncoder();
-        String path = await getTempCommandPath() + "\\export-$processId";
+        String path = pathbase.join( await getTempCommandPath(), "export-$processId") ;
 
-        for (String filePath in filePaths){
-          File(path + (filePath.replaceFirst(await getInstancePath() + "\\$processId", ""))).writeAsBytes(await File(filePath).readAsBytes() ); 
+        await Directory(path).create();
+
+
+        for (FileSystemEntity file in files){
+          String desinationPath =  path +"\\"+ file.path.replaceFirst(await getInstancePath() + "\\$processId", "");
+          if(file is File) {
+
+          
+
+            print(desinationPath);
+           String parentDirectory = pathbase.dirname(desinationPath);
+           await Directory(parentDirectory).create(recursive: true);
+          await File(desinationPath).writeAsBytes(await file.readAsBytes());
+
+          }else if(file is Directory) {
+
+           await Directory(desinationPath).create();
+
+          }
+
         }
         // await Utils.copyDirectory(
         //     Directory(await getInstancePath() + "\\$processId"),

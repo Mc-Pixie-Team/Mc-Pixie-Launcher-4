@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class FileList {
-  static List<String> files = [];
+  static List<FileSystemEntity> files = [];
 }

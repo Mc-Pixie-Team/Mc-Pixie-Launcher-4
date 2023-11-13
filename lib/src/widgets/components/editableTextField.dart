@@ -7,6 +7,8 @@ class EditableTextField extends StatefulWidget {
 
   double height;
   double width;
+  
+
 
   EditableTextField({Key? key, this.textController, this.focusNode, this.width = 135, this.height = 25})
       : super(key: key);
@@ -16,6 +18,8 @@ class EditableTextField extends StatefulWidget {
 }
 
 class _EditableTextFieldState extends State<EditableTextField> {
+
+
   @override
   Widget build(BuildContext context) {
     return Container(

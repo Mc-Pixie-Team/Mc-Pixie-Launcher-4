@@ -19,6 +19,12 @@ class ExportField extends StatefulWidget {
 }
 
 class _ExportFieldState extends State<ExportField> {
+  TextEditingController textEditingController_1 = TextEditingController();
+  TextEditingController textEditingController_2 = TextEditingController();
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -14,7 +14,7 @@ import 'package:path/path.dart' as pathbase;
 import 'package:uuid/uuid.dart';
 
 class ImportExportController {
-  void import(filepath) async {
+ static void import(filepath) async {
     String process_id = Uuid().v1();
     String path = await getTempCommandPath() + "\\$process_id";
     InstallController installController = InstallController(process_id);
@@ -33,7 +33,7 @@ class ImportExportController {
     installController.install(api, pixieIndexJson["providerArgs"]);
   }
 
-  void export(String processId, List<FileSystemEntity> files) async {
+ static Future export(String processId, List<FileSystemEntity> files) async {
     List manifest = jsonDecode(
         File(await getinstances() + "\\instance\\manifest.json")
             .readAsStringSync());
@@ -48,7 +48,7 @@ class ImportExportController {
         var encoder = ZipFileEncoder();
         String path = pathbase.join( await getTempCommandPath(), "export-$processId") ;
 
-        await Directory(path).create();
+        await Directory(path).create(recursive: true);
 
 
         for (FileSystemEntity file in files){

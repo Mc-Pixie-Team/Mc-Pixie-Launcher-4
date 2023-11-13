@@ -7,7 +7,8 @@ import 'package:mclauncher4/src/widgets/explorer/fileListController.dart';
 import 'package:mclauncher4/src/widgets/explorer/fileWidget.dart';
 
 class Explorer extends StatefulWidget {
-  const Explorer({Key? key}) : super(key: key);
+  Directory rootDir;
+  Explorer({Key? key, required this.rootDir}) : super(key: key);
 
   @override
   _ExplorerState createState() => _ExplorerState();
@@ -21,11 +22,9 @@ class _ExplorerState extends State<Explorer> {
   @override
   void initState() {
     FileList.files = [];
-    Directory mainDir = Directory(
-        "C:\\Users\\zepat\\Documents\\PixieLauncherInstances\\instance\\5f303592-e94e-1d7f-945f-cbebbd90c4bd");
 
     ValueNotifier<bool> notifier = ValueNotifier(startvalue);
-    this.entityWidgets = getDirectoryItems(mainDir, notifier);
+    this.entityWidgets = getDirectoryItems(widget.rootDir, notifier);
 
     super.initState();
   }

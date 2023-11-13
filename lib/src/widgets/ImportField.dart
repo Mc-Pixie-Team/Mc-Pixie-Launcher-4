@@ -29,7 +29,7 @@ class _ImportFieldState extends State<ImportField> {
         !(details.files.first.path.split(".").last == "mcmp")) return;
 
    print("start IMPORT");
-   ImportExportController().import(details.files.first.path);
+   ImportExportController.import(details.files.first.path);
   }
 
   @override

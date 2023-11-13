@@ -37,7 +37,6 @@ class _FileWidgetState extends State<FileWidget> {
     isDisposed = false;
     widget.isEnabled.addListener(() {
       isEnabled = widget.isEnabled.value;
-      handleFile();
     });
     super.initState();
   }

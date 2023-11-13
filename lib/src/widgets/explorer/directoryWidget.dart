@@ -78,11 +78,10 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
         FileList.files.add(widget.fileEntity);
       }
 
-    if (!isExpanded) {
       
      handleDirectory(widget.children);
     
-    }
+    
     print(FileList.files);
   }
 
@@ -92,6 +91,8 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
           if (!isEnabled) {
             FileList.files.remove(inwidget.getEntity);
           }else {
+            if(FileList.files.contains(inwidget.fileEntity)) continue;
+
              FileList.files.add(inwidget.fileEntity);
           }
         } else if (inwidget is DirectoryWidget) {

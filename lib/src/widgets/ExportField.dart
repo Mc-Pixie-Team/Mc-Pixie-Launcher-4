@@ -9,7 +9,7 @@ import 'package:mclauncher4/src/widgets/divider.dart' as Divider;
 import 'package:mclauncher4/src/widgets/explorer/explorer.dart';
 import 'package:mclauncher4/src/widgets/explorer/fileListController.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
-
+import 'package:glowy_borders/glowy_borders.dart';
 // ignore: must_be_immutable
 class ExportField extends StatefulWidget {
   String processId = "";
@@ -25,12 +25,7 @@ class _ExportFieldState extends State<ExportField> {
   TextEditingController textEditingController_1 = TextEditingController();
   TextEditingController textEditingController_2 = TextEditingController();
   Future<Directory> get getModpackDir async =>
-      Directory(await getInstancePath() + "\\${widget.processId}");
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  Directory(await getInstancePath() + "\\${widget.processId}");
 
 
    onPressed() async{
@@ -38,7 +33,7 @@ class _ExportFieldState extends State<ExportField> {
     if(isexporting) return;
     isexporting = true;
  
-   await ImportExportController.export(widget.processId, FileList.files);
+   await ImportExportController.export(widget.processId, FileList.files, "${textEditingController_1.text}-${textEditingController_2.text}");
   Navigator.of(context).pop();
     //i know it is a bit cheap, but it works
     isexporting = false;
@@ -46,7 +41,19 @@ class _ExportFieldState extends State<ExportField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedGradientBorder(
+          animationTime: 3,
+            borderSize: 1,
+            glowSize: 10,
+            gradientColors: [
+              Colors.transparent,
+              Colors.transparent,
+              Colors.transparent,
+              Colors.purple.shade50
+            ],
+            
+            borderRadius: BorderRadius.all(Radius.circular(18)),
+            child:   Container(
       clipBehavior: Clip.hardEdge,
       width: 500,
       height: 800,
@@ -96,6 +103,7 @@ class _ExportFieldState extends State<ExportField> {
                 height: 6,
               ),
               EditableTextField(
+                textController: textEditingController_1,
                 height: 38,
                 width: 241,
               ),
@@ -114,6 +122,7 @@ class _ExportFieldState extends State<ExportField> {
                 height: 6,
               ),
               EditableTextField(
+                textController: textEditingController_2,
                 height: 38,
                 width: 241,
               ),
@@ -147,7 +156,7 @@ class _ExportFieldState extends State<ExportField> {
 
                     style: Theme.of(context).typography.black.bodySmall)),
                     Expanded(child: Container(width: double.infinity,)),
-             RoundedTextButton(onTap: () async => await onPressed(),),
+            RoundedTextButton(onTap: () async => await onPressed(),),
               SizedBox(width: 20,),
             ],
           ),
@@ -156,6 +165,6 @@ class _ExportFieldState extends State<ExportField> {
           )
         ],
       ),
-    );
+    ));
   }
 }

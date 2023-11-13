@@ -99,6 +99,9 @@ class _InstalledCardState extends State<InstalledCard> {
         height: 260,
         decoration: ShapeDecoration(
           color: Color(0xFF292929),
+          shadows: [
+            BoxShadow(spreadRadius: 3, blurRadius: 13, color: Color.fromARGB(57, 0, 0, 0))      
+          ],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
           ),
@@ -111,7 +114,7 @@ class _InstalledCardState extends State<InstalledCard> {
                   child: Container(
                       clipBehavior: Clip.hardEdge,
                       decoration:
-                          BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                          BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(8)),
                       child:iconhandler() ))),
           Expanded(
               child: MouseRegion(

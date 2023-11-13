@@ -33,7 +33,7 @@ class ImportExportController {
     installController.install(api, pixieIndexJson["providerArgs"]);
   }
 
- static Future export(String processId, List<FileSystemEntity> files) async {
+ static Future export(String processId, List<FileSystemEntity> files, String filename) async {
     List manifest = jsonDecode(
         File(await getinstances() + "\\instance\\manifest.json")
             .readAsStringSync());
@@ -41,7 +41,7 @@ class ImportExportController {
     for (Map modpack in manifest) {
       if (modpack["processId"] == processId) {
         String? pathTo = await FilePicker.platform.saveFile(
-            dialogTitle: "Save your project", fileName: "project.mcmp");
+            dialogTitle: "Save your project", fileName: filename + ".mcmp");
         if (pathTo == null) return;
 
         print('exportModpack in modrinth');

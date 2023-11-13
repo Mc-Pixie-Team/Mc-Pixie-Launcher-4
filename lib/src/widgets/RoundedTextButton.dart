@@ -23,14 +23,15 @@ class _RoundedTextButtonState extends State<RoundedTextButton> {
     setState(() {
       ispressed = true;
     });
-
-    widget.onTap.call();
   }
 
   void onUp(TapUpDetails details) {
     setState(() {
       ispressed = false;
     });
+
+       widget.onTap.call();
+    
   }
 
   void onEnter(PointerEnterEvent event) {

@@ -61,6 +61,7 @@ dependencies:
   loading_animation_widget: ^1.2.0+4
   desktop_drop: ^0.4.4
   file_picker: ^5.2.10
+  glowy_borders: ^1.0.2
       
 
 

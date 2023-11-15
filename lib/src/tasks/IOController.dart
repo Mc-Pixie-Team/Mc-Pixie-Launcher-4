@@ -41,7 +41,7 @@ class ImportExportController {
     for (Map modpack in manifest) {
       if (modpack["processId"] == processId) {
         String? pathTo = await FilePicker.platform.saveFile(
-            dialogTitle: "Save your project", fileName: filename + ".mcmp");
+            dialogTitle: "Save your project", fileName: filename + ".mcmp", lockParentWindow: true);
         if (pathTo == null) return;
 
         print('exportModpack in modrinth');

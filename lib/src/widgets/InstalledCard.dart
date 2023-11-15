@@ -74,8 +74,8 @@ class _InstalledCardState extends State<InstalledCard> {
 
   onExport() {
     showGeneralDialog(
-      barrierDismissible: true,
-      barrierLabel: 'Java not installed',
+      barrierDismissible: false,
+      barrierLabel: 'export menu',
       barrierColor: Colors.black38,
       transitionDuration: Duration(milliseconds: 200),
       pageBuilder: (ctx, anim1, anim2) => Center(

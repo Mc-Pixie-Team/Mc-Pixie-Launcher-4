@@ -41,21 +41,9 @@ class _ExportFieldState extends State<ExportField> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedGradientBorder(
-          animationTime: 3,
-            borderSize: 1,
-            glowSize: 10,
-            gradientColors: [
-              Colors.transparent,
-              Colors.transparent,
-              Colors.transparent,
-              Colors.purple.shade50
-            ],
-            
-            borderRadius: BorderRadius.all(Radius.circular(18)),
-            child:   Container(
+    return   Container(
       clipBehavior: Clip.hardEdge,
-      width: 500,
+      width: 550,
       height: 800,
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceVariant,
@@ -151,12 +139,17 @@ class _ExportFieldState extends State<ExportField> {
           Row(
             children: [
               SizedBox(width: 20,),
-              SizedBox(width: 200, child:
+              SizedBox(width: 150, child:
               Text("Mods that aren’t regonized are automatically put to override",
 
                     style: Theme.of(context).typography.black.bodySmall)),
                     Expanded(child: Container(width: double.infinity,)),
-            RoundedTextButton(onTap: () async => await onPressed(),),
+            RoundedTextButton(text: "Cancel", onTap: ()  {
+              if(!isexporting) Navigator.of(context).pop();
+            } ,),
+            SizedBox(width: 20,),
+            RoundedTextButton(text: "Export", onTap: () async => await onPressed(),),
+
               SizedBox(width: 20,),
             ],
           ),
@@ -165,6 +158,6 @@ class _ExportFieldState extends State<ExportField> {
           )
         ],
       ),
-    ));
+    );
   }
 }

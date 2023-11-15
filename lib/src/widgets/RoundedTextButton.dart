@@ -8,8 +8,9 @@ class RoundedTextButton extends StatefulWidget {
   double height;
   double width;
   VoidCallback onTap;
+  String text;
   RoundedTextButton(
-      {Key? key, required this.onTap, this.height = 55, this.width = 155})
+      {Key? key, required this.text, required this.onTap, this.height = 55, this.width = 155})
       : super(key: key);
 
   @override
@@ -73,7 +74,7 @@ class _RoundedTextButtonState extends State<RoundedTextButton> {
                           borderRadius: BorderRadius.circular(8)),
                       child: Center(
                         child: Text(
-                          "Export",
+                          widget.text,
                           style:
                               Theme.of(context).typography.black.headlineSmall,
                         ),

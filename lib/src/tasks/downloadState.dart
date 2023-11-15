@@ -42,6 +42,7 @@ enum MainState {
   running,
   installed,
   notinstalled,
+  fetching
 }
 
 enum Modinstall {
@@ -49,6 +50,11 @@ enum Modinstall {
   getML,
 }
 
-
+enum ExportImport {
+  notHandeled,
+  exporting,
+  importing,
+  fetching
+}
 
 

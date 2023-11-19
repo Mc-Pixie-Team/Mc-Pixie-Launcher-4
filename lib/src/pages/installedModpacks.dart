@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/getApiHandler.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/downloadState.dart';
-import 'package:mclauncher4/src/tasks/installController.dart';
+import 'package:mclauncher4/src/tasks/install_controller.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/widgets/InstalledCard.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 
@@ -25,7 +25,7 @@ class Modpacks {
 
     List<Widget> cards = List.generate(manifest.length, (index) {
       InstallController installcontroller =
-          InstallController(manifest[index]["processId"], MainState.installed);
+          InstallController(manifest[index]["processId"],); // MainState.installed
       Map modpackversion = manifest[index]["providerArgs"];
       Api _handler = ApiHandler().getApi(manifest[index]["provider"]);
 
@@ -35,8 +35,8 @@ class Modpacks {
         builder: (context, child) => InstalledCard(
           processId: manifest[index]["processId"],
           modpackData: manifest[index],
-          mainState: installcontroller.mainState,
-          mainprogress: installcontroller.mainprogress,
+          mainState: installcontroller.state,
+          mainprogress: installcontroller.progress,
           onCancel: installcontroller.cancel,
           onOpen: () async {
             installcontroller.start(_handler, modpackversion);

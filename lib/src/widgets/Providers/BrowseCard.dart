@@ -5,11 +5,11 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
-import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
-import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/Buttons/downloadButton.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -21,7 +21,6 @@ class BrowseCard extends StatefulWidget {
   final VoidCallback onOpen;
   final MainState mainState;
   final double mainprogress;
-  final installState;
   final double progress;
   final String processId;
   BrowseCard({
@@ -31,7 +30,6 @@ class BrowseCard extends StatefulWidget {
     required this.modpacklist,
     required this.progress,
     required this.mainState,
-    required this.installState,
     required this.onDownload,
     required this.onCancel,
     required this.onOpen,

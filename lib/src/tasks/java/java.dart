@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 
 class Java {

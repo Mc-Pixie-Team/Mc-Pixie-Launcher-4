@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/getApiHandler.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/downloadState.dart';
-import 'package:mclauncher4/src/tasks/installController.dart';
+import 'package:mclauncher4/src/tasks/install_controller.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:path/path.dart' as pathbase;
@@ -60,7 +60,7 @@ class ImportExportController with ChangeNotifier {
         notifyListeners();
    
         String path =
-            pathbase.join(await getTempCommandPath(), "export-$processId");
+            pathbase.join(await getTempCommandPath(), "export-$processId", "override");
 
         await Directory(path).create(recursive: true);
 
@@ -83,32 +83,36 @@ class ImportExportController with ChangeNotifier {
          notifyListeners();
           
         }
+
+        
         // await Utils.copyDirectory(
         //     Directory(await getInstancePath() + "\\$processId"),
         //     Directory(path + "\\override"));
         _state = ExportImport.fetching;
         notifyListeners();
-
+        
         await Future.delayed(Duration(milliseconds: 200));
 
-        File pixieIndex = File(path + "\\pixie.index.json");
+         String dirpath = pathbase.join(await getTempCommandPath(), "export-$processId");
+
+        File pixieIndex = File(dirpath + "\\pixie.index.json");
         modpack["override"] = "/override";
         pixieIndex.createSync();
         pixieIndex.writeAsStringSync(jsonEncode(modpack));
 
-        
+       
          var encoder = ZipFileEncoder();
 
            encoder.create(pathTo);
         print("after create");
         await encoder.addDirectory(
-          Directory(path),
+          Directory(dirpath),
           includeDirName: false,
         );
          print("add dir");
         encoder.close();
          print("after close");
-        await Directory(path).delete(recursive: true);
+        await Directory(dirpath).delete(recursive: true);
 
       
       }

@@ -1,7 +1,7 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers, no_logic_in_create_state, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import '../divider.dart' as divider;
 
@@ -40,7 +40,6 @@ class TaskwidgetItem extends StatefulWidget {
   double progress = 0.0;
   double mainprogress = 0.0;
   String name = "";
-  var installState;
 
   VoidCallback cancel;
 
@@ -51,7 +50,7 @@ class TaskwidgetItem extends StatefulWidget {
       required this.mainState,
       required this.progress,
       required this.mainprogress,
-      required this.installState})
+  })
       : super(key: key);
 
   @override

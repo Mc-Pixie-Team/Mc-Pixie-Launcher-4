@@ -8,7 +8,7 @@ import 'package:mclauncher4/src/pages/user_page/sidePanelWidget.dart';
 import 'package:mclauncher4/src/pages/user_page/subPages/userAndMSPage.dart';
 import 'package:mclauncher4/src/pages/user_page/textFieldWithEnter.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
-import 'package:mclauncher4/src/tasks/discordStatus/discordRP.dart';
+import 'package:mclauncher4/src/tasks/discord/discordRP.dart';
 import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/barGraph.dart';
 import 'package:mclauncher4/src/widgets/components/bluredContainer.dart';

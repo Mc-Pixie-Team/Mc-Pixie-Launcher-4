@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 import "package:mclauncher4/src/objects/accounts/minecraft.dart";
-import "package:mclauncher4/src/tasks/downloadState.dart";
-import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
+import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import "package:mclauncher4/src/tasks/java/java.dart";
-import "package:mclauncher4/src/tasks/version.dart";
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import "package:path_provider/path_provider.dart" as path_provider;
 import "dart:convert";
 import "dart:io";

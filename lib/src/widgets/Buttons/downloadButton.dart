@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/Providers/BrowseCard.dart';
 

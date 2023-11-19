@@ -7,17 +7,17 @@ import 'package:mclauncher4/src/pages/installedModpacks.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.download.dart';
-import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
-import 'package:mclauncher4/src/tasks/isolateMessage.dart';
-import 'package:mclauncher4/src/tasks/minecraft/client.dart';
-import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/models/isolate_message.dart';
+import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
+import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
-import 'package:mclauncher4/src/tasks/startMessage.dart';
+import 'package:mclauncher4/src/tasks/models/start_message.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
-import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
 import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
 import 'package:uuid/uuid.dart';
@@ -127,7 +127,7 @@ class InstallController with ChangeNotifier {
     this._result = result;
   }
 
-  void install(Api _handler, Map _modpackData) async {
+  void install(Api _handler, Map uMF) async {
     setTaskWidget(_handler, _modpackData );
     _mainState = MainState.downloadingML;
     _progress = 0.0;
@@ -177,7 +177,7 @@ class InstallController with ChangeNotifier {
             File('${await getInstancePath()}\\manifest.json')
                 .readAsStringSync());
         mainfest.add(  {
-          "name": await _handler.getModpackName(_modpackData),
+          "name": await _handler.getModpackName({_modpackData}),
           "provider": _handler.getidname,
           "processId": processId,
           "providerArgs": modpackVersion

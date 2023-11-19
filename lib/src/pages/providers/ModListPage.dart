@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:mclauncher4/src/getApiHandler.dart';
 import 'package:mclauncher4/src/pages/installedModpacks.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/installController.dart';
+import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/java/java.dart';
 import 'package:mclauncher4/src/widgets/Buttons/circularButton.dart';
 import 'package:mclauncher4/src/widgets/InstalledCard.dart';
@@ -263,14 +263,12 @@ class _ModListPageState extends State<ModListPage> {
                                                       .processId,
                                                   mainprogress:
                                                       installcontroller
-                                                          .mainprogress,
+                                                          .progress,
                                                   modpacklist:
                                                       modpacklist[index],
                                                   mainState: installcontroller
-                                                      .mainState,
-                                                  installState:
-                                                      installcontroller
-                                                          .installState,
+                                                      .state,
+                                                 
                                                   progress: installcontroller
                                                       .progress,
                                                   onCancel: () {
@@ -299,10 +297,10 @@ class _ModListPageState extends State<ModListPage> {
                                                         modpackData: modpackData,
                                                         mainState:
                                                             installcontroller
-                                                                .mainState,
+                                                                .state,
                                                         mainprogress:
                                                             installcontroller
-                                                                .mainprogress,
+                                                                .progress,
                                                         onCancel:
                                                             installcontroller
                                                                 .cancel,

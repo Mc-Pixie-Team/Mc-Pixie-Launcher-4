@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
-import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 
-class Modloader with ChangeNotifier{
+class Modloader with ChangeNotifier {
 
   double get mainprogress => throw 'dont call this method, the Modloader class is just an example class';
   get installstate => throw 'dont call this method, the Modloader class is just an example class';

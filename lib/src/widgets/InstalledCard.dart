@@ -4,8 +4,8 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/tasks/downloadState.dart';
-import 'package:mclauncher4/src/tasks/IOController.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
+import 'package:mclauncher4/src/tasks/IO_controller.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/Buttons/SvgButton.dart';
 import 'package:mclauncher4/src/widgets/Buttons/downloadButton.dart';

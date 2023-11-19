@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';

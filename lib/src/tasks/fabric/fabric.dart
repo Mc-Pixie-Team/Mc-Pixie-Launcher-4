@@ -3,15 +3,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mclauncher4/src/tasks/downloadState.dart';
+import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/java/java.dart';
-import 'package:mclauncher4/src/tasks/minecraft/client.dart';
-import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
+import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
-import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:path/path.dart' as path;
 import "package:path_provider/path_provider.dart" as path_provider;
 

@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
-import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:path/path.dart' as path;
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:yaml/yaml.dart';

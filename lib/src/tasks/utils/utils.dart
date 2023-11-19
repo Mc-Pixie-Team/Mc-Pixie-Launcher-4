@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:path/path.dart' as path;
 import 'package:archive/archive_io.dart';
-import 'package:mclauncher4/src/tasks/modloaderVersion.dart';
-import 'package:mclauncher4/src/tasks/version.dart';
+import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import './path.dart';
 
 class Utils {

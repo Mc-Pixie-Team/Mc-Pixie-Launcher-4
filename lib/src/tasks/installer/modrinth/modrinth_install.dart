@@ -43,6 +43,7 @@ class ModrinthInstaller {
 
    install(Map modpackData, String instanceName) async {
 
+
     Map modpackproject = await getModpack(modpackData["project_id"]);
     modpackData = await
       getModpackVersion((modpackproject["versions"] as List).last);

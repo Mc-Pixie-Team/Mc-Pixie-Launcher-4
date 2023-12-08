@@ -62,6 +62,7 @@ dependencies:
   desktop_drop: ^0.4.4
   file_picker: ^5.2.10
   glowy_borders: ^1.0.2
+  dyn_mouse_scroll: ^1.0.7
       
 
 

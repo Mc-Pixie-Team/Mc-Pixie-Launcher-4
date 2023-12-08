@@ -21,11 +21,12 @@ class DownloadButton extends StatefulWidget {
 class _DownloadButtonState extends State<DownloadButton> {
   bool get _isInstalled => widget.mainState == MainState.installed;
   bool get _isRunning => widget.mainState == MainState.running;
+  bool get _isNotInstalled => widget.mainState == MainState.notinstalled;
   bool get _isDownloading =>
       widget.mainState == MainState.downloadingMinecraft ||
       widget.mainState == MainState.downloadingML ||
       widget.mainState == MainState.downloadingMods;
-  bool get _isFetching => false;
+  bool get _isFetching => widget.mainState == MainState.fetching;
   double get downloadProgress => widget.mainprogress;
 
 
@@ -33,7 +34,7 @@ class _DownloadButtonState extends State<DownloadButton> {
 
     void _onPressed() {
     if (_isDownloading) widget.onCancel();
-    if (_isFetching) widget.onCancel();
+    if (_isFetching) return;
     if (widget.mainState == MainState.running) widget.onCancel();
     if (widget.mainState == MainState.installed) widget.onOpen();
     if (widget.mainState == MainState.notinstalled) widget.onDownload();
@@ -67,14 +68,14 @@ class _DownloadButtonState extends State<DownloadButton> {
             child: AnimatedOpacity(
                 duration: Duration(milliseconds: 200),
                 curve: Curves.easeOut,
-                opacity: _isDownloading || _isFetching
-                    ? 0.0
-                    : _isInstalled
-                        ? 0.0
-                        : _isRunning ? 0.0 : 1.0,
+                opacity: _isNotInstalled
+                    ? 1.0
+                    : 0.0,
+                       
                 child: SvgButton.asset('assets\\svg\\download-icon.svg',
                     onpressed: _onPressed)),
           ),
+          
           Positioned.fill(
             child: AnimatedOpacity(
               duration: Duration(milliseconds: 300),

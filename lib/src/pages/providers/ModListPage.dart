@@ -40,7 +40,18 @@ class _ModListPageState extends State<ModListPage> {
   }
 
   Future<List> get modpacklistfuture async {
-    return await _handler.getModpackList();
+    print("get modrinth future");
+    var returntype = await _handler.getModpackList();
+    Future.delayed(Duration(milliseconds: 200)).then((value) {
+      _scrollController.addListener(() async {
+        if (_scrollController.position.pixels >=
+            (_scrollController.position.maxScrollExtent - 400)) {
+          print('new');
+          await getMoreData();
+        }
+      });
+    });
+    return returntype;
   }
 
   bool iscalled = false;
@@ -66,12 +77,9 @@ class _ModListPageState extends State<ModListPage> {
         barrierLabel: 'Java not installed',
         barrierColor: Colors.black38,
         transitionDuration: Duration(milliseconds: 200),
-        pageBuilder: (ctx, anim1, anim2) => Center(
-          child: JavaInstallCard()
-        ),
+        pageBuilder: (ctx, anim1, anim2) => Center(child: JavaInstallCard()),
         transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
-          filter: ImageFilter.blur(
-              sigmaX: 4, sigmaY: 4 ),
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
           child: FadeTransition(
             child: child,
             opacity: anim1,
@@ -139,14 +147,7 @@ class _ModListPageState extends State<ModListPage> {
 
     filters.insert(0, addButton);
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      _scrollController.addListener(() async {
-        if (_scrollController.position.pixels >=
-            (_scrollController.position.maxScrollExtent - 400)) {
-          await getMoreData();
-        }
-      });
-    });
+ 
 
     super.initState();
   }
@@ -191,165 +192,155 @@ class _ModListPageState extends State<ModListPage> {
                 height: 8,
               ),
               Expanded(
-                  child: DynMouseScroll(
-                animationCurve: Curves.easeOutQuart,
-                scrollSpeed: 1.2,
+                  child: FutureBuilder(
+                key: key,
+                future: modpacklistfuture,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: LoadingAnimationWidget.staggeredDotsWave(
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 30),
+                      ),
+                    );
+                  }
+
+                  if (snapshot.hasData) {
+                    print('rebuld in ModList');
+                    if (modpacklist.length < 1) {
+                      modpacklist = snapshot.data ?? [];
+                      installContollers = List.generate(
+                          modpacklist.length, (index) => InstallController());
+                    }
+
+                    return ShaderMask(
+                            shaderCallback: (Rect rect) {
+                              return LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Color.fromARGB(255, 177, 70, 21),
+                                  Colors.transparent,
+                                  Colors.transparent,
+                                  const Color.fromARGB(0, 155, 39, 176)
+                                ],
+                                stops: [
+                                  0.0,
+                                  0.1,
+                                  0.9,
+                                  1.0
+                                ], // 10% purple, 80% transparent, 10% purple
+                              ).createShader(rect);
+                            },
+                            blendMode: BlendMode.dstOut,
+                            child: SlideInAnimation(
+                        curve: Curves.easeInOutQuart,
+                        duration: Duration(milliseconds: 750),
+                        child:  DynMouseScroll(
+                                 animationCurve: Curves.easeOutQuart,
+                scrollSpeed: 0.8,
                 durationMS: 650,
-                builder: (context, controller, physics) {
-                  _scrollController = controller;
-                  return FutureBuilder(
-                      key: key,
-                      future: modpacklistfuture,
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return Center(
-                            child: SizedBox(
-                              height: 50,
-                              width: 50,
-                              child: LoadingAnimationWidget.staggeredDotsWave(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  size: 30),
-                            ),
-                          );
-                        }
+                                builder: (context, controller, physics) {
+                              print('rebuld in dynController');
+                              _scrollController = controller;
 
-                        if (snapshot.hasData) {
-                          print('rebuld in ModList');
-                          if (modpacklist.length < 1) {
-                            modpacklist = snapshot.data ?? [];
-                            installContollers = List.generate(
-                                modpacklist.length,
-                                (index) => InstallController());
-                          }
+                              return ListView.builder(
+                                  physics: physics,
+                                  controller: controller,
+                                  itemCount: modpacklist.length,
+                                  itemBuilder: ((context, index) {
+                                    InstallController installcontroller =
+                                        installContollers[index];
 
-                          return SlideInAnimation(
-                              curve: Curves.easeInOutQuart,
-                              duration: Duration(milliseconds: 750),
-                              child: ShaderMask(
-                                  shaderCallback: (Rect rect) {
-                                    return LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Color.fromARGB(255, 177, 70, 21),
-                                        Colors.transparent,
-                                        Colors.transparent,
-                                        const Color.fromARGB(0, 155, 39, 176)
-                                      ],
-                                      stops: [
-                                        0.0,
-                                        0.1,
-                                        0.9,
-                                        1.0
-                                      ], // 10% purple, 80% transparent, 10% purple
-                                    ).createShader(rect);
-                                  },
-                                  blendMode: BlendMode.dstOut,
-                                  child: ListView.builder(
-                                      physics: physics,
-                                      controller: controller,
-                                      itemCount: modpacklist.length,
-                                      itemBuilder: ((context, index) {
-                                        InstallController installcontroller =
-                                            installContollers[index];
+                                    return AnimatedBuilder(
+                                        key: Key(installcontroller.processId),
+                                        animation: installcontroller,
+                                        builder: (context, child) => BrowseCard(
+                                              processId:
+                                                  installcontroller.processId,
+                                              mainprogress:
+                                                  installcontroller.progress,
+                                              modpacklist: modpacklist[index],
+                                              mainState:
+                                                  installcontroller.state,
+                                              progress:
+                                                  installcontroller.progress,
+                                              onCancel: () {
+                                                installcontroller.cancel();
+                                              },
+                                              onDownload: () async {
+                                                if (checkForJava() == false)
+                                                  return;
 
-                                        return AnimatedBuilder(
-                                            key: Key(
-                                                installcontroller.processId),
-                                            animation: installcontroller,
-                                            builder: (context, child) =>
-                                                BrowseCard(
-                                                  processId: installcontroller
-                                                      .processId,
-                                                  mainprogress:
-                                                      installcontroller
-                                                          .progress,
-                                                  modpacklist:
-                                                      modpacklist[index],
-                                                  mainState: installcontroller
-                                                      .state,
-                                                 
-                                                  progress: installcontroller
-                                                      .progress,
-                                                  onCancel: () {
-                                                    installcontroller.cancel();
-                                                  },
-                                                  onDownload: () async {
-                                                    if (checkForJava() == false) return;
-                                                      
-                                                    Map modpackData = _handler.convertToUMF(modpacklist[index]);
-                                                        print(modpackData);
+                                                Map modpackData =
+                                                    _handler.convertToUMF(
+                                                        modpacklist[index]);
+                                                print(modpackData);
 
-
-                                                    Modpacks
-                                                        .globalinstallContollers
-                                                        .add(AnimatedBuilder(
-                                                      key: Key(installcontroller
-                                                          .processId),
-                                                      animation:
-                                                          installcontroller,
-                                                      builder:
-                                                          (context, child) =>
-                                                              InstalledCard(
-                                                        processId:
-                                                            installcontroller
-                                                                .processId,
-                                                        modpackData: modpackData,
-                                                        mainState:
-                                                            installcontroller
-                                                                .state,
-                                                        mainprogress:
-                                                            installcontroller
-                                                                .progress,
-                                                        onCancel:
-                                                            installcontroller
-                                                                .cancel,
-                                                        onOpen: () async {
-                                                          if (checkForJava() ==
-                                                              false) return;
-                                                          Map modpackproject =
-                                                              await _handler.getModpack(
-                                                                  modpacklist[
-                                                                          index]
-                                                                      [
-                                                                      "project_id"]);
-                                                          Map modpackversion = await _handler
-                                                              .getModpackVersion(
-                                                                  (modpackproject[
-                                                                              "versions"]
-                                                                          as List)
-                                                                      .last);
-                                                          installcontroller.start(
-                                                              _handler,
-                                                              modpackversion);
-                                                        },
-                                                      ),
-                                                    ));
-
-                                                    installcontroller.install(
-                                                        _handler, modpackData);
-                                                  },
-                                                  onOpen: () async {
-                                                    Map modpackproject =
-                                                        await _handler.getModpack(
-                                                            modpacklist[index]
-                                                                ["project_id"]);
-                                                    Map modpackversion =
-                                                        await _handler
-                                                            .getModpackVersion(
-                                                                (modpackproject[
-                                                                            "versions"]
-                                                                        as List)
-                                                                    .last);
-                                                    installcontroller.start(
-                                                        _handler,
-                                                        modpackversion);
-                                                  },
+                                                Modpacks.globalinstallContollers
+                                                    .add(AnimatedBuilder(
+                                                  key: Key(installcontroller
+                                                      .processId),
+                                                  animation: installcontroller,
+                                                  builder: (context, child) =>
+                                                      InstalledCard(
+                                                    processId: installcontroller
+                                                        .processId,
+                                                    modpackData: modpackData,
+                                                    mainState:
+                                                        installcontroller.state,
+                                                    mainprogress:
+                                                        installcontroller
+                                                            .progress,
+                                                    onCancel: installcontroller
+                                                        .cancel,
+                                                    onOpen: () async {
+                                                      if (checkForJava() ==
+                                                          false) return;
+                                                      Map modpackproject =
+                                                          await _handler.getModpack(
+                                                              modpacklist[index]
+                                                                  [
+                                                                  "project_id"]);
+                                                      Map modpackversion = await _handler
+                                                          .getModpackVersion(
+                                                              (modpackproject[
+                                                                          "versions"]
+                                                                      as List)
+                                                                  .last);
+                                                      installcontroller.start(
+                                                          _handler,
+                                                          modpackversion);
+                                                    },
+                                                  ),
                                                 ));
-                                      }))));
-                        }
-                        return Container();
-                      });
+
+                                                installcontroller.install(
+                                                    _handler, modpackData);
+                                              },
+                                              onOpen: () async {
+                                                Map modpackproject =
+                                                    await _handler.getModpack(
+                                                        modpacklist[index]
+                                                            ["project_id"]);
+                                                Map modpackversion = await _handler
+                                                    .getModpackVersion(
+                                                        (modpackproject[
+                                                                    "versions"]
+                                                                as List)
+                                                            .last);
+                                                installcontroller.start(
+                                                    _handler, modpackversion);
+                                              },
+                                            ));
+                                  }));
+                            })));
+                  }
+                  ;
+                  return Container();
                 },
               ))
             ],

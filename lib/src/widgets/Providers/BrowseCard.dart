@@ -57,6 +57,7 @@ class _BrowseCardState extends State<BrowseCard> {
 
   @override
   Widget build(BuildContext context) {
+    print('test');
     return Padding(
         padding: EdgeInsets.only(
           top: 30,
@@ -265,9 +266,9 @@ class ProgressIndicatorWidget extends StatelessWidget {
             backgroundColor: isDownloading
                 ? Theme.of(context).colorScheme.outline
                 : Colors.white.withOpacity(0),
-            valueColor: AlwaysStoppedAnimation(isFetching
-                ? CupertinoColors.lightBackgroundGray
-                : Theme.of(context).colorScheme.primary),
+            valueColor: AlwaysStoppedAnimation(
+             
+                 Theme.of(context).colorScheme.primary),
             strokeWidth: 2,
             value: isFetching ? null : progress / 100,
           );

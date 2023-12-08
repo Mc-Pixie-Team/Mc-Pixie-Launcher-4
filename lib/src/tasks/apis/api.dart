@@ -88,6 +88,11 @@ abstract class Api {
     throw Exception("Do not call the normal API class, this is just a Template function!");
   }
 
+    Future<Map> getMMLVersion(
+       String instanceName,) async {
+        throw Exception("Do not call the normal API class, this is just a Template function!");
+       }
+
 
   UMF convertToUMF(Map modpackData) {
     throw Exception("Do not call the normal API class, this is just a Template function!");

@@ -1,9 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
+import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/installer/modrinth/modrinth_install.dart';
+import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
+import 'package:mclauncher4/src/tasks/modloaders.dart';
+import 'package:mclauncher4/src/tasks/utils/path.dart';
 
 
 class ModrinthApi implements Api {
@@ -137,6 +143,30 @@ class ModrinthApi implements Api {
     return return_value;
   }
 
+    @override
+  Future<Map> getMMLVersion(
+       String instanceName,) async {
+   late ModloaderVersion modloaderVersion;
+   late Modloader modloader;
+    String destination =
+        '${await getInstancePath()}\\$instanceName\\modrinth.index.json';
+    Map depend =
+        (jsonDecode(await File(destination).readAsString()))["dependencies"];
+   
+
+
+    if (depend["fabric-loader"] != null) {
+      modloader = Fabric();
+        modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
+    }else if (depend["forge"] != null) {
+        modloader = Forge();
+       modloaderVersion = ModloaderVersion.parse(depend["forge"]);
+    }
+
+ 
+    return {"modloader": modloader, "modloaderVersion": modloaderVersion};
+  }
+
   @override
   UMF convertToUMF(Map modpackData) {
     modpackData["name"] = modpackData["name"] ?? modpackData["title"];
@@ -150,8 +180,8 @@ class ModrinthApi implements Api {
         likes: modpackData["follows"],
         categories: modpackData["categories"],
         icon: modpackData["icon_url"],
-        modloader: "",
-        MLVersion: "",
+        modloader: null,
+        MLVersion: null,
         MCVersion: modpackData["latest_version"],
         original: modpackData);
   }

@@ -38,6 +38,34 @@ class ModrinthInstaller {
     return jsonDecode(utf8.decode(res.bodyBytes));
   }
 
+ Future<Process> start(String processId) async{
+    late ModloaderVersion modloaderVersion;
+   late Modloader modloader;
+    String destination =
+        '${await getInstancePath()}\\$processId\\modrinth.index.json';
+    Map depend =
+        (jsonDecode(await File(destination).readAsString()))["dependencies"];
+   
+
+
+    if (depend["fabric-loader"] != null) {
+      modloader = Fabric();
+        modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
+    }else if (depend["forge"] != null) {
+        modloader = Forge();
+      modloaderVersion = ModloaderVersion.parse(depend["forge"]);
+    }
+
+    Version version = Version.parse(depend["minecraft"]);
+
+
+
+    
+      return  await modloader.run(processId, version, modloaderVersion);
+
+
+  }
+
   install(Map modpackData, String instanceName) async {
     Map modpackproject = await getModpack(modpackData["project_id"]);
     modpackData = await getModpackVersion((modpackproject["versions"] as List).last);

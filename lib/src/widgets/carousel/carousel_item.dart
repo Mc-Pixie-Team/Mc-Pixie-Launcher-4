@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
+import 'package:mclauncher4/src/widgets/components/size_transition_custom.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class CarouselItem extends StatefulWidget {

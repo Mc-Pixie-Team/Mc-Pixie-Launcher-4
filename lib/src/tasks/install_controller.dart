@@ -1,15 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
 import 'package:mclauncher4/src/tasks/Models/start_message.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/installer/modrinth/modrinth_install.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'package:mclauncher4/src/widgets/side_panel/taskwidget.dart';
@@ -34,7 +36,11 @@ class InstallController with ChangeNotifier {
 
   static int instances = 0;
 
-  void start() {
+  void start() async{
+    print('start');
+   Process result = await  ModrinthInstaller().start(processId);
+
+
 
   }
 

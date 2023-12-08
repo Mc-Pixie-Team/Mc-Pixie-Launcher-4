@@ -68,7 +68,8 @@ class Microsoft {
       http.Response firstAuthResponse = await http.post(
         uri,
         headers: {'Content-Type': "application/x-www-form-urlencoded"},
-        body: "client_id=$clientId&client_secret=$clientSecret&code=$token&grant_type=authorization_code&redirect_uri=http://localhost:25458",
+        body:
+            "client_id=$clientId&client_secret=$clientSecret&code=$token&grant_type=authorization_code&redirect_uri=http://localhost:25458",
       );
       Map rsp = jsonDecode(firstAuthResponse.body);
 
@@ -77,7 +78,8 @@ class Microsoft {
       http.Response firstAuthResponse = await http.post(
         uri,
         headers: {'Content-Type': "application/x-www-form-urlencoded"},
-        body: "client_id=$clientId&client_secret=$clientSecret&refresh_token=$token&grant_type=refresh_token&redirect_uri=http://localhost:25458",
+        body:
+            "client_id=$clientId&client_secret=$clientSecret&refresh_token=$token&grant_type=refresh_token&redirect_uri=http://localhost:25458",
       );
       print(firstAuthResponse.reasonPhrase);
       Map rsp = jsonDecode(firstAuthResponse.body);
@@ -101,8 +103,8 @@ class Microsoft {
       "TokenType": "JWT"
     };
 
-    http.Response firstAuthResponse =
-        await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
+    http.Response firstAuthResponse = await http.post(uri,
+        headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
     print(firstAuthResponse.body);
 
     Map rsp = jsonDecode(firstAuthResponse.body);
@@ -123,8 +125,8 @@ class Microsoft {
       "TokenType": "JWT"
     };
 
-    http.Response firstAuthResponse =
-        await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
+    http.Response firstAuthResponse = await http.post(uri,
+        headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
     print(firstAuthResponse.statusCode);
     if (firstAuthResponse.statusCode != 401) {
       Map rsp = jsonDecode(firstAuthResponse.body);
@@ -145,8 +147,8 @@ class Microsoft {
 
     Map data = {"identityToken": "XBL3.0 x=$xboxUserHash;$authXSTSToken", "ensureLegacyEnabled": true};
 
-    http.Response firstAuthResponse =
-        await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
+    http.Response firstAuthResponse = await http.post(uri,
+        headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
     print(firstAuthResponse.body);
     print(firstAuthResponse.statusCode);
     //Map rsp = jsonDecode(firstAuthResponse.body);

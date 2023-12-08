@@ -22,14 +22,17 @@ class DiscordRP {
     }
     var serviceExecutable = 'C:/Program Files/dotnet/dotnet.exe'; // literally the .NET CLI
     var serviceArgs = ['run', appID]; // or .EXE if on Windows...
-   // csharpProcess = await Process.start(serviceExecutable, serviceArgs, workingDirectory: "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp");
-  // print(csharpProcess);
+    // csharpProcess = await Process.start(serviceExecutable, serviceArgs, workingDirectory: "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp");
+    // print(csharpProcess);
 // Parse messages incoming from C# -> Dart
     dynamic onDataReceived(event) {
       try {
         var strMessage = utf8.decode(event);
-        var strJson =
-            strMessage.split('\r\n').where((element) => !element.contains('Content-Length')).where((element) => element.trim().length > 0).first;
+        var strJson = strMessage
+            .split('\r\n')
+            .where((element) => !element.contains('Content-Length'))
+            .where((element) => element.trim().length > 0)
+            .first;
 
         dynamic result = jsonDecode(strJson);
         print(result);
@@ -46,8 +49,11 @@ class DiscordRP {
     dynamic onErrorReceived(event) {
       try {
         var strMessage = utf8.decode(event);
-        var strJson =
-            strMessage.split('\r\n').where((element) => !element.contains('Content-Length')).where((element) => element.trim().length > 0).first;
+        var strJson = strMessage
+            .split('\r\n')
+            .where((element) => !element.contains('Content-Length'))
+            .where((element) => element.trim().length > 0)
+            .first;
 
         dynamic result = jsonDecode(strJson);
         print(result);
@@ -73,7 +79,7 @@ class DiscordRP {
     var jsonEncodedBody = jsonEncode(message);
     var contentLengthHeader = 'Content-Length: ${jsonEncodedBody.length}';
     var messagePayload = contentLengthHeader + '\r\n\r\n${jsonEncodedBody}';
-  //  (csharpProcess!).stdin.write(messagePayload);
+    //  (csharpProcess!).stdin.write(messagePayload);
 // TODO: track the message ID if replies are important
   }
 
@@ -93,7 +99,7 @@ class DiscordRP {
     var jsonEncodedBody = jsonEncode(message);
     var contentLengthHeader = 'Content-Length: ${jsonEncodedBody.length}';
     var messagePayload = contentLengthHeader + '\r\n\r\n${jsonEncodedBody}';
-   // (csharpProcess!).stdin.write(messagePayload);
+    // (csharpProcess!).stdin.write(messagePayload);
     return true;
   }
 

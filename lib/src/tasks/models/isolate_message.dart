@@ -2,9 +2,7 @@ import 'dart:isolate';
 
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 
-
-
-class InstallerMessage { 
+class InstallerMessage {
   MainState mainState;
   double progress;
   SendPort? sendPort;

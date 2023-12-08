@@ -68,34 +68,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
   isSnapshotNewer(String snapshot1, String snapshot2) {
-  // Extract the version numbers from the snapshot names
-  final version1 = snapshot1.split(' ')[0];
-  final version2 = snapshot2.split(' ')[0];
+    // Extract the version numbers from the snapshot names
+    final version1 = snapshot1.split(' ')[0];
+    final version2 = snapshot2.split(' ')[0];
 
-  // Compare the version numbers
-  print( version1.compareTo(version2) > 0);
-}
-
+    // Compare the version numbers
+    print(version1.compareTo(version2) > 0);
+  }
 
   @override
   Widget build(BuildContext context) {
-
-
-
-
     return Scaffold(
       appBar: AppBar(
-
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
         title: Text(widget.title),
       ),
       body: Center(
-
         child: Column(
-
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(

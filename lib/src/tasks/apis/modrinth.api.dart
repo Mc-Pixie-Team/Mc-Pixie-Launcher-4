@@ -1,19 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:archive/archive_io.dart';
-import 'package:archive/archive_io.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/installer/modrinth/modrinth_install.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
-import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
-import 'package:mclauncher4/src/tasks/utils/path.dart';
-import 'package:mclauncher4/src/tasks/utils/utils.dart';
-import 'package:mclauncher4/src/tasks/models/version_object.dart';
-import '../config/apis.dart';
-import 'package:path/path.dart' as path;
+import 'package:mclauncher4/src/tasks/models/umf_model.dart';
+
 
 class ModrinthApi implements Api {
   int limit = 50;
@@ -21,8 +12,7 @@ class ModrinthApi implements Api {
   List _facet = [];
 
   ModrinthApi() {
-    _facet = jsonDecode(
-        '[["project_type:modpack"], ["categories:forge", "categories:fabric"]]');
+    _facet = jsonDecode('[["project_type:modpack"], ["categories:forge", "categories:fabric"]]');
   }
 
   @override
@@ -98,39 +88,10 @@ class ModrinthApi implements Api {
 
   @override
   getModpack(String id) async {
-    var res =
-        await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
+    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
     return jsonDecode(utf8.decode(res.bodyBytes));
   }
 
-  @override
-  Future<Map<String, dynamic>> getModpackVersion(String version) async {
-    var res = await http
-        .get(Uri.parse('https://api.modrinth.com/v2/version/$version'));
-    // TODO: implement getModpack
-    return jsonDecode(utf8.decode(res.bodyBytes));
-  }
-
-  @override
-  Future<Map> getMMLVersion(
-      modpackVersion, String instanceName, String modloader) async {
-    Map return_value = {};
-    late ModloaderVersion modloaderVersion;
-    String destination =
-        '${await getInstancePath()}\\$instanceName\\modrinth.index.json';
-    Map depend =
-        (jsonDecode(await File(destination).readAsString()))["dependencies"];
-    Version _version = Version.parse(depend['minecraft']);
-
-    if (modloader == "forge") {
-      modloaderVersion = ModloaderVersion.parse(depend["forge"]);
-    }
-    if (modloader == "fabric") {
-      modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
-    }
-    return_value = {"version": _version, "modloader": modloaderVersion};
-    return return_value;
-  }
 
   @override
   Future<String> getModpackName(Map modpackData) async {
@@ -145,8 +106,7 @@ class ModrinthApi implements Api {
 
   @override
   Future<List<String>> getCategories() async {
-    var res =
-        await http.get(Uri.parse('https://api.modrinth.com/v2/tag/category'));
+    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/tag/category'));
 
     List allMCcatergories = jsonDecode(utf8.decode(res.bodyBytes));
     List<String> return_value = [];
@@ -162,8 +122,7 @@ class ModrinthApi implements Api {
 
   @override
   Future<List<String>> getAllMV() async {
-    var res = await http
-        .get(Uri.parse('https://api.modrinth.com/v2/tag/game_version'));
+    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/tag/game_version'));
 
     List allMCversions = jsonDecode(utf8.decode(res.bodyBytes));
     List<String> return_value = [];
@@ -179,21 +138,25 @@ class ModrinthApi implements Api {
   }
 
   @override
-  Map convertToUMF(Map modpackData) {
+  UMF convertToUMF(Map modpackData) {
     modpackData["name"] = modpackData["name"] ?? modpackData["title"];
-    return modpackData; 
+    print(modpackData);
+
+    return UMF(
+        name: modpackData["title"].toString(),
+        author: modpackData["author"].toString(),
+        description: modpackData["description"].toString(),
+        downloads: modpackData["downloads"],
+        likes: modpackData["follows"],
+        categories: modpackData["categories"],
+        icon: modpackData["icon_url"],
+        modloader: "",
+        MLVersion: "",
+        MCVersion: modpackData["latest_version"],
+        original: modpackData);
   }
 
-  Future<String> getIcon(Map modpackData) async {
-    if(modpackData["icon_url"] != null) return modpackData["icon_url"];
-    Map project = await getModpack(modpackData["project_id"]);
-    return  project["icon_url"];
-  }
 
-  @override
-  Future exportModpack(String processId, Map modpack, String pathTo) async {
-
-  }
 
   @override
   getTitlename() {

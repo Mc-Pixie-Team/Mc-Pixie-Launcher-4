@@ -2,9 +2,9 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mclauncher4/src/app.dart';
-import 'package:mclauncher4/src/widgets/components/autoGradient.dart';
-import 'package:mclauncher4/src/widgets/components/gradiantText.dart';
-import 'package:mclauncher4/src/widgets/loginCardSupabase.dart';
+import 'package:mclauncher4/src/widgets/components/auto_Gradient.dart';
+import 'package:mclauncher4/src/widgets/components/gradiant_text.dart';
+import 'package:mclauncher4/src/widgets/login_card_supabase.dart';
 
 class pixieLoginScreen extends StatefulWidget {
   const pixieLoginScreen({Key? key}) : super(key: key);

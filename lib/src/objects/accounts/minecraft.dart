@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
-import 'package:mclauncher4/src/tasks/storrage/secureStorrage.dart';
+import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
 
 class MinecraftAccount {
   String name;
@@ -18,7 +18,8 @@ class MinecraftAccount {
   }
 
   static parse(Map map) {
-    return MinecraftAccount(name: map["name"], refreshToken: map["refreshToken"], username: map["username"], uuid: map["uuid"]);
+    return MinecraftAccount(
+        name: map["name"], refreshToken: map["refreshToken"], username: map["username"], uuid: map["uuid"]);
   }
 }
 
@@ -78,7 +79,6 @@ class MinecraftAccountUtils {
       MinecraftAccountUtils().setStandard(account);
       MinecraftAccountUtils().saveAccounts(accList);
     } else {
-      
       print("account already exists! Doing nothing.");
     }
   }
@@ -138,9 +138,7 @@ class MinecraftAccountUtils {
   }
 
   Future<void> initOnFirstStart() async {
-
-    if ( !(await SecureStorage().isKeyRegistered("accounts"))) await MinecraftAccountUtils().saveAccounts([]);
-      
+    if (!(await SecureStorage().isKeyRegistered("accounts"))) await MinecraftAccountUtils().saveAccounts([]);
   }
 }
 

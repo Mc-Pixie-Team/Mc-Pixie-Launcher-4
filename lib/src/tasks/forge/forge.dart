@@ -15,29 +15,28 @@ import 'package:yaml/yaml.dart';
 import 'package:path/path.dart' as path;
 import '../utils/path.dart';
 
-class Forge with ChangeNotifier implements Modloader{
+class Forge with ChangeNotifier implements Modloader {
   ModloaderInstallState _state = ModloaderInstallState.downloadingClient;
   @override
   ModloaderInstallState get installstate => _state;
   double _progress = 0.0;
   @override
   double get progress => _progress;
-  double _mainprogress = 0.0; 
+  double _mainprogress = 0.0;
   double get mainprogress => _mainprogress;
 
-    @override
-    getSafeDir(Version version, ModloaderVersion modloaderVersion) async{
+  @override
+  getSafeDir(Version version, ModloaderVersion modloaderVersion) async {
     return '${await getworkpath()}\\versions\\$version-forge-$modloaderVersion\\$version-forge-$modloaderVersion.json';
   }
 
   @override
-   getsteps(Version version, [ModloaderVersion? modloaderVersion]) {
+  getsteps(Version version, [ModloaderVersion? modloaderVersion]) {
     if (version > Version(1, 12, 2)) {
       return 3;
     }
     return 2;
-   }
-  
+  }
 
   //1.19.4-forge-45.1.16
 
@@ -49,11 +48,9 @@ class Forge with ChangeNotifier implements Modloader{
 
   String os = "windows";
   @override
-Future<Process> run(String instanceName, Version version,
-      ModloaderVersion ModloaderVersion) async {
-    Map vanillaVersionJson = (jsonDecode(
-        await File("${await getworkpath()}\\versions\\$version\\$version.json")
-            .readAsString()));
+  Future<Process> run(String instanceName, Version version, ModloaderVersion ModloaderVersion) async {
+    Map vanillaVersionJson =
+        (jsonDecode(await File("${await getworkpath()}\\versions\\$version\\$version.json").readAsString()));
 
     Map versionJson = (jsonDecode(await File(
             "${await getworkpath()}\\versions\\$version-forge-$ModloaderVersion\\$version-forge-$ModloaderVersion.json")
@@ -67,20 +64,17 @@ Future<Process> run(String instanceName, Version version,
     vanillaVersionJson["libraries"] = testlib;
     vanillaVersionJson["mainClass"] = versionJson["mainClass"];
     if (version < Version(1, 13, 0)) {
-      vanillaVersionJson["minecraftArguments"] =
-          versionJson["minecraftArguments"];
+      vanillaVersionJson["minecraftArguments"] = versionJson["minecraftArguments"];
     } else {
       if (versionJson["arguments"]["jvm"] != null) {
-        (vanillaVersionJson["arguments"]["jvm"] as List)
-            .addAll(versionJson["arguments"]["jvm"]);
+        (vanillaVersionJson["arguments"]["jvm"] as List).addAll(versionJson["arguments"]["jvm"]);
       }
       if (versionJson["arguments"]["game"] != null) {
-        (vanillaVersionJson["arguments"]["game"] as List)
-            .addAll(versionJson["arguments"]["game"]);
+        (vanillaVersionJson["arguments"]["game"] as List).addAll(versionJson["arguments"]["game"]);
       }
     }
 
-   List<String> launchcommand = await Minecraft().getlaunchCommand(
+    List<String> launchcommand = await Minecraft().getlaunchCommand(
       instanceName,
       vanillaVersionJson,
       os,
@@ -94,17 +88,16 @@ Future<Process> run(String instanceName, Version version,
     // await tempFile.create(recursive: true);
     // await tempFile.writeAsString(launchcommand);
 
-    var result = await Process.start(
-        Java.getJavaJdk(version), launchcommand,
+    var result = await Process.start(Java.getJavaJdk(version), launchcommand,
         workingDirectory: '${await getInstancePath()}\\$instanceName');
 
     stdout.addStream(result.stdout);
     stderr.addStream(result.stderr);
     return result;
   }
+
   @override
-  install(Version version, ModloaderVersion modloaderVersion,
-      [additional]) async {
+  install(Version version, ModloaderVersion modloaderVersion, [additional]) async {
     Map versionJson = Map();
 
     print("installing now: $version-$modloaderVersion");
@@ -124,9 +117,9 @@ Future<Process> run(String instanceName, Version version,
     String versionJsonPath =
         "${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\version.json";
     if (File(versionJsonPath).existsSync()) {
-      versionJson = jsonDecode(await File(
-              "${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\version.json")
-          .readAsString());
+      versionJson = jsonDecode(
+          await File("${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\version.json")
+              .readAsString());
     } else {
       List additionalLibs = [];
 
@@ -135,8 +128,7 @@ Future<Process> run(String instanceName, Version version,
         "downloads": {
           "artifact": {
             "path": "net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
-            "url":
-                "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
+            "url": "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar",
             "size": 32999
           }
         }
@@ -146,8 +138,7 @@ Future<Process> run(String instanceName, Version version,
         "downloads": {
           "artifact": {
             "path": "lzma/lzma/0.0.1/lzma-0.0.1.jar",
-            "url":
-                "https://phoenixnap.dl.sourceforge.net/project/kcauldron/lzma/lzma/0.0.1/lzma-0.0.1.jar",
+            "url": "https://phoenixnap.dl.sourceforge.net/project/kcauldron/lzma/lzma/0.0.1/lzma-0.0.1.jar",
             "size": 100000
           }
         }
@@ -157,28 +148,22 @@ Future<Process> run(String instanceName, Version version,
         "downloads": {
           "artifact": {
             "path": "java3d/vecmath/1.5.2/vecmath-1.5.2.jar",
-            "url":
-                "https://repo1.maven.org/maven2/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2.jar",
+            "url": "https://repo1.maven.org/maven2/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2.jar",
             "size": 100000
           }
         }
       });
 
-      List<String> ignoreList = [
-        "net.minecraft:launchwrapper:1.12",
-        "lzma:lzma:0.0.1",
-        "java3d:vecmath:1.5.2"
-      ];
-      versionJson = Utils.convertLibraries(
-          install_profileJson["versionInfo"], ignoreList, additionalLibs);
+      List<String> ignoreList = ["net.minecraft:launchwrapper:1.12", "lzma:lzma:0.0.1", "java3d:vecmath:1.5.2"];
+      versionJson = Utils.convertLibraries(install_profileJson["versionInfo"], ignoreList, additionalLibs);
     }
 
     // print(versionJson);
     Download _downloader = Download();
     Processor _processor = Processor();
-      var _1 = 0.0;
-      var _2 = 0.0;
-      var _raw = 0.0;
+    var _1 = 0.0;
+    var _2 = 0.0;
+    var _raw = 0.0;
     _downloader.addListener(() {
       if (_downloader.downloadstate == DownloadState.downloadingLibraries) {
         print(getsteps(version));
@@ -186,14 +171,14 @@ Future<Process> run(String instanceName, Version version,
         _1 = _downloader.progress;
         _progress = _downloader.progress;
         _state = ModloaderInstallState.downloadingLibraries;
-         _mainprogress = _raw / getsteps(version);
+        _mainprogress = _raw / getsteps(version);
         notifyListeners();
       }
     });
 
     _processor.addListener(() {
       if (_state == ModloaderInstallState.patching) {
-         _raw += _downloader.progress - _2;
+        _raw += _downloader.progress - _2;
         _2 = _downloader.progress;
         _progress = _processor.progress;
         _mainprogress = _raw / getsteps(version);
@@ -202,8 +187,7 @@ Future<Process> run(String instanceName, Version version,
     });
 
     _state = ModloaderInstallState.downloadingLibraries;
-    await _downloader.downloadLibaries(
-        install_profileJson, version, modloaderVersion);
+    await _downloader.downloadLibaries(install_profileJson, version, modloaderVersion);
     _state = ModloaderInstallState.patching;
     await _processor.run(install_profileJson, version, modloaderVersion);
     //install_profile is finished
@@ -211,16 +195,14 @@ Future<Process> run(String instanceName, Version version,
     _state = ModloaderInstallState.downloadingLibraries;
     _1 = 0.0;
     await _downloader.downloadLibaries(versionJson, version, modloaderVersion);
-    await _downloader.getOldUniversal(
-        install_profileJson, version, modloaderVersion);
+    await _downloader.getOldUniversal(install_profileJson, version, modloaderVersion);
     await _createVersionDir(versionJson, version, modloaderVersion);
     //version is finished
     _state = ModloaderInstallState.finished;
     notifyListeners();
   }
 
-  _createVersionDir(Map versionJson, Version version,
-      ModloaderVersion modloaderVersion) async {
+  _createVersionDir(Map versionJson, Version version, ModloaderVersion modloaderVersion) async {
     String filepath =
         "${await getworkpath()}\\versions\\$version-forge-$modloaderVersion\\$version-forge-$modloaderVersion.json";
     String parentDirectory = path.dirname(filepath);

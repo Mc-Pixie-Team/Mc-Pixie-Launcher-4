@@ -15,32 +15,30 @@ import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:path/path.dart' as path;
 import "package:path_provider/path_provider.dart" as path_provider;
 
-class Fabric with ChangeNotifier implements Modloader  {
+class Fabric with ChangeNotifier implements Modloader {
   ModloaderInstallState _state = ModloaderInstallState.downloadingLibraries;
   @override
   ModloaderInstallState get installstate => _state;
   double _progress = 0.0;
   @override
   double get progress => _progress;
-  double _mainprogress = 0.0; 
+  double _mainprogress = 0.0;
   double get mainprogress => _mainprogress;
-  
-   @override
-   getsteps(Version version, [ModloaderVersion? modloaderVersion]) {
-    return 1;
-   }
-
 
   @override
-  getSafeDir(Version version, ModloaderVersion modloaderVersion) async{
+  getsteps(Version version, [ModloaderVersion? modloaderVersion]) {
+    return 1;
+  }
+
+  @override
+  getSafeDir(Version version, ModloaderVersion modloaderVersion) async {
     return "${await getworkpath()}\\versions\\fabric-loader-$modloaderVersion-$version\\fabric-loader-$modloaderVersion-$version.json";
   }
+
   @override
-  Future<Process> run(String instanceName, Version version,
-      ModloaderVersion modloaderVersion) async {
-    Map vanillaVersionJson = (jsonDecode(
-        await File("${await getworkpath()}\\versions\\$version\\$version.json")
-            .readAsString()));
+  Future<Process> run(String instanceName, Version version, ModloaderVersion modloaderVersion) async {
+    Map vanillaVersionJson =
+        (jsonDecode(await File("${await getworkpath()}\\versions\\$version\\$version.json").readAsString()));
 
     Map versionJson = (jsonDecode(await File(
             "${await getworkpath()}\\versions\\fabric-loader-$modloaderVersion-$version\\fabric-loader-$modloaderVersion-$version.json")
@@ -55,12 +53,10 @@ class Fabric with ChangeNotifier implements Modloader  {
     vanillaVersionJson["mainClass"] = versionJson["mainClass"];
 
     if (versionJson["arguments"]["jvm"] != null) {
-      (vanillaVersionJson["arguments"]["jvm"] as List)
-          .addAll(versionJson["arguments"]["jvm"]);
+      (vanillaVersionJson["arguments"]["jvm"] as List).addAll(versionJson["arguments"]["jvm"]);
     }
     if (versionJson["arguments"]["game"] != null) {
-      (vanillaVersionJson["arguments"]["game"] as List)
-          .addAll(versionJson["arguments"]["game"]);
+      (vanillaVersionJson["arguments"]["game"] as List).addAll(versionJson["arguments"]["game"]);
     }
 
     List<String> launchcommand = await Minecraft().getlaunchCommand(
@@ -78,19 +74,16 @@ class Fabric with ChangeNotifier implements Modloader  {
     // await tempFile.
     // writeAsString(launchcommand);
 
+    String exec = Java.getJavaJdk(version);
+    print(exec);
 
-  String exec = Java.getJavaJdk(version);
-      print(exec);
+    var result =
+        await Process.start(exec, launchcommand, workingDirectory: '${await getInstancePath()}\\$instanceName');
 
-    var result = await Process.start(
-        exec, launchcommand,
-        workingDirectory: '${await getInstancePath()}\\$instanceName');
+    stdout.addStream(result.stdout);
+    stderr.addStream(result.stderr);
 
-     stdout.addStream(result.stdout);
-     stderr.addStream(result.stderr);
-
-     print(result.pid);
-
+    print(result.pid);
 
     //  Future.delayed(Duration(seconds: 15)).then((value) {
     //   print('trying to kill with pid');
@@ -99,10 +92,11 @@ class Fabric with ChangeNotifier implements Modloader  {
 
     return result;
   }
+
   @override
   install(Version version, ModloaderVersion modloaderVersion, [additional]) async {
-    var res = await http.get(Uri.parse(
-        'https://meta.fabricmc.net/v2/versions/loader/$version/$modloaderVersion/profile/json'));
+    var res = await http
+        .get(Uri.parse('https://meta.fabricmc.net/v2/versions/loader/$version/$modloaderVersion/profile/json'));
 
     Map profileJson = jsonDecode(utf8.decode(res.bodyBytes));
 
@@ -111,7 +105,7 @@ class Fabric with ChangeNotifier implements Modloader  {
     Download _downloader = Download();
     _downloader.addListener(() {
       if (_downloader.downloadstate == DownloadState.downloadingLibraries) {
-         _mainprogress = _downloader.progress;
+        _mainprogress = _downloader.progress;
         _progress = _downloader.progress;
         _state = ModloaderInstallState.downloadingLibraries;
         notifyListeners();
@@ -122,8 +116,7 @@ class Fabric with ChangeNotifier implements Modloader  {
     await _createVersionDir(profileJson, version, modloaderVersion);
   }
 
-  _createVersionDir(Map versionJson, Version version,
-      ModloaderVersion modloaderVersion) async {
+  _createVersionDir(Map versionJson, Version version, ModloaderVersion modloaderVersion) async {
     String filepath =
         "${await getworkpath()}\\versions\\fabric-loader-$modloaderVersion-$version\\fabric-loader-$modloaderVersion-$version.json";
     String parentDirectory = path.dirname(filepath);

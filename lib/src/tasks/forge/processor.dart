@@ -9,14 +9,11 @@ import 'package:path/path.dart' as path;
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:yaml/yaml.dart';
 
-
-
 class Processor with ChangeNotifier {
   double _progress = 0.0;
   double get progress => _progress;
 
-Future<String> _checkkeys(
-      List args, Map data, Version version,ModloaderVersion modloaderVersion) async {
+  Future<String> _checkkeys(List args, Map data, Version version, ModloaderVersion modloaderVersion) async {
     String outputArgs = "";
 
     for (var i = 0; i < args.length; i++) {
@@ -27,8 +24,8 @@ Future<String> _checkkeys(
         // Der Datei pfad wird nun an den outputArgs heran gehängt
 
         String path = Utils.parseMaven(arg);
-        Download().downloadSingeFile("https://maven.minecraftforge.net/$path",
-            "${await getlibarypath()}\\libraries\\$path");
+        Download()
+            .downloadSingeFile("https://maven.minecraftforge.net/$path", "${await getlibarypath()}\\libraries\\$path");
         outputArgs += "${await getlibarypath()}\\libraries\\$path ";
       } else if (Utils.isSurrounded(arg, "{", "}")) {
         //hier checken wir ob das argument mit {} umklammert ist, wenn ja, dann entfernen wir diese. Wir suchen nun in der "DATA" (gucke in der install_profile.json nach) nach dem passenden schlüssel der gleich bennant ist
@@ -38,8 +35,7 @@ Future<String> _checkkeys(
         arg = arg.split("{").join("").split("}").join("");
         List data_keys = data.keys.toList();
         if (arg == "MINECRAFT_JAR") {
-          outputArgs +=
-              await getworkpath() + "\\versions\\$version\\$version.jar ";
+          outputArgs += await getworkpath() + "\\versions\\$version\\$version.jar ";
         } else if (arg == "SIDE") {
           outputArgs += "client ";
         } else if (arg == "MINECRAFT_VERSION") {
@@ -64,14 +60,13 @@ Future<String> _checkkeys(
                 //wenn keiner der punkte zu trifft.
 
                 outputArgs +=
-                    "${await getlibarypath()}\\libraries\\${Utils.parseMaven(argoutput)} "
-                        .replaceAll("/", "\\");
-              //  print("found []");
+                    "${await getlibarypath()}\\libraries\\${Utils.parseMaven(argoutput)} ".replaceAll("/", "\\");
+                //  print("found []");
                 break;
               } else if (Utils.isSurrounded(argoutput, "'", "'")) {
                 outputArgs += "$argoutput ";
                 //ich denke das diese hashes die hierbei raus kommen nur zur überprüfung dienen (SHA) //TODO: überprüfung des Outputs der anderen jars
-              //  print("found ''");
+                //  print("found ''");
                 break;
               } else if (argoutput.startsWith("/")) {
                 //this part is mostly called Patching
@@ -79,13 +74,13 @@ Future<String> _checkkeys(
                     "${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\$argoutput "
                         .replaceAll("/", "\\");
 
-               // print("found /");
+                // print("found /");
                 break;
               } else {
                 continue;
               }
             } else {
-            //  print('nothing found in data keys');
+              //  print('nothing found in data keys');
             }
           }
         }
@@ -96,10 +91,8 @@ Future<String> _checkkeys(
     return outputArgs;
   }
 
-  run(
-      Map install_profile, Version version, ModloaderVersion modloaderVersion) async {
-    if (install_profile["processors"] == null ||
-        install_profile["processors"].length == 0) return;
+  run(Map install_profile, Version version, ModloaderVersion modloaderVersion) async {
+    if (install_profile["processors"] == null || install_profile["processors"].length == 0) return;
     //NOTE:
     // alternative individuelle keys
     List processor = install_profile["processors"];
@@ -107,40 +100,34 @@ Future<String> _checkkeys(
     for (var i = 0; i < processor.length;) {
       Map current = processor[i];
 
-      if (_checkAllowed(current)){
+      if (_checkAllowed(current)) {
         i++;
         continue;
-      } 
+      }
 
-       print(
-           "================================================================================> new processor:" +
-               current["jar"]);
-      String stack = await _getStack(
-          current["classpath"], install_profile["libraries"], current["jar"]);
-      String processor_jar =
-          await searchforjar(current["jar"], install_profile["libraries"]);
+      print("================================================================================> new processor:" +
+          current["jar"]);
+      String stack = await _getStack(current["classpath"], install_profile["libraries"], current["jar"]);
+      String processor_jar = await searchforjar(current["jar"], install_profile["libraries"]);
       stack += processor_jar;
 
       //Getting the mainclass
-      List<int> byte_MANIFEST = await Utils.extractFilefromjar(processor_jar,
-          "META-INF/MANIFEST.MF"); //TODO: check if succsesfull (error handling)
+      List<int> byte_MANIFEST = await Utils.extractFilefromjar(
+          processor_jar, "META-INF/MANIFEST.MF"); //TODO: check if succsesfull (error handling)
 
       String mainClass = loadYaml(utf8.decode(byte_MANIFEST))[
           "Main-Class"]; //TODO: erro handlung einbauen falls loadYAML oder utf8decoder fehlschlägt.
 
-      String _args = await _checkkeys(
-          current["args"], install_profile["data"], version, modloaderVersion);
+      String _args = await _checkkeys(current["args"], install_profile["data"], version, modloaderVersion);
 
-      String command =
-          'java -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';
+      String command = 'java -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';
 
       var tempFile = File("${await getTempCommandPath()}temp_command_2.ps1");
       await tempFile.create(recursive: true);
       await tempFile.writeAsString(command);
 
-      var result = await Process.start(
-          "powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path],
-          runInShell: true);
+      var result =
+          await Process.start("powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path], runInShell: true);
       String filepath = await getworkpath() + '\\logs\\${i.toString()}\\log.txt';
       String parentDirectory = path.dirname(filepath);
       await Directory(parentDirectory).create(recursive: true);
@@ -158,36 +145,36 @@ Future<String> _checkkeys(
     }
   }
 
-
-onHandleStdout(Iterable<int> out) {
-  print(String.fromCharCodes(out));
-}
-
-Future<String> _getStack(List classes, List libraries, String jarname) async {
-  String stack = "";
-  for (int i = 0; i < classes.length; i++) {
-    stack += "${await searchforjar(classes[i], libraries)};";
+  onHandleStdout(Iterable<int> out) {
+    print(String.fromCharCodes(out));
   }
-  return stack;
-}
 
-Future<String> searchforjar(String name, List libraries) async {
-  for (var i = 0; i < libraries.length; i++) {
-    Map currentLib = libraries[i];
-    if (currentLib["name"] != name) continue;
-    return "${await getlibarypath()}\\libraries\\${currentLib["downloads"]["artifact"]["path"]}";
-  }
-  return "!!";
-}
-
-_checkAllowed(Map current) {
-  // true is not allowed
-
-  if (current["sides"] != null) {
-    for (var i = 0; i < current["sides"].length; i++) {
-      if (current["sides"][i] == "client") return false;
-      return true;
+  Future<String> _getStack(List classes, List libraries, String jarname) async {
+    String stack = "";
+    for (int i = 0; i < classes.length; i++) {
+      stack += "${await searchforjar(classes[i], libraries)};";
     }
+    return stack;
   }
-  return false;
-}}
+
+  Future<String> searchforjar(String name, List libraries) async {
+    for (var i = 0; i < libraries.length; i++) {
+      Map currentLib = libraries[i];
+      if (currentLib["name"] != name) continue;
+      return "${await getlibarypath()}\\libraries\\${currentLib["downloads"]["artifact"]["path"]}";
+    }
+    return "!!";
+  }
+
+  _checkAllowed(Map current) {
+    // true is not allowed
+
+    if (current["sides"] != null) {
+      for (var i = 0; i < current["sides"].length; i++) {
+        if (current["sides"][i] == "client") return false;
+        return true;
+      }
+    }
+    return false;
+  }
+}

@@ -1,51 +1,29 @@
 import 'dart:io';
-import 'dart:math';
 import 'dart:ui';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
-import 'package:mclauncher4/src/pages/HomePage.dart';
-import 'package:mclauncher4/src/pages/debugpage.dart';
-import 'package:mclauncher4/src/pages/installedModpacks.dart';
-import 'package:mclauncher4/src/pages/providers/ModListPage.dart';
-import 'package:mclauncher4/src/pages/settings_page/settingsPage.dart';
-import 'package:mclauncher4/src/pages/splash/splash.dart';
-import 'package:mclauncher4/src/pages/splash/splashLogin.dart';
-import 'package:mclauncher4/src/pages/user_page/userPage.dart';
-import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
-import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
-import 'package:mclauncher4/src/tasks/discord/discordRP.dart';
-import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
-import 'package:mclauncher4/src/tasks/forge/forge.dart';
-import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
-import 'package:mclauncher4/src/tasks/win32Deleter.dart';
-import 'package:mclauncher4/src/widgets/ImportField.dart';
-import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
-import 'package:mclauncher4/src/widgets/components/sizetransitioncustom.dart';
-import 'package:mclauncher4/src/tasks/utils/downloads.dart';
-import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
-import 'package:mclauncher4/src/tasks/models/version_object.dart';
-import 'package:mclauncher4/src/widgets/SidePanel/taskwidget.dart';
-import 'package:desktop_drop/desktop_drop.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:mclauncher4/src/pages/home_page.dart';
+import 'package:mclauncher4/src/pages/debug_page.dart';
+import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
+import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
+import 'package:mclauncher4/src/pages/user_page/user_page.dart';
+import 'package:mclauncher4/src/widgets/import_field.dart';
+import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
-import 'widgets/NavigationDrawer/itemDrawer.dart';
+import 'widgets/navigation_drawer/item_drawer.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'widgets/NavigationDrawer/menuItem.dart';
+import 'widgets/navigation_drawer/menu_item.dart';
 import 'widgets/divider.dart' as Div;
 import 'package:animations/animations.dart';
-import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
+
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.trackpad
-      };
+  Set<PointerDeviceKind> get dragDevices =>
+      {PointerDeviceKind.touch, PointerDeviceKind.mouse, PointerDeviceKind.trackpad};
 }
 
 class McLauncher extends StatelessWidget {
@@ -67,9 +45,7 @@ class McLauncher extends StatelessWidget {
             typography: Typography(black: blackTextSchemes),
             scrollbarTheme: ScrollbarThemeData()),
         darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: darkColorScheme,
-            typography: Typography(black: blackTextSchemes)),
+            useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
         themeMode: ThemeMode.dark,
         home: MainPage());
   }
@@ -87,8 +63,7 @@ class _MainPageState extends State<MainPage> {
   bool isSplashed = true;
   int pageIndex = 1;
   int pageIndex_old = 1;
-  EdgeInsets edgeInsets =
-      EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
+  EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
   final List<Widget> _pages = [
     HomePage(),
     ModListPage(),
@@ -156,8 +131,7 @@ class _MainPageState extends State<MainPage> {
               Container(
                 height: double.infinity,
                 width: 200,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant),
+                decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant),
                 child: Column(
                   children: [
                     Container(
@@ -262,14 +236,12 @@ class _MainPageState extends State<MainPage> {
                           ),
                         ]),
                     Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, top: 10, bottom: 17),
+                        padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 17),
                         child: Container(
                             height: 50,
                             decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.all(
-                                    Radius.elliptical(18, 18))),
+                                borderRadius: BorderRadius.all(Radius.elliptical(18, 18))),
                             width: double.infinity,
                             child: Align(
                               alignment: Alignment.centerLeft,
@@ -295,8 +267,7 @@ class _MainPageState extends State<MainPage> {
                                   icon: Icon(
                                     Icons.folder,
                                     size: 20,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ),
@@ -315,10 +286,7 @@ class _MainPageState extends State<MainPage> {
                         style: Theme.of(context).typography.black.bodySmall,
                       ),
                     ),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, bottom: 20, top: 8),
-                        child: ImportField())
+                    Padding(padding: EdgeInsets.only(left: 15, right: 15, bottom: 20, top: 8), child: ImportField())
                   ],
                 ),
               ),
@@ -331,9 +299,7 @@ class _MainPageState extends State<MainPage> {
                   padding: edgeInsets,
                   child: _pages![pageIndex],
                 ),
-                transitionBuilder:
-                    (child, primaryAnimation, secondaryAnimation) =>
-                        SharedAxisTransition(
+                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   transitionType: SharedAxisTransitionType.vertical,

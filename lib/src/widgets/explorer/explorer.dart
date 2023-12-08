@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:mclauncher4/src/widgets/explorer/directoryWidget.dart';
-import 'package:mclauncher4/src/widgets/explorer/fileListController.dart';
-import 'package:mclauncher4/src/widgets/explorer/fileWidget.dart';
+import 'package:mclauncher4/src/widgets/explorer/directory_widget.dart';
+import 'package:mclauncher4/src/widgets/explorer/file_listcontroller.dart';
+import 'package:mclauncher4/src/widgets/explorer/file_widget.dart';
 
 class Explorer extends StatefulWidget {
   Directory rootDir;
@@ -29,8 +29,7 @@ class _ExplorerState extends State<Explorer> {
     super.initState();
   }
 
-  List<Widget> getDirectoryItems(
-      Directory directory, ValueNotifier<bool> isEnabled) {
+  List<Widget> getDirectoryItems(Directory directory, ValueNotifier<bool> isEnabled) {
     List<Widget> result = [];
 
     List<FileSystemEntity> entities = directory.listSync();
@@ -39,7 +38,6 @@ class _ExplorerState extends State<Explorer> {
       FileList.files.add(entity);
       if (entity is Directory) {
         if ((entity as Directory).listSync().length < 1) {
-      
           result.add(FileWidget(
             fileEntity: entity,
             isEnabled: isEnabled,
@@ -55,7 +53,7 @@ class _ExplorerState extends State<Explorer> {
             children: getDirectoryItems(entity, notifier)));
         continue;
       }
-    
+
       result.add(FileWidget(
         fileEntity: entity as File,
         isEnabled: isEnabled,
@@ -72,8 +70,7 @@ class _ExplorerState extends State<Explorer> {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
-              children: List.generate(
-                  entityWidgets.length, (index) => entityWidgets[index])),
+              children: List.generate(entityWidgets.length, (index) => entityWidgets[index])),
         ));
   }
 }

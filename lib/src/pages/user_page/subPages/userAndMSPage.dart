@@ -1,6 +1,6 @@
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
-import 'package:mclauncher4/src/pages/user_page/sidePanelWidget.dart';
-import 'package:mclauncher4/src/pages/user_page/textFieldWithEnter.dart';
+import 'package:mclauncher4/src/pages/user_page/side_panel_widget.dart';
+import 'package:mclauncher4/src/pages/user_page/text_field_with_enter.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -9,7 +9,7 @@ import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
-import 'package:mclauncher4/src/widgets/SidePanel/SidePanel.dart';
+import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 
 class UserAndMSPage extends StatefulWidget {
   const UserAndMSPage({Key? key}) : super(key: key);
@@ -24,20 +24,19 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
     super.initState();
   }
 
-
   onReturn() {
     print('return');
-     SidePanel().pop(Container(
-      height: double.infinity,
-      width: double.infinity,
-      clipBehavior: Clip.antiAlias,
-      child: Image.asset(
-        'assets\\images\\backgound_blue.jpg',
-        fit: BoxFit.cover,
-      ),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          color: Color.fromARGB(0, 27, 124, 204))), 280.0);
+    SidePanel().pop(
+        Container(
+            height: double.infinity,
+            width: double.infinity,
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset(
+              'assets\\images\\backgound_blue.jpg',
+              fit: BoxFit.cover,
+            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: Color.fromARGB(0, 27, 124, 204))),
+        280.0);
   }
 
   @override
@@ -67,14 +66,16 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
         padding: const EdgeInsets.only(left: 70.0, right: 70.0),
         child: Container(
           height: 40,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Theme.of(context).colorScheme.surface),
+          decoration:
+              BoxDecoration(borderRadius: BorderRadius.circular(10), color: Theme.of(context).colorScheme.surface),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
                 width: 10,
               ),
-              Text("Username", style: Theme.of(context).typography.black.bodyMedium!.merge(TextStyle(color: Colors.white))),
+              Text("Username",
+                  style: Theme.of(context).typography.black.bodyMedium!.merge(TextStyle(color: Colors.white))),
               TextFieldWithEnter(
                 presetValue: "has to be implemented",
                 maxLenght: 20,
@@ -83,7 +84,11 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
                   final snackBar = SnackBar(
                     content: Text(
                       "Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ",
-                      style: Theme.of(context).typography.black.bodyMedium!.merge(TextStyle(color: Theme.of(context).colorScheme.onError)),
+                      style: Theme.of(context)
+                          .typography
+                          .black
+                          .bodyMedium!
+                          .merge(TextStyle(color: Theme.of(context).colorScheme.onError)),
                     ),
                     backgroundColor: Theme.of(context).colorScheme.error,
                     action: SnackBarAction(
@@ -102,7 +107,11 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
                   final snackBar = SnackBar(
                     content: Text(
                       "Updated Username ",
-                      style: Theme.of(context).typography.black.bodyMedium!.merge(TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+                      style: Theme.of(context)
+                          .typography
+                          .black
+                          .bodyMedium!
+                          .merge(TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
                     ),
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     action: SnackBarAction(
@@ -170,14 +179,14 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
       child: AnimatedContainer(
         curve: Curves.decelerate,
         duration: Duration(milliseconds: 300),
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+        decoration:
+            BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
         margin: EdgeInsets.only(top: 5, bottom: 5),
         child: Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8),
           child: FutureBuilder(
             future: MinecraftAccountUtils().getAccounts(),
             builder: (context, snapshot) {
-            
               print(snapshot.error);
               if (snapshot.hasData) {
                 List<MinecraftAccount> accounts = snapshot.data ?? [];
@@ -291,7 +300,6 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                   child: LinearProgressIndicator(),
                 );
               }
-         
             },
           ),
         ),

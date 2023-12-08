@@ -10,8 +10,7 @@ class Utils {
   static extractNativesfromjar(String pathfrom, String version) async {
     List<int> _bytes = [];
 
-    _bytes = await File("${await getlibarypath()}\\libraries\\$pathfrom")
-        .readAsBytes();
+    _bytes = await File("${await getlibarypath()}\\libraries\\$pathfrom").readAsBytes();
     final archive = ZipDecoder().decodeBytes(_bytes);
     for (var data in archive) {
       final filename = data.name;
@@ -21,8 +20,7 @@ class Utils {
           ..createSync(recursive: true)
           ..writeAsBytesSync(datadir);
       } else {
-        Directory(await getbinpath() + "\\$version\\" + filename)
-            .create(recursive: true);
+        Directory(await getbinpath() + "\\$version\\" + filename).create(recursive: true);
       }
     }
   }
@@ -51,13 +49,10 @@ class Utils {
     if (!destination.existsSync()) {
       await destination.create(recursive: true);
     }
-    
 
     /// get all files from source (recursive: false is important here)
-   await for (var entity in  source.list(recursive: false)){
-      final newPath = destination.path +
-          Platform.pathSeparator +
-          path.basename(entity.path);
+    await for (var entity in source.list(recursive: false)) {
+      final newPath = destination.path + Platform.pathSeparator + path.basename(entity.path);
       if (entity is File) {
         await entity.copy(newPath);
       } else if (entity is Directory) {
@@ -66,8 +61,7 @@ class Utils {
     }
   }
 
-  static extractForgeInstaller(
-      List<int> _bytes, Version version, ModloaderVersion modloaderVersion,
+  static extractForgeInstaller(List<int> _bytes, Version version, ModloaderVersion modloaderVersion,
       [String? additional]) async {
     String filepath = await getTempForgePath() +
         "\\${version.toString()}\\${modloaderVersion.toString()}\\${version.toString()}-${modloaderVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar";
@@ -81,22 +75,17 @@ class Utils {
       final filename = data.name;
       if (data.isFile) {
         final datadir = data.content as List<int>;
-        File(await getTempForgePath() +
-            "\\${version.toString()}\\${modloaderVersion.toString()}\\" +
-            filename)
+        File(await getTempForgePath() + "\\${version.toString()}\\${modloaderVersion.toString()}\\" + filename)
           ..createSync(recursive: true)
           ..writeAsBytesSync(datadir);
       } else {
-        Directory(await getTempForgePath() +
-                "\\${version.toString()}\\${modloaderVersion.toString()}\\" +
-                filename)
+        Directory(await getTempForgePath() + "\\${version.toString()}\\${modloaderVersion.toString()}\\" + filename)
             .create(recursive: true);
       }
     }
   }
 
-  static Future<List<int>> extractFilefromjar(
-      String filepath, String filepathinjar) async {
+  static Future<List<int>> extractFilefromjar(String filepath, String filepathinjar) async {
     List<int> _bytes = [];
 
     _bytes = await File(filepath).readAsBytes();
@@ -117,8 +106,7 @@ class Utils {
     return str.startsWith(prefix) && str.endsWith(suffix);
   }
 
-  static convertLibraries(Map versionJson, List<String> ignoreList,
-      [additionallib]) {
+  static convertLibraries(Map versionJson, List<String> ignoreList, [additionallib]) {
     List libraries = versionJson["libraries"];
     List newlibraries = [];
     if (additionallib != null) {
@@ -137,8 +125,7 @@ class Utils {
           "downloads": {
             "artifact": {
               "path": Utils.parseMaven(current["name"]),
-              "url": "https://repo1.maven.org/maven2/" +
-                  Utils.parseMaven(current["name"]),
+              "url": "https://repo1.maven.org/maven2/" + Utils.parseMaven(current["name"]),
               "size": 100000
             }
           }
@@ -176,8 +163,7 @@ class Utils {
     String packageVersion = mavenString.split(":")[2].split("@")[0];
     String packageVersion2;
     if (mavenString.split(":").length > 3) {
-      packageVersion2 =
-          '${mavenString.split(":")[2].split("@")[0]}-${mavenString.split(":")[3].split("@")[0]}';
+      packageVersion2 = '${mavenString.split(":")[2].split("@")[0]}-${mavenString.split(":")[3].split("@")[0]}';
     } else {
       packageVersion2 = packageVersion;
     }
@@ -190,10 +176,7 @@ class Utils {
       packageExtension = mavenString.split("@")[1];
     }
 
-    return [
-      "$packageGroup/$packageName/$packageVersion",
-      "$packageName-$packageVersion2.$packageExtension"
-    ];
+    return ["$packageGroup/$packageName/$packageVersion", "$packageName-$packageVersion2.$packageExtension"];
   }
 
   static String parseMaven(String mavenString) {

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mclauncher4/src/app.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
-import 'package:mclauncher4/src/widgets/components/autoGradient.dart';
-import 'package:mclauncher4/src/widgets/components/gradiantText.dart';
+import 'package:mclauncher4/src/widgets/components/auto_Gradient.dart';
+import 'package:mclauncher4/src/widgets/components/gradiant_text.dart';
 import "package:mclauncher4/src/tasks/auth/supabase.dart";
 
 class SplashScreen extends StatefulWidget {
@@ -24,7 +24,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: Stack(children: [
         Container(
             height: double.infinity,
@@ -83,8 +82,6 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ))
             ])),
-       
-        
       ]),
     );
   }

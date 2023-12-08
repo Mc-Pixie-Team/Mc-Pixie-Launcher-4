@@ -15,41 +15,39 @@ class Minecraft with ChangeNotifier {
   ClientInstallState get installstate => _state;
   double _progress = 0.0;
   double get progress => _progress;
-  double _mainprogress = 0.0; 
+  double _mainprogress = 0.0;
   double get mainprogress => _mainprogress;
   Download _downloader = Download();
 
-
-   getsteps(Version? version, [ModloaderVersion? modloaderVersion]) {
+  getsteps(Version? version, [ModloaderVersion? modloaderVersion]) {
     return 2;
-   }
+  }
 
   install(Version version) async {
-      var _1 = 0.0;
-      var _2 = 0.0;
-      var _raw = 0.0;
+    var _1 = 0.0;
+    var _2 = 0.0;
+    var _raw = 0.0;
     _downloader.addListener(() {
       if (_downloader.downloadstate == DownloadState.downloadingLibraries) {
-        _raw  += _downloader.progress - _1;
+        _raw += _downloader.progress - _1;
         _1 = _downloader.progress;
         _progress = _downloader.progress;
         _state = ClientInstallState.downloadingLibraries;
-        _mainprogress =  _raw / getsteps(version);
+        _mainprogress = _raw / getsteps(version);
         notifyListeners();
       } else if (_downloader.downloadstate == DownloadState.downloadAssets) {
-         _raw  += _downloader.progress - _2;
+        _raw += _downloader.progress - _2;
         _2 = _downloader.progress;
         _progress = _downloader.progress;
         _state = ClientInstallState.downloadAssets;
-        
-         _mainprogress = _raw / getsteps(version);
+
+        _mainprogress = _raw / getsteps(version);
         notifyListeners();
       }
     });
     Map res = await _downloader.getJson(version);
-    await Future.wait([_downloader.downloadLibaries(res),_downloader.downloadAssets(res) ]);
+    await Future.wait([_downloader.downloadLibaries(res), _downloader.downloadAssets(res)]);
     await _downloader.downloadClient(res);
-  
 
     // await _downloader.downloadLibaries(res);
     // _state = InstallState.downloadingClient;
@@ -59,17 +57,14 @@ class Minecraft with ChangeNotifier {
   }
 
   void run(Map packagejson, String instanceName) async {
-  
     String os = "windows";
     String accessToken = "3423423jdisgjsdf";
     String username = "Fridolin";
     String stack = "";
     List<String> valuesString = (packagejson["id"] as String).split('.');
-    Version version = new Version(int.parse(valuesString[0]),
-        int.parse(valuesString[1]), int.parse(valuesString[2]));
+    Version version = new Version(int.parse(valuesString[0]), int.parse(valuesString[1]), int.parse(valuesString[2]));
 
-    List<String> launchcommand =
-        await getlaunchCommand(instanceName, packagejson, os, version);
+    List<String> launchcommand = await getlaunchCommand(instanceName, packagejson, os, version);
 
     print(launchcommand);
     // var tempFile = File(
@@ -77,56 +72,42 @@ class Minecraft with ChangeNotifier {
     // await tempFile.create(recursive: true);
     // await tempFile.writeAsString(launchcommand);
 
-    var result = await Process.start(
-        Java.getJavaJdk(version), launchcommand,
-        runInShell: true);
+    var result = await Process.start(Java.getJavaJdk(version), launchcommand, runInShell: true);
 
     stdout.addStream(result.stdout);
     stderr.addStream(result.stderr);
   }
 
-  Future<List<String>> getlaunchCommand(
-      String instanceName, Map packagejson, String os, Version version,
+  Future<List<String>> getlaunchCommand(String instanceName, Map packagejson, String os, Version version,
       [ModloaderVersion? modloaderVersion]) async {
     List<String> launchcommand;
     Map<String, List> args;
     String majorVer = Java.getJavaJdk(version);
 
     if (version < Version(1, 13, 0)) {
- 
       List<String> gameArgs = (packagejson["minecraftArguments"] as String).split(" ");
       print('installing under 1.13.0 !');
       print(gameArgs);
 
-    
-     args = await overrideArguments(["-Djava.library.path=\${natives_directory}", "-cp", "\${classpath}" ],
-         gameArgs, packagejson,instanceName, os);
-
-      
-   
-    }else {
-      args = await getArgs(packagejson, os,instanceName);
+      args = await overrideArguments(["-Djava.library.path=\${natives_directory}", "-cp", "\${classpath}"], gameArgs,
+          packagejson, instanceName, os);
+    } else {
+      args = await getArgs(packagejson, os, instanceName);
     }
 
-    
     print(args);
-    launchcommand =
-        ["-Xmx16064m", "-Xms256m", ...args["jvm"]!,  packagejson["mainClass"], ...args["game"]!];
+    launchcommand = ["-Xmx16064m", "-Xms256m", ...args["jvm"]!, packagejson["mainClass"], ...args["game"]!];
 
     return launchcommand;
   }
 
-  Future<Map<String, List>> getArgs(
-    Map packagejson,
-    String os,
-    String instanceName
-  ) async {
+  Future<Map<String, List>> getArgs(Map packagejson, String os, String instanceName) async {
     Map vanillaArgs = packagejson["arguments"];
     List<String> jvmArgs = [];
     List<String> gameArgs = [];
     for (var i = 0; i < vanillaArgs["jvm"].length; i++) {
       if (vanillaArgs["jvm"][i] is String) {
-         jvmArgs.add( '${vanillaArgs["jvm"][i]}');
+        jvmArgs.add('${vanillaArgs["jvm"][i]}');
       } else {
         if (chechAllowed(
           (vanillaArgs["jvm"][i]["rules"]),
@@ -135,38 +116,36 @@ class Minecraft with ChangeNotifier {
         )) {
           if (vanillaArgs["jvm"][i]["value"] is List) {
             for (var j = 0; j < vanillaArgs["jvm"][i]["value"].length; j++) {
-              jvmArgs.add( '${vanillaArgs["jvm"][i]["value"][j]}');
+              jvmArgs.add('${vanillaArgs["jvm"][i]["value"][j]}');
             }
           } else {
-              jvmArgs.add( '${vanillaArgs["jvm"][i]["value"]}');
+            jvmArgs.add('${vanillaArgs["jvm"][i]["value"]}');
           }
         }
       }
     }
     for (var i = 0; i < vanillaArgs["game"].length; i++) {
       if (vanillaArgs["game"][i] is String) {
-        gameArgs.add( "${vanillaArgs["game"][i]}");
+        gameArgs.add("${vanillaArgs["game"][i]}");
       } else {
         if (chechAllowed(
           (vanillaArgs["game"][i]["rules"]),
           "windows",
           "x64",
         )) {
-          gameArgs.add( "${vanillaArgs["game"][i]["value"]}");
+          gameArgs.add("${vanillaArgs["game"][i]["value"]}");
         }
       }
     }
-    return await overrideArguments(jvmArgs, gameArgs, packagejson,instanceName, os);
+    return await overrideArguments(jvmArgs, gameArgs, packagejson, instanceName, os);
   }
 
- Future<Map<String, List<String>>> overrideArguments(List<String> jvmArgs, List<String> gameArgs, packagejson, String instanceName, os) async {
+  Future<Map<String, List<String>>> overrideArguments(
+      List<String> jvmArgs, List<String> gameArgs, packagejson, String instanceName, os) async {
     MinecraftAccount? minecraftAccount = await MinecraftAccountUtils().getStandard();
     Map minecraftToken = await MinecraftAccountUtils().reAuthenticateAndUpdateAccount(minecraftAccount!);
 
-
-
-    String natives_directory =
-        "${await getworkpath()}\\bin\\${packagejson["id"]}";
+    String natives_directory = "${await getworkpath()}\\bin\\${packagejson["id"]}";
     String launcher_name = "Mc-pixie";
     String launcher_version = "4";
     String auth_player_name = minecraftAccount.username;
@@ -176,7 +155,7 @@ class Minecraft with ChangeNotifier {
     String assets_index_name = packagejson["assets"];
     String auth_uuid = minecraftAccount.uuid;
     String auth_access_token = minecraftToken["authToken"];
-       
+
     String clientid = "";
     String auth_xuid = "";
     String user_type = "mojang";
@@ -190,39 +169,37 @@ class Minecraft with ChangeNotifier {
 
     for (var i = 0; i < jvmArgs.length; i++) {
       String arg = jvmArgs[i];
-     arg = arg
-        .replaceAll("\${natives_directory}", natives_directory)
-        .replaceAll("\${launcher_name}", launcher_name)
-        .replaceAll("\${launcher_version}", launcher_version)
-        .replaceAll("\${classpath}", '${await getCP(packagejson, os)}')
-        .replaceAll("\${auth_player_name}", '"${await getCP(packagejson, os)}"')
-        .replaceAll("\${library_directory}", library_directory)
-        .replaceAll("\${classpath_separator}", classpath_separator)
-        .replaceAll("\${version_name}", version_name);
+      arg = arg
+          .replaceAll("\${natives_directory}", natives_directory)
+          .replaceAll("\${launcher_name}", launcher_name)
+          .replaceAll("\${launcher_version}", launcher_version)
+          .replaceAll("\${classpath}", '${await getCP(packagejson, os)}')
+          .replaceAll("\${auth_player_name}", '"${await getCP(packagejson, os)}"')
+          .replaceAll("\${library_directory}", library_directory)
+          .replaceAll("\${classpath_separator}", classpath_separator)
+          .replaceAll("\${version_name}", version_name);
       jvmArgs[i] = arg;
     }
 
-      
     for (var i = 0; i < gameArgs.length; i++) {
-        String arg = gameArgs[i];
-        
-        arg = arg
-        .replaceAll("\${auth_player_name}", auth_player_name)
-        .replaceAll("\${version_name}", version_name)
-        .replaceAll("\${game_directory}", game_directory)
-        .replaceAll("\${assets_root}", assets_root)
-        .replaceAll("\${assets_index_name}", assets_index_name)
-        .replaceAll("\${auth_uuid}", auth_uuid)
-        .replaceAll("\${auth_access_token}", auth_access_token)
-        .replaceAll("\${clientid}", clientid)
-        .replaceAll("\${auth_xuid}", auth_xuid)
-        .replaceAll("\${user_type}", user_type)
-        .replaceAll("\${version_type}", version_type)
-        .replaceAll("\${user_properties}", user_properties);
+      String arg = gameArgs[i];
 
-        gameArgs[i] = arg;
-      }
-  
+      arg = arg
+          .replaceAll("\${auth_player_name}", auth_player_name)
+          .replaceAll("\${version_name}", version_name)
+          .replaceAll("\${game_directory}", game_directory)
+          .replaceAll("\${assets_root}", assets_root)
+          .replaceAll("\${assets_index_name}", assets_index_name)
+          .replaceAll("\${auth_uuid}", auth_uuid)
+          .replaceAll("\${auth_access_token}", auth_access_token)
+          .replaceAll("\${clientid}", clientid)
+          .replaceAll("\${auth_xuid}", auth_xuid)
+          .replaceAll("\${user_type}", user_type)
+          .replaceAll("\${version_type}", version_type)
+          .replaceAll("\${user_properties}", user_properties);
+
+      gameArgs[i] = arg;
+    }
 
     return {
       "jvm": jvmArgs,
@@ -252,8 +229,7 @@ class Minecraft with ChangeNotifier {
             "$path/${libary["downloads"]["classifiers"][libary["natives"][os].replaceAll("\${arch}", "64")]["path"]}${(os == "windows") ? ";" : ":"}";
       }
       if (libary["downloads"]["artifact"] == null) continue;
-      stack +=
-          "$path/${libary["downloads"]["artifact"]["path"]}${(os == "windows") ? ";" : ":"}";
+      stack += "$path/${libary["downloads"]["artifact"]["path"]}${(os == "windows") ? ";" : ":"}";
     }
     return stack;
   }
@@ -268,15 +244,13 @@ class Minecraft with ChangeNotifier {
     }
 
     if (rules.length == 1) {
-      if (rules.last["action"] == "allow" &&
-          rules.last["os"]["name"] == osName) {
+      if (rules.last["action"] == "allow" && rules.last["os"]["name"] == osName) {
         return true;
       }
       return false;
     }
 
-    if (rules.last["action"] == "disallow" &&
-        rules.last["os"]["name"] == osName) {
+    if (rules.last["action"] == "disallow" && rules.last["os"]["name"] == osName) {
       return false;
     }
 

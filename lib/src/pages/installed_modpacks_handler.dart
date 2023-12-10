@@ -6,6 +6,7 @@ import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
+import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 
@@ -21,32 +22,32 @@ class Modpacks {
   static Future<List<Widget>> getPacksformManifest() async {
     List manifest = jsonDecode(await File('${await getInstancePath()}/manifest.json').readAsString());
 
-    List<Widget> cards = List.generate(manifest.length, (index) {
-      Map modpackversion = manifest[index]["providerArgs"];
+    return List.generate(manifest.length, (index) {
       Api _handler = ApiHandler().getApi(manifest[index]["provider"]);
 
       InstallController installcontroller = InstallController(
+          replace: false,
+          mainstate: MainState.installed,
           processid: manifest[index]["processId"],
           handler: _handler,
-          modpackData: _handler.convertToUMF(modpackversion)); // MainState.installed
+          modpackData: UMF.parse(manifest[index])); // MainState.installed
 
       return AnimatedBuilder(
         animation: installcontroller,
-        key: Key(manifest[index]["processId"]),
+        key: Key(installcontroller.processId),
         builder: (context, child) => InstalledCard(
-          processId: manifest[index]["processId"],
-          modpackData: manifest[index],
+          processId: installcontroller.processId,
+          modpackData: installcontroller.modpackData,
           state: installcontroller.state,
           progress: installcontroller.progress,
           onCancel: installcontroller.cancel,
-          onOpen: () async {
+          onOpen: () {
+            print('fff');
             installcontroller.start();
           },
         ),
       );
     });
-
-    return cards;
   }
 }
 
@@ -54,7 +55,13 @@ class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
   ValueNotifierList(List<Widget> value) : super(value);
 
   void add(Widget valueToAdd) {
+    
     value = [...value, valueToAdd];
+    notifyListeners();
+  }
+
+  void insert(int index, Widget element ) {
+    value.insert(index, element);
     notifyListeners();
   }
 

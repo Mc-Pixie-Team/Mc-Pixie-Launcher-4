@@ -34,7 +34,7 @@ class _TaskpageState extends State<TaskWidget> {
 }
 
 class TaskwidgetItem extends StatefulWidget {
-  MainState mainState = MainState.notinstalled;
+  MainState state = MainState.notinstalled;
 
   double progress = 0.0;
   double mainprogress = 0.0;
@@ -46,7 +46,7 @@ class TaskwidgetItem extends StatefulWidget {
     Key? key,
     required this.name,
     required this.cancel,
-    required this.mainState,
+    required this.state,
     required this.progress,
     required this.mainprogress,
   }) : super(key: key);
@@ -66,7 +66,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
   }
 
   String get titleText {
-    if (widget.mainState == MainState.running) return "Running: $getName";
+    if (widget.state == MainState.running) return "Running: $getName";
     return "Installing: $getName";
   }
 
@@ -124,6 +124,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                           height: 0,
                         ),
                       ),
+                      widget.state == MainState.running ? TextSpan() :
                       TextSpan(
                         text: ' ${widget.mainprogress.ceil()}%',
                         style: TextStyle(

@@ -35,6 +35,7 @@ class Fabric with ChangeNotifier implements Modloader {
     return "${await getworkpath()}\\versions\\fabric-loader-$modloaderVersion-$version\\fabric-loader-$modloaderVersion-$version.json";
   }
 
+
   @override
   Future<Process> run(String instanceName, Version version, ModloaderVersion modloaderVersion) async {
     Map vanillaVersionJson =

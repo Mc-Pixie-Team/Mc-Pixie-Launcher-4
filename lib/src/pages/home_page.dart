@@ -29,39 +29,8 @@ class _HomePageState extends State<HomePage> {
 
   bool get isEmpty => Modpacks.globalinstallContollers.value.length < 1;
 
-  bool checkforDouble(Widget widget) {
-    for (Widget tempWidgets in Modpacks.globalinstallContollers.value) {
-      if (widget.key == tempWidgets.key) {
-        return false;
-      }
-    }
-    return true;
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        clipBehavior: Clip.antiAlias,
-        height: double.infinity,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Stack(alignment: Alignment.center, children: [
-          Positioned.fill(
-            child: FutureBuilder(
-                future: Modpacks.getPacksformManifest(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    for (Widget widget in snapshot.data!) {
-                      if (checkforDouble(widget)) {
-                        print(widget.toString() + ' is allowed');
-                        Modpacks.globalinstallContollers.value.add(widget);
-                      }
-                    }
-
-                    return DynMouseScroll(
+  Widget  modpackList(BuildContext context) => DynMouseScroll(
                         animationCurve: Curves.easeOutExpo,
                         scrollSpeed: 1.0,
                         durationMS: 650,
@@ -113,10 +82,20 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                             )));
-                  } else {
-                    return Container();
-                  }
-                }),
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        clipBehavior: Clip.antiAlias,
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Stack(alignment: Alignment.center, children: [
+          Positioned.fill(
+            child:   modpackList(context),
           ),
           Positioned.fill(
               child: Align(

@@ -24,4 +24,38 @@ class UMF {
   String? MLVersion;
   String? MCVersion;
   Map original;
+
+  static toJson(UMF umf) {
+    return {
+      "name": umf.name,
+      "author": umf.author,
+      "description": umf.description,
+      "downloads": umf.downloads,
+      "likes": umf.likes,
+      "categories": umf.categories,
+      "icon": umf.icon,
+      "modloader": umf.modloader,
+      "MLVersion": umf.MLVersion,
+      "MCVersion": umf.MCVersion,
+      "original": umf.original
+    };
+  }
+
+  static parse(Map json) {
+    return UMF(
+      
+    name: json["name"],
+    author: json["author"],
+    description:  json["description"],
+    downloads: json["downloads"],
+    likes: json["likes"],
+    categories: json["categories"],
+    icon: json["icon"],
+   modloader: json["modloader"],
+    MLVersion: json["MLVersion"],
+    MCVersion: json["MCVersion"],
+   original: json["original"]
+  
+    );
+  }
 }

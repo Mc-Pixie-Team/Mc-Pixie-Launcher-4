@@ -99,6 +99,12 @@ class _MainPageState extends State<MainPage> {
     // TODO: implement initState
     MinecraftAccountUtils().initOnFirstStart();
     Modpacks.generateManifest();
+
+    Modpacks.getPacksformManifest().then((value) => Modpacks.globalinstallContollers.addAll(value));
+
+
+    
+
     super.initState();
   }
 

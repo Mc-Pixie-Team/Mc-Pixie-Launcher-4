@@ -170,7 +170,6 @@ class ModrinthApi implements Api {
   @override
   UMF convertToUMF(Map modpackData) {
     modpackData["name"] = modpackData["name"] ?? modpackData["title"];
-    print(modpackData);
 
     return UMF(
         name: modpackData["title"].toString(),

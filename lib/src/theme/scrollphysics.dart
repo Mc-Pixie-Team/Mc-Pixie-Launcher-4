@@ -14,12 +14,18 @@ class PixieScrollSimulation extends Simulation {
 
   @override
   double x(double time) {
-    return initPosition + velocity * time;
+    // print(time);
+    // print(velocity);
+    //(begin as dynamic) + ((end as dynamic) - (begin as dynamic)) * t
+    print(initPosition);
+    print(afterPosition);
+    return  initPosition + afterPosition- initPosition * time;
   }
 
   @override
   double dx(double time) {
     return velocity;
+    
   }
 
   @override

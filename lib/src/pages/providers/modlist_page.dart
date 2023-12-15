@@ -248,7 +248,7 @@ class _ModListPageState extends State<ModListPage> {
                                             },
                                             onDownload: () async {
                                               if (checkForJava() == false) return;
-                                              installcontroller.install();
+                                              installcontroller.install(version: _handler.version);
                                             },
                                             onOpen: () async {
                                             

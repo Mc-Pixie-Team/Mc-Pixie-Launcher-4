@@ -25,7 +25,11 @@ class InstallController with ChangeNotifier {
   String? processid;
   MainState mainstate;
   InstallController(
-      {required this.handler, required this.modpackData, this.processid, this.mainstate = MainState.notinstalled, this.replace = true}) {
+      {required this.handler,
+      required this.modpackData,
+      this.processid,
+      this.mainstate = MainState.notinstalled,
+      this.replace = true}) {
     processid = processid ?? const Uuid().v1();
   }
 
@@ -64,7 +68,6 @@ class InstallController with ChangeNotifier {
   }
 
   void cancel() {
-
     if (_result != null) {
       _result!.kill();
       mainstate = MainState.installed;
@@ -72,23 +75,40 @@ class InstallController with ChangeNotifier {
       return;
     }
 
-        if (_isolate == null) {
+    if (_isolate == null) {
       print("cant kill Isolate");
       return;
     }
 
     _isolate!.kill(priority: -1);
     _progress = 0.0;
-    
 
     //Exception: called from here
+    delete();
+  }
+
+  void delete() async {
+
+    File manifestfile =  File('${await getInstancePath()}\\manifest.json');
+    List manifest = jsonDecode(
+        manifestfile.readAsStringSync());
+
+    manifest.removeWhere((element) {
+      print(element["processId"]);
+      return element["processId"] == processId;
+    });
+        await manifestfile
+        .writeAsString(jsonEncode(manifest));
+        print('deleted');
+    Directory(await getInstancePath() + "\\$processId").delete(recursive: true);
+
     Modpacks.globalinstallContollers.removeKeyFromAnimatedBuilder(processId);
 
     mainstate = MainState.notinstalled;
     notifyListeners();
   }
 
-  void install() async {
+  void install({String? version}) async {
     print('start download');
     mainstate = MainState.fetching;
     notifyListeners();
@@ -122,7 +142,7 @@ class InstallController with ChangeNotifier {
         [
           receivePort.sendPort,
           StartMessage(
-              handler: handler, modpackData: modpackData, processId: processId)
+              handler: handler, modpackData: modpackData, processId: processId, version:version == null ? null  : Version.parse(version))
         ],
         onExit: exitPort.sendPort,
         debugName: "Install of $processId");
@@ -141,7 +161,7 @@ class InstallController with ChangeNotifier {
 
     //Call the main installer
     await installer.install(
-        startMessage.modpackData.original, startMessage.processId);
+       modpackData: startMessage.modpackData.original, instanceName: startMessage.processId, localversion: startMessage.version );
 
     timer.cancel();
 
@@ -185,24 +205,23 @@ class InstallController with ChangeNotifier {
   }
 
   setUIChanges() {
-
-  if(Modpacks.globalinstallContollers.value.where((Widget element) =>  element.key == Key(processId)).isEmpty) {
-        Modpacks.globalinstallContollers.add(AnimatedBuilder(
-      key: Key(processId),
-      animation: this,
-      builder: (context, child) => InstalledCard(
-        processId: processId,
-        modpackData: modpackData,
-        state: state,
-        progress: progress,
-        onCancel: cancel,
-        onOpen: start,
-      ),
-    ));
-  }
-
-    
-
+    if (Modpacks.globalinstallContollers.value
+        .where((Widget element) => element.key == Key(processId))
+        .isEmpty) {
+      Modpacks.globalinstallContollers.add(AnimatedBuilder(
+        key: Key(processId),
+        animation: this,
+        builder: (context, child) => InstalledCard(
+          processId: processId,
+          modpackData: modpackData,
+          state: state,
+          progress: progress,
+          onCancel: cancel,
+          onOpen: start,
+          onDelete: delete,
+        ),
+      ));
+    }
 
     //Calls SidePanel instance
     SidePanel().addToTaskWidget(
@@ -214,7 +233,6 @@ class InstallController with ChangeNotifier {
                       : modpackData.name!,
                   cancel: cancel,
                   state: state,
-                  mainprogress: progress,
                   progress: progress,
                 )),
         processId);

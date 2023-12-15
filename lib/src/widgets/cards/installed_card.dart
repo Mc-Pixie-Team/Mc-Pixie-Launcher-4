@@ -18,10 +18,12 @@ class InstalledCard extends StatefulWidget {
   final double progress;
   final VoidCallback onCancel;
   final VoidCallback onOpen;
+  final VoidCallback onDelete;
   final UMF modpackData;
   final String processId;
   InstalledCard(
       {Key? key,
+      required this.onDelete,
       required this.processId,
       required this.modpackData,
       required this.state,
@@ -108,7 +110,7 @@ class _InstalledCardState extends State<InstalledCard> {
                   child: Container(
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(8)),
+                          color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(10)),
                       child: iconhandler()))),
           Expanded(
               child: MouseRegion(
@@ -153,7 +155,7 @@ class _InstalledCardState extends State<InstalledCard> {
                                         ? 1
                                         : 0,
                                 child: Padding(
-                                    padding: EdgeInsets.all(10).copyWith(top: 15, bottom: 15),
+                                    padding: EdgeInsets.all(10).copyWith(top: 10, bottom: 15),
                                     child: GestureDetector(
                                         onTap: widget.onOpen,
                                         child: Container(
@@ -171,8 +173,11 @@ class _InstalledCardState extends State<InstalledCard> {
                                                             'Play',
                                                             style: Theme.of(context).typography.black.titleMedium,
                                                           ),
-                                                          SvgButton.asset('assets/svg/cancel-icon.svg',
-                                                              onpressed: onExport)
+                                                           Padding( padding: EdgeInsets.only(top: 15, bottom: 15), child:  Container( height: double.infinity, width: 1, color: Theme.of(context).colorScheme.outline)),
+                                                          SvgButton.asset('assets/svg/export-import-icon.svg',
+                                                              onpressed: onExport),
+                                                              SvgButton.asset('assets/svg/trash-icon.svg',
+                                                              onpressed: widget.onDelete)
                                                         ],
                                                       )
                                                     : SizedBox(

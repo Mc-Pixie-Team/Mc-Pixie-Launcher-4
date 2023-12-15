@@ -41,10 +41,8 @@ class Modpacks {
           state: installcontroller.state,
           progress: installcontroller.progress,
           onCancel: installcontroller.cancel,
-          onOpen: () {
-            print('fff');
-            installcontroller.start();
-          },
+          onDelete: installcontroller.delete,
+          onOpen: installcontroller.start
         ),
       );
     });

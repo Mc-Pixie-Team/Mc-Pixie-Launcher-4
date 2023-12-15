@@ -102,6 +102,8 @@ flutter:
     - assets\svg\filter-icon.svg
     - assets\svg\play-icon.svg
     - assets\svg\cancel-icon.svg
+    - assets\svg\trash-icon.svg
+    - assets\svg\export-import-icon.svg
     - assets\redirect.html
      
 

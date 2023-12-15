@@ -58,17 +58,15 @@ class ModrinthInstaller {
 
     Version version = Version.parse(depend["minecraft"]);
 
-
-
-    
       return  await modloader.run(processId, version, modloaderVersion);
 
 
   }
 
-  install(Map modpackData, String instanceName) async {
+  install( {required Map modpackData, required String instanceName, Version? localversion}) async {
+    
     Map modpackproject = await getModpack(modpackData["project_id"]);
-    modpackData = await getModpackVersion((modpackproject["versions"] as List).last);
+    modpackData = await getModpackVersion( (modpackproject["versions"] as List).last);
 
     _state = MainState.downloadingMods;
     print("downloading mods");

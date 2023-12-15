@@ -10,7 +10,7 @@ abstract class Api {
 
   /// for any further investigation, you can look in the already existing implementations of the providers
 
-  String version = "";
+  String? version = "";
   String query = "";
 
   //Is the title name of the Provider (ex: Modrinth, Curseforge)

@@ -23,7 +23,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
   Set<PointerDeviceKind> get dragDevices =>
-      {PointerDeviceKind.touch, PointerDeviceKind.mouse, PointerDeviceKind.trackpad};
+      {PointerDeviceKind.touch,  PointerDeviceKind.trackpad};
 }
 
 class McLauncher extends StatelessWidget {
@@ -101,9 +101,6 @@ class _MainPageState extends State<MainPage> {
     Modpacks.generateManifest();
 
     Modpacks.getPacksformManifest().then((value) => Modpacks.globalinstallContollers.addAll(value));
-
-
-    
 
     super.initState();
   }

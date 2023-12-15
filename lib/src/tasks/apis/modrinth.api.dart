@@ -8,6 +8,7 @@ import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/installer/modrinth/modrinth_install.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 
@@ -24,7 +25,7 @@ class ModrinthApi implements Api {
   @override
   String query = "";
   @override
-  String version = "";
+  String? version;
 
   @override
   get getidname => "modrinth";
@@ -40,6 +41,9 @@ class ModrinthApi implements Api {
     if ((_facet.first.last).startsWith("versions:")) {
       _facet.removeAt(0);
     }
+
+    this.version = version;
+
     if (version != "") {
       _facet.insert(0, ["versions:$version"]);
     }

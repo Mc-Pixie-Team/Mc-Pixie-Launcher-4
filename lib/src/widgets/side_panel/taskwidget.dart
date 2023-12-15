@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
+import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import '../divider.dart' as divider;
 
@@ -48,7 +49,6 @@ class TaskwidgetItem extends StatefulWidget {
     required this.cancel,
     required this.state,
     required this.progress,
-    required this.mainprogress,
   }) : super(key: key);
 
   @override
@@ -126,7 +126,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                       ),
                       widget.state == MainState.running ? TextSpan() :
                       TextSpan(
-                        text: ' ${widget.mainprogress.ceil()}%',
+                        text: ' ${widget.progress.ceil()}%',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -140,11 +140,11 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                 ),
               ),
               Padding(
-                  padding: EdgeInsets.only(left: 27, right: 24),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                  padding: EdgeInsets.only(left: 27, right: 24, top: 5),
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
                     Expanded(
                         child: LinearProgressIndicator(
-                      value: widget.mainprogress / 100,
+                      value: widget.progress / 100,
                       borderRadius: BorderRadius.circular(18),
                     )),
                     SizedBox(
@@ -153,8 +153,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                     SizedBox(
                         height: 20,
                         width: 20,
-                        child: SvgButton.asset('assets/svg/cancel-icon.svg',
-                            color: Theme.of(context).colorScheme.secondary, onpressed: widget.cancel))
+                        child: DownloadButton(mainState: widget.state, onCancel: widget.cancel, onDownload: () {}, onOpen: () {}, mainprogress: widget.progress,))
                   ]))
             ],
           ),

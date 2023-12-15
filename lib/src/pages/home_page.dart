@@ -8,7 +8,7 @@ import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/carousel/carousel.dart';
 import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
-import 'package:mclauncher4/src/widgets/Providers/browse_card.dart';
+import 'package:mclauncher4/src/widgets/providers/browse_card.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:transparent_image/transparent_image.dart';
 

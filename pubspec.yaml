@@ -119,7 +119,27 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: SF Pro
+    - family: SF Pro Text
+      fonts:
+        - asset: assets/fonts/SF-Pro-Text-Black.otf
+          weight: 900
+        - asset: assets/fonts/SF-Pro-Text-Heavy.otf
+          weight: 800        
+        - asset: assets/fonts/SF-Pro-Text-Bold.otf
+          weight: 700     
+        - asset: assets/fonts/SF-Pro-Text-Semibold.otf
+          weight: 600     
+        - asset: assets/fonts/SF-Pro-Text-Medium.otf
+          weight: 500    
+        - asset: assets/fonts/SF-Pro-Text-Regular.otf
+          weight: 400  
+        - asset: assets/fonts/SF-Pro-Text-Light.otf
+          weight: 300
+        - asset: assets/fonts/SF-Pro-Text-Thin.otf
+          weight: 200     
+        - asset: assets/fonts/SF-Pro-Text-Ultralight.otf
+          weight: 100   
+    - family: SF Pro Display
       fonts:
         - asset: assets/fonts/SF-Pro-Display-Black.otf
           weight: 900
@@ -138,7 +158,7 @@ flutter:
         - asset: assets/fonts/SF-Pro-Display-Thin.otf
           weight: 200     
         - asset: assets/fonts/SF-Pro-Display-Ultralight.otf
-          weight: 100      
+          weight: 100     
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

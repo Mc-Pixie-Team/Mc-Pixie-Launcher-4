@@ -2,11 +2,11 @@
 
 import 'dart:ui';
 
+import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mclauncher4/src/screen.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
@@ -23,11 +23,13 @@ class BrowseCard extends StatefulWidget {
   VoidCallback onDownload;
   VoidCallback onCancel;
   VoidCallback onOpen;
+  VoidCallback onPageOpen;
   MainState state;
   double progress;
   String processId;
   BrowseCard({
     Key? key,
+    required this.onPageOpen,
     required this.processId,
     required this.modpackData,
     required this.progress,
@@ -74,8 +76,7 @@ class _BrowseCardState extends State<BrowseCard>
 
   @override
   Widget build(BuildContext context) {
-    print('test');
-    return Padding(
+    return  Padding(
         padding: EdgeInsets.only(
           top: 30,
           left: 32,
@@ -88,12 +89,10 @@ class _BrowseCardState extends State<BrowseCard>
                 onTapDown: (details) => _controller.forward(),
                 onTapUp: (details)  {
                   
-                  _controller.reverse();
-                    Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) => const Screen(),
-    ),
-  );
+                 // _controller.reverse();
+
+              widget.onPageOpen.call();
+
                 },
                 child: ScaleTransition(
                   filterQuality: FilterQuality.high,
@@ -112,6 +111,7 @@ class _BrowseCardState extends State<BrowseCard>
                             Padding(
                               padding: EdgeInsets.all(17),
                               child: Container(
+                             
                                   width: 127,
                                   height: 127,
                                   clipBehavior: Clip.antiAlias,
@@ -145,6 +145,9 @@ class _BrowseCardState extends State<BrowseCard>
                                       .typography
                                       .black
                                       .headlineSmall,
+                                ),
+                                SizedBox(
+                                  height: 8,
                                 ),
                                 SizedBox(
                                     width: 400,

@@ -69,25 +69,33 @@ class _InstalledCardState extends State<InstalledCard> {
 
   onExport() {
     showGeneralDialog(
+      context: context,
       barrierDismissible: false,
       barrierLabel: 'export menu',
       barrierColor: Colors.black38,
-      transitionDuration: Duration(milliseconds: 200),
-      pageBuilder: (ctx, anim1, anim2) => Center(
+      transitionDuration: Duration(milliseconds: 500),
+      pageBuilder: (ctx, anim1, anim2) =>Center(
           child: DefaultTextStyle(
               style: TextStyle(),
               child: ExportField(
                 processId: widget.processId,
               ))),
-      transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-        child: FadeTransition(
-          child: child,
-          opacity: anim1,
-        ),
-      ),
-      context: context,
-    );
+      transitionBuilder: (context, anim1, anim2, child) {  
+
+
+        
+        
+         Animation<double> ani = CurvedAnimation(parent: anim1, curve: Curves.easeOutExpo, reverseCurve: Curves.easeInExpo);
+    
+      return     ScaleTransition(
+        scale: ani,
+        filterQuality: FilterQuality.high,
+        child:  FadeTransition(opacity: ani, child:  child));
+ 
+   
+  
+
+  });
   }
 
   @override

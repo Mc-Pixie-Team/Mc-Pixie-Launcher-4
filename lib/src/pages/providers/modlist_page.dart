@@ -2,8 +2,10 @@
 
 import 'dart:ui';
 
+import 'package:animations/animations.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/java/java.dart';
@@ -43,7 +45,8 @@ class _ModListPageState extends State<ModListPage> {
     var returntype = await _handler.getModpackList();
     Future.delayed(Duration(milliseconds: 200)).then((value) {
       _scrollController.addListener(() async {
-        if (_scrollController.position.pixels >= (_scrollController.position.maxScrollExtent - 400)) {
+        if (_scrollController.position.pixels >=
+            (_scrollController.position.maxScrollExtent - 400)) {
           print('new');
           await getMoreData();
         }
@@ -62,7 +65,9 @@ class _ModListPageState extends State<ModListPage> {
     List rawModpacks = await _handler.getMoreModpacks();
     modpacklist.addAll(rawModpacks);
     installContollers.addAll(List.generate(
-        rawModpacks.length, (index) => InstallController(handler: _handler, modpackData: rawModpacks[index])));
+        rawModpacks.length,
+        (index) => InstallController(
+            handler: _handler, modpackData: rawModpacks[index])));
     setState(() {});
     iscalled = false;
   }
@@ -156,8 +161,9 @@ class _ModListPageState extends State<ModListPage> {
         clipBehavior: Clip.antiAlias,
         height: double.infinity,
         width: double.infinity,
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(18)),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            borderRadius: BorderRadius.circular(18)),
         child: Stack(children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -197,7 +203,8 @@ class _ModListPageState extends State<ModListPage> {
                         height: 50,
                         width: 50,
                         child: LoadingAnimationWidget.staggeredDotsWave(
-                            color: Theme.of(context).colorScheme.primary, size: 30),
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 30),
                       ),
                     );
                   }
@@ -209,7 +216,9 @@ class _ModListPageState extends State<ModListPage> {
                       installContollers = List.generate(
                           modpacklist.length,
                           (index) => InstallController(
-                              handler: _handler, modpackData: _handler.convertToUMF(modpacklist[index])));
+                              handler: _handler,
+                              modpackData:
+                                  _handler.convertToUMF(modpacklist[index])));
                     }
                     return ShaderMask(
                         shaderCallback: (Rect rect) {
@@ -222,7 +231,12 @@ class _ModListPageState extends State<ModListPage> {
                               Colors.transparent,
                               Color.fromARGB(0, 155, 39, 176)
                             ],
-                            stops: [0.0, 0.1, 0.9, 1.0], // 10% purple, 80% transparent, 10% purple
+                            stops: [
+                              0.0,
+                              0.08,
+                              0.6,
+                              1.0
+                            ], // 10% purple, 80% transparent, 10% purple
                           ).createShader(rect);
                         },
                         blendMode: BlendMode.dstOut,
@@ -233,28 +247,53 @@ class _ModListPageState extends State<ModListPage> {
                                 controller: _scrollController,
                                 itemCount: modpacklist.length,
                                 itemBuilder: ((context, index) {
-                                  InstallController installcontroller = installContollers[index];
+                                  InstallController installcontroller =
+                                      installContollers[index];
 
-                                  return AnimatedBuilder(
-                                      key: Key(installcontroller.processId),
-                                      animation: installcontroller,
-                                      builder: (context, child) => BrowseCard(
-                                            processId: installcontroller.processId,
-                                            modpackData: installcontroller.modpackData,
-                                            state: installcontroller.state,
-                                            progress: installcontroller.progress,
-                                            onCancel: () {
-                                              installcontroller.cancel();
-                                            },
-                                            onDownload: () async {
-                                              if (checkForJava() == false) return;
-                                              installcontroller.install(version: _handler.version);
-                                            },
-                                            onOpen: () async {
-                                            
-                                              installcontroller.start();
-                                            },
-                                          ));
+                                  return OpenContainer(
+                                   
+                                      transitionType: ContainerTransitionType.fade,
+                                      openElevation: 0.0,
+                                      closedElevation: 0.0,
+                                      openColor: const Color.fromARGB(0, 216, 216, 216),
+                                      closedColor: Colors.transparent,
+                                      openBuilder: (context,
+                                              VoidCallback closecontainer) =>
+                                          ModPage(modpackData:installcontroller
+                                                            .modpackData ,),
+                                      closedBuilder: (context,
+                                              VoidCallback opencontainer) =>
+                                          AnimatedBuilder(
+                                              key: Key(
+                                                  installcontroller.processId),
+                                              animation: installcontroller,
+                                              builder: (context, child) =>
+                                                  BrowseCard(
+                                                    onPageOpen: opencontainer,
+                                                    processId: installcontroller
+                                                        .processId,
+                                                    modpackData:
+                                                        installcontroller
+                                                            .modpackData,
+                                                    state:
+                                                        installcontroller.state,
+                                                    progress: installcontroller
+                                                        .progress,
+                                                    onCancel: () {
+                                                      installcontroller
+                                                          .cancel();
+                                                    },
+                                                    onDownload: () async {
+                                                      if (checkForJava() ==
+                                                          false) return;
+                                                      installcontroller.install(
+                                                          version:
+                                                              _handler.version);
+                                                    },
+                                                    onOpen: () async {
+                                                      installcontroller.start();
+                                                    },
+                                                  )));
                                 }))));
                   }
                   ;
@@ -288,8 +327,10 @@ class _ModListPageState extends State<ModListPage> {
                                         reverse: true,
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
                                           children: filters,
                                         ));
                                   } else {

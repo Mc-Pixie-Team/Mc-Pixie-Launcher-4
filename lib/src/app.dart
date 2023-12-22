@@ -7,6 +7,7 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
+import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'theme/colorSchemes.dart';
@@ -18,12 +19,13 @@ import 'widgets/navigation_drawer/menu_item.dart';
 import 'widgets/divider.dart' as Div;
 import 'package:animations/animations.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
+import 'dart:math' as math;
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
   Set<PointerDeviceKind> get dragDevices =>
-      {PointerDeviceKind.touch,  PointerDeviceKind.trackpad};
+      {PointerDeviceKind.touch, PointerDeviceKind.trackpad};
 }
 
 class McLauncher extends StatelessWidget {
@@ -37,6 +39,7 @@ class McLauncher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -45,9 +48,25 @@ class McLauncher extends StatelessWidget {
             typography: Typography(black: blackTextSchemes),
             scrollbarTheme: ScrollbarThemeData()),
         darkTheme: ThemeData(
-            useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
+            useMaterial3: true,
+            colorScheme: darkColorScheme,
+            typography: Typography(black: blackTextSchemes)),
         themeMode: ThemeMode.dark,
-        home: MainPage());
+        home: MainPage(),
+        builder: (context, child) => Stack(children: [
+              child!,
+              SizedBox(
+                height: 35,
+                child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Row(
+                      children: [
+                        Expanded(child: MoveWindow()),
+                        WindowButtons()
+                      ],
+                    )),
+              ),
+            ]));
   }
 }
 
@@ -59,15 +78,20 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  late BuildContext innercontext;
+
   bool shouldSplashedDisplayed = true;
   bool isSplashed = true;
   int pageIndex = 1;
   int pageIndex_old = 1;
-  EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
+
+  EdgeInsets edgeInsets =
+      EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
+
   final List<Widget> _pages = [
-    HomePage(),
-    ModListPage(),
-    Debugpage(),
+    const HomePage(),
+    const ModListPage(),
+    const Debugpage(),
     Container(
       key: Key('4'),
       color: Color.fromARGB(255, 146, 91, 218),
@@ -76,23 +100,9 @@ class _MainPageState extends State<MainPage> {
       key: Key('5'),
       color: Color.fromARGB(255, 146, 91, 218),
     ),
-    SettingsPage(),
-    UserPage(),
+    const SettingsPage(),
+    const UserPage(),
   ];
-
-  OverlayEntry _overlayEntryBuilder() {
-    return OverlayEntry(
-      builder: (context) {
-        return Align(
-            alignment: Alignment.center,
-            child: Container(
-              height: 30,
-              width: 30,
-              color: Colors.green,
-            ));
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -100,9 +110,49 @@ class _MainPageState extends State<MainPage> {
     MinecraftAccountUtils().initOnFirstStart();
     Modpacks.generateManifest();
 
-    Modpacks.getPacksformManifest().then((value) => Modpacks.globalinstallContollers.addAll(value));
+    Modpacks.getPacksformManifest()
+        .then((value) => Modpacks.globalinstallContollers.addAll(value));
 
     super.initState();
+  }
+
+  Navigator _getNavigator(BuildContext context) {
+    return Navigator(
+      onGenerateRoute: (RouteSettings settings) {
+        return MaterialPageRoute(builder: (context) {
+          innercontext = context;
+          return PageTransitionSwitcher(
+            duration: const Duration(milliseconds: 400),
+            reverse: pageIndex < pageIndex_old,
+            child: Container(key: UniqueKey(), child: _pages[pageIndex]),
+            transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
+                SharedAxisTransition(
+              animation: primaryAnimation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.vertical,
+              fillColor: Colors.transparent,
+              child: child,
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  void onDrawerChange(int index) {
+
+    // if(Navigator.of(innercontext).canPop()){
+    //   Navigator.of(innercontext).pop();
+    // }
+
+    pageIndex_old = pageIndex;
+
+    if (index != pageIndex_old) {
+       setState(() {
+         pageIndex = index;
+       });
+
+    }
   }
 
   @override
@@ -134,7 +184,8 @@ class _MainPageState extends State<MainPage> {
               Container(
                 height: double.infinity,
                 width: 200,
-                decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant),
                 child: Column(
                   children: [
                     Container(
@@ -144,18 +195,8 @@ class _MainPageState extends State<MainPage> {
                       padding: EdgeInsets.only(left: 30),
                       child: Align(
                         child: MenuItem(
-                          onClick: () {
-                            int index = 6;
-                            print('change: ' + index.toString());
-                            pageIndex_old = pageIndex;
-
-                            if (index != pageIndex_old) {
-                              setState(() {
-                                pageIndex = index;
-                              });
-                            }
-                          },
-                          title: 'Profile',
+                          onClick:  () =>  onDrawerChange(6),
+                          title: 'Profile', 
                           icon: Icon(
                             Icons.person,
                             size: 20,
@@ -170,17 +211,7 @@ class _MainPageState extends State<MainPage> {
                     Padding(
                       padding: EdgeInsets.only(left: 30),
                       child: MenuItem(
-                        onClick: () {
-                          int index = 5;
-                          print('change: ' + index.toString());
-                          pageIndex_old = pageIndex;
-
-                          if (index != pageIndex_old) {
-                            setState(() {
-                              pageIndex = index;
-                            });
-                          }
-                        },
+                        onClick: () =>  onDrawerChange(5),
                         title: 'Settings',
                         icon: Icon(
                           Icons.settings,
@@ -198,17 +229,10 @@ class _MainPageState extends State<MainPage> {
                         offset: 0,
                         onChange: (index) {
                           index = index + 1;
-                          print('change: ' + index.toString());
-                          pageIndex_old = pageIndex;
-
-                          if (index != pageIndex_old) {
-                            setState(() {
-                              pageIndex = index;
-                            });
-                          }
+                         onDrawerChange(index);
                         },
                         title: 'Providers',
-                        children: [
+                        children: <ItemDrawerItem>[
                           ItemDrawerItem(
                             icon: Icon(
                               Icons.sms,
@@ -239,12 +263,14 @@ class _MainPageState extends State<MainPage> {
                           ),
                         ]),
                     Padding(
-                        padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 17),
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, top: 10, bottom: 17),
                         child: Container(
                             height: 50,
                             decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.all(Radius.elliptical(18, 18))),
+                                borderRadius: BorderRadius.all(
+                                    Radius.elliptical(18, 18))),
                             width: double.infinity,
                             child: Align(
                               alignment: Alignment.centerLeft,
@@ -270,7 +296,8 @@ class _MainPageState extends State<MainPage> {
                                   icon: Icon(
                                     Icons.folder,
                                     size: 20,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ),
@@ -289,27 +316,17 @@ class _MainPageState extends State<MainPage> {
                         style: Theme.of(context).typography.black.bodySmall,
                       ),
                     ),
-                    Padding(padding: EdgeInsets.only(left: 15, right: 15, bottom: 20, top: 8), child: ImportField())
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, bottom: 20, top: 8),
+                        child: ImportField())
                   ],
                 ),
               ),
               Expanded(
-                  child: PageTransitionSwitcher(
-                duration: const Duration(milliseconds: 400),
-                reverse: pageIndex < pageIndex_old,
-                child: Padding(
-                  key: UniqueKey(),
-                  padding: edgeInsets,
-                  child: _pages![pageIndex],
-                ),
-                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
-                  animation: primaryAnimation,
-                  secondaryAnimation: secondaryAnimation,
-                  transitionType: SharedAxisTransitionType.vertical,
-                  fillColor: Colors.transparent,
-                  child: child,
-                ),
-              )),
+                  child: Padding(
+                      padding: edgeInsets, child: _getNavigator(context))),
+
               SidePanel()
 
               // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
@@ -335,14 +352,6 @@ class _MainPageState extends State<MainPage> {
           //         ),
           //       )
           //     : Container(),
-          SizedBox(
-            height: 35,
-            child: Align(
-                alignment: Alignment.topLeft,
-                child: Row(
-                  children: [Expanded(child: MoveWindow()), WindowButtons()],
-                )),
-          ),
         ]));
   }
 }
@@ -354,12 +363,20 @@ final buttonColors = WindowButtonColors(
     iconMouseOver: const Color.fromARGB(255, 255, 255, 255),
     iconMouseDown: Color.fromARGB(255, 153, 153, 153));
 
+final closebuttonColors = WindowButtonColors(
+    iconNormal: Color.fromARGB(255, 192, 192, 192),
+    mouseOver: Color.fromARGB(255, 189, 0, 0),
+    mouseDown: Color.fromARGB(0, 92, 92, 92), //Code by Mc-PIXWIE
+    iconMouseOver: const Color.fromARGB(255, 255, 255, 255),
+    iconMouseDown: Color.fromARGB(255, 153, 153, 153));
+
 class WindowButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         //Code by Mc-PIXIE
+
         MinimizeWindowButton(
           colors: buttonColors,
         ),
@@ -367,7 +384,7 @@ class WindowButtons extends StatelessWidget {
           colors: buttonColors,
         ),
         CloseWindowButton(
-          colors: buttonColors,
+          colors: closebuttonColors,
           onPressed: () {
             print('close');
             exit(0);

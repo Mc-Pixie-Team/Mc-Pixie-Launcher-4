@@ -62,7 +62,7 @@ const blackTextSchemes = TextTheme(
     fontFamily: "SF Pro Text",
     color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w300,
-    fontSize: 16,
+    fontSize: 17,
 
   ),
   labelMedium: TextStyle(

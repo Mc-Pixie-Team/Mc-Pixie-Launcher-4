@@ -43,12 +43,8 @@ class _SettingsListState extends State<SettingsList> {
                           )),
                       title: Text(
                         widget.names[index],
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          fontSize: 16,
-                          fontFamily: Theme.of(context).typography.black.labelLarge!.fontFamily,
-                          fontWeight: Theme.of(context).typography.black.labelLarge!.fontWeight,
-                        ),
+                        style: Theme.of(context).typography.black.labelLarge
+                        
                       )),
                   (index != widget.names.length - 1)
                       ? Padding(

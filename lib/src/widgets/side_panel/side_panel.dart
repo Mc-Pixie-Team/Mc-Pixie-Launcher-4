@@ -184,6 +184,9 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
     _controllersec.reverse();
   }
 
+
+
+
   @override
   Widget build(BuildContext context) {
     return Padding(

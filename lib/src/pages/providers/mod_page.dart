@@ -3,7 +3,7 @@ import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
 import 'package:transparent_image/transparent_image.dart';
-
+import 'package:mclauncher4/src/widgets/divider.dart' as divider;
 class ModPage extends StatefulWidget {
   UMF modpackData;
 
@@ -39,14 +39,11 @@ class _ModPageState extends State<ModPage> {
               child: Align(
                 alignment: Alignment.topLeft,
                 //TOP
-                child: Row(children: [
-                  SlideInAnimation(
-                      curve: Curves.easeOutQuad,
-                      duration: const Duration(milliseconds: 500),
-                      child: Container(
+                child: Column( children: [ Row(children: [
+                 Container(
                         margin: const EdgeInsets.only(left: 50),
-                        width: 144,
-                        height: 144,
+                        width: 145,
+                        height: 145,
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(18),
@@ -59,7 +56,7 @@ class _ModPageState extends State<ModPage> {
                           placeholder: kTransparentImage,
                           image: widget.modpackData.icon!,
                         ),
-                      )),
+                      ),
                   const SizedBox(
                     width: 20,
                   ),
@@ -75,7 +72,7 @@ class _ModPageState extends State<ModPage> {
                             style: Theme.of(context)
                                 .typography
                                 .black
-                                .headlineSmall!
+                                .labelLarge!
                                 .copyWith(
                                     color:
                                         Theme.of(context).colorScheme.primary),
@@ -108,6 +105,8 @@ class _ModPageState extends State<ModPage> {
                         ],
                       ))
                 ]),
+                  
+                ]),
               ))
         ],
       ),
@@ -115,6 +114,7 @@ class _ModPageState extends State<ModPage> {
   }
 }
 
+// ignore: must_be_immutable
 class StackedItem extends StatelessWidget {
   String type1;
   String type2;

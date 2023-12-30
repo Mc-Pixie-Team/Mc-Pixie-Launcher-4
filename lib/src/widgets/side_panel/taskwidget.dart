@@ -92,11 +92,11 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                      padding: EdgeInsets.only(left: 10, right: 8, top: 4),
+                      padding: EdgeInsets.only(left: 12, right: 18, top: 4),
                       child: SizedBox(
                         width: 8,
                         height: 5,

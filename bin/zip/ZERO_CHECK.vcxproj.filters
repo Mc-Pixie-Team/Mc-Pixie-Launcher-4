@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\joshi\Documents\GitHub\Flutter-downloader-pixie\bin\zip\CMakeFiles\2ebb10a2695a81bad562f57ceb18ca7d\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{D6F3137D-1B88-3A66-A8FF-7972B7D0B643}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

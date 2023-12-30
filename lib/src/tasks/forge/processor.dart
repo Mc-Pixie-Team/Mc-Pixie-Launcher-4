@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
-import 'package:mclauncher4/src/tasks/utils/downloads.dart';
+import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:path/path.dart' as path;
@@ -24,7 +24,7 @@ class Processor with ChangeNotifier {
         // Der Datei pfad wird nun an den outputArgs heran gehängt
 
         String path = Utils.parseMaven(arg);
-        Download()
+        DownloadUtils()
             .downloadSingeFile("https://maven.minecraftforge.net/$path", "${await getlibarypath()}\\libraries\\$path");
         outputArgs += "${await getlibarypath()}\\libraries\\$path ";
       } else if (Utils.isSurrounded(arg, "{", "}")) {

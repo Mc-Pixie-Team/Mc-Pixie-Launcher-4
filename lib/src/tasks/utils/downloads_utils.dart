@@ -11,7 +11,7 @@ import 'utils.dart';
 import 'package:path_provider/path_provider.dart';
 import '../config/apis.dart';
 
-class Download with ChangeNotifier {
+class DownloadUtils with ChangeNotifier {
   DownloadState _state = DownloadState.notDownloaded;
   DownloadState get downloadstate => _state;
   double _progress = 0.0;
@@ -19,7 +19,7 @@ class Download with ChangeNotifier {
 
   bool? isForge;
   int received = 0;
-  Download({this.isForge});
+  DownloadUtils({this.isForge});
   String os = "windows";
   String arch = "64";
 

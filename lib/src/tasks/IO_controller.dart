@@ -32,7 +32,7 @@ class ImportExportController with ChangeNotifier {
     pixieIndexJson["processId"] = process_id;
 
     await Utils.copyDirectory(
-        Directory(path + pixieIndexJson["override"]), Directory("${await getinstances()}\\instance\\$process_id"));
+       source: Directory(path + pixieIndexJson["override"]), destination: Directory("${await getinstances()}\\instance\\$process_id"));
 
     Api api = ApiHandler().getApi(pixieIndexJson["provider"]);
     print(pixieIndexJson["providerArgs"]);

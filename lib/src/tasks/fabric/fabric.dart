@@ -8,7 +8,7 @@ import 'package:mclauncher4/src/tasks/java/java.dart';
 import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
-import 'package:mclauncher4/src/tasks/utils/downloads.dart';
+import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
@@ -103,7 +103,7 @@ class Fabric with ChangeNotifier implements Modloader {
 
     profileJson = Utils.convertLibraries(profileJson, []);
 
-    Download _downloader = Download();
+    DownloadUtils _downloader = DownloadUtils();
     _downloader.addListener(() {
       if (_downloader.downloadstate == DownloadState.downloadingLibraries) {
         _mainprogress = _downloader.progress;

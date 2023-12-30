@@ -8,7 +8,7 @@ import '../models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/forge/processor.dart';
 import "package:path_provider/path_provider.dart" as path_provider;
 import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
-import 'package:mclauncher4/src/tasks/utils/downloads.dart';
+import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:yaml/yaml.dart';
@@ -108,7 +108,7 @@ class Forge with ChangeNotifier implements Modloader {
       print('set additional');
     }
 
-    await Download().downloadForgeClient(version, modloaderVersion, additional);
+    await DownloadUtils().downloadForgeClient(version, modloaderVersion, additional);
 
     Map install_profileJson = jsonDecode(await File(
             "${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\install_profile.json")
@@ -159,7 +159,7 @@ class Forge with ChangeNotifier implements Modloader {
     }
 
     // print(versionJson);
-    Download _downloader = Download();
+    DownloadUtils _downloader = DownloadUtils();
     Processor _processor = Processor();
     var _1 = 0.0;
     var _2 = 0.0;

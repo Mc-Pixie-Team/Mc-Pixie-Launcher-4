@@ -39,20 +39,12 @@ class _SvgButtonState extends State<SvgButton>
     return GestureDetector(
         onTap: widget.onpressed,
         child: MouseRegion(
-          child: SizedBox(
-              child: Row(children: [ SvgPicture.asset(widget.asset,
+          child: SvgPicture.asset(widget.asset,
                   color: (widget.color ?? Theme.of(context).colorScheme.primary)
                       .withOpacity(Tween(begin: 1, end: 0.5)
                           .animate(_controller)
                           .value
                           .toDouble())),
-                          
-                          ... widget.text != null ? [
-                            SizedBox(width: 20,),
-                            widget.text!
-                          ] :[]
-                          
-                          ])),
           onEnter: (e) => _controller.forward(),
           onExit: (e) => _controller.reverse(),
         ));

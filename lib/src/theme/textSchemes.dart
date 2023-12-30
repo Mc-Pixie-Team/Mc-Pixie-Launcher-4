@@ -19,13 +19,13 @@ const blackTextSchemes = TextTheme(
     fontFamily: "SF Pro Display",
     color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w600,
-    fontSize: 36,
+    fontSize: 32,
 
   ),
   headlineLarge: TextStyle(
     fontFamily: "SF Pro Display",
     fontWeight: FontWeight.w600,
-    fontSize: 32,
+    fontSize: 30,
 
   ),
   headlineMedium: TextStyle(

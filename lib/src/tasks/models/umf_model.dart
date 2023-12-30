@@ -7,7 +7,7 @@ class UMF {
     this.likes,
     this.categories,
     this.icon,
-    this.modloader,
+    this.modloader = const [],
     this.MLVersion,
     this.MCVersion,
     required this.original,
@@ -20,7 +20,7 @@ class UMF {
   int? likes;
   List<dynamic>? categories;
   String? icon;
-  String? modloader;
+  List<String> modloader;
   String? MLVersion;
   String? MCVersion;
   Map original;
@@ -42,6 +42,9 @@ class UMF {
   }
 
   static parse(Map json) {
+
+    List<String> modloaderlist = List.generate((json["modloader"] as List).length, (index) => (json["modloader"] as List)[index].toString());
+
     return UMF(
       
     name: json["name"],
@@ -51,7 +54,7 @@ class UMF {
     likes: json["likes"],
     categories: json["categories"],
     icon: json["icon"],
-   modloader: json["modloader"],
+   modloader: modloaderlist,
     MLVersion: json["MLVersion"],
     MCVersion: json["MCVersion"],
    original: json["original"]

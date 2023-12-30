@@ -42,23 +42,62 @@ class Utils {
         Directory(filePath + '\\' + filename).create(recursive: true);
       }
     }
+    _bytes = [];
   }
 
-  static Future copyDirectory(Directory source, Directory destination) async {
-    /// create destination folder if not exist
-    if (!destination.existsSync()) {
-      await destination.create(recursive: true);
-    }
+    static extractZipFile(
+    String filePath,
+    String exportfilePath,
+  ) async{
+    Archive? archive = ZipDecoder().decodeBytes(await File(filePath).readAsBytes());
 
-    /// get all files from source (recursive: false is important here)
-    await for (var entity in source.list(recursive: false)) {
-      final newPath = destination.path + Platform.pathSeparator + path.basename(entity.path);
-      if (entity is File) {
-        await entity.copy(newPath);
-      } else if (entity is Directory) {
-        await copyDirectory(entity, Directory(newPath));
+    for (var data in archive) {
+      final filename = data.name;
+      if (data.isFile) {
+        final datadir = data.content as List<int>;
+       File(exportfilePath + '\\' + filename)
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(datadir);
+      } else {
+        Directory(exportfilePath + '\\' + filename).create(recursive: true);
       }
     }
+    archive = null;
+  }
+
+  static Future<void> copyDirectory({required Directory source, required Directory destination}) async {
+    
+    if(!(await destination.exists())) {
+              await destination.create();
+          }
+
+      final fileitems = source.list();
+
+      fileitems.listen((fileEntity) async{ 
+        final newPath = destination.path + Platform.pathSeparator + path.basename(fileEntity.path);
+        if(fileEntity is File) {
+         await copyFile( source: fileEntity,  destination: File( newPath));
+        }else if(fileEntity is Directory) {
+          await copyDirectory(source: fileEntity, destination: Directory(newPath));
+        }
+      });
+  }
+
+
+
+    static Future<void> copyFile({required File source, required File destination}) async {
+    
+          if(!(await destination.exists())) {
+              await destination.create();
+          }
+
+          if(source.path == destination.path) throw "destination and source have the same path: ${destination.path}";
+
+        final dataStream = destination.openWrite();
+        await dataStream.addStream(source.openRead());
+
+        await dataStream.close();
+     
   }
 
   static extractForgeInstaller(List<int> _bytes, Version version, ModloaderVersion modloaderVersion,

@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
-
+import 'package:background_downloader/background_downloader.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
+import 'package:mclauncher4/src/tasks/utils/downloader.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 
@@ -63,6 +64,7 @@ class ModrinthInstaller {
 
   }
 
+
   install( {required Map modpackData, required String instanceName, Version? localversion}) async {
     
     Map modpackproject = await getModpack(modpackData["project_id"]);
@@ -79,16 +81,31 @@ class ModrinthInstaller {
 
     _progress = (_received / _total) * 100;
 
-    for (var dependence in modpackData["dependencies"]) {
+    final downloads_at_same_time  = 15;
+    int _totalitems = modpackData["dependencies"].length;
+    print(_totalitems);
+    for (var i = 0; modpackData["dependencies"].length > i; ) {
+      print(i);
+     Iterable<Future<dynamic>> downloads = Iterable.generate(
+          downloads_at_same_time > _totalitems ? _totalitems : downloads_at_same_time,
+          (index) async {
+            print("downloading:" + i.toString());
+        var dependence = modpackData["dependencies"][i + index];
       var res = await http.get(Uri.parse('https://api.modrinth.com/v2/version/${dependence["version_id"]}'));
       // print(dependence["version_id"]);
-      if (dependence["version_id"] == null) continue;
+      if (dependence["version_id"] == null) return;
       Map dependenceJson = jsonDecode(utf8.decode(res.bodyBytes));
       // print(dependenceJson);
       await _downloadFiles(dependenceJson["files"], instanceName);
-      if (dependenceJson["dependencies"].length > 0) {}
-      _received++;
+
+          });
+    await Future.wait(downloads);
+
+      i += downloads_at_same_time;
+      _totalitems = _totalitems - downloads_at_same_time;
+      _received += downloads_at_same_time > _totalitems ? _totalitems : downloads_at_same_time;
       _progress = (_received / _total) * 100;
+      
     }
 
     String destination = '${await getInstancePath()}\\$instanceName\\modrinth.index.json';
@@ -140,37 +157,40 @@ class ModrinthInstaller {
   }
 
   _downloadFiles(List files, String instanceName) async {
+
+
     for (var file in files) {
       // print(file["url"]);
 
-      int total = file["size"];
-      int received = 0;
-
-      List<int> _bytes = [];
-      http.StreamedResponse? response = await http.Client().send(http.Request('GET', Uri.parse(file["url"])));
-
-      await response.stream.listen((value) {
-        _bytes.addAll(value);
-        received += value.length;
-      }).asFuture();
-
-      String filepath = '${await getTempCommandPath()}\\$instanceName';
+  
+     
+     String filepath = '${await getTempCommandPath()}\\$instanceName';
       String destination = '${await getInstancePath()}\\$instanceName';
 
+
+
+
+
       if (file["filename"].split('.').last == 'mrpack') {
-        await Utils.extractZip(_bytes, filepath);
-        await Utils.copyDirectory(Directory('$filepath\\overrides'), Directory(destination));
-        await File('$destination\\modrinth.index.json')
-            .writeAsBytes(await File('$filepath\\modrinth.index.json').readAsBytes());
+        Downloader _downloader =  Downloader(file["url"],path.join(filepath, file["filename"]) );
+        print(path.join(filepath, file["filename"]));
+        await _downloader.startDownload(onProgress: (p0) => _progress = p0,);
+
+        await _downloader.unzip(deleteOld: true);
+
+        await Utils.copyDirectory(source: Directory('$filepath\\overrides'), destination: Directory(destination));
+        await Utils.copyFile(source: File('$filepath\\modrinth.index.json'), destination: File('$destination\\modrinth.index.json'));
+
       } else if (file["url"].split('.').last == 'jar') {
         if (!(file["primary"])) continue;
+
         String filepath2 = destination + '\\mods\\${file["filename"]}';
-        String parentDirectory = path.dirname(filepath2);
+        Downloader _downloader =  Downloader(file["url"], filepath2);
 
-        await Directory(parentDirectory).create(recursive: true);
+       await _downloader.startDownload();
 
-        await File(filepath2).writeAsBytes(_bytes);
       }
     }
+   
   }
 }

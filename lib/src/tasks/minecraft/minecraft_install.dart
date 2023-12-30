@@ -7,7 +7,7 @@ import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import "package:path_provider/path_provider.dart" as path_provider;
 import "dart:convert";
 import "dart:io";
-import "../utils/downloads.dart";
+import '../utils/downloads_utils.dart';
 import '../utils/path.dart';
 
 class Minecraft with ChangeNotifier {
@@ -17,7 +17,7 @@ class Minecraft with ChangeNotifier {
   double get progress => _progress;
   double _mainprogress = 0.0;
   double get mainprogress => _mainprogress;
-  Download _downloader = Download();
+  DownloadUtils _downloader = DownloadUtils();
 
   getsteps(Version? version, [ModloaderVersion? modloaderVersion]) {
     return 2;

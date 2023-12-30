@@ -20,6 +20,7 @@ import 'package:smooth_list_view/smooth_list_view.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as Divider;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 
 class ModListPage extends StatefulWidget {
   const ModListPage({Key? key}) : super(key: key);
@@ -240,11 +241,9 @@ class _ModListPageState extends State<ModListPage> {
                           ).createShader(rect);
                         },
                         blendMode: BlendMode.dstOut,
-                        child: SlideInAnimation(
-                            curve: Curves.easeInOutQuart,
-                            duration: Duration(milliseconds: 750),
-                            child: ListView.builder(
+                        child:   ListView.builder(
                                 controller: _scrollController,
+                              
                                 itemCount: modpacklist.length,
                                 itemBuilder: ((context, index) {
                                   InstallController installcontroller =
@@ -294,7 +293,7 @@ class _ModListPageState extends State<ModListPage> {
                                                       installcontroller.start();
                                                     },
                                                   )));
-                                }))));
+                                })));
                   }
                   ;
 

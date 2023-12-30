@@ -1,0 +1,4 @@
+C:/Users/joshi/Documents/GitHub/Flutter-downloader-pixie/bin/zip/CMakeFiles/zip.dir
+C:/Users/joshi/Documents/GitHub/Flutter-downloader-pixie/bin/zip/CMakeFiles/zip1.dir
+C:/Users/joshi/Documents/GitHub/Flutter-downloader-pixie/bin/zip/CMakeFiles/ALL_BUILD.dir
+C:/Users/joshi/Documents/GitHub/Flutter-downloader-pixie/bin/zip/CMakeFiles/ZERO_CHECK.dir

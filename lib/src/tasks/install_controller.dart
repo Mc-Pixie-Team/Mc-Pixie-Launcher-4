@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
@@ -88,22 +89,20 @@ class InstallController with ChangeNotifier {
   }
 
   void delete() async {
-
-    File manifestfile =  File('${await getInstancePath()}\\manifest.json');
-    List manifest = jsonDecode(
-        manifestfile.readAsStringSync());
+    File manifestfile = File('${await getInstancePath()}\\manifest.json');
+    List manifest = jsonDecode(manifestfile.readAsStringSync());
+    final dir = Directory(await getInstancePath() + "\\$processId");
 
     manifest.removeWhere((element) {
       print(element["processId"]);
       return element["processId"] == processId;
     });
-        await manifestfile
-        .writeAsString(jsonEncode(manifest));
-        print('deleted');
-    Directory(await getInstancePath() + "\\$processId").delete(recursive: true);
+    await manifestfile.writeAsString(jsonEncode(manifest));
+  
+    if (dir.existsSync()) dir.delete(recursive: true);
 
     Modpacks.globalinstallContollers.removeKeyFromAnimatedBuilder(processId);
-
+     print('deleted');
     mainstate = MainState.notinstalled;
     notifyListeners();
   }
@@ -142,7 +141,10 @@ class InstallController with ChangeNotifier {
         [
           receivePort.sendPort,
           StartMessage(
-              handler: handler, modpackData: modpackData, processId: processId, version:version == null ? null  : Version.parse(version))
+              handler: handler,
+              modpackData: modpackData,
+              processId: processId,
+              version: version == null ? null : Version.parse(version))
         ],
         onExit: exitPort.sendPort,
         debugName: "Install of $processId");
@@ -152,7 +154,7 @@ class InstallController with ChangeNotifier {
     StartMessage startMessage = (args.last as StartMessage);
     ModrinthInstaller installer = ModrinthInstaller();
 
-    Timer timer = Timer.periodic(Duration(milliseconds: 1500), (timer) {
+    Timer timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
       (args.first as SendPort).send(InstallerMessage(
         mainState: installer.installState,
         progress: installer.progress,
@@ -161,7 +163,9 @@ class InstallController with ChangeNotifier {
 
     //Call the main installer
     await installer.install(
-       modpackData: startMessage.modpackData.original, instanceName: startMessage.processId, localversion: startMessage.version );
+        modpackData: startMessage.modpackData.original,
+        instanceName: startMessage.processId,
+        localversion: startMessage.version);
 
     timer.cancel();
 

@@ -183,7 +183,7 @@ class ModrinthApi implements Api {
         likes: modpackData["follows"],
         categories: modpackData["categories"],
         icon: modpackData["icon_url"],
-        modloader: null,
+        modloader: ["Fabric"],
         MLVersion: null,
         MCVersion: modpackData["latest_version"],
         original: modpackData);

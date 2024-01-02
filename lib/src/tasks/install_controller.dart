@@ -113,8 +113,8 @@ class InstallController with ChangeNotifier {
     notifyListeners();
     setUIChanges();
 
-    //To show the fetching animation
-    await Future.delayed(Duration(milliseconds: 300));
+  ///To show the fetching animation
+   // await Future.delayed(Duration(milliseconds: 300));
 
     print(InstallController.instances);
     await waitWhile(() => InstallController.instances > 1);

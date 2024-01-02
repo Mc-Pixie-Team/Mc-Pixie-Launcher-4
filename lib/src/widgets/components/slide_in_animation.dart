@@ -27,6 +27,7 @@ class _SlideInAnimationState extends State<SlideInAnimation> with SingleTickerPr
 
   @override
   void initState() {
+    
     super.initState();
     _controller = AnimationController(
       vsync: this,
@@ -36,6 +37,7 @@ class _SlideInAnimationState extends State<SlideInAnimation> with SingleTickerPr
       setState(() {});
     });
     _controller.forward();
+
   }
 
   @override

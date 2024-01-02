@@ -7,14 +7,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
+import 'package:mclauncher4/src/theme/custom_page_transition.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
+import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 // ignore: must_be_immutable
@@ -23,13 +26,11 @@ class BrowseCard extends StatefulWidget {
   VoidCallback onDownload;
   VoidCallback onCancel;
   VoidCallback onOpen;
-  VoidCallback onPageOpen;
   MainState state;
   double progress;
   String processId;
   BrowseCard({
     Key? key,
-    required this.onPageOpen,
     required this.processId,
     required this.modpackData,
     required this.progress,
@@ -88,10 +89,13 @@ class _BrowseCardState extends State<BrowseCard>
             child: GestureDetector(
                 onTapDown: (details) => _controller.forward(),
                 onTapUp: (details)  {
-                  
+           
                  // _controller.reverse();
-
-              widget.onPageOpen.call();
+                Navigator.push(
+    context,
+   SlowMaterialPageRoute(allowSnapshotting: false, builder: (context) =>  ModPage(modpackData: widget.modpackData),
+  ));
+                 
 
                 },
                 child: ScaleTransition(
@@ -110,24 +114,7 @@ class _BrowseCardState extends State<BrowseCard>
                           children: [
                             Padding(
                               padding: EdgeInsets.all(17),
-                              child: Container(
-                             
-                                  width: 127,
-                                  height: 127,
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(18),
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .surfaceVariant),
-                                  child: FadeInImage.memoryNetwork(
-                                    fit: BoxFit.fill,
-                                    fadeOutDuration: Duration(milliseconds: 1),
-                                    fadeInDuration: Duration(milliseconds: 300),
-                                    fadeInCurve: Curves.easeOutQuad,
-                                    placeholder: kTransparentImage,
-                                    image: widget.modpackData.icon!,
-                                  )),
+                              child: ModPicture(width: 127, url: widget.modpackData.icon!, color:  Theme.of(context).colorScheme.surfaceVariant,),
                             ),
                             Expanded(
                                 child: Column(

@@ -116,8 +116,13 @@ class _MainPageState extends State<MainPage> {
     super.initState();
   }
 
+      RectTween _createRectTween(Rect? begin, Rect? end) {
+    return MaterialRectArcTween(begin: begin, end: end);
+  }
+
   Navigator _getNavigator(BuildContext context) {
     return Navigator(
+    observers: [HeroController(createRectTween: _createRectTween)],
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(builder: (context) {
           innercontext = context;

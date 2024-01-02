@@ -249,26 +249,14 @@ class _ModListPageState extends State<ModListPage> {
                                   InstallController installcontroller =
                                       installContollers[index];
 
-                                  return OpenContainer(
-                                   
-                                      transitionType: ContainerTransitionType.fade,
-                                      openElevation: 0.0,
-                                      closedElevation: 0.0,
-                                      openColor: const Color.fromARGB(0, 216, 216, 216),
-                                      closedColor: Colors.transparent,
-                                      openBuilder: (context,
-                                              VoidCallback closecontainer) =>
-                                          ModPage(modpackData:installcontroller
-                                                            .modpackData ,),
-                                      closedBuilder: (context,
-                                              VoidCallback opencontainer) =>
+                                  return 
                                           AnimatedBuilder(
                                               key: Key(
                                                   installcontroller.processId),
                                               animation: installcontroller,
                                               builder: (context, child) =>
                                                   BrowseCard(
-                                                    onPageOpen: opencontainer,
+                                                   
                                                     processId: installcontroller
                                                         .processId,
                                                     modpackData:
@@ -292,7 +280,7 @@ class _ModListPageState extends State<ModListPage> {
                                                     onOpen: () async {
                                                       installcontroller.start();
                                                     },
-                                                  )));
+                                                  ));
                                 })));
                   }
                   ;

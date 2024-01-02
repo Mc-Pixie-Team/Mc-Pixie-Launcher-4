@@ -50,8 +50,8 @@ class _SearchbarState extends State<Searchbar> with SingleTickerProviderStateMix
       if (event.logicalKey.keyLabel == "Enter") {
         if (_focusNode.hasFocus) {
           setSelectedState();
-
           widget.onsubmit!.call();
+        
         }
       }
       return KeyEventResult.ignored;
@@ -106,7 +106,17 @@ class _SearchbarState extends State<Searchbar> with SingleTickerProviderStateMix
                         )))
                 : Container(),
             GestureDetector(
-              onTapUp: (details) => setSelectedState(),
+            
+              onTapUp: (details) {
+              
+                print(_controller.isAnimating);
+                
+                if(_controller.isAnimating){
+                  widget.onsubmit!.call();
+                
+                } 
+                setSelectedState();
+              } ,
               child: Padding(
                 padding: EdgeInsets.all(10),
                 child: Icon(

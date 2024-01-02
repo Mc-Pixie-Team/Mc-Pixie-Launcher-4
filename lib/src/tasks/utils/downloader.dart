@@ -19,9 +19,8 @@ class Downloader {
     final url = Uri.parse(downloadUrl);
     isDownloading = true;
 
-         String parentDirectory = path.dirname(savedDir);
-
-         await Directory(parentDirectory).create(recursive: true);
+    String parentDirectory = path.dirname(savedDir);
+    await Directory(parentDirectory).create(recursive: true);
 
 
     final client = http.Client();

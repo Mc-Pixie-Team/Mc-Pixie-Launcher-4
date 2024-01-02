@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:mclauncher4/src/tasks/java/java.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
@@ -120,7 +121,9 @@ class Processor with ChangeNotifier {
 
       String _args = await _checkkeys(current["args"], install_profile["data"], version, modloaderVersion);
 
-      String command = 'java -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';
+      final javaPath = Java.getJavaJdk(version);
+
+      String command = '$javaPath -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';
 
       var tempFile = File("${await getTempCommandPath()}temp_command_2.ps1");
       await tempFile.create(recursive: true);

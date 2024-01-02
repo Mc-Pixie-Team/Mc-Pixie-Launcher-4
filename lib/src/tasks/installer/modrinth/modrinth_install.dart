@@ -23,7 +23,7 @@ class ModrinthInstaller {
   Minecraft minecraft = Minecraft();
 
   double _progress = 0.0;
-  MainState _state = MainState.notinstalled;
+  MainState _state = MainState.downloadingML;
 
   MainState get installState => _state;
   double get progress => _progress;

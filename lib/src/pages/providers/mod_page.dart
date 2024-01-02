@@ -5,6 +5,7 @@ import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
 import 'package:mclauncher4/src/widgets/file_table/file_table.dart';
+import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as divider;
 
@@ -19,11 +20,17 @@ class ModPage extends StatefulWidget {
 
 class _ModPageState extends State<ModPage> {
   @override
+  void initState() {
+    print("init");
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    String modloaderstring ="";
-     for (String modl in widget.modpackData.modloader) {
-        modloaderstring += "$modl ";
-     }
+    String modloaderstring = "";
+    for (String modl in widget.modpackData.modloader) {
+      modloaderstring += "$modl ";
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -32,7 +39,7 @@ class _ModPageState extends State<ModPage> {
       child: Stack(
         children: [
           Positioned(
-              top: 20,
+              top: 35,
               left: 20,
               child: SvgButton.asset(
                 "assets/svg/dropdown-icon.svg",
@@ -44,93 +51,94 @@ class _ModPageState extends State<ModPage> {
                 ),
               )),
           Positioned.fill(
-              top: 60,
-              child:  Column(children: [
-                  Row(children: [
-                    Container(
-                      margin: const EdgeInsets.only(left: 50),
-                      width: 145,
-                      height: 145,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
-                          color: Theme.of(context).colorScheme.surface),
-                      child: FadeInImage.memoryNetwork(
-                        fit: BoxFit.fill,
-                        fadeOutDuration: const Duration(milliseconds: 1),
-                        fadeInDuration: const Duration(milliseconds: 300),
-                        fadeInCurve: Curves.easeOutQuad,
-                        placeholder: kTransparentImage,
-                        image: widget.modpackData.icon!,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    SlideInAnimation(
-                        curve: Curves.easeOutQuad,
-                        duration: const Duration(milliseconds: 1000),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
+            top: 70,
+            child: Column(children: [
+              Row(children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 40),
+                  child: ModPicture(
+                    width: 160,
+                    url: widget.modpackData.icon!,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                SlideInAnimation(
+                    curve: Curves.easeOutQuad,
+                    duration: const Duration(milliseconds: 800),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Modpack",
+                          style: Theme.of(context)
+                              .typography
+                              .black
+                              .labelLarge!
+                              .copyWith(
+                                  color: Theme.of(context).colorScheme.primary),
+                        ),
+                        Text(
+                          
+                          widget.modpackData.name!,
+                          style:
+                              Theme.of(context).typography.black.displaySmall,
+                                maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
                           children: [
-                            Text(
-                              "Modpack",
-                              style: Theme.of(context)
-                                  .typography
-                                  .black
-                                  .labelLarge!
-                                  .copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
+                            StackedItem(
+                              type1: "Downloads",
+                              type2: widget.modpackData.downloads! > 999
+                                  ? (((widget.modpackData.downloads! / 1000)
+                                                  as double)
+                                              .round())
+                                          .toString() +
+                                      'k'
+                                  : widget.modpackData.downloads!.toString(),
                             ),
-                            Text(
-                              widget.modpackData.name!,
-                              style: Theme.of(context)
-                                  .typography
-                                  .black
-                                  .displaySmall,
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              children: [
-                                StackedItem(
-                                  type1: "Downloads",
-                                  type2: widget.modpackData.downloads! > 999
-                                      ? (((widget.modpackData.downloads! / 1000)
-                                                      as double)
-                                                  .round())
-                                              .toString() +
-                                          'k'
-                                      : widget.modpackData.downloads!
-                                          .toString(),
-                                ),
-                                StackedItem(
-                                    type1:
-                                        modloaderstring ,
-                                    type2:
-                                        widget.modpackData.MLVersion ?? "N/A"),
-                                StackedItem(
-                                    type1: "Minecraft",
-                                    type2:
-                                        widget.modpackData.MCVersion ?? "N/A")
-                              ],
-                            )
+                            StackedItem(
+                                type1: modloaderstring,
+                                type2: widget.modpackData.MLVersion ?? "N/A"),
+                            StackedItem(
+                                type1: "Minecraft",
+                                type2: widget.modpackData.MCVersion ?? "N/A")
                           ],
-                        ))
-                  ]),
-                  
-                  const SizedBox(height: 30,),
-                  Row(children: [Text("Home"),SizedBox(width: 30,), Text("Versions")],),
-                  const SizedBox(height: 6,),
-                  divider.Divider(size: 32,),
-                  const SizedBox(height: 30,),
-                 Expanded(child:  FileTable())
-                ]),
-              )
+                        )
+                      ],
+                    ))
+              ]),
+              const SizedBox(
+                height: 30,
+              ),
+              Row(
+                children: [
+                  Text("Home"),
+                  SizedBox(
+                    width: 30,
+                  ),
+                  Text("Versions")
+                ],
+              ),
+              const SizedBox(
+                height: 6,
+              ),
+              divider.Divider(
+                size: 32,
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Expanded(child: FileTable())
+            ]),
+          )
         ],
       ),
     );
@@ -147,7 +155,7 @@ class StackedItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.only( right: 25),
+        padding: EdgeInsets.only(right: 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

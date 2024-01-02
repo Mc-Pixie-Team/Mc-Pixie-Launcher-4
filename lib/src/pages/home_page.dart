@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                                     onpressed: () {},
                                     color: Theme.of(context).colorScheme.secondary,
                                   )),
-                              Padding(
+                              const Padding(
                                   padding: EdgeInsets.only(left: 14, bottom: 3),
                                   child: Text(
                                     'HomePage',

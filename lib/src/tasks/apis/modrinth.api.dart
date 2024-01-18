@@ -6,12 +6,13 @@ import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/installer/modrinth/modrinth_install.dart';
+import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
-
+import 'package:mclauncher4/src/tasks/utils/utils.dart';
 
 class ModrinthApi implements Api {
   int limit = 50;
@@ -19,7 +20,8 @@ class ModrinthApi implements Api {
   List _facet = [];
 
   ModrinthApi() {
-    _facet = jsonDecode('[["project_type:modpack"], ["categories:forge", "categories:fabric"]]');
+    _facet = jsonDecode(
+        '[["project_type:modpack"], ["categories:forge", "categories:fabric"]]');
   }
 
   @override
@@ -72,14 +74,18 @@ class ModrinthApi implements Api {
     }
   }
 
+
   @override
   getModpackList() async {
     // print(
     //     'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit');
-    var res = await http.get(Uri.parse(
+    List<Map> modpacksproc = [];
+    final res = await http.get(Uri.parse(
         'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit'));
+    final hits = jsonDecode(utf8.decode(res.bodyBytes))["hits"];
 
-    return jsonDecode(utf8.decode(res.bodyBytes))["hits"];
+ 
+    return hits;
   }
 
   @override
@@ -89,7 +95,6 @@ class ModrinthApi implements Api {
 
   @override
   getMoreModpacks() async {
-    String ver = '["versions:$version"]';
     var res = await http.get(Uri.parse(
         'https://api.modrinth.com/v2/search?query=$query&offset=$offset&facets=[["project_type:modpack"], ["categories:forge", "categories:fabric"]]&index=relevance&limit=$limit'));
     offset += limit;
@@ -98,10 +103,10 @@ class ModrinthApi implements Api {
 
   @override
   getModpack(String id) async {
-    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
+    var res =
+        await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
     return jsonDecode(utf8.decode(res.bodyBytes));
   }
-
 
   @override
   Future<String> getModpackName(Map modpackData) async {
@@ -116,7 +121,8 @@ class ModrinthApi implements Api {
 
   @override
   Future<List<String>> getCategories() async {
-    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/tag/category'));
+    var res =
+        await http.get(Uri.parse('https://api.modrinth.com/v2/tag/category'));
 
     List allMCcatergories = jsonDecode(utf8.decode(res.bodyBytes));
     List<String> return_value = [];
@@ -132,7 +138,8 @@ class ModrinthApi implements Api {
 
   @override
   Future<List<String>> getAllMV() async {
-    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/tag/game_version'));
+    var res = await http
+        .get(Uri.parse('https://api.modrinth.com/v2/tag/game_version'));
 
     List allMCversions = jsonDecode(utf8.decode(res.bodyBytes));
     List<String> return_value = [];
@@ -147,27 +154,25 @@ class ModrinthApi implements Api {
     return return_value;
   }
 
-    @override
+  @override
   Future<Map> getMMLVersion(
-       String instanceName,) async {
-   late ModloaderVersion modloaderVersion;
-   late Modloader modloader;
+    String instanceName,
+  ) async {
+    late ModloaderVersion modloaderVersion;
+    late Modloader modloader;
     String destination =
         '${await getInstancePath()}\\$instanceName\\modrinth.index.json';
     Map depend =
         (jsonDecode(await File(destination).readAsString()))["dependencies"];
-   
-
 
     if (depend["fabric-loader"] != null) {
       modloader = Fabric();
-        modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
-    }else if (depend["forge"] != null) {
-        modloader = Forge();
-       modloaderVersion = ModloaderVersion.parse(depend["forge"]);
+      modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
+    } else if (depend["forge"] != null) {
+      modloader = Forge();
+      modloaderVersion = ModloaderVersion.parse(depend["forge"]);
     }
 
- 
     return {"modloader": modloader, "modloaderVersion": modloaderVersion};
   }
 
@@ -189,7 +194,56 @@ class ModrinthApi implements Api {
         original: modpackData);
   }
 
+  Future<List> _getMultipleVersion(List<dynamic> verisons) async {
+    var res = await http
+        .get(Uri.parse('https://api.modrinth.com/v2/versions?ids=${jsonEncode(verisons)}'));
+    // TODO: implement getModpack
+    return jsonDecode(utf8.decode(res.bodyBytes));
+  }
 
+      Future<Map<String, dynamic>> _getModpack(String id) async {
+    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
+    return jsonDecode(utf8.decode(res.bodyBytes));
+  }
+
+
+
+  @override
+  Future<DUMF> getDUMF(Map modpackData) async {
+    List<UMF> versions = [];
+
+    modpackData =await _getModpack(modpackData["project_id"]);
+    List rawVersion = await _getMultipleVersion(modpackData["versions"]);
+
+    for (Map version in rawVersion){
+  versions.add(UMF(
+          icon: modpackData["icon_url"],
+          MCVersion: version["game_versions"].last,
+          modloader: Utils.listTOListString(version["loaders"]),
+          name: version["name"].toString(),
+          description: modpackData["description"].toString(),
+          downloads: modpackData["downloads"],
+          original: version));
+    }
+   versions.sort((a, b) {
+    if(Version.parse(a.MCVersion!) > Version.parse(b.MCVersion!) ) return -1;
+    if(Version.parse(a.MCVersion!) < Version.parse(b.MCVersion!) ) return 1;
+    if(Version.parse(a.MCVersion!) == Version.parse(b.MCVersion!) ) return 0;
+    throw "cannot parse Version";
+   },);
+  
+    return DUMF(
+      name: modpackData["title"].toString(),
+      author: modpackData["author"].toString(),
+      description: modpackData["description"].toString(),
+      downloads: modpackData["downloads"],
+      likes: modpackData["follows"],
+      categories: modpackData["categories"],
+      icon: modpackData["icon_url"],
+      versions: versions,
+      original: modpackData,
+    );
+  }
 
   @override
   getTitlename() {

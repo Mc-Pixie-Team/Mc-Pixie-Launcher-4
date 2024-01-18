@@ -56,6 +56,7 @@ class _InstalledCardState extends State<InstalledCard> {
   }
 
   Widget iconhandler() {
+    print("icon: ${widget.modpackData.icon}");
     if (widget.modpackData.icon != null) {
       return FadeInImage.memoryNetwork(
           fit: BoxFit.cover, placeholder: kTransparentImage, image: widget.modpackData.icon!);

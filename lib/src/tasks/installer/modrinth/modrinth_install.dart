@@ -67,8 +67,12 @@ class ModrinthInstaller {
 
   install( {required Map modpackData, required String instanceName, Version? localversion}) async {
     
-    Map modpackproject = await getModpack(modpackData["project_id"]);
+
+    if(modpackData["name"] == null) {
+          Map modpackproject = await getModpack(modpackData["project_id"]);
     modpackData = await getModpackVersion( (modpackproject["versions"] as List).last);
+    }
+
 
     _state = MainState.downloadingMods;
     print("downloading mods");
@@ -161,19 +165,12 @@ class ModrinthInstaller {
 
     for (var file in files) {
       // print(file["url"]);
-
   
-     
      String filepath = '${await getTempCommandPath()}\\$instanceName';
       String destination = '${await getInstancePath()}\\$instanceName';
 
-
-
-
-
       if (file["filename"].split('.').last == 'mrpack') {
         Downloader _downloader =  Downloader(file["url"],path.join(filepath, file["filename"]) );
-        print(path.join(filepath, file["filename"]));
         await _downloader.startDownload(onProgress: (p0) => _progress = p0,);
 
         await _downloader.unzip(deleteOld: true);

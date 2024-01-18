@@ -47,10 +47,12 @@ class Version {
       }
       return isSnapshotNewer(various!, other.various!);
     }
+  
 
     if (release != other.release) return release.compareTo(other.release);
     if (major != other.major) return major.compareTo(other.major);
-    if (minor == null) return 0;
+    minor ??= 0;
+    other.minor ??= 0;
     if (minor != other.minor) return (minor as int).compareTo(other.minor as num);
     return 0;
   }

@@ -44,15 +44,15 @@ class _ModListPageState extends State<ModListPage> {
   Future<List> get modpacklistfuture async {
     print("get modrinth future");
     var returntype = await _handler.getModpackList();
-    Future.delayed(Duration(milliseconds: 200)).then((value) {
-      _scrollController.addListener(() async {
-        if (_scrollController.position.pixels >=
-            (_scrollController.position.maxScrollExtent - 400)) {
-          print('new');
-          await getMoreData();
-        }
-      });
-    });
+    // Future.delayed(Duration(milliseconds: 200)).then((value) {
+    //   _scrollController.addListener(() async {
+    //     if (_scrollController.position.pixels >=
+    //         (_scrollController.position.maxScrollExtent - 400)) {
+    //       print('new');
+    //       await getMoreData();
+    //     }
+    //   });
+    // });
     return returntype;
   }
 

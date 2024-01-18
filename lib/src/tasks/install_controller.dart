@@ -47,6 +47,7 @@ class InstallController with ChangeNotifier {
   static int instances = 0;
 
   void start() async {
+
     print('start');
 
     mainstate = MainState.fetching;
@@ -113,6 +114,8 @@ class InstallController with ChangeNotifier {
     notifyListeners();
     setUIChanges();
 
+    print(modpackData.icon);
+  
   ///To show the fetching animation
    // await Future.delayed(Duration(milliseconds: 300));
 

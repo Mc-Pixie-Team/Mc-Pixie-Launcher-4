@@ -223,4 +223,13 @@ class Utils {
 
     return mavenlist[0] + "/" + mavenlist[1];
   }
+
+  static List<String> listTOListString(List<dynamic> list) {
+      List<String> exp = [];
+
+      for (var item in list) {
+        exp.add(item.toString());
+      }
+      return exp;
+  }
 }

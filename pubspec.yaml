@@ -66,6 +66,7 @@ dependencies:
   smooth_list_view: ^1.0.4
   figma_squircle: ^0.5.3
   background_downloader: ^8.0.4
+  shimmer_animation: ^2.1.0+1
       
 
 

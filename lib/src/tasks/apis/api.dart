@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 
 abstract class Api {
@@ -95,6 +96,9 @@ abstract class Api {
 
 
   UMF convertToUMF(Map modpackData) {
+    throw Exception("Do not call the normal API class, this is just a Template function!");
+  }
+  Future<DUMF> getDUMF(Map modpackData) {
     throw Exception("Do not call the normal API class, this is just a Template function!");
   }
 

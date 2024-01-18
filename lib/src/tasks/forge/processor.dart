@@ -121,7 +121,7 @@ class Processor with ChangeNotifier {
 
       String _args = await _checkkeys(current["args"], install_profile["data"], version, modloaderVersion);
 
-      final javaPath = Java.getJavaJdk(version);
+      final javaPath = Java.getJavaJdk(Version(1, 12, 2));
 
       String command = '$javaPath -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';
 

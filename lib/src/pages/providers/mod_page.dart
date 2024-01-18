@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings, unnecessary_cast
 
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
+import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
@@ -8,6 +12,8 @@ import 'package:mclauncher4/src/widgets/file_table/file_table.dart';
 import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as divider;
+import 'package:flutter/foundation.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ModPage extends StatefulWidget {
   UMF modpackData;
@@ -19,10 +25,52 @@ class ModPage extends StatefulWidget {
 }
 
 class _ModPageState extends State<ModPage> {
+  DUMF? details;
+  bool isdisposed = false;
+  Isolate? isolate;
+
+  static inIsolate(List args) async {
+    DUMF dumf = await ModrinthApi().getDUMF(args[0]);
+    Isolate.exit(args[1], dumf);
+  }
+
+  createIsolate() async {
+    final resultPort = ReceivePort();
+
+    isolate = await Isolate.spawn(
+        inIsolate, [widget.modpackData.original, resultPort.sendPort]);
+
+    resultPort.listen((message) {
+      setState(() {
+        details = message;
+      });
+    });
+  }
+
   @override
   void initState() {
-    print("init");
+    createIsolate();
+
+//    Future c = compute(ModrinthApi().getDUMF, widget.modpackData.original);
+//     print("init");
+// c.then((value) {
+//   if(isdisposed) return;
+//       setState(() {
+//            details = value;
+//       });
+
+//     });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    isdisposed = true;
+    if (isolate != null) {
+      isolate!.kill();
+    }
+    super.dispose();
   }
 
   @override
@@ -82,12 +130,11 @@ class _ModPageState extends State<ModPage> {
                                   color: Theme.of(context).colorScheme.primary),
                         ),
                         Text(
-                          
                           widget.modpackData.name!,
                           style:
                               Theme.of(context).typography.black.displaySmall,
-                                maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(
                           height: 20,
@@ -136,7 +183,11 @@ class _ModPageState extends State<ModPage> {
               const SizedBox(
                 height: 30,
               ),
-              Expanded(child: FileTable())
+              Expanded(
+                  child:  
+                           FileTable(
+                              details: details,
+                            ))
             ]),
           )
         ],

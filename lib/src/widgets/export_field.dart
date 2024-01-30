@@ -28,7 +28,7 @@ class _ExportFieldState extends State<ExportField> {
   TextEditingController textEditingController_2 = TextEditingController();
   ImportExportController exportController = ImportExportController();
 
-  Future<Directory> get getModpackDir async => Directory(await getInstancePath() + "\\${widget.processId}");
+  Future<Directory> get getModpackDir async => Directory( getInstancePath() + "\\${widget.processId}");
 
   onPressed() async {
     print(isexporting);

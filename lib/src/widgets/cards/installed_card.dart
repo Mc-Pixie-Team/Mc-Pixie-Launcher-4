@@ -12,6 +12,7 @@ import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
 import 'package:mclauncher4/src/widgets/export_field.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:path/path.dart' as path;
 
 class InstalledCard extends StatefulWidget {
   final MainState state;
@@ -63,9 +64,11 @@ class _InstalledCardState extends State<InstalledCard> {
     }
 
     return Image.memory(
-      File("${getInstancePathSync()}\\${widget.processId}\\icon.png").readAsBytesSync(),
+      File(path.join(getInstancePath(), widget.processId, "icon.png")).readAsBytesSync(),
       gaplessPlayback: true,
     );
+    
+    
   }
 
   onExport() {

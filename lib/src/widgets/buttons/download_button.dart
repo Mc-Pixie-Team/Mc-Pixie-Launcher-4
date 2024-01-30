@@ -53,21 +53,21 @@ class _DownloadButtonState extends State<DownloadButton> {
                 duration: Duration(milliseconds: 200),
                 curve: Curves.easeOut,
                 opacity: _isInstalled ? 1.0 : 0.0,
-                child: SvgButton.asset('assets\\svg\\play-icon.svg', onpressed: _onPressed)),
+                child: SvgButton.asset('assets/svg/play-icon.svg', onpressed: _onPressed)),
           ),
           Center(
             child: AnimatedOpacity(
                 duration: Duration(milliseconds: 200),
                 curve: Curves.easeOut,
                 opacity: _isRunning ? 1.0 : 0.0,
-                child: SvgButton.asset('assets\\svg\\cancel-icon.svg', onpressed: _onPressed)),
+                child: SvgButton.asset('assets/svg/cancel-icon.svg', onpressed: _onPressed)),
           ),
           Center(
             child: AnimatedOpacity(
                 duration: Duration(milliseconds: 200),
                 curve: Curves.easeOut,
                 opacity: _isNotInstalled ? 1.0 : 0.0,
-                child: SvgButton.asset('assets\\svg\\download-icon.svg', onpressed: _onPressed)),
+                child: SvgButton.asset('assets/svg/download-icon.svg', onpressed: _onPressed)),
           ),
           Positioned.fill(
             child: AnimatedOpacity(

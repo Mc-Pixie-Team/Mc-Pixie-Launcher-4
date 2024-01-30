@@ -57,7 +57,7 @@ class _FileTableItemState extends State<FileTableItem> {
                 decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(4)),
-                child: Center(child: SizedBox(height: 16, width: 16, child: SvgPicture.asset('assets\\svg\\download-icon.svg', color: Colors.white,),),),
+                child: Center(child: SizedBox(height: 16, width: 16, child: SvgPicture.asset('assets/svg/download-icon.svg', color: Colors.white,),),),
               )),
           SizedBox(
             width: 10,

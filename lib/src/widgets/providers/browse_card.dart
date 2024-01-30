@@ -153,7 +153,7 @@ class _BrowseCardState extends State<BrowseCard>
                                 Row(
                                   children: [
                                     SvgPicture.asset(
-                                      'assets\\svg\\heart-icon.svg',
+                                      'assets/svg/heart-icon.svg',
                                       width: 12,
                                     ),
                                     SizedBox(
@@ -180,7 +180,7 @@ class _BrowseCardState extends State<BrowseCard>
                                       width: 15,
                                     ),
                                     SvgPicture.asset(
-                                      'assets\\svg\\download-full-icon.svg',
+                                      'assets/svg/download-full-icon.svg',
                                       width: 14,
                                     ),
                                     SizedBox(
@@ -278,7 +278,7 @@ class _BrowseCardState extends State<BrowseCard>
                                               onCancel: widget.onCancel,
                                               onDownload: widget.onDownload),
                                           SvgButton.asset(
-                                              'assets\\svg\\network-icon.svg',
+                                              'assets/svg/network-icon.svg',
                                               onpressed: () {})
                                         ]),
                                   ),

@@ -65,8 +65,8 @@ dependencies:
   dyn_mouse_scroll: ^1.0.7
   smooth_list_view: ^1.0.4
   figma_squircle: ^0.5.3
-  background_downloader: ^8.0.4
   shimmer_animation: ^2.1.0+1
+  show_fps: ^1.0.6
       
 
 
@@ -94,20 +94,20 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets\images\backgound_blue.jpg
-    - assets\svg\download-icon.svg
-    - assets\svg\download-full-icon.svg
-    - assets\svg\heart-icon.svg
-    - assets\svg\folder-icon.svg
-    - assets\svg\network-icon.svg
-    - assets\svg\add-icon.svg
-    - assets\svg\dropdown-icon.svg
-    - assets\svg\filter-icon.svg
-    - assets\svg\play-icon.svg
-    - assets\svg\cancel-icon.svg
-    - assets\svg\trash-icon.svg
-    - assets\svg\export-import-icon.svg
-    - assets\redirect.html
+    - assets/images/backgound_blue.jpg
+    - assets/svg/download-icon.svg
+    - assets/svg/download-full-icon.svg
+    - assets/svg/heart-icon.svg
+    - assets/svg/folder-icon.svg
+    - assets/svg/network-icon.svg
+    - assets/svg/add-icon.svg
+    - assets/svg/dropdown-icon.svg
+    - assets/svg/filter-icon.svg
+    - assets/svg/play-icon.svg
+    - assets/svg/cancel-icon.svg
+    - assets/svg/trash-icon.svg
+    - assets/svg/export-import-icon.svg
+    - assets/redirect.html
      
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -43,7 +43,7 @@ class _FileTableShiningState extends State<FileTableShining>
         child: child,
       ),
       child: Container(
-        height: 46,
+        height: 52,
         width: double.infinity,
         margin: EdgeInsets.only(left: 28, right: 28),
         decoration: ShapeDecoration(
@@ -63,8 +63,8 @@ class _FileTableShiningState extends State<FileTableShining>
               width: 28,
             ),
             Container(
-                width: 29,
-                height: 29,
+                width: 33,
+                height: 33,
                 decoration: BoxDecoration(
                     color: Color.fromARGB(255, 59, 59, 59),
                     borderRadius: BorderRadius.circular(4))),

@@ -161,7 +161,7 @@ class ModrinthApi implements Api {
     late ModloaderVersion modloaderVersion;
     late Modloader modloader;
     String destination =
-        '${await getInstancePath()}\\$instanceName\\modrinth.index.json';
+        '${ getInstancePath()}\\$instanceName\\modrinth.index.json';
     Map depend =
         (jsonDecode(await File(destination).readAsString()))["dependencies"];
 

@@ -124,7 +124,7 @@ class _ModListPageState extends State<ModListPage> {
                 child: Dropdownmenu(
                   isRemovalIcon: true,
                   child: SvgPicture.asset(
-                    'assets\\svg\\cancel-icon.svg',
+                    'assets/svg/cancel-icon.svg',
                     color: Theme.of(context).textTheme.bodySmall!.color,
                   ),
                   onremove: (text) {
@@ -163,8 +163,9 @@ class _ModListPageState extends State<ModListPage> {
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
             color: Theme.of(context).colorScheme.surfaceVariant,
-            borderRadius: BorderRadius.circular(18)),
+        ),
         child: Stack(children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.start,

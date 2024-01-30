@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
-import 'package:background_downloader/background_downloader.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
@@ -43,7 +42,7 @@ class ModrinthInstaller {
     late ModloaderVersion modloaderVersion;
    late Modloader modloader;
     String destination =
-        '${await getInstancePath()}\\$processId\\modrinth.index.json';
+       path.join(getInstancePath(), processId, "modrinth.index.json");
     Map depend =
         (jsonDecode(await File(destination).readAsString()))["dependencies"];
    
@@ -112,7 +111,7 @@ class ModrinthInstaller {
       
     }
 
-    String destination = '${await getInstancePath()}\\$instanceName\\modrinth.index.json';
+    String destination = path.join(getInstancePath(), instanceName, "modrinth.index.json");
     Map depend = (jsonDecode(await File(destination).readAsString()))["dependencies"];
     Version version = Version.parse(depend['minecraft']);
 
@@ -127,7 +126,7 @@ class ModrinthInstaller {
           "Could not find a mod loader in modrinth.index.json! \n is the file corupted? Please check the formatting");
     }
 
-    String mfilePath = '${await getworkpath()}\\versions\\$version\\$version.json';
+    String mfilePath = path.join(getworkpath(), "versions", version.toString(), "$version.json");
 
     modloader!.addListener(() {
       _progress = modloader!.mainprogress;
@@ -138,7 +137,7 @@ class ModrinthInstaller {
     });
 
     ///check if minecraft is installed
-    if (_checkForInstall('${await getworkpath()}\\versions\\$version\\$version.json')) {
+    if (_checkForInstall( mfilePath)) {
       _state = MainState.downloadingMinecraft;
       //install minecraft
       print('need to install minecraft: $version');
@@ -166,8 +165,8 @@ class ModrinthInstaller {
     for (var file in files) {
       // print(file["url"]);
   
-     String filepath = '${await getTempCommandPath()}\\$instanceName';
-      String destination = '${await getInstancePath()}\\$instanceName';
+     String filepath = path.join(getTempCommandPath(), instanceName);
+      String destination = path.join(getInstancePath(), instanceName);
 
       if (file["filename"].split('.').last == 'mrpack') {
         Downloader _downloader =  Downloader(file["url"],path.join(filepath, file["filename"]) );
@@ -175,13 +174,13 @@ class ModrinthInstaller {
 
         await _downloader.unzip(deleteOld: true);
 
-        await Utils.copyDirectory(source: Directory('$filepath\\overrides'), destination: Directory(destination));
-        await Utils.copyFile(source: File('$filepath\\modrinth.index.json'), destination: File('$destination\\modrinth.index.json'));
+        await Utils.copyDirectory(source: Directory(path.join(filepath, "overrides")), destination: Directory(destination));
+        await Utils.copyFile(source: File(path.join(filepath, "modrinth.index.json")), destination: File(path.join(destination, "modrinth.index.json")));
 
       } else if (file["url"].split('.').last == 'jar') {
         if (!(file["primary"])) continue;
 
-        String filepath2 = destination + '\\mods\\${file["filename"]}';
+        String filepath2 = path.join(destination, 'mods', file["filename"]);
         Downloader _downloader =  Downloader(file["url"], filepath2);
 
        await _downloader.startDownload();

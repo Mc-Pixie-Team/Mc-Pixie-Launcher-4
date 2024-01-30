@@ -10,17 +10,17 @@ class Utils {
   static extractNativesfromjar(String pathfrom, String version) async {
     List<int> _bytes = [];
 
-    _bytes = await File("${await getlibarypath()}\\libraries\\$pathfrom").readAsBytes();
+    _bytes = await File(path.join(getlibarypath(), "libraries", pathfrom)).readAsBytes();
     final archive = ZipDecoder().decodeBytes(_bytes);
     for (var data in archive) {
       final filename = data.name;
       if (data.isFile) {
         final datadir = data.content as List<int>;
-        File(await getbinpath() + "\\$version\\" + filename)
+        File(path.join(getbinpath(), version.toString(), filename))
           ..createSync(recursive: true)
           ..writeAsBytesSync(datadir);
       } else {
-        Directory(await getbinpath() + "\\$version\\" + filename).create(recursive: true);
+        Directory(path.join(getbinpath(), version.toString(), filename)).create(recursive: true);
       }
     }
   }
@@ -35,11 +35,11 @@ class Utils {
       final filename = data.name;
       if (data.isFile) {
         final datadir = data.content as List<int>;
-        File(filePath + '\\' + filename)
+        File(path.join(filePath, filename))
           ..createSync(recursive: true)
           ..writeAsBytesSync(datadir);
       } else {
-        Directory(filePath + '\\' + filename).create(recursive: true);
+        Directory(path.join(filePath, filename)).create(recursive: true);
       }
     }
     _bytes = [];
@@ -55,11 +55,11 @@ class Utils {
       final filename = data.name;
       if (data.isFile) {
         final datadir = data.content as List<int>;
-       File(exportfilePath + '\\' + filename)
+       File(path.join(exportfilePath, filename))
           ..createSync(recursive: true)
           ..writeAsBytesSync(datadir);
       } else {
-        Directory(exportfilePath + '\\' + filename).create(recursive: true);
+        Directory(path.join(exportfilePath, filename)).create(recursive: true);
       }
     }
     archive = null;
@@ -102,8 +102,7 @@ class Utils {
 
   static extractForgeInstaller(List<int> _bytes, Version version, ModloaderVersion modloaderVersion,
       [String? additional]) async {
-    String filepath = await getTempForgePath() +
-        "\\${version.toString()}\\${modloaderVersion.toString()}\\${version.toString()}-${modloaderVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar";
+    String filepath = path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), "${version.toString()}-${modloaderVersion.toString()}${additional == null ? "" : "-" + additional}-installer.jar");
 
     String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
@@ -114,11 +113,11 @@ class Utils {
       final filename = data.name;
       if (data.isFile) {
         final datadir = data.content as List<int>;
-        File(await getTempForgePath() + "\\${version.toString()}\\${modloaderVersion.toString()}\\" + filename)
+        File(path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), filename))
           ..createSync(recursive: true)
           ..writeAsBytesSync(datadir);
       } else {
-        Directory(await getTempForgePath() + "\\${version.toString()}\\${modloaderVersion.toString()}\\" + filename)
+        Directory(path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), filename))
             .create(recursive: true);
       }
     }

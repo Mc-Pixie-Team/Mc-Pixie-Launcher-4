@@ -4,11 +4,13 @@ import 'src/app.dart';
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
+import 'package:mclauncher4/src/tasks/utils/path.dart';
 
-void main() {
+void main() async{
   supabaseHelpers().init();
   DiscordRP().initCS("1144740158374158366");
    Paint.enableDithering = true;
+  await Path.init();
   runApp(const McLauncher());
   doWhenWindowReady(() {
     final win = appWindow;

@@ -32,17 +32,17 @@ class Fabric with ChangeNotifier implements Modloader {
 
   @override
   getSafeDir(Version version, ModloaderVersion modloaderVersion) async {
-    return "${await getworkpath()}\\versions\\fabric-loader-$modloaderVersion-$version\\fabric-loader-$modloaderVersion-$version.json";
+    return path.join(getworkpath(), "versions", "fabric-loader-$modloaderVersion-$version", "fabric-loader-$modloaderVersion-$version.json");
   }
 
 
   @override
   Future<Process> run(String instanceName, Version version, ModloaderVersion modloaderVersion) async {
     Map vanillaVersionJson =
-        (jsonDecode(await File("${await getworkpath()}\\versions\\$version\\$version.json").readAsString()));
+        (jsonDecode(await File(path.join(getworkpath(), "versions", version.toString(), "$version.json")).readAsString()));
 
     Map versionJson = (jsonDecode(await File(
-            "${await getworkpath()}\\versions\\fabric-loader-$modloaderVersion-$version\\fabric-loader-$modloaderVersion-$version.json")
+            path.join(getworkpath(), "versions", "fabric-loader-$modloaderVersion-$version", "fabric-loader-$modloaderVersion-$version.json"))
         .readAsString()));
 
     List testlib = [];
@@ -63,7 +63,6 @@ class Fabric with ChangeNotifier implements Modloader {
     List<String> launchcommand = await Minecraft().getlaunchCommand(
       instanceName,
       vanillaVersionJson,
-      "windows",
       version,
       modloaderVersion,
     );
@@ -79,7 +78,7 @@ class Fabric with ChangeNotifier implements Modloader {
     print(exec);
 
     var result =
-        await Process.start(exec, launchcommand, workingDirectory: '${await getInstancePath()}\\$instanceName');
+        await Process.start(exec, launchcommand, workingDirectory: path.join(getInstancePath(), instanceName));
 
     stdout.addStream(result.stdout);
     stderr.addStream(result.stderr);
@@ -119,7 +118,7 @@ class Fabric with ChangeNotifier implements Modloader {
 
   _createVersionDir(Map versionJson, Version version, ModloaderVersion modloaderVersion) async {
     String filepath =
-        "${await getworkpath()}\\versions\\fabric-loader-$modloaderVersion-$version\\fabric-loader-$modloaderVersion-$version.json";
+       path.join(getworkpath(), "versions", "fabric-loader-$modloaderVersion-$version", "fabric-loader-$modloaderVersion-$version.json");
     String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
     await File(filepath).writeAsString(jsonEncode(versionJson));

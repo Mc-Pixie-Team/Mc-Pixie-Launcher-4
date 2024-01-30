@@ -35,17 +35,18 @@ class _FileTableState extends State<FileTable> {
       Expanded(
           child: Stack(children: [
         
-            AnimatedOpacity(opacity: versions == null ? 1: 0, duration: Duration(milliseconds: 600), child: ListView.builder(
+            AnimatedOpacity(opacity: versions == null ? 1: 0, duration: Duration(milliseconds: 600), child: versions == null ?  ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) => FileTableShining(
                       index: index,
-                    ))),
+                    )): Container() ),
             AnimatedOpacity(opacity: versions != null ? 1: 0, duration: Duration(milliseconds: 600),child: DynMouseScroll(
+               
                 animationCurve: Curves.easeOutExpo,
                 scrollSpeed: 0.4,
                 durationMS: 500,
                 builder: (context, _scrollController, physics) =>
-                    ListView.builder(
+                   versions != null ?  ListView.builder(
                         controller: _scrollController,
                         physics: physics,
                         itemCount: versions!.length,
@@ -56,7 +57,7 @@ class _FileTableState extends State<FileTable> {
                             FileTableItem(
                               index: index,
                               umf: versions![index],
-                            )))),
+                            )): Container())),
              
       ]))
     ]);

@@ -9,6 +9,8 @@ import "dart:convert";
 import "dart:io";
 import '../utils/downloads_utils.dart';
 import '../utils/path.dart';
+import 'dart:io' show Platform;
+import 'package:path/path.dart' as path;
 
 class Minecraft with ChangeNotifier {
   ClientInstallState _state = ClientInstallState.downloadingLibraries;
@@ -57,14 +59,10 @@ class Minecraft with ChangeNotifier {
   }
 
   void run(Map packagejson, String instanceName) async {
-    String os = "windows";
-    String accessToken = "3423423jdisgjsdf";
-    String username = "Fridolin";
-    String stack = "";
     List<String> valuesString = (packagejson["id"] as String).split('.');
     Version version = new Version(int.parse(valuesString[0]), int.parse(valuesString[1]), int.parse(valuesString[2]));
 
-    List<String> launchcommand = await getlaunchCommand(instanceName, packagejson, os, version);
+    List<String> launchcommand = await getlaunchCommand(instanceName, packagejson, version);
 
     print(launchcommand);
     // var tempFile = File(
@@ -78,11 +76,10 @@ class Minecraft with ChangeNotifier {
     stderr.addStream(result.stderr);
   }
 
-  Future<List<String>> getlaunchCommand(String instanceName, Map packagejson, String os, Version version,
+  Future<List<String>> getlaunchCommand(String instanceName, Map packagejson,  Version version,
       [ModloaderVersion? modloaderVersion]) async {
     List<String> launchcommand;
     Map<String, List> args;
-    String majorVer = Java.getJavaJdk(version);
 
     if (version < Version(1, 13, 0)) {
       List<String> gameArgs = (packagejson["minecraftArguments"] as String).split(" ");
@@ -90,9 +87,9 @@ class Minecraft with ChangeNotifier {
       print(gameArgs);
 
       args = await overrideArguments(["-Djava.library.path=\${natives_directory}", "-cp", "\${classpath}"], gameArgs,
-          packagejson, instanceName, os);
+          packagejson, instanceName, );
     } else {
-      args = await getArgs(packagejson, os, instanceName);
+      args = await getArgs(packagejson, instanceName);
     }
 
     print(args);
@@ -101,7 +98,7 @@ class Minecraft with ChangeNotifier {
     return launchcommand;
   }
 
-  Future<Map<String, List>> getArgs(Map packagejson, String os, String instanceName) async {
+  Future<Map<String, List>> getArgs(Map packagejson,  String instanceName) async {
     Map vanillaArgs = packagejson["arguments"];
     List<String> jvmArgs = [];
     List<String> gameArgs = [];
@@ -111,8 +108,7 @@ class Minecraft with ChangeNotifier {
       } else {
         if (chechAllowed(
           (vanillaArgs["jvm"][i]["rules"]),
-          "windows",
-          "x64",
+         
         )) {
           if (vanillaArgs["jvm"][i]["value"] is List) {
             for (var j = 0; j < vanillaArgs["jvm"][i]["value"].length; j++) {
@@ -130,39 +126,38 @@ class Minecraft with ChangeNotifier {
       } else {
         if (chechAllowed(
           (vanillaArgs["game"][i]["rules"]),
-          "windows",
-          "x64",
+        
         )) {
           gameArgs.add("${vanillaArgs["game"][i]["value"]}");
         }
       }
     }
-    return await overrideArguments(jvmArgs, gameArgs, packagejson, instanceName, os);
+    return await overrideArguments(jvmArgs, gameArgs, packagejson, instanceName, );
   }
 
   Future<Map<String, List<String>>> overrideArguments(
-      List<String> jvmArgs, List<String> gameArgs, packagejson, String instanceName, os) async {
-    MinecraftAccount? minecraftAccount = await MinecraftAccountUtils().getStandard();
-    Map minecraftToken = await MinecraftAccountUtils().reAuthenticateAndUpdateAccount(minecraftAccount!);
+      List<String> jvmArgs, List<String> gameArgs, packagejson, String instanceName, ) async {
+    MinecraftAccount? minecraftAccount;   // await MinecraftAccountUtils().getStandard();
+    Map minecraftToken = {}; // await MinecraftAccountUtils().reAuthenticateAndUpdateAccount(minecraftAccount!);
 
-    String natives_directory = "${await getworkpath()}\\bin\\${packagejson["id"]}";
+    String natives_directory = path.join(getworkpath(), "bin", packagejson["id"]);
     String launcher_name = "Mc-pixie";
     String launcher_version = "4";
-    String auth_player_name = minecraftAccount.username;
+    String auth_player_name = "zufgfdd"; //minecraftAccount.username;
     String version_name = packagejson["id"];
-    String game_directory = '${await getInstancePath()}\\$instanceName';
-    String assets_root = "${await getworkpath()}\\assets";
+    String game_directory = path.join(getInstancePath(), instanceName);
+    String assets_root = path.join(getworkpath(), "assets");
     String assets_index_name = packagejson["assets"];
-    String auth_uuid = minecraftAccount.uuid;
-    String auth_access_token = minecraftToken["authToken"];
+    String auth_uuid = "9cf90db6-1a4a-407e-a93b-a831e3ef45a2";// minecraftAccount.uuid;
+    String auth_access_token = minecraftToken["authToken"] ?? "dfdffdfd";
 
     String clientid = "";
     String auth_xuid = "";
     String user_type = "mojang";
     String version_type = "Pixie";
-    String classpath_separator = "${(os == "windows") ? ";" : ":"}";
+    String classpath_separator = "${Platform.isWindows ? ";" : ":"}";
 
-    String library_directory = "${await getlibarypath()}\\libraries";
+    String library_directory =  path.join(getlibarypath(), "libraries");
     String user_properties = '{}';
     print(jvmArgs);
     print(gameArgs);
@@ -173,8 +168,8 @@ class Minecraft with ChangeNotifier {
           .replaceAll("\${natives_directory}", natives_directory)
           .replaceAll("\${launcher_name}", launcher_name)
           .replaceAll("\${launcher_version}", launcher_version)
-          .replaceAll("\${classpath}", '${await getCP(packagejson, os)}')
-          .replaceAll("\${auth_player_name}", '"${await getCP(packagejson, os)}"')
+          .replaceAll("\${classpath}", '${await getCP(packagejson)}')
+          .replaceAll("\${auth_player_name}", '"${await getCP(packagejson)}"')
           .replaceAll("\${library_directory}", library_directory)
           .replaceAll("\${classpath_separator}", classpath_separator)
           .replaceAll("\${version_name}", version_name);
@@ -207,34 +202,63 @@ class Minecraft with ChangeNotifier {
     };
   }
 
-  Future<String> getCP(Map packagejson, String os) async {
-    String path = "${await getlibarypath()}\\libraries";
+  Future<String> getCP(Map packagejson) async {
+    String libpath = path.join(getlibarypath(), "libraries");
     List libraries = packagejson["libraries"];
+    late String os;
+   
+    if (Platform.isMacOS) {
+      os = "osx";
+    } else if (Platform.isWindows) {
+      os = "windows";
+    }else if (Platform.isLinux) {
+      os = "linux";
+    }else {
+      throw "plattform not supported!";
+    }
 
     String stack =
-        "${await getworkpath()}\\versions\\${packagejson["id"]}\\${packagejson["id"]}.jar${(os == "windows") ? ";" : ":"}";
+        '${path.join(getworkpath(), "versions",packagejson["id"],packagejson["id"] +".jar")}${(os == "windows") ? ";" : ":"}';
+
     for (var i = 0; i < libraries.length; i++) {
       Map libary = libraries[i];
       if (libary["rules"] == null) {
+        
       } else if (chechAllowed(
             libary["rules"],
-            os,
-            "x64",
+           
           ) ==
           false) {
         continue;
       }
       if (libary["natives"] != null && libary["natives"][os] != null) {
         stack +=
-            "$path/${libary["downloads"]["classifiers"][libary["natives"][os].replaceAll("\${arch}", "64")]["path"]}${(os == "windows") ? ";" : ":"}";
+            "$libpath/${libary["downloads"]["classifiers"][libary["natives"][os].replaceAll("\${arch}", "64")]["path"]}${(os == "windows") ? ";" : ":"}";
       }
       if (libary["downloads"]["artifact"] == null) continue;
-      stack += "$path/${libary["downloads"]["artifact"]["path"]}${(os == "windows") ? ";" : ":"}";
+      stack += "$libpath/${libary["downloads"]["artifact"]["path"]}${(os == "windows") ? ";" : ":"}";
     }
     return stack;
   }
 
-  bool chechAllowed(List rules, String osName, String osArch) {
+  bool chechAllowed(List rules) {
+
+    late  String os;
+    late  String osArch;
+
+if (Platform.isMacOS) {
+      os = "osx";
+      osArch = "arm";
+    } else if (Platform.isWindows) {
+      os = "windows";
+      osArch = "x86";
+    }else if (Platform.isLinux) {
+      os = "linux";
+      osArch = "x86";
+    }else {
+      throw "plattform not supported!";
+    }
+
     if (rules.isEmpty) {
       return true;
     }
@@ -244,13 +268,13 @@ class Minecraft with ChangeNotifier {
     }
 
     if (rules.length == 1) {
-      if (rules.last["action"] == "allow" && rules.last["os"]["name"] == osName) {
+      if (rules.last["action"] == "allow" && rules.last["os"]["name"] == os) {
         return true;
       }
       return false;
     }
 
-    if (rules.last["action"] == "disallow" && rules.last["os"]["name"] == osName) {
+    if (rules.last["action"] == "disallow" && rules.last["os"]["name"] == os) {
       return false;
     }
 

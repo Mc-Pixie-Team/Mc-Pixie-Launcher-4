@@ -32,7 +32,7 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
             width: double.infinity,
             clipBehavior: Clip.antiAlias,
             child: Image.asset(
-              'assets\\images\\backgound_blue.jpg',
+              'assets/images/backgound_blue.jpg',
               fit: BoxFit.cover,
             ),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: Color.fromARGB(0, 27, 124, 204))),

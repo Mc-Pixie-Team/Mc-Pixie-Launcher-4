@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show Platform, exit;
 import 'dart:ui';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/home_page.dart';
@@ -7,9 +7,13 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
+import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
+import 'tasks/minecraft/minecraft_install.dart';
+import 'tasks/utils/downloads_utils.dart';
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +24,31 @@ import 'widgets/divider.dart' as Div;
 import 'package:animations/animations.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 import 'dart:math' as math;
+import 'package:show_fps/show_fps.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
   Set<PointerDeviceKind> get dragDevices =>
       {PointerDeviceKind.touch, PointerDeviceKind.trackpad};
+
+
+ @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    switch (getPlatform(context)) {
+      case TargetPlatform.iOS:
+      
+      case TargetPlatform.android:
+        return const BouncingScrollPhysics();
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return const ClampingScrollPhysics();
+    }
+    
+  }
+  
 }
 
 class McLauncher extends StatelessWidget {
@@ -39,20 +62,21 @@ class McLauncher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
+        
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,
             typography: Typography(black: blackTextSchemes),
+            
             scrollbarTheme: ScrollbarThemeData()),
         darkTheme: ThemeData(
             useMaterial3: true,
             colorScheme: darkColorScheme,
             typography: Typography(black: blackTextSchemes)),
         themeMode: ThemeMode.dark,
-        home: MainPage(),
+        home:  MainPage(),
         builder: (context, child) => Stack(children: [
               child!,
               SizedBox(
@@ -117,6 +141,7 @@ class _MainPageState extends State<MainPage> {
   }
 
       RectTween _createRectTween(Rect? begin, Rect? end) {
+        
     return MaterialRectArcTween(begin: begin, end: end);
   }
 
@@ -129,7 +154,7 @@ class _MainPageState extends State<MainPage> {
           return PageTransitionSwitcher(
             duration: const Duration(milliseconds: 400),
             reverse: pageIndex < pageIndex_old,
-            child: Container(key: UniqueKey(), child: _pages[pageIndex]),
+            child:  Container(  key: UniqueKey(), child: _pages[pageIndex]),
             transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
                 SharedAxisTransition(
               animation: primaryAnimation,
@@ -164,11 +189,15 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
-/*           await Minecraft().install('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json'); */
-          // Map res = await Download().getJson('https://piston-meta.mojang.com/v1/packages/ed5d8789ed29872ea2ef1c348302b0c55e3f3468/1.7.10.json');
-          // Minecraft().run(res, 'C:\\Users\\ancie\\Documents\\PixieLauncherInstances\\debug\\libraries');
+          print(getTempForgePath());
+        //   print("start install");
+        // await Minecraft().install(Version(1,20,4)); 
+        //   print("start url");
+        //    Map res = await DownloadUtils().getJson(Version(1,20,4));
+        //    print("start run");
+        //    Minecraft().run(res, '4656567332');
 
-          supabaseHelpers().signoutUser();
+       //   supabaseHelpers().signoutUser();
 
           //  DiscordRP().initCS();
           // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
@@ -194,7 +223,7 @@ class _MainPageState extends State<MainPage> {
                 child: Column(
                   children: [
                     Container(
-                      height: 28,
+                      height: Platform.isMacOS ? 40 : 28,
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 30),
@@ -393,7 +422,7 @@ class WindowButtons extends StatelessWidget {
           onPressed: () {
             print('close');
             exit(0);
-          },
+          }
         ),
       ],
     );

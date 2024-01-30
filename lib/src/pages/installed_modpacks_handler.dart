@@ -12,7 +12,7 @@ import 'package:mclauncher4/src/tasks/utils/path.dart';
 
 class Modpacks {
   static generateManifest() async {
-    File manifest = File("${await getInstancePath()}\\manifest.json");
+    File manifest = File("${ getInstancePath()}/manifest.json");
     if (manifest.existsSync()) return;
     manifest.createSync(recursive: true);
     manifest.writeAsStringSync("[]");
@@ -20,7 +20,8 @@ class Modpacks {
 
   static ValueNotifierList<Widget> globalinstallContollers = ValueNotifierList([]);
   static Future<List<Widget>> getPacksformManifest() async {
-    List manifest = jsonDecode(await File('${await getInstancePath()}/manifest.json').readAsString());
+    
+    List manifest = jsonDecode(await File('${ getInstancePath()}/manifest.json').readAsString());
 
     return List.generate(manifest.length, (index) {
       Api _handler = ApiHandler().getApi(manifest[index]["provider"]);

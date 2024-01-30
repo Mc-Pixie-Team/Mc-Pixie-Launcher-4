@@ -233,7 +233,7 @@ class _DropdownmenuState extends State<Dropdownmenu> with TickerProviderStateMix
                       Transform.rotate(
                         angle: (-1.59 * _animation.value),
                         child: SvgPicture.asset(
-                          'assets\\svg\\dropdown-icon.svg',
+                          'assets/svg/dropdown-icon.svg',
                           color: Color.fromARGB(255, 148, 148, 148),
                         ),
                       ),
@@ -267,12 +267,12 @@ class _DropdownmenuState extends State<Dropdownmenu> with TickerProviderStateMix
                               onTap: () => removeElement(),
                               child: widget.child ??
                                   SvgPicture.asset(
-                                    'assets\\svg\\filter-icon.svg',
+                                    'assets/svg/filter-icon.svg',
                                     color: Theme.of(context).textTheme.bodySmall!.color,
                                   ))
                           : widget.child ??
                               SvgPicture.asset(
-                                'assets\\svg\\filter-icon.svg',
+                                'assets/svg/filter-icon.svg',
                                 color: Theme.of(context).textTheme.bodySmall!.color,
                               ),
                       SizedBox(

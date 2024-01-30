@@ -17,13 +17,29 @@ class DownloadUtils with ChangeNotifier {
   double _progress = 0.0;
   double get progress => _progress;
 
+ late String os;
+ late String arch;
   bool? isForge;
   int received = 0;
-  DownloadUtils({this.isForge});
-  String os = "windows";
-  String arch = "64";
+  DownloadUtils({this.isForge}) {
 
-  Future downloadLibaries(Map profile, [Version? version, ModloaderVersion? modloaderVersion]) async {
+    if (Platform.isMacOS) {
+      os = "osx";
+      arch = "arm64";
+    } else if (Platform.isWindows) {
+      os = "windows";
+      arch = "x86";
+    }else if (Platform.isLinux) {
+      os = "linux";
+      arch = "x86";
+    }else {
+      throw "plattform not supported!";
+    }
+  }
+ 
+
+  Future downloadLibaries(Map profile,
+      [Version? version, ModloaderVersion? modloaderVersion]) async {
     if (profile["libraries"] == null) return;
 
     List libraries = profile["libraries"];
@@ -31,11 +47,22 @@ class DownloadUtils with ChangeNotifier {
       Map current = libraries[i];
       // print(current["downloads"]["artifact"]);
 
+    if(current["rules"] != null) {
+  if (current["rules"].last["os"]["name"] == os && current["rules"].last["action"] == "disallow"){
+        print(current["name"]);
+        i++;
+        continue;
+      } 
+    }
+
+    
+
       if (current["natives"] != null && current["natives"][os] != null) {
-        await _downloadForLibraries(
-            current["downloads"]["classifiers"][current["natives"][os].replaceAll("\${arch}", arch)]);
+        await _downloadForLibraries(current["downloads"]["classifiers"]
+            [current["natives"][os].replaceAll("\${arch}", arch)]);
         await Utils.extractNativesfromjar(
-            current["downloads"]["classifiers"][current["natives"][os].replaceAll("\${arch}", arch)]["path"],
+            current["downloads"]["classifiers"]
+                [current["natives"][os].replaceAll("\${arch}", arch)]["path"],
             profile["id"]);
       }
       if (current["downloads"]["artifact"] != null) {
@@ -50,16 +77,22 @@ class DownloadUtils with ChangeNotifier {
     }
   }
 
-  _downloadForLibraries(Map current, {String? altpath, Version? version, ModloaderVersion? modloaderVersion}) async {
+  _downloadForLibraries(Map current,
+      {String? altpath,
+      Version? version,
+      ModloaderVersion? modloaderVersion}) async {
     List<int> _bytes = [];
     int total = current["size"], received = 0, receivedControll = 0;
 
     if (current["url"] == "" || current["url"] == null) {
-      if (version == null || modloaderVersion == null) throw "unable to handle version cause it empty.";
-      _bytes = await File('${await getTempForgePath()}\\$version\\$modloaderVersion\\maven\\${current["path"]}')
+      if (version == null || modloaderVersion == null)
+        throw "unable to handle version cause it empty.";
+      _bytes = await File(path.join(getTempForgePath(), version.toString(),
+              modloaderVersion.toString(), "maven", current["path"]))
           .readAsBytes();
     } else {
-      http.StreamedResponse? response = await http.Client().send(http.Request('GET', Uri.parse(current["url"])));
+      http.StreamedResponse? response = await http.Client()
+          .send(http.Request('GET', Uri.parse(current["url"])));
       await response.stream.listen((value) {
         _bytes.addAll(value);
         received += value.length;
@@ -70,8 +103,15 @@ class DownloadUtils with ChangeNotifier {
       }).asFuture();
     }
 
-    String filepath =
-        '${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\libraries\\${altpath != null ? altpath + path.basename(((current["path"] as String).replaceAll('/', '\\'))) : ((current["path"] as String).replaceAll('/', '\\'))}';
+    String filepath = path.join(
+        getDocumentsPath(),
+        "PixieLauncherInstances",
+        "debug",
+        "libraries",
+        altpath != null
+            ? altpath + path.basename(current["path"] as String)
+            : ((current["path"] as String)
+                .replaceAll('/', path.separator)));
 
     String parentDirectory = path.dirname(filepath);
 
@@ -81,25 +121,28 @@ class DownloadUtils with ChangeNotifier {
     _bytes = []; //reset;
   }
 
-  getOldUniversal(Map install_profileJson, Version version, ModloaderVersion modloaderVersion) async {
+  getOldUniversal(Map install_profileJson, Version version,
+      ModloaderVersion modloaderVersion) async {
     if (install_profileJson["install"] == null) return;
     Map install_profile = install_profileJson["install"];
-    File path = File('${await getlibarypath()}\\libraries\\${Utils.parseMaven(install_profile["path"])}');
-    print('parsing ${path.path} ');
+    File filepath = File(
+       path.join(getlibarypath(), "libraries", Utils.parseMaven(install_profile["path"])));
+    print('parsing ${filepath.path} ');
 
-    if (!(await path.exists()))
+    if (!(await filepath.exists()))
       throw "the file does not exist, mabye you called the method before you installed the libraries";
-    List<int> _bytes =
-        await File('${await getTempForgePath()}\\$version\\$modloaderVersion\\${install_profile["filePath"]}')
-            .readAsBytes();
-    await File('${await getlibarypath()}\\libraries\\${Utils.parseMaven(install_profile["path"])}')
+    List<int> _bytes = await File(
+          path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), install_profile["filePath"]))
+        .readAsBytes();
+    await File(
+           path.join(getlibarypath(), "libraries",Utils.parseMaven(install_profile["path"]) ))
         .writeAsBytes(_bytes);
   }
 
   Future<Map> getJson(Version version) async {
     late String url;
-    var minecraftManifestRES =
-        await http.get(Uri.parse('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'));
+    var minecraftManifestRES = await http.get(Uri.parse(
+        'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'));
     List minecraftManifest = jsonDecode(minecraftManifestRES.body)['versions'];
 
     for (Map versionjson in minecraftManifest) {
@@ -116,23 +159,27 @@ class DownloadUtils with ChangeNotifier {
     String mcversion = packagejson["id"];
 
     String filepath =
-        '${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\versions\\$mcversion\\$mcversion.json';
+       path.join(getDocumentsPath(), "PixieLauncherInstances", "debug", "versions", mcversion, mcversion + ".json");
 
     String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
     await File(filepath).writeAsBytes(utf8.encode(jsonEncode(packagejson)));
 
-    var clientRES = await http.get(Uri.parse(packagejson["downloads"]["client"]["url"]));
-    await File('${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\versions\\$mcversion\\$mcversion.jar')
+    var clientRES =
+        await http.get(Uri.parse(packagejson["downloads"]["client"]["url"]));
+    await File(
+            path.join(getDocumentsPath(), "PixieLauncherInstances", "debug", "versions", mcversion, mcversion + ".jar"))
         .writeAsBytes(clientRES.bodyBytes);
   }
 
   _writeAssetsjson(Map packagejson) async {
     String filepath =
-        '${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\assets\\indexes\\${packagejson["assets"]}.json';
+       path.join(getDocumentsPath(), "PixieLauncherInstances", "debug", "assets", "indexes",'${packagejson["assets"]}.json' );
     await Directory(path.dirname(filepath)).create(recursive: true);
     await File(filepath).create(recursive: true);
-    await File(filepath).writeAsBytes((await http.get(Uri.parse(packagejson["assetIndex"]["url"]))).bodyBytes);
+    await File(filepath).writeAsBytes(
+        (await http.get(Uri.parse(packagejson["assetIndex"]["url"])))
+            .bodyBytes);
   }
 
   Future downloadAssets(Map packagejson) async {
@@ -140,7 +187,9 @@ class DownloadUtils with ChangeNotifier {
 
     int total = packagejson["assetIndex"]["totalSize"];
     received = 0;
-    Map objects = jsonDecode((await http.get(Uri.parse(packagejson["assetIndex"]["url"]))).body)["objects"];
+    Map objects = jsonDecode(
+        (await http.get(Uri.parse(packagejson["assetIndex"]["url"])))
+            .body)["objects"];
     List objectEnteries = objects.keys.toList();
 
     //sorts all hashes to donwloads
@@ -151,8 +200,11 @@ class DownloadUtils with ChangeNotifier {
     http.Client client = http.Client();
     for (var i = 0; objects.length > i;) {
       Iterable<Future<dynamic>> downloads = Iterable.generate(
-          downloads_at_same_time > _totalitems ? _totalitems : downloads_at_same_time,
-          (index) => _downloadForAssets(objects, objectEnteries, total, i + index, client));
+          downloads_at_same_time > _totalitems
+              ? _totalitems
+              : downloads_at_same_time,
+          (index) => _downloadForAssets(
+              objects, objectEnteries, total, i + index, client));
       await Future.wait(downloads);
       i += downloads_at_same_time;
       _totalitems = _totalitems - downloads_at_same_time;
@@ -163,7 +215,8 @@ class DownloadUtils with ChangeNotifier {
   }
 
   //private Method
-  _downloadForAssets(Map objects, List objectEnteries, int total, int i, http.Client client) async {
+  _downloadForAssets(Map objects, List objectEnteries, int total, int i,
+      http.Client client) async {
     // print('downloading is called' + i.toString());
     String url = minecraftResources +
         objects[objectEnteries[i]]["hash"].substring(0, 2) +
@@ -172,24 +225,25 @@ class DownloadUtils with ChangeNotifier {
 
     //Downloading..
     List<int> _bytes = [];
-    http.StreamedResponse? response = await client.send(http.Request('GET', Uri.parse(url)));
+    http.StreamedResponse? response =
+        await client.send(http.Request('GET', Uri.parse(url)));
 
     await response.stream.listen((value) {
       _bytes.addAll(value);
       received += value.length;
     }).asFuture();
 
-    String filepath = '${await getDocumentsPath()}\\PixieLauncherInstances\\debug\\assets\\objects\\' +
-        objects[objectEnteries[i]]["hash"].substring(0, 2) +
-        '\\' +
-        objects[objectEnteries[i]]["hash"];
+    String filepath =
+      path.join(getDocumentsPath(), "PixieLauncherInstances", "debug", "assets", "objects", objects[objectEnteries[i]]["hash"].substring(0, 2), objects[objectEnteries[i]]["hash"]);
+           
     String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
     await File(filepath).writeAsBytes(_bytes);
     //   print('done with ' + i.toString());
   }
 
-  downloadForgeClient(Version version, ModloaderVersion modloaderVersion, [String? additional]) async {
+  downloadForgeClient(Version version, ModloaderVersion modloaderVersion,
+      [String? additional]) async {
     //https://maven.minecraftforge.net/net/minecraftforge/forge/1.19.4-45.1.16/forge-1.19.4-45.1.16-installer.jar
 
     String url =
@@ -199,7 +253,8 @@ class DownloadUtils with ChangeNotifier {
 
     List<int> _bytes = [];
     int received = 0;
-    http.StreamedResponse? response = await http.Client().send(http.Request('GET', Uri.parse(url)));
+    http.StreamedResponse? response =
+        await http.Client().send(http.Request('GET', Uri.parse(url)));
 
     await response.stream.listen((value) {
       _bytes.addAll(value);
@@ -219,7 +274,8 @@ class DownloadUtils with ChangeNotifier {
     int receivedControll = 0;
     print(_totalsize);
 
-    http.StreamedResponse? response = await http.Client().send(http.Request('GET', Uri.parse(url)));
+    http.StreamedResponse? response =
+        await http.Client().send(http.Request('GET', Uri.parse(url)));
 
     await response.stream.listen((value) {
       _bytes.addAll(value);
@@ -249,7 +305,8 @@ class DownloadUtils with ChangeNotifier {
     int receivedControll = 0;
     print(_totalsize);
 
-    http.StreamedResponse? response = await http.Client().send(http.Request('GET', Uri.parse(url)));
+    http.StreamedResponse? response =
+        await http.Client().send(http.Request('GET', Uri.parse(url)));
 
     await response.stream.listen((value) {
       _bytes.addAll(value);

@@ -51,7 +51,8 @@ class MinecraftAccountUtils {
       Map elemNew = element.toMap();
       saveData.add(elemNew);
     }
-    SecureStorage().writeSecureData("accounts", jsonEncode(saveData));
+    print("new data");
+   await SecureStorage().writeSecureData("accounts", jsonEncode(saveData));
   }
 
   Future<List<MinecraftAccount>> getAccounts() async {
@@ -138,7 +139,10 @@ class MinecraftAccountUtils {
   }
 
   Future<void> initOnFirstStart() async {
-    if (!(await SecureStorage().isKeyRegistered("accounts"))) await MinecraftAccountUtils().saveAccounts([]);
+    if (!(await SecureStorage().isKeyRegistered("accounts"))){
+      print("need to register new");
+      await MinecraftAccountUtils().saveAccounts([]);
+    } 
   }
 }
 

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 
-import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/utils/downloader.dart';
@@ -39,7 +38,7 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
     for (String link in links) {
       String filename = Uuid().v1() + ".zip";
       final downloader =
-          Downloader(link, path.join(await  getinstances(), filename));
+          Downloader(link, path.join(  getinstances(), filename));
 
       await downloader.startDownload(
           onProgress: (percentage) => setState(() {

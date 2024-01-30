@@ -14,8 +14,8 @@ class Processor with ChangeNotifier {
   double _progress = 0.0;
   double get progress => _progress;
 
-  Future<String> _checkkeys(List args, Map data, Version version, ModloaderVersion modloaderVersion) async {
-    String outputArgs = "";
+  Future<List<String>> _checkkeys(List args, Map data, Version version, ModloaderVersion modloaderVersion) async {
+    List<String> outputArgs = [];
 
     for (var i = 0; i < args.length; i++) {
       String arg = args[i];
@@ -24,30 +24,30 @@ class Processor with ChangeNotifier {
         // wenn das der fall ist dann wird die datei gedownloaded in den ordner den wir aus dem Mavenparser herausbekommen.
         // Der Datei pfad wird nun an den outputArgs heran gehängt
 
-        String path = Utils.parseMaven(arg);
+        String filepath = Utils.parseMaven(arg);
         DownloadUtils()
-            .downloadSingeFile("https://maven.minecraftforge.net/$path", "${await getlibarypath()}\\libraries\\$path");
-        outputArgs += "${await getlibarypath()}\\libraries\\$path ";
+            .downloadSingeFile("https://maven.minecraftforge.net/$filepath", path.join(getlibarypath(), "libraries", filepath));
+        outputArgs.add( path.join(getlibarypath(), "libraries", filepath));
       } else if (Utils.isSurrounded(arg, "{", "}")) {
         //hier checken wir ob das argument mit {} umklammert ist, wenn ja, dann entfernen wir diese. Wir suchen nun in der "DATA" (gucke in der install_profile.json nach) nach dem passenden schlüssel der gleich bennant ist
-        //wie der grade, neu erstellte String. Wenn wir einen passenden KEY gefunden haben gucken wir auch dort um welche Art es sich hierbei andelt. Wenn es mit [] umgeben ist übernimmt der mavenparser
+        //wie der grade, neu erstellte String. Wenn wir einen passenden KEY gefunden haben gucken wir auch dort um welche Art es sich hierbei handelt. Wenn es mit [] umgeben ist übernimmt der mavenparser
         //TODO: extrahier methode hinzufügen bzw. /data/client.lzma nd direkt den arg zum outputarg hinzufügen wenn keiner der punkte zu trifft.
 
         arg = arg.split("{").join("").split("}").join("");
         List data_keys = data.keys.toList();
         if (arg == "MINECRAFT_JAR") {
-          outputArgs += await getworkpath() + "\\versions\\$version\\$version.jar ";
+          outputArgs.add(path.join(getworkpath(), "versions", version.toString(), "$version.jar"));
         } else if (arg == "SIDE") {
-          outputArgs += "client ";
+          outputArgs.add("client");
         } else if (arg == "MINECRAFT_VERSION") {
-          outputArgs += "$version ";
+          outputArgs.add("$version");
         } else if (arg == "ROOT") {
-          outputArgs += await getworkpath() + " ";
+          outputArgs.add(  getworkpath());
         } else if (arg == "INSTALLER") {
-          outputArgs += await getTempForgePath() +
-              "\\${version.toString()}\\${modloaderVersion.toString()}\\${version.toString()}-${modloaderVersion.toString()}-installer.jar ";
+          outputArgs.add( path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), "${version.toString()}-${modloaderVersion.toString()}-installer.jar"));
+           
         } else if (arg == "LIBRARY_DIR") {
-          outputArgs += await getlibarypath() + "\\libraries\\";
+          outputArgs.add( path.join(getlibarypath(), "libraries") + path.separator);
         } else {
           //checking if data has information about it
           for (var j = 0; j < data_keys.length; j++) {
@@ -60,20 +60,19 @@ class Processor with ChangeNotifier {
                 //TODO: Mavenparser fixen, andere individuelle, nicht im DATA verhandene KEY hinzufügen (checken). gucken was passiert wenn mit '' umgeben (oftmals ein hash drinn) und direkt den arg zum outputarg hinzufügen
                 //wenn keiner der punkte zu trifft.
 
-                outputArgs +=
-                    "${await getlibarypath()}\\libraries\\${Utils.parseMaven(argoutput)} ".replaceAll("/", "\\");
+                outputArgs.add(
+                   path.join(getlibarypath(), "libraries", "${Utils.parseMaven(argoutput)} ").replaceAll("/", path.separator));
                 //  print("found []");
                 break;
               } else if (Utils.isSurrounded(argoutput, "'", "'")) {
-                outputArgs += "$argoutput ";
+                outputArgs.add(argoutput.toString());
                 //ich denke das diese hashes die hierbei raus kommen nur zur überprüfung dienen (SHA) //TODO: überprüfung des Outputs der anderen jars
                 //  print("found ''");
                 break;
               } else if (argoutput.startsWith("/")) {
                 //this part is mostly called Patching
-                outputArgs +=
-                    "${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\$argoutput "
-                        .replaceAll("/", "\\");
+                outputArgs.add( path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), "$argoutput ").replaceAll("/", path.separator));
+                  
 
                 // print("found /");
                 break;
@@ -86,7 +85,7 @@ class Processor with ChangeNotifier {
           }
         }
       } else {
-        outputArgs += "$arg ";
+        outputArgs.add(arg.toString());
       }
     }
     return outputArgs;
@@ -108,9 +107,9 @@ class Processor with ChangeNotifier {
 
       print("================================================================================> new processor:" +
           current["jar"]);
-      String stack = await _getStack(current["classpath"], install_profile["libraries"], current["jar"]);
+      List<String> stack = await _getStack(current["classpath"], install_profile["libraries"], current["jar"]);
       String processor_jar = await searchforjar(current["jar"], install_profile["libraries"]);
-      stack += processor_jar;
+      stack.add( processor_jar);
 
       //Getting the mainclass
       List<int> byte_MANIFEST = await Utils.extractFilefromjar(
@@ -119,19 +118,27 @@ class Processor with ChangeNotifier {
       String mainClass = loadYaml(utf8.decode(byte_MANIFEST))[
           "Main-Class"]; //TODO: erro handlung einbauen falls loadYAML oder utf8decoder fehlschlägt.
 
-      String _args = await _checkkeys(current["args"], install_profile["data"], version, modloaderVersion);
+      String stackstring = "";
+
+      for (var lib in stack) {
+        stackstring += lib + (Platform.isWindows ? ";" : ":");
+      }
+
+
+
+      List<String> args = await _checkkeys(current["args"], install_profile["data"], version, modloaderVersion);
+
+     
 
       final javaPath = Java.getJavaJdk(Version(1, 12, 2));
 
-      String command = '$javaPath -cp "${stack.replaceAll('/', "\\")}" $mainClass $_args';
+      List<String> launchcommand = [ "-cp", stackstring, mainClass, ...args ];
 
-      var tempFile = File("${await getTempCommandPath()}temp_command_2.ps1");
-      await tempFile.create(recursive: true);
-      await tempFile.writeAsString(command);
+      print(launchcommand);
 
       var result =
-          await Process.start("powershell", ["-ExecutionPolicy", "Bypass", "-File", tempFile.path], runInShell: true);
-      String filepath = await getworkpath() + '\\logs\\${i.toString()}\\log.txt';
+          await Process.start(javaPath, launchcommand, runInShell: true);
+      String filepath = path.join(getworkpath(), "logs", i.toString(), "log.txt");
       String parentDirectory = path.dirname(filepath);
       await Directory(parentDirectory).create(recursive: true);
 
@@ -152,10 +159,10 @@ class Processor with ChangeNotifier {
     print(String.fromCharCodes(out));
   }
 
-  Future<String> _getStack(List classes, List libraries, String jarname) async {
-    String stack = "";
+  Future<List<String>> _getStack(List classes, List libraries, String jarname) async {
+    List<String> stack = [];
     for (int i = 0; i < classes.length; i++) {
-      stack += "${await searchforjar(classes[i], libraries)};";
+      stack.add( "${await searchforjar(classes[i], libraries)}");
     }
     return stack;
   }
@@ -164,7 +171,7 @@ class Processor with ChangeNotifier {
     for (var i = 0; i < libraries.length; i++) {
       Map currentLib = libraries[i];
       if (currentLib["name"] != name) continue;
-      return "${await getlibarypath()}\\libraries\\${currentLib["downloads"]["artifact"]["path"]}";
+      return path.join(getlibarypath(), "libraries", currentLib["downloads"]["artifact"]["path"].toString());
     }
     return "!!";
   }

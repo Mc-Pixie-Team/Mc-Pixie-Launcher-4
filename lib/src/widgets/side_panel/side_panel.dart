@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/side_panel/taskwidget.dart';
 import 'package:vector_math/vector_math.dart' as vec;
+import 'dart:io' show Platform;
 
 class SidePanel extends StatefulWidget {
   var state = _SidePanelState();
@@ -86,7 +87,7 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
       width: 280.0,
       clipBehavior: Clip.antiAlias,
       child: Image.asset(
-        'assets\\images\\backgound_blue.jpg',
+        'assets/images/backgound_blue.jpg',
         fit: BoxFit.cover,
       ),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: Color.fromARGB(0, 27, 124, 204)));
@@ -190,7 +191,7 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.only(left: 0, top: 43, right: 10, bottom: 12),
+        padding: EdgeInsets.only(left: 0, top: Platform.isMacOS ? 12 : 43, right: 10, bottom: 12),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Expanded(
               child: Container(

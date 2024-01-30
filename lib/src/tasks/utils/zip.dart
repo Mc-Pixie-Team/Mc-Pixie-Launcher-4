@@ -20,12 +20,12 @@ typedef ExtractSingleFile = int Function(
 class ZipFHandler {
   static String getDllPath() {
     if (Platform.isMacOS) {
-      return path.join(Directory.current.path, 'bin', 'zip', 'pixie.dylib');
+      return "./bin/zip/pixie.dylib";
     }
 
     if (Platform.isWindows) {
       return path.join(
-          Directory.current.path, 'bin', 'zip', 'Release', 'pixie.dll');
+          Directory.current.path, 'bin', 'zip', 'pixie.dll');
     }
 
     return path.join(Directory.current.path, 'bin', 'zip', 'pixie.so');

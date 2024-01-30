@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:background_downloader/background_downloader.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
@@ -19,7 +19,7 @@ import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'package:mclauncher4/src/widgets/side_panel/taskwidget.dart';
 import 'package:uuid/uuid.dart';
-
+import 'package:path/path.dart' as path;
 class InstallController with ChangeNotifier {
   Api handler;
   UMF modpackData;
@@ -90,9 +90,9 @@ class InstallController with ChangeNotifier {
   }
 
   void delete() async {
-    File manifestfile = File('${await getInstancePath()}\\manifest.json');
+    File manifestfile = File( path.join(getInstancePath(), "manifest.json"));
     List manifest = jsonDecode(manifestfile.readAsStringSync());
-    final dir = Directory(await getInstancePath() + "\\$processId");
+    final dir = Directory( getInstancePath() + "\\$processId");
 
     manifest.removeWhere((element) {
       print(element["processId"]);
@@ -139,11 +139,16 @@ class InstallController with ChangeNotifier {
       InstallController.instances--;
     });
 
+
+    //compute Isolate
+    var rootToken = RootIsolateToken.instance!;
+
     _isolate = await Isolate.spawn(
-        (args) => isolateInstall(args),
+        (args) => isolateEntry(args),
         [
           receivePort.sendPort,
           StartMessage(
+              token: rootToken,
               handler: handler,
               modpackData: modpackData,
               processId: processId,
@@ -153,9 +158,15 @@ class InstallController with ChangeNotifier {
         debugName: "Install of $processId");
   }
 
-  static void isolateInstall(List args) async {
+  static void isolateEntry(List args) async {
     StartMessage startMessage = (args.last as StartMessage);
     ModrinthInstaller installer = ModrinthInstaller();
+
+    BackgroundIsolateBinaryMessenger.ensureInitialized(startMessage.getToken);
+
+
+    //init for all pathes
+    await Path.init();
 
     Timer timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
       (args.first as SendPort).send(InstallerMessage(
@@ -173,7 +184,7 @@ class InstallController with ChangeNotifier {
     timer.cancel();
 
     List manifest = jsonDecode(
-        File('${await getInstancePath()}\\manifest.json').readAsStringSync());
+        File( path.join(getInstancePath(), "manifest.json")).readAsStringSync());
 
     Map manifestaddon = {
       "processId": startMessage.processId,
@@ -183,7 +194,7 @@ class InstallController with ChangeNotifier {
 
     manifest.add(manifestaddon);
 
-    await File('${await getInstancePath()}\\manifest.json')
+    await File(path.join(getInstancePath(), "manifest.json"))
         .writeAsString(jsonEncode(manifest));
 
     //Send complete message

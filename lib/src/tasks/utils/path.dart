@@ -1,66 +1,77 @@
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'dart:ffi';
 
-import 'package:ffi/ffi.dart';
-import 'package:win32/win32.dart';
+class Path {
 
-class UsernameProvider {
-  static String getUsername() {
-    int unLen = 256;
-    return using<String>((arena) {
-      final buffer = arena.allocate<Utf16>(sizeOf<Uint16>() * (unLen + 1));
-      final bufferSize = arena.allocate<Uint32>(sizeOf<Uint32>());
-      bufferSize.value = unLen + 1;
-      final result = GetUserName(buffer, bufferSize);
-      if (result == 0) {
-        GetLastError();
-        throw Exception('Failed to get win32 username: error 0x${result.toRadixString(16)}');
-      }
-      return buffer.toDartString();
-    });
-  }
+static String instance_name = "PixieLauncherInstances";
+
+static String? applicationDocumentsDirectory;
+static String? temporaryDirectory;
+
+static init() async{
+ applicationDocumentsDirectory = (await getApplicationDocumentsDirectory()).path;
+ temporaryDirectory = (await getTemporaryDirectory()).path;
 }
 
-Future<String> getbinpath() async {
+//---
+
+
+}
+
+
+
+String getbinpath() {
+  
   // return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\debug\\bin';
-  return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents\\PixieLauncherInstances\\debug\\bin';
+  
+  return path.join( getDocumentsPath(), Path.instance_name, "debug", "bin");
 }
 
-Future<String> getinstances() async {
+String getinstances() {
   // return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\debug\\bin';
-  return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents\\PixieLauncherInstances';
+  return path.join(getDocumentsPath(), Path.instance_name);
 }
 
-Future<String> getworkpath() async {
+String getworkpath() {
   //  return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\debug';
-  return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents\\PixieLauncherInstances\\debug';
+   return path.join(getDocumentsPath(), Path.instance_name, "debug");
 }
 
-Future<String> getlibarypath() async {
+String getlibarypath() {
   //  return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\debug';
-  return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents\\PixieLauncherInstances\\debug';
+  return path.join( getDocumentsPath(), Path.instance_name, "debug");
 }
 
-Future<String> getTempForgePath() async {
+String getTempForgePath() {
   // return '${(await getTemporaryDirectory()).path}\\PixieLauncher\\Forge';
-  return 'C:\\Users\\${UsernameProvider.getUsername()}\\AppData\\Local\\Temp\\PixieLauncher\\Forge';
+  if(Path.temporaryDirectory == null) throw "path must be initialized";
+
+  return path.join(Path.temporaryDirectory!, 'PixieLauncher', 'Forge');
 }
 
-Future<String> getTempCommandPath() async {
-  // return '${(await getTemporaryDirectory()).path}\\PixieLauncher';
-  return 'C:\\Users\\${UsernameProvider.getUsername()}\\AppData\\Local\\Temp\\PixieLauncher';
-}
 
-Future<String> getInstancePath() async {
+String getInstancePath() {
   //return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\instance';
-  return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents\\PixieLauncherInstances\\instance';
+  return path.join(getDocumentsPath(), Path.instance_name, "instance");
 }
 
-String getInstancePathSync() {
-  //return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\instance';
-  return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents\\PixieLauncherInstances\\instance';
+
+//--- 
+
+String getTempCommandPath() {
+  
+  if(Path.temporaryDirectory == null) throw "path must be initialized";
+
+  return path.join(Path.temporaryDirectory!, "PixieLauncher");
 }
 
-Future<String> getDocumentsPath() async {
-  return 'C:\\Users\\${UsernameProvider.getUsername()}\\Documents';
+String getDocumentsPath() {
+  
+  if(Path.applicationDocumentsDirectory == null) throw "path must be initialized";
+
+  return Path.applicationDocumentsDirectory!;
+}
+
+String pixieInstances()  {
+    return path.join( getDocumentsPath(), Path.instance_name);
 }

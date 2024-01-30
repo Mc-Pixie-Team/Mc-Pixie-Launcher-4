@@ -27,7 +27,7 @@ class Forge with ChangeNotifier implements Modloader {
 
   @override
   getSafeDir(Version version, ModloaderVersion modloaderVersion) async {
-    return '${await getworkpath()}\\versions\\$version-forge-$modloaderVersion\\$version-forge-$modloaderVersion.json';
+    return path.join(getworkpath(), "versions", "$version-forge-$modloaderVersion","$version-forge-$modloaderVersion.json" );
   }
 
   @override
@@ -49,11 +49,11 @@ class Forge with ChangeNotifier implements Modloader {
   String os = "windows";
   @override
   Future<Process> run(String instanceName, Version version, ModloaderVersion ModloaderVersion) async {
-    Map vanillaVersionJson =
-        (jsonDecode(await File("${await getworkpath()}\\versions\\$version\\$version.json").readAsString()));
+    Map vanillaVersionJson = 
+        (jsonDecode(await File(path.join(getworkpath(), "versions", version.toString(), "$version.json")).readAsString()));
 
     Map versionJson = (jsonDecode(await File(
-            "${await getworkpath()}\\versions\\$version-forge-$ModloaderVersion\\$version-forge-$ModloaderVersion.json")
+          path.join(getworkpath(), "versions", "$version-forge-$ModloaderVersion", "$version-forge-$ModloaderVersion.json"))
         .readAsString()));
 
     List testlib = [];
@@ -77,19 +77,18 @@ class Forge with ChangeNotifier implements Modloader {
     List<String> launchcommand = await Minecraft().getlaunchCommand(
       instanceName,
       vanillaVersionJson,
-      os,
       version,
       ModloaderVersion,
     );
 
     print(launchcommand);
     // var tempFile = File(
-    //     "${(await path_provider.getTemporaryDirectory()).path}\\pixie\\temp_command.ps1");
+    //     "${(await path_provider.getTemporaryDirectory()).path}/pixie/temp_command.ps1");
     // await tempFile.create(recursive: true);
     // await tempFile.writeAsString(launchcommand);
 
     var result = await Process.start(Java.getJavaJdk(version), launchcommand,
-        workingDirectory: '${await getInstancePath()}\\$instanceName');
+        workingDirectory: path.join(getInstancePath(), instanceName));
 
     stdout.addStream(result.stdout);
     stderr.addStream(result.stderr);
@@ -111,14 +110,14 @@ class Forge with ChangeNotifier implements Modloader {
     await DownloadUtils().downloadForgeClient(version, modloaderVersion, additional);
 
     Map install_profileJson = jsonDecode(await File(
-            "${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\install_profile.json")
+           path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), "install_profile.json"))
         .readAsString());
 
     String versionJsonPath =
-        "${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\version.json";
+       path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), "version.json");
     if (File(versionJsonPath).existsSync()) {
       versionJson = jsonDecode(
-          await File("${await getTempForgePath()}\\${version.toString()}\\${modloaderVersion.toString()}\\version.json")
+          await File(versionJsonPath)
               .readAsString());
     } else {
       List additionalLibs = [];
@@ -204,7 +203,7 @@ class Forge with ChangeNotifier implements Modloader {
 
   _createVersionDir(Map versionJson, Version version, ModloaderVersion modloaderVersion) async {
     String filepath =
-        "${await getworkpath()}\\versions\\$version-forge-$modloaderVersion\\$version-forge-$modloaderVersion.json";
+        path.join(getworkpath(), "versions", "$version-forge-$modloaderVersion", "$version-forge-$modloaderVersion.json");
     String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
     await File(filepath).writeAsString(jsonEncode(versionJson));

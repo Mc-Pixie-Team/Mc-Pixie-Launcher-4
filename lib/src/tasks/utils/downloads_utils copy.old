@@ -55,11 +55,15 @@ class DownloadUtils with ChangeNotifier {
         continue;
       } 
     }
+   
+    
 
       if (current["natives"] != null && current["natives"][os] != null) {
 
-                    final lib = current["downloads"]["classifiers"]
+        final lib = current["downloads"]["classifiers"]
             [current["natives"][os].replaceAll("\${arch}", arch)];
+
+        await _downloadForLibraries();
 
             String filepath = path.join(
         getDocumentsPath(),
@@ -69,37 +73,23 @@ class DownloadUtils with ChangeNotifier {
         ((lib["path"] as String)
                 .replaceAll('/', path.separator)));
 
-      if(lib["url"] == "" || current["url"] == null) {
-        Utils.copyFile(source: File(path.join(getTempForgePath(), version.toString(),
-              modloaderVersion.toString(), "maven", current["path"])), destination: File(filepath));
-        
-      }
-      else {
 
-      var _downloader = Downloader(lib["url"], filepath);
+       var _downloader = Downloader(lib["url"], filepath);
 
       await _downloader.startDownload();
 
       await _downloader.unzip(unzipPath: path.join(getbinpath(), version.toString()));
 
-      }
+
+        await Utils.extractNativesfromjar(
+            current["downloads"]["classifiers"]
+                [current["natives"][os].replaceAll("\${arch}", arch)]["path"],
+            profile["id"]);
       }
 
       if (current["downloads"]["artifact"] != null) {
-
-        final lib = current["downloads"]["artifact"];
-
-
-        var _downloader = Downloader(lib["url"],  path.join(
-        getDocumentsPath(),
-        "PixieLauncherInstances",
-        "debug",
-        "libraries",
-        ((lib["path"] as String)
-                .replaceAll('/', path.separator))));
-
-       await _downloader.startDownload();
-
+        await _downloadForLibraries(current["downloads"]["artifact"],
+            version: version, modloaderVersion: modloaderVersion);
       }
 
       i++;
@@ -109,6 +99,50 @@ class DownloadUtils with ChangeNotifier {
     }
   }
 
+  _downloadForLibraries(Map current,
+      {String? altpath,
+      Version? version,
+      ModloaderVersion? modloaderVersion}) async {
+    List<int> _bytes = [];
+    int total = current["size"], received = 0, receivedControll = 0;
+
+    if (current["url"] == "" || current["url"] == null) {
+      if (version == null || modloaderVersion == null)
+        throw "unable to handle version cause it empty.";
+
+      _bytes = await File(path.join(getTempForgePath(), version.toString(),
+              modloaderVersion.toString(), "maven", current["path"]))
+          .readAsBytes();
+    } else {
+      http.StreamedResponse? response = await http.Client()
+          .send(http.Request('GET', Uri.parse(current["url"])));
+      await response.stream.listen((value) {
+        _bytes.addAll(value);
+        received += value.length;
+        receivedControll += value.length;
+        if (receivedControll > total / 10) {
+          receivedControll = 0;
+        }
+      }).asFuture();
+    }
+
+    String filepath = path.join(
+        getDocumentsPath(),
+        "PixieLauncherInstances",
+        "debug",
+        "libraries",
+        altpath != null
+            ? altpath + path.basename(current["path"] as String)
+            : ((current["path"] as String)
+                .replaceAll('/', path.separator)));
+
+    String parentDirectory = path.dirname(filepath);
+
+    await Directory(parentDirectory).create(recursive: true);
+
+    await File(filepath).writeAsBytes(_bytes);
+    _bytes = []; //reset;
+  }
 
   getOldUniversal(Map install_profileJson, Version version,
       ModloaderVersion modloaderVersion) async {
@@ -185,22 +219,22 @@ class DownloadUtils with ChangeNotifier {
     //Sweet spot: 10 || 40 sec || 1.20.1
     int downloads_at_same_time = 10;
 
-     int _totalitems = objects.length;
-     http.Client client = http.Client();
-     for (var i = 0; objects.length > i;) {
-       Iterable<Future<dynamic>> downloads = Iterable.generate(
-           downloads_at_same_time > _totalitems
-               ? _totalitems
-               : downloads_at_same_time,
-           (index) => _downloadForAssets(
-               objects, objectEnteries, total, i + index, client));
-       await Future.wait(downloads);
-       i += downloads_at_same_time;
-       _totalitems = _totalitems - downloads_at_same_time;
-       _progress = (i / objects.length) * 100;
-       _state = DownloadState.downloadAssets;
-       notifyListeners();
-     }
+    int _totalitems = objects.length;
+    http.Client client = http.Client();
+    for (var i = 0; objects.length > i;) {
+      Iterable<Future<dynamic>> downloads = Iterable.generate(
+          downloads_at_same_time > _totalitems
+              ? _totalitems
+              : downloads_at_same_time,
+          (index) => _downloadForAssets(
+              objects, objectEnteries, total, i + index, client));
+      await Future.wait(downloads);
+      i += downloads_at_same_time;
+      _totalitems = _totalitems - downloads_at_same_time;
+      _progress = (received / total) * 100;
+      _state = DownloadState.downloadAssets;
+      notifyListeners();
+    }
   }
 
   //private Method
@@ -212,12 +246,22 @@ class DownloadUtils with ChangeNotifier {
         '/' +
         objects[objectEnteries[i]]["hash"];
 
+    //Downloading..
+    List<int> _bytes = [];
+    http.StreamedResponse? response =
+        await client.send(http.Request('GET', Uri.parse(url)));
+
+    await response.stream.listen((value) {
+      _bytes.addAll(value);
+      received += value.length;
+    }).asFuture();
 
     String filepath =
       path.join(getDocumentsPath(), "PixieLauncherInstances", "debug", "assets", "objects", objects[objectEnteries[i]]["hash"].substring(0, 2), objects[objectEnteries[i]]["hash"]);
-    //Downloading..
-  await  Downloader(url, filepath).startDownload();
-
+           
+    String parentDirectory = path.dirname(filepath);
+    await Directory(parentDirectory).create(recursive: true);
+    await File(filepath).writeAsBytes(_bytes);
     //   print('done with ' + i.toString());
   }
 

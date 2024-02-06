@@ -67,11 +67,11 @@ class ModrinthInstaller {
   install( {required Map modpackData, required String instanceName, Version? localversion}) async {
     
 
-    if(modpackData["name"] == null) {
+    if( modpackData["dependencies"] == null) {
           Map modpackproject = await getModpack(modpackData["project_id"]);
     modpackData = await getModpackVersion( (modpackproject["versions"] as List).last);
     }
-
+    print(modpackData);
 
     _state = MainState.downloadingMods;
     print("downloading mods");

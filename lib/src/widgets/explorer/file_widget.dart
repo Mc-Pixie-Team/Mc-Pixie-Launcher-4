@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
 import 'package:mclauncher4/src/widgets/explorer/file_listcontroller.dart';
-
+import 'package:path/path.dart' as path;
 // ignore: must_be_immutable
 class FileWidget extends StatefulWidget {
   FileSystemEntity get getEntity => fileEntity;
@@ -81,7 +81,7 @@ class _FileWidgetState extends State<FileWidget> {
                                 shape: OvalBorder(),
                               )))),
                   Text(
-                    widget.fileEntity.path.split("\\").last,
+                    widget.fileEntity.path.split(path.separator).last,
                     style: Theme.of(context).typography.black.bodyLarge,
                   )
                 ],

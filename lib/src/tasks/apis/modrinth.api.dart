@@ -13,6 +13,7 @@ import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
+import 'package:path/path.dart' as path;
 
 class ModrinthApi implements Api {
   int limit = 50;
@@ -161,7 +162,7 @@ class ModrinthApi implements Api {
     late ModloaderVersion modloaderVersion;
     late Modloader modloader;
     String destination =
-        '${ getInstancePath()}\\$instanceName\\modrinth.index.json';
+        path.join(getInstancePath(), instanceName, "modrinth.index.json");
     Map depend =
         (jsonDecode(await File(destination).readAsString()))["dependencies"];
 
@@ -222,7 +223,7 @@ class ModrinthApi implements Api {
           modloader: Utils.listTOListString(version["loaders"]),
           name: version["name"].toString(),
           description: modpackData["description"].toString(),
-          downloads: modpackData["downloads"],
+          downloads: version["downloads"],
           original: version));
     }
    versions.sort((a, b) {

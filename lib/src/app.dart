@@ -7,13 +7,9 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
-import 'package:mclauncher4/src/tasks/models/version_object.dart';
-import 'package:mclauncher4/src/tasks/utils/path.dart';
-import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
+import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
-import 'tasks/minecraft/minecraft_install.dart';
-import 'tasks/utils/downloads_utils.dart';
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +18,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'widgets/navigation_drawer/menu_item.dart';
 import 'widgets/divider.dart' as Div;
 import 'package:animations/animations.dart';
-import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 import 'dart:math' as math;
-import 'package:show_fps/show_fps.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
@@ -32,12 +26,10 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   Set<PointerDeviceKind> get dragDevices =>
       {PointerDeviceKind.touch, PointerDeviceKind.trackpad};
 
-
- @override
+  @override
   ScrollPhysics getScrollPhysics(BuildContext context) {
     switch (getPlatform(context)) {
       case TargetPlatform.iOS:
-      
       case TargetPlatform.android:
         return const BouncingScrollPhysics();
       case TargetPlatform.fuchsia:
@@ -46,9 +38,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
       case TargetPlatform.windows:
         return const ClampingScrollPhysics();
     }
-    
   }
-  
 }
 
 class McLauncher extends StatelessWidget {
@@ -62,21 +52,19 @@ class McLauncher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,
             typography: Typography(black: blackTextSchemes),
-            
             scrollbarTheme: ScrollbarThemeData()),
         darkTheme: ThemeData(
             useMaterial3: true,
             colorScheme: darkColorScheme,
             typography: Typography(black: blackTextSchemes)),
         themeMode: ThemeMode.dark,
-        home:  MainPage(),
+        home: MainPage(),
         builder: (context, child) => Stack(children: [
               child!,
               SizedBox(
@@ -140,21 +128,20 @@ class _MainPageState extends State<MainPage> {
     super.initState();
   }
 
-      RectTween _createRectTween(Rect? begin, Rect? end) {
-        
+  RectTween _createRectTween(Rect? begin, Rect? end) {
     return MaterialRectArcTween(begin: begin, end: end);
   }
 
   Navigator _getNavigator(BuildContext context) {
     return Navigator(
-    observers: [HeroController(createRectTween: _createRectTween)],
+      observers: [HeroController(createRectTween: _createRectTween)],
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(builder: (context) {
           innercontext = context;
           return PageTransitionSwitcher(
             duration: const Duration(milliseconds: 400),
             reverse: pageIndex < pageIndex_old,
-            child:  Container(  key: UniqueKey(), child: _pages[pageIndex]),
+            child: Container(key: UniqueKey(), child: _pages[pageIndex]),
             transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
                 SharedAxisTransition(
               animation: primaryAnimation,
@@ -169,8 +156,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  void onDrawerChange(int index) {
-
+  void onDrawerChange(int index) async {
     // if(Navigator.of(innercontext).canPop()){
     //   Navigator.of(innercontext).pop();
     // }
@@ -178,10 +164,13 @@ class _MainPageState extends State<MainPage> {
     pageIndex_old = pageIndex;
 
     if (index != pageIndex_old) {
-       setState(() {
-         pageIndex = index;
-       });
-
+      if (Navigator.canPop(innercontext)) {
+        Navigator.pop(innercontext);
+        await Future.delayed(Duration(milliseconds: 450));
+      }
+      setState(() {
+        pageIndex = index;
+      });
     }
   }
 
@@ -189,15 +178,24 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
-          print(getTempForgePath());
-        //   print("start install");
-        // await Minecraft().install(Version(1,20,4)); 
-        //   print("start url");
-        //    Map res = await DownloadUtils().getJson(Version(1,20,4));
-        //    print("start run");
-        //    Minecraft().run(res, '4656567332');
+          // print(await SecureStorage().readSecureData("accounts"));
 
-       //   supabaseHelpers().signoutUser();
+          //  await SecureStorage.storage.delete(key: "test");
+          //  await SecureStorage.storage.write(key: "test", value: "[${math.Random.secure().nextInt(25)}]", mOptions: MacOsOptions(accessibility: KeychainAccessibility.first_unlock_this_device));
+
+          await SecureStorage.storage.deleteAll();
+          // print(await SecureStorage.storage.read(key: "test"));
+          // print(await SecureStorage.isKeyRegistered("accounts"));
+          // print( await SecureStorage.storage.readAll());
+          //await MinecraftAccountUtils().saveAccounts([]);
+          //   print("start install");
+          // await Minecraft().install(Version(1,20,4));
+          //   print("start url");
+          //    Map res = await DownloadUtils().getJson(Version(1,20,4));
+          //    print("start run");
+          //    Minecraft().run(res, '4656567332');
+
+          //   supabaseHelpers().signoutUser();
 
           //  DiscordRP().initCS();
           // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
@@ -229,8 +227,8 @@ class _MainPageState extends State<MainPage> {
                       padding: EdgeInsets.only(left: 30),
                       child: Align(
                         child: MenuItem(
-                          onClick:  () =>  onDrawerChange(6),
-                          title: 'Profile', 
+                          onClick: () => onDrawerChange(6),
+                          title: 'Profile',
                           icon: Icon(
                             Icons.person,
                             size: 20,
@@ -245,7 +243,7 @@ class _MainPageState extends State<MainPage> {
                     Padding(
                       padding: EdgeInsets.only(left: 30),
                       child: MenuItem(
-                        onClick: () =>  onDrawerChange(5),
+                        onClick: () => onDrawerChange(5),
                         title: 'Settings',
                         icon: Icon(
                           Icons.settings,
@@ -263,7 +261,7 @@ class _MainPageState extends State<MainPage> {
                         offset: 0,
                         onChange: (index) {
                           index = index + 1;
-                         onDrawerChange(index);
+                          onDrawerChange(index);
                         },
                         title: 'Providers',
                         children: <ItemDrawerItem>[
@@ -315,12 +313,18 @@ class _MainPageState extends State<MainPage> {
                                 ),
                                 child: MenuItem(
                                   width: 140,
-                                  onClick: () {
+                                  onClick: () async {
                                     int index = 0;
                                     print('change: ' + index.toString());
                                     pageIndex_old = pageIndex;
 
                                     if (index != pageIndex_old) {
+                                      if (Navigator.canPop(innercontext)) {
+                                        Navigator.pop(innercontext);
+                                        await Future.delayed(
+                                            Duration(milliseconds: 450));
+                                      }
+
                                       setState(() {
                                         pageIndex = index;
                                       });
@@ -411,6 +415,8 @@ class WindowButtons extends StatelessWidget {
       children: [
         //Code by Mc-PIXIE
 
+        
+
         MinimizeWindowButton(
           colors: buttonColors,
         ),
@@ -418,12 +424,11 @@ class WindowButtons extends StatelessWidget {
           colors: buttonColors,
         ),
         CloseWindowButton(
-          colors: closebuttonColors,
-          onPressed: () {
-            print('close');
-            exit(0);
-          }
-        ),
+            colors: closebuttonColors,
+            onPressed: () {
+              print('close');
+              exit(0);
+            }),
       ],
     );
   }

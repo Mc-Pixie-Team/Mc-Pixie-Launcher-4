@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:mclauncher4/src/widgets/explorer/directory_widget.dart';
 import 'package:mclauncher4/src/widgets/explorer/file_listcontroller.dart';
 import 'package:mclauncher4/src/widgets/explorer/file_widget.dart';
+import 'package:path/path.dart' as path;
 
 class Explorer extends StatefulWidget {
   Directory rootDir;

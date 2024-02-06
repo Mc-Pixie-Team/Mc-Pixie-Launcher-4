@@ -20,6 +20,7 @@ class Java {
       majorVer = javaVer8;
     }
 
+
     if(Platform.isMacOS && version < Version(1, 17, 1)) {
       //zulu8.76.0.17-ca-jdk8.0.402-macosx_x64
       majorVer =  path.join(pixieInstances(), "zulu8.76.0.17-ca-jdk8.0.402-macosx_x64","zulu-8.jdk","Contents", "Home" , "bin", "java");

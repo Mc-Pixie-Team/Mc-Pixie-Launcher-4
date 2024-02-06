@@ -11,6 +11,8 @@ import 'package:mclauncher4/src/widgets/explorer/explorer.dart';
 import 'package:mclauncher4/src/widgets/explorer/file_listcontroller.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:glowy_borders/glowy_borders.dart';
+import 'package:path/path.dart' as path;
+
 
 // ignore: must_be_immutable
 class ExportField extends StatefulWidget {
@@ -28,7 +30,7 @@ class _ExportFieldState extends State<ExportField> {
   TextEditingController textEditingController_2 = TextEditingController();
   ImportExportController exportController = ImportExportController();
 
-  Future<Directory> get getModpackDir async => Directory( getInstancePath() + "\\${widget.processId}");
+  Future<Directory> get getModpackDir async => Directory( path.join(getInstancePath(), widget.processId));
 
   onPressed() async {
     print(isexporting);

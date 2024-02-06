@@ -6,7 +6,7 @@ import 'package:path/path.dart' as path;
 
 class Downloader {
   final String downloadUrl;
-  final String savedDir;
+  String savedDir;
   bool isDownloading = false;
   double progress = 0.0;
   String fileName = '';
@@ -59,7 +59,11 @@ class Downloader {
     client.close();
   }
 
-  Future<void> unzip({bool deleteOld = false}) async {
+  Future<void> unzip({bool deleteOld = false, String? unzipPath}) async {
+    if(unzipPath != null) {
+      savedDir = unzipPath;
+    }
+
     if (!File(savedDir).existsSync())
       throw Exception("File ${savedDir} cannot be found!");
 

@@ -1,15 +1,16 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage {
-  final FlutterSecureStorage storage = const FlutterSecureStorage();
+ static FlutterSecureStorage storage = new FlutterSecureStorage();
 
-  Future<bool> isKeyRegistered(String key) async => await storage.containsKey(key: key);
+ static Future<bool> isKeyRegistered(String key) async => await storage.containsKey(key: key);
 
-  writeSecureData(String key, String value) async {
+ static writeSecureData(String key, String value) async {
+  await storage.delete(key: key);
     await storage.write(key: key, value: value);
   }
 
-  readSecureData(String key) async {
+ static readSecureData(String key) async {
     String? value = await storage.read(key: key);
     if (value == null) {
       throw Exception("no value found for key: " + key);
@@ -17,7 +18,7 @@ class SecureStorage {
     return value;
   }
 
-  deleteSecureData(String key) async {
+ static deleteSecureData(String key) async {
     await storage.delete(key: key);
   }
 }

@@ -39,10 +39,19 @@ class Microsoft {
   }
 
   Future<String> launchMSA() async {
-    var result = await Process.run("rundll32", [
+    var result;
+
+    if(Platform.isWindows) {
+result = await Process.run("rundll32", [
       'url.dll,FileProtocolHandler',
       'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
     ]);
+    }else {
+      result = await Process.run("open", [
+      'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
+    ]);
+    }
+     
     String token = "";
     var server = await HttpServer.bind(InternetAddress.anyIPv6, 25458, shared: true);
     server.idleTimeout = Duration(seconds: 20);

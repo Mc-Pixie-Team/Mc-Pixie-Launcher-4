@@ -18,7 +18,6 @@ class _FileTableShiningState extends State<FileTableShining>
 
   @override
   void initState() {
-    print(widget.index);
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: Random().nextInt(600) + 800))
           ..repeat(reverse: true);
@@ -44,8 +43,9 @@ class _FileTableShiningState extends State<FileTableShining>
       ),
       child: Container(
         height: 52,
+
         width: double.infinity,
-        margin: EdgeInsets.only(left: 28, right: 28),
+        margin: EdgeInsets.only(left: 28, right: 28, top: widget.index == 0? 20 : 0),
         decoration: ShapeDecoration(
           color:
               widget.index.isOdd ? null : Theme.of(context).colorScheme.surface,

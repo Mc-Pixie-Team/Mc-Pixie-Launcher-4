@@ -92,7 +92,7 @@ class InstallController with ChangeNotifier {
   void delete() async {
     File manifestfile = File( path.join(getInstancePath(), "manifest.json"));
     List manifest = jsonDecode(manifestfile.readAsStringSync());
-    final dir = Directory( getInstancePath() + "\\$processId");
+    final dir = Directory(path.join(getInstancePath(), processid));
 
     manifest.removeWhere((element) {
       print(element["processId"]);

@@ -174,6 +174,7 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
+    print("builder");
     return Padding(
       padding: const EdgeInsets.only(left: 70.0, right: 70.0),
       child: AnimatedContainer(
@@ -187,7 +188,8 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
           child: FutureBuilder(
             future: MinecraftAccountUtils().getAccounts(),
             builder: (context, snapshot) {
-              print(snapshot.error);
+              print('error: ' +  snapshot.error.toString());
+              
               if (snapshot.hasData) {
                 List<MinecraftAccount> accounts = snapshot.data ?? [];
                 return ListView.separated(
@@ -207,13 +209,17 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                           print("add Account!");
                           Map dataNewAcc = await Microsoft().authenticate();
                           if (dataNewAcc["access_token"] != "") {
-                            setState(() {
+                            print("isnt null");
+                            
                               MinecraftAccountUtils().addAccount(MinecraftAccount(
-                                  name: dataNewAcc["xbox_username"] ?? "",
-                                  refreshToken: dataNewAcc["refreshToken"] ?? "",
-                                  username: dataNewAcc["username"] ?? "",
-                                  uuid: dataNewAcc["uuid"] ?? ""));
-                            });
+                                  name: dataNewAcc["xbox_username"]!,
+                                  refreshToken: dataNewAcc["refreshToken"]!,
+                                  username: dataNewAcc["username"]!,
+                                  uuid: dataNewAcc["uuid"]!)).then((value) => {
+
+                                      setState(() => {})
+                                  });
+                         
                           }
                         } else {
                           print("Setting account with UUID as standard: " + accounts[index].uuid);
@@ -296,9 +302,9 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                   },
                 );
               } else {
-                return Center(
-                  child: LinearProgressIndicator(),
-                );
+                return 
+                  Container(clipBehavior: Clip.antiAlias, decoration: BoxDecoration(borderRadius: BorderRadius.circular(40)), margin: EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 30), child: LinearProgressIndicator());
+                
               }
             },
           ),

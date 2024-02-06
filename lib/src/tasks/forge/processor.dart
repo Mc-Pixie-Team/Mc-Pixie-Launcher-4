@@ -19,6 +19,7 @@ class Processor with ChangeNotifier {
 
     for (var i = 0; i < args.length; i++) {
       String arg = args[i];
+      print(arg);
       if (Utils.isSurrounded(arg, "[", "]")) {
         //als erstes checken wir ob das argument (die argumente werden von dem Forloop einzeln'd abgearbeitet) von [] um klammert wird,
         // wenn das der fall ist dann wird die datei gedownloaded in den ordner den wir aus dem Mavenparser herausbekommen.
@@ -61,7 +62,7 @@ class Processor with ChangeNotifier {
                 //wenn keiner der punkte zu trifft.
 
                 outputArgs.add(
-                   path.join(getlibarypath(), "libraries", "${Utils.parseMaven(argoutput)} ").replaceAll("/", path.separator));
+                   path.join(getlibarypath(), "libraries", "${Utils.parseMaven(argoutput)}").replaceAll("/", path.separator));
                 //  print("found []");
                 break;
               } else if (Utils.isSurrounded(argoutput, "'", "'")) {
@@ -71,7 +72,11 @@ class Processor with ChangeNotifier {
                 break;
               } else if (argoutput.startsWith("/")) {
                 //this part is mostly called Patching
-                outputArgs.add( path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), "$argoutput ").replaceAll("/", path.separator));
+                print('====> out: ' + argoutput);
+
+                List paths = argoutput.split("/");
+
+                outputArgs.add( path.joinAll([getTempForgePath(), version.toString(), modloaderVersion.toString(), ...paths]));
                   
 
                 // print("found /");

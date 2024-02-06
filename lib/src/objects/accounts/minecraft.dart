@@ -52,11 +52,13 @@ class MinecraftAccountUtils {
       saveData.add(elemNew);
     }
     print("new data");
-   await SecureStorage().writeSecureData("accounts", jsonEncode(saveData));
+    print(jsonEncode(saveData));
+   await SecureStorage.writeSecureData("account", jsonEncode(saveData));
+   print('data: '+  await SecureStorage.readSecureData("account"));
   }
 
   Future<List<MinecraftAccount>> getAccounts() async {
-    String unparsedData = await SecureStorage().readSecureData("accounts");
+    String unparsedData = await SecureStorage.readSecureData("account");
     List listData = jsonDecode(unparsedData);
     List<MinecraftAccount> data = [];
 
@@ -67,7 +69,7 @@ class MinecraftAccountUtils {
   }
 
   Future<void> addAccount(MinecraftAccount account) async {
-    List<MinecraftAccount> accList = await MinecraftAccountUtils().getAccounts();
+    List<MinecraftAccount> accList = await getAccounts();
     bool newAcc = true;
     for (var element in accList) {
       if (element.uuid == account.uuid) {
@@ -76,9 +78,11 @@ class MinecraftAccountUtils {
       }
     }
     if (newAcc) {
+      print("set new acc");
       accList.add(account);
-      MinecraftAccountUtils().setStandard(account);
-      MinecraftAccountUtils().saveAccounts(accList);
+      await saveAccounts(accList);
+      await setStandard(account);
+  
     } else {
       print("account already exists! Doing nothing.");
     }
@@ -86,7 +90,7 @@ class MinecraftAccountUtils {
 
   Future<void> deleteAccount(MinecraftAccount account) async {
     String uuid = account.uuid;
-    List<MinecraftAccount> accList = await MinecraftAccountUtils().getAccounts();
+    List<MinecraftAccount> accList = await getAccounts();
     bool deletedAcc = false;
     List<MinecraftAccount> newAccList = [];
 
@@ -117,11 +121,11 @@ class MinecraftAccountUtils {
   }
 
   Future<void> setStandard(MinecraftAccount account) async {
-    await SecureStorage().writeSecureData("standardAccount", account.uuid);
+    await SecureStorage.writeSecureData("standardAccount", account.uuid);
   }
 
   Future<MinecraftAccount?> getAccountByUUID(String uuid) async {
-    List<MinecraftAccount> accounts = await MinecraftAccountUtils().getAccounts();
+    List<MinecraftAccount> accounts = await getAccounts();
 
     MinecraftAccount? account;
     for (var element in accounts) {
@@ -133,13 +137,13 @@ class MinecraftAccountUtils {
   }
 
   Future<MinecraftAccount?> getStandard() async {
-    String standardAccUUID = await SecureStorage().readSecureData("standardAccount");
-    MinecraftAccount? account = await MinecraftAccountUtils().getAccountByUUID(standardAccUUID);
+    String standardAccUUID = await SecureStorage.readSecureData("standardAccount");
+    MinecraftAccount? account = await getAccountByUUID(standardAccUUID);
     return account;
   }
 
   Future<void> initOnFirstStart() async {
-    if (!(await SecureStorage().isKeyRegistered("accounts"))){
+    if (!(await SecureStorage.isKeyRegistered("account"))){
       print("need to register new");
       await MinecraftAccountUtils().saveAccounts([]);
     } 

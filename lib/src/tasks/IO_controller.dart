@@ -12,8 +12,8 @@ import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
-import 'package:path/path.dart' as pathbase;
 import 'package:uuid/uuid.dart';
+import 'package:path/path.dart' as path;
 
 class ImportExportController with ChangeNotifier {
   double _progress = 0.0;
@@ -24,15 +24,15 @@ class ImportExportController with ChangeNotifier {
 
   void import(filepath) async {
     String process_id = Uuid().v1();
-    String path =  getTempCommandPath() + "\\$process_id";
+    String filepath =  getTempCommandPath() + "\\$process_id";
 
     print("extracting");
-    Utils.extractZip(File(filepath).readAsBytesSync(), path);
-    Map pixieIndexJson = jsonDecode(File(path + "\\pixie.index.json").readAsStringSync());
+    Utils.extractZip(File(filepath).readAsBytesSync(), filepath);
+    Map pixieIndexJson = jsonDecode(File(filepath + "\\pixie.index.json").readAsStringSync());
     pixieIndexJson["processId"] = process_id;
 
     await Utils.copyDirectory(
-       source: Directory(path + pixieIndexJson["override"]), destination: Directory("${ getinstances()}\\instance\\$process_id"));
+       source: Directory(filepath + pixieIndexJson["override"]), destination: Directory("${ getinstances()}\\instance\\$process_id"));
 
     Api api = ApiHandler().getApi(pixieIndexJson["provider"]);
     print(pixieIndexJson["providerArgs"]);
@@ -54,16 +54,16 @@ class ImportExportController with ChangeNotifier {
         _state = ExportImport.exporting;
         notifyListeners();
 
-        String path = pathbase.join( getTempCommandPath(), "export-$processId", "override");
+        String filepath = path.join( getTempCommandPath(), "export-$processId", "override");
 
-        await Directory(path).create(recursive: true);
+        await Directory(filepath).create(recursive: true);
 
         for (var i = 0; i < files.length; i++) {
           FileSystemEntity file = files[i];
-          String desinationPath = path + "\\" + file.path.replaceFirst( getInstancePath() + "\\$processId", "");
+          String desinationPath = filepath + "\\" + file.path.replaceFirst( getInstancePath() + "\\$processId", "");
           if (file is File) {
             print(desinationPath);
-            String parentDirectory = pathbase.dirname(desinationPath);
+            String parentDirectory = path.dirname(desinationPath);
             await Directory(parentDirectory).create(recursive: true);
             await File(desinationPath).writeAsBytes(await file.readAsBytes());
           } else if (file is Directory) {
@@ -82,7 +82,7 @@ class ImportExportController with ChangeNotifier {
 
         await Future.delayed(Duration(milliseconds: 200));
 
-        String dirpath = pathbase.join( getTempCommandPath(), "export-$processId");
+        String dirpath = path.join( getTempCommandPath(), "export-$processId");
 
         File pixieIndex = File(dirpath + "\\pixie.index.json");
         modpack["override"] = "/override";

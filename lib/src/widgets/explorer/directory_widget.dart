@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
 import 'package:mclauncher4/src/widgets/explorer/file_listcontroller.dart';
 import 'package:mclauncher4/src/widgets/explorer/file_widget.dart';
+import 'package:path/path.dart' as path;
 
 class DirectoryWidget extends StatefulWidget {
   FileSystemEntity get getEntity => fileEntity;
@@ -151,7 +152,7 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
                                     ),
                                   ))),
                           Text(
-                            "/" + widget.fileEntity.path.split("\\").last,
+                            "/" + widget.fileEntity.path.split(path.separator).last,
                             style: Theme.of(context).typography.black.bodyLarge,
                           ),
                         ],

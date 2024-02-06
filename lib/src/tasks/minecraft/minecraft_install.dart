@@ -137,18 +137,18 @@ class Minecraft with ChangeNotifier {
 
   Future<Map<String, List<String>>> overrideArguments(
       List<String> jvmArgs, List<String> gameArgs, packagejson, String instanceName, ) async {
-    MinecraftAccount? minecraftAccount;   // await MinecraftAccountUtils().getStandard();
-    Map minecraftToken = {}; // await MinecraftAccountUtils().reAuthenticateAndUpdateAccount(minecraftAccount!);
+    MinecraftAccount? minecraftAccount =  await MinecraftAccountUtils().getStandard();
+    Map minecraftToken = await MinecraftAccountUtils().reAuthenticateAndUpdateAccount(minecraftAccount!);
 
     String natives_directory = path.join(getworkpath(), "bin", packagejson["id"]);
     String launcher_name = "Mc-pixie";
     String launcher_version = "4";
-    String auth_player_name = "zufgfdd"; //minecraftAccount.username;
+    String auth_player_name = minecraftAccount!.username;
     String version_name = packagejson["id"];
     String game_directory = path.join(getInstancePath(), instanceName);
     String assets_root = path.join(getworkpath(), "assets");
     String assets_index_name = packagejson["assets"];
-    String auth_uuid = "9cf90db6-1a4a-407e-a93b-a831e3ef45a2";// minecraftAccount.uuid;
+    String auth_uuid = minecraftAccount.uuid;
     String auth_access_token = minecraftToken["authToken"] ?? "dfdffdfd";
 
     String clientid = "";

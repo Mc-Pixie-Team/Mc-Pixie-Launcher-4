@@ -167,8 +167,11 @@ class _ModPageState extends State<ModPage> {
               ),
               Row(
                 children: [
+                   const SizedBox(
+                width: 50,
+              ),
                   Text("Home"),
-                  SizedBox(
+                 const SizedBox(
                     width: 30,
                   ),
                   Text("Versions")
@@ -178,7 +181,7 @@ class _ModPageState extends State<ModPage> {
                 height: 6,
               ),
               divider.Divider(
-                size: 32,
+                size: 22,
               ),
               const SizedBox(
                 height: 30,

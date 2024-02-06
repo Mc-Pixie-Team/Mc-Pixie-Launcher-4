@@ -18,7 +18,6 @@ class FileTableItem extends StatefulWidget {
 
 class _FileTableItemState extends State<FileTableItem> {
   void ondownload() {
-    print("download");
     InstallController installController = InstallController(
       handler: ModrinthApi(),
       modpackData: widget.umf,
@@ -29,9 +28,10 @@ class _FileTableItemState extends State<FileTableItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
+
       height: 52,
       width: double.infinity,
-      margin: EdgeInsets.only(left: 28, right: 28),
+      margin: EdgeInsets.only(left: 28, right: 28, top: widget.index == 0? 20 : 0),
       decoration: ShapeDecoration(
         color:
             widget.index.isOdd ? null : Theme.of(context).colorScheme.surface,
@@ -59,14 +59,26 @@ class _FileTableItemState extends State<FileTableItem> {
                     borderRadius: BorderRadius.circular(4)),
                 child: Center(child: SizedBox(height: 16, width: 16, child: SvgPicture.asset('assets/svg/download-icon.svg', color: Colors.white,),),),
               )),
-          SizedBox(
+        const  SizedBox(
             width: 10,
           ),
-          Text(widget.umf.name!),
-          SizedBox(
+          SizedBox(width: 230, child: 
+          Text(widget.umf.name!)),
+       const SizedBox(
             width: 10,
           ),
-          Text(widget.umf.MCVersion!),
+         SizedBox(width: 120, child:  Text(widget.umf.MCVersion!, style: Theme.of(context).typography.black.bodyMedium,)),
+        const SizedBox(
+            width: 10,
+          ),
+         Text(widget.umf.downloads! > 999
+                                          ? (((widget.umf.downloads! /
+                                                          1000) as double)
+                                                      .round())
+                                                  .toString() +
+                                              'k'
+                                          : widget.umf.downloads!
+                                              .toString(), style: Theme.of(context).typography.black.bodyMedium),
         ],
       ),
     );

@@ -64,8 +64,10 @@ class McLauncher extends StatelessWidget {
             colorScheme: darkColorScheme,
             typography: Typography(black: blackTextSchemes)),
         themeMode: ThemeMode.dark,
-        home: MainPage(),
-        builder: (context, child) => Stack(children: [
+        home:
+        Material(child:
+        MainPage()),
+          builder: (context, child) => Stack(children: [
               child!,
               SizedBox(
                 height: 35,
@@ -78,7 +80,8 @@ class McLauncher extends StatelessWidget {
                       ],
                     )),
               ),
-            ]));
+            ])
+        );
   }
 }
 
@@ -184,6 +187,8 @@ class _MainPageState extends State<MainPage> {
           //  await SecureStorage.storage.write(key: "test", value: "[${math.Random.secure().nextInt(25)}]", mOptions: MacOsOptions(accessibility: KeychainAccessibility.first_unlock_this_device));
 
           await SecureStorage.storage.deleteAll();
+
+       
           // print(await SecureStorage.storage.read(key: "test"));
           // print(await SecureStorage.isKeyRegistered("accounts"));
           // print( await SecureStorage.storage.readAll());
@@ -213,6 +218,7 @@ class _MainPageState extends State<MainPage> {
           Row(
             children: [
               //   NavigationDrawer(children: children)
+
               Container(
                 height: double.infinity,
                 width: 200,
@@ -369,7 +375,7 @@ class _MainPageState extends State<MainPage> {
 
               // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
             ],
-          ),
+          ),])
 
           // shouldSplashedDisplayed
           //     ? AnimatedOpacity(
@@ -390,7 +396,7 @@ class _MainPageState extends State<MainPage> {
           //         ),
           //       )
           //     : Container(),
-        ]));
+        );
   }
 }
 

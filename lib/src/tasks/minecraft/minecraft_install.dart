@@ -214,7 +214,7 @@ class Minecraft with ChangeNotifier {
     }else if (Platform.isLinux) {
       os = "linux";
     }else {
-      throw "plattform not supported!";
+      //throw "plattform not supported!";
     }
 
     String stack =
@@ -256,7 +256,7 @@ if (Platform.isMacOS) {
       os = "linux";
       osArch = "x86";
     }else {
-      throw "plattform not supported!";
+     // throw "plattform not supported!";
     }
 
     if (rules.isEmpty) {

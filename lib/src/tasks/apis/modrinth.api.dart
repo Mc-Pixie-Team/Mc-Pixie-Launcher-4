@@ -109,16 +109,6 @@ class ModrinthApi implements Api {
     return jsonDecode(utf8.decode(res.bodyBytes));
   }
 
-  @override
-  Future<String> getModpackName(Map modpackData) async {
-    if (modpackData["title"] != null) {
-      return modpackData["title"];
-    } else {
-      Map project = await getModpack(modpackData["project_id"]);
-
-      return project["title"];
-    }
-  }
 
   @override
   Future<List<String>> getCategories() async {

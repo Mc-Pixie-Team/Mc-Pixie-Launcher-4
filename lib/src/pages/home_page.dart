@@ -11,7 +11,7 @@ import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 import 'package:mclauncher4/src/widgets/providers/browse_card.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:transparent_image/transparent_image.dart';
-
+import 'package:mclauncher4/src/widgets/divider.dart' as divider;
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -44,35 +44,37 @@ class _HomePageState extends State<HomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(
-                                    height: isEmpty ? 100 : 71,
+                                    height:  71,
                                   ),
                                   Carousel(items: items),
                                   ValueListenableBuilder(
                                       valueListenable: Modpacks.globalinstallContollers,
-                                      builder: (context, value, child) => isEmpty
+                                      builder: (context, value, child) =>
+                                           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(left: 75, top: 20),
+                                                child: Text(
+                                                  'Installed:',
+                                                  style: Theme.of(context).typography.black.headlineSmall,
+                                                ),
+                                              ),
+                                               SizedBox(
+                                                height: 10,
+                                              ),
+                                              divider.Divider(size: 70, ),
+                                             isEmpty
                                           ? Padding(
-                                              padding: EdgeInsets.only(top: 200),
+                                              padding: EdgeInsets.only(top: 150),
                                               child: Center(
                                                   child: Text(
                                                 'Nothing found :(',
                                                 style: Theme.of(context).typography.black.bodyLarge,
                                               )),
-                                            )
-                                          : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                            ) :
                                               Padding(
-                                                padding: EdgeInsets.only(left: 40, top: 30),
-                                                child: Text(
-                                                  'Installed :',
-                                                  style: Theme.of(context).typography.black.headlineSmall,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 15,
-                                              ),
-                                              Padding(
-                                                  padding: EdgeInsets.all(38),
+                                                  padding: EdgeInsets.only(left: 80, top: 50),
                                                   child: Align(
-                                                      alignment: Alignment.center,
+                                                      alignment: Alignment.topLeft,
                                                       child: Wrap(
                                                           alignment: WrapAlignment.start,
                                                           spacing: 40.0, // gap between adjacent chips
@@ -120,17 +122,11 @@ class _HomePageState extends State<HomePage> {
                                     onpressed: () {},
                                     color: Theme.of(context).colorScheme.secondary,
                                   )),
-                              const Padding(
+                               Padding(
                                   padding: EdgeInsets.only(left: 14, bottom: 3),
                                   child: Text(
                                     'HomePage',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w600,
-                                      height: 0,
-                                    ),
+                                     style: Theme.of(context).typography.black.titleMedium
                                   )),
                               Expanded(child: Container()),
                               Container(

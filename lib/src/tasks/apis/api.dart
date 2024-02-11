@@ -54,10 +54,6 @@ abstract class Api {
     throw Exception("Do not call the normal API class, this is just a Template function!");
   }
 
-  //based on your format, it will provide a Map, the methode should return the name of a specific modpack
-  Future<String> getModpackName(Map v) {
-    throw Exception("Do not call the normal API class, this is just a Template function!");
-  }
 
   //The method should return all minecraft version, that the provider has to offer
   Future<List<String>> getAllMV() {

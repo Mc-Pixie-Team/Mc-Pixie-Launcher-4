@@ -34,7 +34,7 @@ class DownloadUtils with ChangeNotifier {
       os = "linux";
       arch = "x86";
     }else {
-      throw "plattform not supported!";
+    //  throw "plattform not supported!";
     }
   }
  

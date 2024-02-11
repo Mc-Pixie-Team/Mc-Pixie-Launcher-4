@@ -13,7 +13,6 @@ import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as divider;
 import 'package:flutter/foundation.dart';
-import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ModPage extends StatefulWidget {
   UMF modpackData;
@@ -163,28 +162,24 @@ class _ModPageState extends State<ModPage> {
                     ))
               ]),
               const SizedBox(
-                height: 30,
+                height: 40,
               ),
               Row(
                 children: [
                    const SizedBox(
                 width: 50,
               ),
-                  Text("Home"),
+                  Text("Home", style: Theme.of(context).typography.black.headlineSmall,),
                  const SizedBox(
                     width: 30,
                   ),
-                  Text("Versions")
+                  Text("Versions",style: Theme.of(context).typography.black.headlineSmall)
                 ],
               ),
+             
+
               const SizedBox(
-                height: 6,
-              ),
-              divider.Divider(
-                size: 22,
-              ),
-              const SizedBox(
-                height: 30,
+                height: 20,
               ),
               Expanded(
                   child:  

@@ -1,5 +1,7 @@
 // ignore_for_file: sort_child_properties_last, prefer_const_constructors
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:mclauncher4/src/widgets/components/size_transition_custom.dart';

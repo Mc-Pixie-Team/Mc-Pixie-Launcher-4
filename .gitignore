@@ -27,7 +27,9 @@ doc/api/
 .flutter-plugins
 .flutter-plugins-dependencies
 
-.fvm*
 .vscode/settings.json
 logs/*
 *.log
+
+# FVM Version Cache
+.fvm/

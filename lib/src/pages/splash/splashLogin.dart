@@ -30,7 +30,9 @@ class _pixieLoginScreenState extends State<pixieLoginScreen> {
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [LoginCardSupabase()],
+                  children: [LoginCardSupabase(onLogin: () => setState(() {
+                    
+                  }),)],
                 ),
               ),
             ])),

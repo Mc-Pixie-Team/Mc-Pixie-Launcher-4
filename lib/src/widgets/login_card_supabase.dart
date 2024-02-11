@@ -10,7 +10,9 @@ import 'package:mclauncher4/src/widgets/buttons/circular_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginCardSupabase extends StatefulWidget {
-  const LoginCardSupabase({Key? key}) : super(key: key);
+  VoidCallback onLogin;
+
+  LoginCardSupabase({Key? key, required this.onLogin}) : super(key: key);
 
   @override
   _LoginCardSupabaseState createState() => _LoginCardSupabaseState();
@@ -183,12 +185,7 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                     supabase.auth.signInWithOAuth(Provider.google,
                         redirectTo: "http://localhost:2695/redirect", authScreenLaunchMode: LaunchMode.inAppWebView);
                     bool sucess = await oauthReturnServer(context, supabase);
-                    if (sucess == true) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MainPage()),
-                      );
-                    }
+                    if (sucess) widget.onLogin.call();
                   },
                 ),
                 CircularButton(
@@ -204,12 +201,7 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                         authScreenLaunchMode: LaunchMode.inAppWebView,
                         scopes: "email");
                     bool sucess = await oauthReturnServer(context, supabase);
-                    if (sucess == true) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MainPage()),
-                      );
-                    }
+                    if (sucess) widget.onLogin.call();
                   },
                 ),
                 CircularButton(
@@ -223,12 +215,7 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                     supabase.auth.signInWithOAuth(Provider.discord,
                         redirectTo: "http://localhost:2695/redirect", authScreenLaunchMode: LaunchMode.inAppWebView);
                     bool sucess = await oauthReturnServer(context, supabase);
-                    if (sucess == true) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MainPage()),
-                      );
-                    }
+                    if (sucess) widget.onLogin.call();
                   },
                 ),
               ],
@@ -249,7 +236,7 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                         .merge(TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w700)),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.canPop(context);
                   }),
               Expanded(
                 child: SizedBox(

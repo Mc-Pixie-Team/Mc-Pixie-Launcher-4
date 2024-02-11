@@ -27,7 +27,7 @@ class _CarouselState extends State<Carousel> {
   void initState() {
     super.initState();
     isdisposed = false;
-    Timer.periodic(Duration(seconds: 5), (timer) {
+   var timer = Timer.periodic(Duration(seconds: 5), (timer) {
       if (currentindex >= widget.items.length - 1) {
         currentindex = 0;
       } else {
@@ -36,6 +36,8 @@ class _CarouselState extends State<Carousel> {
       if (isdisposed) return;
       setState(() {});
     });
+
+    
   }
 
   void changeindex(int index) {

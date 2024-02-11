@@ -26,16 +26,36 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   late FocusNode _focusNode;
   late final TextEditingController _textController;
+  final supabase = Supabase.instance.client;
+  bool isdisposed = false;
+
   @override
   void initState() {
+    isdisposed = false;
     _textController = TextEditingController();
 
     _focusNode = FocusNode();
+ 
+
+      supabase.auth.onAuthStateChange.listen((event) { 
+            if(!isdisposed){
+              setState(() {
+                
+              });
+            }
+      });
 
     super.initState();
   }
 
-  final supabase = Supabase.instance.client;
+  @override
+  void dispose() {
+    isdisposed = true;
+    
+
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     bool hasPFP = false;
@@ -270,7 +290,10 @@ class _UserPageState extends State<UserPage> {
                   overlayColor: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.2),
                   child: Center(
                     child: Center(
-                      child: LoginCardSupabase(),
+                      child: LoginCardSupabase(onLogin: () async {
+                     
+                     
+                      },),
                     ),
                   ))
         ],

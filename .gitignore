@@ -33,3 +33,4 @@ logs/*
 
 # FVM Version Cache
 .fvm/
+bin.zip

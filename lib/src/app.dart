@@ -7,6 +7,7 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
+import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
@@ -186,7 +187,7 @@ class _MainPageState extends State<MainPage> {
           //  await SecureStorage.storage.delete(key: "test");
           //  await SecureStorage.storage.write(key: "test", value: "[${math.Random.secure().nextInt(25)}]", mOptions: MacOsOptions(accessibility: KeychainAccessibility.first_unlock_this_device));
 
-          await SecureStorage.storage.deleteAll();
+        //  await SecureStorage.storage.deleteAll();
 
        
           // print(await SecureStorage.storage.read(key: "test"));
@@ -200,7 +201,7 @@ class _MainPageState extends State<MainPage> {
           //    print("start run");
           //    Minecraft().run(res, '4656567332');
 
-          //   supabaseHelpers().signoutUser();
+             supabaseHelpers().signoutUser();
 
           //  DiscordRP().initCS();
           // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));

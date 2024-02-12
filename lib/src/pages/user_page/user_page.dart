@@ -147,7 +147,7 @@ class _UserPageState extends State<UserPage> {
                                 ),
                                 Text(
                                   (supabaseHelpers().isLoggedIn())
-                                      ? (supabase.auth.currentUser!.userMetadata?["email"])
+                                      ? (supabase.auth.currentUser?.userMetadata?["email"] ?? "MAIL")
                                       : "your_name_here@gmail.com",
                                   style: Theme.of(context)
                                       .typography

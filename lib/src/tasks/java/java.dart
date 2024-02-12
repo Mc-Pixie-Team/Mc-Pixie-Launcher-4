@@ -9,10 +9,10 @@ class Java {
   
     ///Users/joshig/Documents/PixieLauncherInstances/zulu17.48.15-ca-jdk17.0.10-macosx_aarch64/zulu-17.jdk/Contents/Home/bin
     String javaVer17 =
-        path.join(pixieInstances(), "zulu17.48.15-ca-jdk17.0.10-macosx_aarch64","zulu-17.jdk","Contents", "Home" , "bin", "java");
+        path.join(pixieInstances(), "zulu17.44.53-ca-jdk17.0.8.1-win_x64", "bin", "javaw.exe");
       
     String javaVer8 =
-         path.join(pixieInstances(), "zulu8.76.0.17-ca-jdk8.0.402-macosx_aarch64","zulu-8.jdk","Contents", "Home" , "bin", "java");
+         path.join(pixieInstances(), "zulu8.72.0.17-ca-jdk8.0.382-win_x64", "bin", "javaw.exe");
     String majorVer = javaVer17;
 
 
@@ -30,11 +30,10 @@ class Java {
   }
 
   static bool get isJavaInstalled {
-   
 
-    return File(path.join(pixieInstances(), "zulu17.48.15-ca-jdk17.0.10-macosx_aarch64","zulu-17.jdk","Contents", "Home" , "bin", "java"))
+    return File(path.join(pixieInstances(), "zulu17.44.53-ca-jdk17.0.8.1-win_x64", "bin", "javaw.exe"))
             .existsSync() &&
-        File(path.join(pixieInstances(), "zulu8.76.0.17-ca-jdk8.0.402-macosx_aarch64","zulu-8.jdk","Contents", "Home" , "bin", "java"))
+        File(path.join(pixieInstances(), "zulu8.72.0.17-ca-jdk8.0.382-win_x64", "bin", "javaw.exe"))
             .existsSync();
   }
 }

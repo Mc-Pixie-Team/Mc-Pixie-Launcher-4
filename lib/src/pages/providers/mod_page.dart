@@ -3,6 +3,8 @@
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/get_api_handler.dart';
+import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
@@ -16,8 +18,8 @@ import 'package:flutter/foundation.dart';
 
 class ModPage extends StatefulWidget {
   UMF modpackData;
-
-  ModPage({Key? key, required this.modpackData}) : super(key: key);
+  String handlerString;
+  ModPage({Key? key, required this.modpackData, required this.handlerString}) : super(key: key);
 
   @override
   _ModPageState createState() => _ModPageState();
@@ -29,7 +31,8 @@ class _ModPageState extends State<ModPage> {
   Isolate? isolate;
 
   static inIsolate(List args) async {
-    DUMF dumf = await ModrinthApi().getDUMF(args[0]);
+    Api handler = ApiHandler().getApi(args[2]);
+    DUMF dumf = await handler.getDUMF(args[0]);
     Isolate.exit(args[1], dumf);
   }
 
@@ -37,7 +40,7 @@ class _ModPageState extends State<ModPage> {
     final resultPort = ReceivePort();
 
     isolate = await Isolate.spawn(
-        inIsolate, [widget.modpackData.original, resultPort.sendPort]);
+        inIsolate, [widget.modpackData.original, resultPort.sendPort, widget.handlerString]);
 
     resultPort.listen((message) {
       setState(() {
@@ -184,6 +187,7 @@ class _ModPageState extends State<ModPage> {
               Expanded(
                   child:  
                            FileTable(
+                            providerString: widget.handlerString,
                               details: details,
                             ))
             ]),

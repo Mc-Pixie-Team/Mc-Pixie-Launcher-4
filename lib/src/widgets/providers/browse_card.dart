@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
+import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
@@ -29,8 +30,10 @@ class BrowseCard extends StatefulWidget {
   MainState state;
   double progress;
   String processId;
+  String handlerString;
   BrowseCard({
     Key? key,
+    required this.handlerString,
     required this.processId,
     required this.modpackData,
     required this.progress,
@@ -93,7 +96,7 @@ class _BrowseCardState extends State<BrowseCard>
                  // _controller.reverse();
                 Navigator.push(
     context,
-   SlowMaterialPageRoute(allowSnapshotting: false, builder: (context) =>  ModPage(modpackData: widget.modpackData),
+   SlowMaterialPageRoute(allowSnapshotting: false, builder: (context) =>  ModPage(handlerString: widget.handlerString, modpackData: widget.modpackData),
   ));
                  
 

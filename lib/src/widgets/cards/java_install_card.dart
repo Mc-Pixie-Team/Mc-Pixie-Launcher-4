@@ -44,7 +44,7 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
           onProgress: (percentage) => setState(() {
                 downloadprecentage = percentage / 100;
               }));
-      await downloader.unzip(deleteOld: true);
+      downloader.unzip(deleteOld: true);
     installStep++;
     }
 

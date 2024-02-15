@@ -172,7 +172,7 @@ class ModrinthInstaller {
         Downloader _downloader =  Downloader(file["url"],path.join(filepath, file["filename"]) );
         await _downloader.startDownload(onProgress: (p0) => _progress = p0,);
 
-        await _downloader.unzip(deleteOld: true);
+        _downloader.unzip(deleteOld: true);
 
         await Utils.copyDirectory(source: Directory(path.join(filepath, "overrides")), destination: Directory(destination));
         await Utils.copyFile(source: File(path.join(filepath, "modrinth.index.json")), destination: File(path.join(destination, "modrinth.index.json")));

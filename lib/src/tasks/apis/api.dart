@@ -66,14 +66,6 @@ abstract class Api {
     throw Exception("Do not call the normal API class, this is just a Template function!");
   }
 
-  //Many modpack providers use a id to identify thier modpacks, you methode should return
-  // a modpack based on the id that is provided
-  getModpack(String id) {
-    throw Exception("Do not call the normal API class, this is just a Template function!");
-  }
-
-  //Many modpacks providers divide thier modpacks into versions of it self, this methode
-
 
   //This methode should return a sperate download object you created to download modpacks, if
   //thats not the case just return your custom api class
@@ -84,11 +76,6 @@ abstract class Api {
   Future<List<String>> getCategories() {
     throw Exception("Do not call the normal API class, this is just a Template function!");
   }
-
-    Future<Map> getMMLVersion(
-       String instanceName,) async {
-        throw Exception("Do not call the normal API class, this is just a Template function!");
-       }
 
 
   UMF convertToUMF(Map modpackData) {

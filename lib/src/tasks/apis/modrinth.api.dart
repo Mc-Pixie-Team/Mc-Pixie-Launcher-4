@@ -102,13 +102,6 @@ class ModrinthApi implements Api {
     return jsonDecode(utf8.decode(res.bodyBytes))["hits"];
   }
 
-  @override
-  getModpack(String id) async {
-    var res =
-        await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
-    return jsonDecode(utf8.decode(res.bodyBytes));
-  }
-
 
   @override
   Future<List<String>> getCategories() async {
@@ -146,35 +139,13 @@ class ModrinthApi implements Api {
   }
 
   @override
-  Future<Map> getMMLVersion(
-    String instanceName,
-  ) async {
-    late ModloaderVersion modloaderVersion;
-    late Modloader modloader;
-    String destination =
-        path.join(getInstancePath(), instanceName, "modrinth.index.json");
-    Map depend =
-        (jsonDecode(await File(destination).readAsString()))["dependencies"];
-
-    if (depend["fabric-loader"] != null) {
-      modloader = Fabric();
-      modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
-    } else if (depend["forge"] != null) {
-      modloader = Forge();
-      modloaderVersion = ModloaderVersion.parse(depend["forge"]);
-    }
-
-    return {"modloader": modloader, "modloaderVersion": modloaderVersion};
-  }
-
-  @override
   UMF convertToUMF(Map modpackData) {
     modpackData["name"] = modpackData["name"] ?? modpackData["title"];
 
     return UMF(
-        name: modpackData["title"].toString(),
-        author: modpackData["author"].toString(),
-        description: modpackData["description"].toString(),
+        name: modpackData["title"],
+        author: modpackData["author"],
+        description: modpackData["description"],
         downloads: modpackData["downloads"],
         likes: modpackData["follows"],
         categories: modpackData["categories"],
@@ -192,7 +163,7 @@ class ModrinthApi implements Api {
     return jsonDecode(utf8.decode(res.bodyBytes));
   }
 
-      Future<Map<String, dynamic>> _getModpack(String id) async {
+  Future<Map<String, dynamic>> _getModpack(String id) async {
     var res = await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
     return jsonDecode(utf8.decode(res.bodyBytes));
   }

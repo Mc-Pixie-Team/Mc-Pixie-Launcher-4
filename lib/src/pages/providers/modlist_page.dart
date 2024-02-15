@@ -23,7 +23,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 
 class ModListPage extends StatefulWidget {
-  const ModListPage({Key? key}) : super(key: key);
+  String providerString;
+  ModListPage({Key? key, required this.providerString}) : super(key: key);
 
   @override
   _ModListPageState createState() => _ModListPageState();
@@ -36,7 +37,8 @@ class _ModListPageState extends State<ModListPage> {
   GlobalKey key = new GlobalKey();
   List installContollers = [];
   List modpacklist = [];
-  Api _handler = ApiHandler().getApi("modrinth");
+  late Api _handler;
+  
   Future<dynamic> get mv async {
     return await _handler.getAllMV();
   }
@@ -106,6 +108,7 @@ class _ModListPageState extends State<ModListPage> {
 
   @override
   void initState() {
+   _handler = ApiHandler().getApi(widget.providerString);
     addButton = CircularButton(
       child: Icon(
         Icons.add,
@@ -212,6 +215,7 @@ class _ModListPageState extends State<ModListPage> {
                   }
 
                   if (snapshot.hasData) {
+                    print(_handler.getTitlename());
                     print('rebuld in ModList');
                     if (modpacklist.length < 1) {
                       modpacklist = snapshot.data ?? [];
@@ -257,7 +261,7 @@ class _ModListPageState extends State<ModListPage> {
                                               animation: installcontroller,
                                               builder: (context, child) =>
                                                   BrowseCard(
-                                                   
+                                                   handlerString: widget.providerString,
                                                     processId: installcontroller
                                                         .processId,
                                                     modpackData:

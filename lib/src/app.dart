@@ -9,6 +9,7 @@ import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
+import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'theme/colorSchemes.dart';
@@ -106,12 +107,9 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const ModListPage(),
+    ModListPage(providerString: "modrinth", key: Key("modrinth"),),
     const Debugpage(),
-    Container(
-      key: Key('4'),
-      color: Color.fromARGB(255, 146, 91, 218),
-    ),
+    ModListPage(providerString: "curseforge", key: Key("curseforge"),),
     Container(
       key: Key('5'),
       color: Color.fromARGB(255, 146, 91, 218),
@@ -200,8 +198,8 @@ class _MainPageState extends State<MainPage> {
           //    Map res = await DownloadUtils().getJson(Version(1,20,4));
           //    print("start run");
           //    Minecraft().run(res, '4656567332');
-
-             supabaseHelpers().signoutUser();
+          print(getTempCommandPath());
+          //   supabaseHelpers().signoutUser();
 
           //  DiscordRP().initCS();
           // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));

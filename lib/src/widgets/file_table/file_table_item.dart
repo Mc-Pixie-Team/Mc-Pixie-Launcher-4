@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
@@ -9,7 +10,8 @@ import 'package:transparent_image/transparent_image.dart';
 class FileTableItem extends StatefulWidget {
   int index;
   UMF umf;
-  FileTableItem({Key? key, required this.index, required this.umf})
+  String providerString;
+  FileTableItem({Key? key, required this.index, required this.umf, required this.providerString})
       : super(key: key);
 
   @override
@@ -19,7 +21,7 @@ class FileTableItem extends StatefulWidget {
 class _FileTableItemState extends State<FileTableItem> {
   void ondownload() {
     InstallController installController = InstallController(
-      handler: ModrinthApi(),
+      handler: ApiHandler().getApi(widget.providerString),
       modpackData: widget.umf,
     );
     installController.install();

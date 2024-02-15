@@ -59,16 +59,14 @@ class Downloader {
     client.close();
   }
 
-  Future<void> unzip({bool deleteOld = false, String? unzipPath}) async {
-    if(unzipPath != null) {
-      savedDir = unzipPath;
-    }
-
+  void unzip({bool deleteOld = false, String? unzipPath}) {
+    
     if (!File(savedDir).existsSync())
       throw Exception("File ${savedDir} cannot be found!");
 
-    final exportDir = path.join(path.dirname(savedDir));
+    final exportDir = unzipPath ?? path.join(path.dirname(savedDir));
 
+    
     ZipFHandler.unzipIntoDir(exportDir: exportDir, zipFile: savedDir);
 
     if (deleteOld) File(savedDir).delete();

@@ -1,9 +1,11 @@
 import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 
 class ApiHandler {
   Map<String, Api> _handlers = {
     "modrinth": ModrinthApi(),
+    "curseforge": CurseforgeApi(),
   };
 
   Api getApi(String handler) {

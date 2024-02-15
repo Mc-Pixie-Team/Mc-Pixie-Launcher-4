@@ -55,7 +55,7 @@ class InstallController with ChangeNotifier {
     notifyListeners();
     setUIChanges();
 
-    _result = await ModrinthInstaller().start(processId);
+    _result = await handler.getDownloaderObject().start(processId);
 
     await Future.delayed(Duration(milliseconds: 300));
     mainstate = MainState.running;
@@ -109,6 +109,7 @@ class InstallController with ChangeNotifier {
   }
 
   void install({String? version}) async {
+    print("Installing with:" + handler.getTitlename());
     print('start download');
     mainstate = MainState.fetching;
     notifyListeners();
@@ -140,6 +141,8 @@ class InstallController with ChangeNotifier {
     });
 
 
+    
+
     //compute Isolate
     var rootToken = RootIsolateToken.instance!;
 
@@ -155,12 +158,14 @@ class InstallController with ChangeNotifier {
               version: version == null ? null : Version.parse(version))
         ],
         onExit: exitPort.sendPort,
-        debugName: "Install of $processId");
+        debugName: "Install of $processId",
+        errorsAreFatal: true,);
   }
 
   static void isolateEntry(List args) async {
     StartMessage startMessage = (args.last as StartMessage);
-    ModrinthInstaller installer = ModrinthInstaller();
+
+    var installer = startMessage.getHandler.getDownloaderObject();
 
     BackgroundIsolateBinaryMessenger.ensureInitialized(startMessage.getToken);
 
@@ -168,7 +173,7 @@ class InstallController with ChangeNotifier {
     //init for all pathes
     await Path.init();
 
-    Timer timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+    Timer timer = Timer.periodic(Duration(milliseconds: 200), (timer) {
       (args.first as SendPort).send(InstallerMessage(
         mainState: installer.installState,
         progress: installer.progress,

@@ -8,7 +8,8 @@ import 'package:mclauncher4/src/widgets/divider.dart' as divider;
 
 class FileTable extends StatefulWidget {
   DUMF? details;
-  FileTable({Key? key, this.details}) : super(key: key);
+  String? providerString;
+  FileTable({Key? key, this.details, this.providerString}) : super(key: key);
 
   @override
   _FileTableState createState() => _FileTableState();
@@ -82,6 +83,7 @@ class _FileTableState extends State<FileTable> {
                               int index,
                             ) =>
                                 FileTableItem(
+                                  providerString: widget.providerString!,
                                   index: index,
                                   umf: versions![index],
                                 ))

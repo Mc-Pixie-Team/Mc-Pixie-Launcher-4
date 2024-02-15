@@ -15,7 +15,7 @@ void main() async{
        McLauncher());
   doWhenWindowReady(() {
     final win = appWindow;
-    win.alignment = Alignment.center;
+    win.alignment = Alignment.topLeft;
     
     win.title = "Mc-Pixie Launcher";
     win.size = Size(1530, 900);

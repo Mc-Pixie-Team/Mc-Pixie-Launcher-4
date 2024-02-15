@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
@@ -9,7 +10,6 @@ import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:path/path.dart' as path;
 import 'utils.dart';
-import 'package:path_provider/path_provider.dart';
 import '../config/apis.dart';
 
 class DownloadUtils with ChangeNotifier {
@@ -18,113 +18,156 @@ class DownloadUtils with ChangeNotifier {
   double _progress = 0.0;
   double get progress => _progress;
 
- late String os;
- late String arch;
+  late String os;
+  late String arch;
   bool? isForge;
   int received = 0;
   DownloadUtils({this.isForge}) {
-
     if (Platform.isMacOS) {
       os = "osx";
       arch = "arm64";
     } else if (Platform.isWindows) {
       os = "windows";
       arch = "x86";
-    }else if (Platform.isLinux) {
+    } else if (Platform.isLinux) {
       os = "linux";
       arch = "x86";
-    }else {
-    //  throw "plattform not supported!";
+    } else {
+      //  throw "plattform not supported!";
     }
   }
- 
 
   Future downloadLibaries(Map profile,
       [Version? version, ModloaderVersion? modloaderVersion]) async {
     if (profile["libraries"] == null) return;
 
     List libraries = profile["libraries"];
-    for (int i = 0; i < libraries.length;) {
-      Map current = libraries[i];
-      // print(current["downloads"]["artifact"]);
 
-    if(current["rules"] != null) {
-  if (current["rules"].last["os"]["name"] == os && current["rules"].last["action"] == "disallow"){
-        print(current["name"]);
-        i++;
-        continue;
-      } 
-    }
+    int downloads_at_same_time = 20;
+    int totalitems = libraries.length;
 
-      if (current["natives"] != null && current["natives"][os] != null) {
+    for (var i = 0; i <= libraries.length; i += downloads_at_same_time) {
 
-                    final lib = current["downloads"]["classifiers"]
-            [current["natives"][os].replaceAll("\${arch}", arch)];
+      Iterable<Future<dynamic>> downloads = Iterable.generate(
+          downloads_at_same_time > totalitems
+              ? totalitems
+              : downloads_at_same_time, (index) async {
+        Map current = libraries[i + index];
+        // print(current["downloads"]["artifact"]);
 
-            String filepath = path.join(
-        getDocumentsPath(),
-        "PixieLauncherInstances",
-        "debug",
-        "libraries",
-        ((lib["path"] as String)
-                .replaceAll('/', path.separator)));
+        if (current["rules"] != null) {
+          if (current["rules"].last["os"]["name"] == os &&
+              current["rules"].last["action"] == "disallow") {
+            print(current["name"]);
+            return;
+          }
+        }
 
-      if(lib["url"] == "" || current["url"] == null) {
-        Utils.copyFile(source: File(path.join(getTempForgePath(), version.toString(),
-              modloaderVersion.toString(), "maven", current["path"])), destination: File(filepath));
+
+        if (current["natives"] != null && current["natives"][os] != null) {
+          print("found valid native!");
+          final lib = current["downloads"]["classifiers"]
+              [current["natives"][os].replaceAll("\${arch}", arch)];
+          print(lib);
+
+          String filepath = path.join(
+              getDocumentsPath(),
+              "PixieLauncherInstances",
+              "debug",
+              "libraries",
+              ((lib["path"] as String).replaceAll('/', path.separator)));
+
+          if (lib["url"] == "" || lib["url"] == null) {
+            File movepath = File(path.join(
+                getTempForgePath(),
+                version.toString(),
+                modloaderVersion.toString(),
+                "maven",
+                current["path"]));
+
+            if (movepath.existsSync()) {
+              Utils.copyFile(source: movepath, destination: File(filepath));
+            }
+          } else {
+            print("need to download and extract: " +
+                filepath +
+                " | from: " +
+                lib["url"]);
+
+            var _downloader = Downloader(lib["url"], filepath);
+
+            await _downloader.startDownload();
+            //unzipPath: path.join(getbinpath(), version.toString())
+            _downloader.unzip(
+                unzipPath: path.join(getbinpath(), version.toString()));
+            print("done with export");
+          }
+        }
+
+        if (current["downloads"]["artifact"] != null) {
+          final lib = current["downloads"]["artifact"];
+
+          String filepath = path.join(
+              getDocumentsPath(),
+              "PixieLauncherInstances",
+              "debug",
+              "libraries",
+              ((lib["path"] as String).replaceAll('/', path.separator)));
+
+          var _downloader = Downloader(lib["url"], filepath);
+
+          if (lib["url"] != null && lib["url"] != "") {
+            print("artifact can be downloaded: " + filepath);
+            await _downloader.startDownload();
         
-      }
-      else {
+          } else {
+            File movepath = File(path.join(
+                getTempForgePath(),
+                version.toString(),
+                modloaderVersion.toString(),
+                "maven",
+                lib["path"]));
 
-      var _downloader = Downloader(lib["url"], filepath);
+            print("need to move: " + movepath.path + " | To: " + filepath);
 
-      await _downloader.startDownload();
+            if (movepath.existsSync()) {
+              Utils.copyFile(source: movepath, destination: File(filepath));
+            }
+          }
+        }
+      });
 
-      await _downloader.unzip(unzipPath: path.join(getbinpath(), version.toString()));
+      await Future.wait(downloads);
 
-      }
-      }
-
-      if (current["downloads"]["artifact"] != null) {
-
-        final lib = current["downloads"]["artifact"];
-
-
-        var _downloader = Downloader(lib["url"],  path.join(
-        getDocumentsPath(),
-        "PixieLauncherInstances",
-        "debug",
-        "libraries",
-        ((lib["path"] as String)
-                .replaceAll('/', path.separator))));
-
-       await _downloader.startDownload();
-
-      }
-
-      i++;
+      totalitems -= downloads_at_same_time;
+      print((i / libraries.length));
+      print(totalitems);
       _progress = (i / libraries.length) * 100;
       _state = DownloadState.downloadingLibraries;
       notifyListeners();
     }
+    print("done with libraries <==========");
   }
-
 
   getOldUniversal(Map install_profileJson, Version version,
       ModloaderVersion modloaderVersion) async {
     if (install_profileJson["install"] == null) return;
     Map install_profile = install_profileJson["install"];
-    File filepath = File(
-       path.join(getlibarypath(), "libraries", Utils.parseMaven(install_profile["path"])));
+    File filepath = File(path.join(getlibarypath(), "libraries",
+        Utils.parseMaven(install_profile["path"])));
     print('parsing ${filepath.path} ');
 
     if (!(await filepath.exists()))
       throw "the file does not exist, mabye you called the method before you installed the libraries";
-    List<int> _bytes = await File(
-          path.join(getTempForgePath(), version.toString(), modloaderVersion.toString(), install_profile["filePath"]))
+
+    List<int> _bytes = await File(path.join(
+            getTempForgePath(),
+            version.toString(),
+            modloaderVersion.toString(),
+            install_profile["filePath"]))
         .readAsBytes();
-    await File(
-           path.join(getlibarypath(), "libraries",Utils.parseMaven(install_profile["path"]) ))
+    await File(path.join(getlibarypath(), "libraries",
+            Utils.parseMaven(install_profile["path"])))
         .writeAsBytes(_bytes);
   }
 
@@ -147,8 +190,8 @@ class DownloadUtils with ChangeNotifier {
     notifyListeners();
     String mcversion = packagejson["id"];
 
-    String filepath =
-       path.join(getDocumentsPath(), "PixieLauncherInstances", "debug", "versions", mcversion, mcversion + ".json");
+    String filepath = path.join(getDocumentsPath(), "PixieLauncherInstances",
+        "debug", "versions", mcversion, mcversion + ".json");
 
     String parentDirectory = path.dirname(filepath);
     await Directory(parentDirectory).create(recursive: true);
@@ -156,14 +199,14 @@ class DownloadUtils with ChangeNotifier {
 
     var clientRES =
         await http.get(Uri.parse(packagejson["downloads"]["client"]["url"]));
-    await File(
-            path.join(getDocumentsPath(), "PixieLauncherInstances", "debug", "versions", mcversion, mcversion + ".jar"))
+    await File(path.join(getDocumentsPath(), "PixieLauncherInstances", "debug",
+            "versions", mcversion, mcversion + ".jar"))
         .writeAsBytes(clientRES.bodyBytes);
   }
 
   _writeAssetsjson(Map packagejson) async {
-    String filepath =
-       path.join(getDocumentsPath(), "PixieLauncherInstances", "debug", "assets", "indexes",'${packagejson["assets"]}.json' );
+    String filepath = path.join(getDocumentsPath(), "PixieLauncherInstances",
+        "debug", "assets", "indexes", '${packagejson["assets"]}.json');
     await Directory(path.dirname(filepath)).create(recursive: true);
     await File(filepath).create(recursive: true);
     await File(filepath).writeAsBytes(
@@ -183,24 +226,25 @@ class DownloadUtils with ChangeNotifier {
 
     //sorts all hashes to donwloads
     //Sweet spot: 10 || 40 sec || 1.20.1
-    int downloads_at_same_time = 10;
+    int downloads_at_same_time = 120;
 
-     int _totalitems = objects.length;
-     http.Client client = http.Client();
-     for (var i = 0; objects.length > i;) {
-       Iterable<Future<dynamic>> downloads = Iterable.generate(
-           downloads_at_same_time > _totalitems
-               ? _totalitems
-               : downloads_at_same_time,
-           (index) => _downloadForAssets(
-               objects, objectEnteries, total, i + index, client));
-       await Future.wait(downloads);
-       i += downloads_at_same_time;
-       _totalitems = _totalitems - downloads_at_same_time;
-       _progress = (i / objects.length) * 100;
-       _state = DownloadState.downloadAssets;
-       notifyListeners();
-     }
+    int _totalitems = objects.length;
+    http.Client client = http.Client();
+    for (var i = 0; objects.length > i;) {
+      Iterable<Future<dynamic>> downloads = Iterable.generate(
+          downloads_at_same_time > _totalitems
+              ? _totalitems
+              : downloads_at_same_time,
+          (index) => _downloadForAssets(
+              objects, objectEnteries, total, i + index, client));
+      await Future.wait(downloads);
+      i += downloads_at_same_time;
+      _totalitems = _totalitems - downloads_at_same_time;
+      _progress = (i / objects.length) * 100;
+      _state = DownloadState.downloadAssets;
+      notifyListeners();
+    }
+    print("done with ASSETS <=======================");
   }
 
   //private Method
@@ -212,11 +256,16 @@ class DownloadUtils with ChangeNotifier {
         '/' +
         objects[objectEnteries[i]]["hash"];
 
-
-    String filepath =
-      path.join(getDocumentsPath(), "PixieLauncherInstances", "debug", "assets", "objects", objects[objectEnteries[i]]["hash"].substring(0, 2), objects[objectEnteries[i]]["hash"]);
+    String filepath = path.join(
+        getDocumentsPath(),
+        "PixieLauncherInstances",
+        "debug",
+        "assets",
+        "objects",
+        objects[objectEnteries[i]]["hash"].substring(0, 2),
+        objects[objectEnteries[i]]["hash"]);
     //Downloading..
-  await  Downloader(url, filepath).startDownload();
+    await Downloader(url, filepath).startDownload();
 
     //   print('done with ' + i.toString());
   }

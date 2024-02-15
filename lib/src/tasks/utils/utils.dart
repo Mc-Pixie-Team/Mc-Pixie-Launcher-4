@@ -68,7 +68,7 @@ class Utils {
   static Future<void> copyDirectory({required Directory source, required Directory destination}) async {
     
     if(!(await destination.exists())) {
-              await destination.create();
+              await destination.create(recursive: true);
           }
 
       final fileitems = source.list();
@@ -88,7 +88,7 @@ class Utils {
     static Future<void> copyFile({required File source, required File destination}) async {
     
           if(!(await destination.exists())) {
-              await destination.create();
+              await destination.create(recursive: true);
           }
 
           if(source.path == destination.path) throw "destination and source have the same path: ${destination.path}";

@@ -1,5 +1,7 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers, no_logic_in_create_state, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
@@ -57,11 +59,7 @@ class TaskwidgetItem extends StatefulWidget {
 
 class _TaskwidgetItemState extends State<TaskwidgetItem> {
   String get getName {
-    if (widget.name.length > 8) {
-      widget.name = widget.name.replaceRange(8, widget.name.length, "");
-      widget.name = '${widget.name}...';
-      return widget.name;
-    }
+
     return widget.name;
   }
 
@@ -73,11 +71,11 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(mainAxisSize: MainAxisSize.min, children: [
+    return  Column(mainAxisSize: MainAxisSize.min, children: [
       Padding(
         padding: EdgeInsets.all(10.0),
         child: Container(
-          height: 85,
+          
           width: double.infinity,
           decoration: ShapeDecoration(
             color: Color(0xFF262626),
@@ -111,9 +109,11 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 26, top: 4),
-                child: Text.rich(
-                  TextSpan(
+                padding: const EdgeInsets.only(left: 26, top: 4, right: 26),
+                child: RichText(
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
                     children: [
                       TextSpan(
                         text: titleText,
@@ -122,22 +122,23 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                           fontSize: 16,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.w700,
-                          height: 0,
+                         
                         ),
                       ),
                       widget.state == MainState.running ? TextSpan() :
                       TextSpan(
-                        text: ' ${widget.progress.ceil()}%',
+                        text: ' ${min(widget.progress.ceil(), 100) }%',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.w400,
-                          height: 0,
+                         
                         ),
                       ),
                     ],
                   ),
+              
                 ),
               ),
               Padding(
@@ -155,7 +156,10 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                         height: 20,
                         width: 20,
                         child: DownloadButton(mainState: widget.state, onCancel: widget.cancel, onDownload: () {}, onOpen: () {}, mainprogress: widget.progress,))
-                  ]))
+                  ])),
+                  SizedBox(
+                height: 10,
+              ),
             ],
           ),
         ),

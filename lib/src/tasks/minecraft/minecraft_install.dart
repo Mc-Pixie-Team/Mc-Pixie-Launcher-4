@@ -48,7 +48,9 @@ class Minecraft with ChangeNotifier {
       }
     });
     Map res = await _downloader.getJson(version);
-    await Future.wait([_downloader.downloadLibaries(res), _downloader.downloadAssets(res)]);
+    await _downloader.downloadLibaries(res, version);
+    await  _downloader.downloadAssets(res);
+   
     await _downloader.downloadClient(res);
 
     // await _downloader.downloadLibaries(res);

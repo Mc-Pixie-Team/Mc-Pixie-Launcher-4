@@ -6,7 +6,7 @@ import 'package:path/path.dart' as path;
 
 class Java {
   static String getJavaJdk(Version version) {
-  
+    //zulu17.48.15-ca-jdk17.0.10-macosx_x64
     ///Users/joshig/Documents/PixieLauncherInstances/zulu17.48.15-ca-jdk17.0.10-macosx_aarch64/zulu-17.jdk/Contents/Home/bin
     String javaVer17 =
         path.join(pixieInstances(), "zulu17.48.15-ca-jdk17.0.10-macosx_aarch64","zulu-17.jdk", "Contents", "Home" , "bin", "java");
@@ -21,9 +21,13 @@ class Java {
     }
 
 
-    if(Platform.isMacOS && version < Version(1, 17, 1)) {
+    if(Platform.isMacOS && version < Version(1, 19)) {
       //zulu8.76.0.17-ca-jdk8.0.402-macosx_x64
       majorVer =  path.join(pixieInstances(), "zulu8.76.0.17-ca-jdk8.0.402-macosx_x64","zulu-8.jdk","Contents", "Home" , "bin", "java");
+
+      if(version > Version(1, 16)){
+        majorVer = path.join(pixieInstances(), "zulu17.48.15-ca-jdk17.0.10-macosx_x64","zulu-17.jdk", "Contents", "Home" , "bin", "java");
+      }
     }
 
     return majorVer;

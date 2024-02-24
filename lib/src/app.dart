@@ -8,10 +8,14 @@ import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
+import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
+import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
+import "package:system_info2/system_info2.dart";
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
@@ -176,6 +180,26 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  void getDeviceInfos() {
+    int MEGABYTE = 1024 * 1024;
+      print("Kernel architecture     : ${SysInfo.kernelArchitecture}");
+  print("Kernel bitness          : ${SysInfo.kernelBitness}");
+  print("Kernel name             : ${SysInfo.kernelName}");
+  print("Kernel version          : ${SysInfo.kernelVersion}");
+  print("Operating system name   : ${SysInfo.operatingSystemName}");
+  print("Operating system version: ${SysInfo.operatingSystemVersion}");
+  print("User directory          : ${SysInfo.userDirectory}");
+  print("User id                 : ${SysInfo.userId}");
+  print("User name               : ${SysInfo.userName}");
+  print("User space bitness      : ${SysInfo.userSpaceBitness}");
+  print("Total physical memory   : ${SysInfo.getTotalPhysicalMemory() ~/ MEGABYTE} MB");
+  print("Free physical memory    : ${SysInfo.getFreePhysicalMemory() ~/ MEGABYTE} MB");
+  print("Total virtual memory    : ${SysInfo.getTotalVirtualMemory() ~/ MEGABYTE} MB");
+  print("Free virtual memory     : ${SysInfo.getFreeVirtualMemory() ~/ MEGABYTE} MB");
+  print("Virtual memory size     : ${SysInfo.getVirtualMemorySize() ~/ MEGABYTE} MB");
+}
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,12 +217,14 @@ class _MainPageState extends State<MainPage> {
           // print( await SecureStorage.storage.readAll());
           //await MinecraftAccountUtils().saveAccounts([]);
           //   print("start install");
-          // await Minecraft().install(Version(1,20,4));
-          //   print("start url");
-          //    Map res = await DownloadUtils().getJson(Version(1,20,4));
-          //    print("start run");
+          getDeviceInfos();
+          
+          // await Minecraft().install(Version(1,18,2));
+          // print("start url");
+          //     Map res = await DownloadUtils().getJson(Version(1,18,2));
+          //     print("start run");
           //    Minecraft().run(res, '4656567332');
-          print(getTempCommandPath());
+          // print(getTempCommandPath());
           //   supabaseHelpers().signoutUser();
 
           //  DiscordRP().initCS();

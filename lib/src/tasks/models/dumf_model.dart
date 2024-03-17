@@ -9,6 +9,7 @@ class DUMF {
     this.likes,
     this.categories,
     this.icon,
+    this.body,
     required this.versions,
     required this.original,
   });
@@ -16,6 +17,7 @@ class DUMF {
   String? name;
   String? author;
   String? description;
+  String? body;
   int? downloads;
   int? likes;
   List<dynamic>? categories;
@@ -33,7 +35,8 @@ class DUMF {
       "categories": umf.categories,
       "icon": umf.icon,
       "versions": umf.versions,
-      "original": umf.original
+      "original": umf.original,
+      "body": umf.body
     };
   }
 
@@ -52,6 +55,7 @@ class DUMF {
     icon: json["icon"],
    original: json["original"],
    versions: json["verions"],
+   body: json["body"]
   
     );
   }

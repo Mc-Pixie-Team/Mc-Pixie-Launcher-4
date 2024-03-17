@@ -54,6 +54,8 @@ dependencies:
   dart_discord_rpc:
     git: 
       url: https://github.com/Mc-Pixie-Team/dart_discord_rpc.git
+  webview_cef:
+    path: packages/webview_cef
   flutter_secure_storage: ^8.1.0
   uuid: ^4.0.0
   path_provider: ^2.1.1
@@ -64,9 +66,6 @@ dependencies:
   dyn_mouse_scroll: ^1.0.7
   smooth_list_view: ^1.0.4
   figma_squircle: ^0.5.3
-  system_info: ^1.0.1
-  system_info2: ^4.0.0
-  system_info_plus: ^0.0.5
       
 
 

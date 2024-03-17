@@ -9,11 +9,12 @@ import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/java/java.dart';
+import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/widgets/buttons/circular_button.dart';
 import 'package:mclauncher4/src/widgets/cards/java_install_card.dart';
-import 'package:mclauncher4/src/widgets/providers/browse_card.dart';
+import 'package:mclauncher4/src/widgets/providers_widget/browse_card.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
-import 'package:mclauncher4/src/widgets/providers/dropdown_menu.dart';
+import 'package:mclauncher4/src/widgets/providers_widget/dropdown_menu.dart';
 import 'package:mclauncher4/src/widgets/searchbar.dart' as Searchbar;
 import 'package:flutter/material.dart';
 import 'package:smooth_list_view/smooth_list_view.dart';
@@ -46,15 +47,15 @@ class _ModListPageState extends State<ModListPage> {
   Future<List> get modpacklistfuture async {
     print("get modrinth future");
     var returntype = await _handler.getModpackList();
-    // Future.delayed(Duration(milliseconds: 200)).then((value) {
-    //   _scrollController.addListener(() async {
-    //     if (_scrollController.position.pixels >=
-    //         (_scrollController.position.maxScrollExtent - 400)) {
-    //       print('new');
-    //       await getMoreData();
-    //     }
-    //   });
-    // });
+    Future.delayed(Duration(milliseconds: 200)).then((value) {
+      _scrollController.addListener(() async {
+        if (_scrollController.position.pixels ==
+            (_scrollController.position.maxScrollExtent )) {
+          print('new');
+          await getMoreData();
+        }
+      });
+    });
     return returntype;
   }
 
@@ -70,7 +71,9 @@ class _ModListPageState extends State<ModListPage> {
     installContollers.addAll(List.generate(
         rawModpacks.length,
         (index) => InstallController(
-            handler: _handler, modpackData: rawModpacks[index])));
+                              handler: _handler,
+                              modpackData:
+                                  _handler.convertToUMF(rawModpacks[index]))));
     setState(() {});
     iscalled = false;
   }
@@ -191,7 +194,7 @@ class _ModListPageState extends State<ModListPage> {
                   style: Theme.of(context).typography.black.displaySmall,
                 )),
               ),
-              Divider.Divider(
+              Divider.CustomDivider(
                 size: 14,
               ),
               SizedBox(
@@ -249,8 +252,16 @@ class _ModListPageState extends State<ModListPage> {
                         child:   ListView.builder(
                                 controller: _scrollController,
                               
-                                itemCount: modpacklist.length,
-                                itemBuilder: ((context, index) {
+                                itemCount: modpacklist.length +1,
+                                itemBuilder: ((context, index) {               
+                                  
+                                  if(index == modpacklist.length ) {
+                                    print("returned");
+                                  return SizedBox(height: 100, child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 30)));
+                                  }
+
                                   InstallController installcontroller =
                                       installContollers[index];
 
@@ -339,7 +350,7 @@ class _ModListPageState extends State<ModListPage> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return SizedBox(
-                                width: 235,
+                                width: 220,
                                 child: Dropdownmenu(
                                   useOverlay: false,
                                   registry: snapshot.data,
@@ -354,7 +365,7 @@ class _ModListPageState extends State<ModListPage> {
                                 ));
                           }
                           return SizedBox(
-                            width: 235,
+                            width: 215,
                           );
                         }),
                     SizedBox(

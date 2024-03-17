@@ -1,5 +1,6 @@
 import 'dart:io' show Platform, exit;
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/home_page.dart';
 import 'package:mclauncher4/src/pages/debug_page.dart';
@@ -9,22 +10,23 @@ import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
+import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
-import "package:system_info2/system_info2.dart";
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
 import 'widgets/navigation_drawer/item_drawer.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'widgets/navigation_drawer/menu_item.dart';
-import 'widgets/divider.dart' as Div;
+import 'widgets/divider.dart' as div;
 import 'package:animations/animations.dart';
 import 'dart:math' as math;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
@@ -47,12 +49,34 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   }
 }
 
-class McLauncher extends StatelessWidget {
+class McLauncher extends StatefulWidget {
   const McLauncher({super.key});
+
+
+
+
+
+  
+  @override
+  State<StatefulWidget> createState() => _McLauncherState();
+    // TODO: implement createState
+  
+    static _McLauncherState of(BuildContext context) => 
+      context.findAncestorStateOfType<_McLauncherState>()!;
+  
+}
+class _McLauncherState extends State<McLauncher>{
 
   Future<String> get customWait async {
     await Future.delayed(Duration(seconds: 10));
     return "done!";
+  }
+   ThemeMode _themeMode = ThemeMode.system;
+
+    void changeTheme(ThemeMode themeMode) {
+    setState(() {
+      _themeMode = themeMode;
+    });
   }
 
   @override
@@ -69,7 +93,7 @@ class McLauncher extends StatelessWidget {
             useMaterial3: true,
             colorScheme: darkColorScheme,
             typography: Typography(black: blackTextSchemes)),
-        themeMode: ThemeMode.dark,
+        themeMode: _themeMode,
         home:
         Material(child:
         MainPage()),
@@ -89,6 +113,7 @@ class McLauncher extends StatelessWidget {
             ])
         );
   }
+
 }
 
 class MainPage extends StatefulWidget {
@@ -180,24 +205,6 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  void getDeviceInfos() {
-    int MEGABYTE = 1024 * 1024;
-      print("Kernel architecture     : ${SysInfo.kernelArchitecture}");
-  print("Kernel bitness          : ${SysInfo.kernelBitness}");
-  print("Kernel name             : ${SysInfo.kernelName}");
-  print("Kernel version          : ${SysInfo.kernelVersion}");
-  print("Operating system name   : ${SysInfo.operatingSystemName}");
-  print("Operating system version: ${SysInfo.operatingSystemVersion}");
-  print("User directory          : ${SysInfo.userDirectory}");
-  print("User id                 : ${SysInfo.userId}");
-  print("User name               : ${SysInfo.userName}");
-  print("User space bitness      : ${SysInfo.userSpaceBitness}");
-  print("Total physical memory   : ${SysInfo.getTotalPhysicalMemory() ~/ MEGABYTE} MB");
-  print("Free physical memory    : ${SysInfo.getFreePhysicalMemory() ~/ MEGABYTE} MB");
-  print("Total virtual memory    : ${SysInfo.getTotalVirtualMemory() ~/ MEGABYTE} MB");
-  print("Free virtual memory     : ${SysInfo.getFreeVirtualMemory() ~/ MEGABYTE} MB");
-  print("Virtual memory size     : ${SysInfo.getVirtualMemorySize() ~/ MEGABYTE} MB");
-}
   
 
   @override
@@ -211,13 +218,16 @@ class _MainPageState extends State<MainPage> {
 
         //  await SecureStorage.storage.deleteAll();
 
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+         print(prefs.getInt(SettingsKeys.minRamUsage));
+          print(prefs.getInt(SettingsKeys.maxRamUsage));
        
           // print(await SecureStorage.storage.read(key: "test"));
           // print(await SecureStorage.isKeyRegistered("accounts"));
           // print( await SecureStorage.storage.readAll());
           //await MinecraftAccountUtils().saveAccounts([]);
           //   print("start install");
-          getDeviceInfos();
+         // getDeviceInfos();
           
           // await Minecraft().install(Version(1,18,2));
           // print("start url");
@@ -250,6 +260,7 @@ class _MainPageState extends State<MainPage> {
                 decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surfaceVariant),
                 child: Column(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Container(
                       height: Platform.isMacOS ? 40 : 28,
@@ -284,7 +295,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     Padding(
-                        child: Div.Divider(
+                        child: div.CustomDivider(
                           size: 20,
                         ),
                         padding: EdgeInsets.only(top: 20, bottom: 20)),
@@ -371,7 +382,7 @@ class _MainPageState extends State<MainPage> {
                                 ),
                               ),
                             ))),
-                    Div.Divider(
+                    div.CustomDivider(
                       size: 20,
                     ),
                     SizedBox(

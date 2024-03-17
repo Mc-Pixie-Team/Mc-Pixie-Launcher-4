@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings, unnecessary_cast
 
+import 'dart:io';
 import 'dart:isolate';
 
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
@@ -15,11 +17,13 @@ import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as divider;
 import 'package:flutter/foundation.dart';
+import 'package:webview_cef/webview_cef.dart';
 
 class ModPage extends StatefulWidget {
   UMF modpackData;
   String handlerString;
-  ModPage({Key? key, required this.modpackData, required this.handlerString}) : super(key: key);
+  ModPage({Key? key, required this.modpackData, required this.handlerString})
+      : super(key: key);
 
   @override
   _ModPageState createState() => _ModPageState();
@@ -29,6 +33,7 @@ class _ModPageState extends State<ModPage> {
   DUMF? details;
   bool isdisposed = false;
   Isolate? isolate;
+  bool isVersions = true;
 
   static inIsolate(List args) async {
     Api handler = ApiHandler().getApi(args[2]);
@@ -39,8 +44,11 @@ class _ModPageState extends State<ModPage> {
   createIsolate() async {
     final resultPort = ReceivePort();
 
-    isolate = await Isolate.spawn(
-        inIsolate, [widget.modpackData.original, resultPort.sendPort, widget.handlerString]);
+    isolate = await Isolate.spawn(inIsolate, [
+      widget.modpackData.original,
+      resultPort.sendPort,
+      widget.handlerString
+    ]);
 
     resultPort.listen((message) {
       setState(() {
@@ -101,13 +109,13 @@ class _ModPageState extends State<ModPage> {
                 ),
               )),
           Positioned.fill(
-            top: 70,
+            top: 50,
             child: Column(children: [
               Row(children: [
                 Padding(
                   padding: EdgeInsets.only(left: 40),
                   child: ModPicture(
-                    width: 160,
+                    width: 140,
                     url: widget.modpackData.icon!,
                     color: Theme.of(context).colorScheme.surface,
                   ),
@@ -169,29 +177,107 @@ class _ModPageState extends State<ModPage> {
               ),
               Row(
                 children: [
-                   const SizedBox(
-                width: 50,
-              ),
-                  Text("Home", style: Theme.of(context).typography.black.headlineSmall,),
-                 const SizedBox(
+                  const SizedBox(
+                    width: 50,
+                  ),
+                  GestureDetector(
+                      onTap: () => setState(() {
+                            isVersions = false;
+                          }),
+                      child: Column(children: [
+                        Text(
+                          "Home",
+                          style:
+                              Theme.of(context).typography.black.headlineSmall,
+                        ),
+                        SizedBox(
+                            width: 80,
+                            child: Center(child: AnimatedContainer(
+                              margin: EdgeInsets.only(top: 5),
+                              duration: Duration(milliseconds: 300),
+                              height: 2,
+                              curve: Curves.easeInOutCubic,
+                              width: isVersions ? 0 : 80,
+                              color:  Theme.of(context).colorScheme.primary,
+                            )))
+                      ])),
+                  const SizedBox(
                     width: 30,
                   ),
-                  Text("Versions",style: Theme.of(context).typography.black.headlineSmall)
+                  GestureDetector(
+                      onTap: () => setState(() {
+                            isVersions = true;
+                          }),
+                      child: Column(children: [
+                        Text("Versions",
+                            style: Theme.of(context)
+                                .typography
+                                .black
+                                .headlineSmall),
+                        SizedBox(
+                            width: 100,
+                            child: Center(child: AnimatedContainer(
+                              margin: EdgeInsets.only(top: 5),
+                              duration: Duration(milliseconds: 300),
+                              height: 2,
+                              curve: Curves.easeInOutCubic,
+                              width: isVersions ? 100 : 0,
+                              color: Theme.of(context).colorScheme.primary,
+                            )))
+                      ]))
                 ],
               ),
-             
-
               const SizedBox(
                 height: 20,
               ),
               Expanded(
-                  child:  
-                           FileTable(
-                            providerString: widget.handlerString,
-                              details: details,
-                            ))
+                  child: PageTransitionSwitcher(
+                reverse: !isVersions,
+                duration: const Duration(milliseconds: 400),
+                child: isVersions
+                    ? FileTable(
+                        providerString: widget.handlerString,
+                        details: details,
+                      )
+                    : ShaderMask(
+                        shaderCallback: (Rect rect) {
+                          return const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color.fromARGB(255, 177, 70, 21),
+                              Colors.transparent,
+                              Colors.transparent,
+                              Colors.transparent,
+                            ],
+                            stops: [
+                              0.0,
+                              0.1,
+                              0.1,
+                              1.0
+                            ], // 10% purple, 80% transparent, 10% purple
+                          ).createShader(rect);
+                        },
+                        blendMode: BlendMode.dstOut,
+                        child: details?.body == null
+                            ? Text(
+                                "no body found! or details could not be loaded")
+                            : WebviewWidget(
+                                body: details!.body!,
+                                cacheFilePath: File(
+                                    '/Users/joshig/Documents/GitHub/Mc-Pixie-Launcher-4/lib/src/html_cache/index.html'))),
+                transitionBuilder:
+                    (child, primaryAnimation, secondaryAnimation) =>
+                        SharedAxisTransition(
+                  animation: primaryAnimation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: SharedAxisTransitionType.horizontal,
+                  fillColor: Colors.transparent,
+                  child: child,
+                ),
+              ))
             ]),
-          )
+          ),
         ],
       ),
     );

@@ -24,11 +24,11 @@ class CurseforgeApi implements Api {
 
   final baseUrl = "https://api.curseforge.com";
 
+
   int index = 0;
   int pageSize = 50;
   List categoriesSearch = [];
 
-  _convertCateToId(String name) {}
 
   @override
   void addCategory(String name, String oldtext) {
@@ -66,12 +66,18 @@ class CurseforgeApi implements Api {
     return versions;
   }
 
-  @override
-  Future<List<String>> getCategories() async {
-    final res = await http.get(
+
+  Future<List> _requestCategories() async {
+        final res = await http.get(
         Uri.parse('$baseUrl/v1/categories?gameId=432&classId=4471'),
         headers: userHeader);
     final hits = await jsonDecode(utf8.decode(res.bodyBytes))["data"];
+    return hits;
+  }
+
+  @override
+  Future<List<String>> getCategories() async {
+    final hits = await _requestCategories();
 
     List<String> categories = [];
     for (var version in hits) {
@@ -90,6 +96,11 @@ class CurseforgeApi implements Api {
         headers: userHeader);
     final hits = await jsonDecode(utf8.decode(res.bodyBytes))["data"] as List;
 
+      final res2 = await http.get(
+        Uri.parse('$baseUrl/v1/mods/${modpackData["id"]}/description'),
+        headers: userHeader);
+    final body = await jsonDecode(utf8.decode(res2.bodyBytes))["data"];
+
     for (var hit in hits) {
       if(hit["isServerPack"]) continue;
       versions.add(UMF(
@@ -99,7 +110,8 @@ class CurseforgeApi implements Api {
         icon: modpackData["logo"]["thumbnailUrl"],
       author: modpackData["authors"][0]["name"],
         MLVersion: null,
-        MCVersion: hit["gameVersions"][0]));
+        MCVersion: hit["gameVersions"][0],
+        ));
     }
 
     return DUMF(
@@ -110,7 +122,8 @@ class CurseforgeApi implements Api {
         icon: modpackData["logo"]["thumbnailUrl"],
         author: modpackData["authors"][0]["name"],
         versions: versions,
-        original: modpackData);
+        original: modpackData,
+        body: body);
   }
 
   @override
@@ -121,20 +134,65 @@ class CurseforgeApi implements Api {
 
   @override
   getModpackList() async {
+    print("get list");
+
+    List categories = [];
+
+    if(!categoriesSearch.isEmpty) {
+      print("need to search for cate");
+      List hits = await _requestCategories();
+
+      for (String cate in categoriesSearch) {
+
+        for (var hit in hits) {
+          if(hit["name"] == cate) {
+            categories.add(hit["id"]);
+          }
+        }
+      }
+    }
+
+    String url = '$baseUrl/v1/mods/search?index=0&pageSize=50&gameId=432&sortField=1&sortOrder=desc&classId=4471&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categories';
     print(
-        '$baseUrl/v1/mods/search?index=0&pageSize=50&gameId=432&sortField=1&sortOrder=desc&classId=4471&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categoriesSearch');
+        url);
     final res = await http.get(
         Uri.parse(
-            '$baseUrl/v1/mods/search?index=0&pageSize=50&gameId=432&sortField=1&sortOrder=desc&classId=4471&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categoriesSearch'),
+            url),
         headers: userHeader);
     final hits = jsonDecode(utf8.decode(res.bodyBytes))["data"];
     return hits;
   }
 
   @override
-  Future<List> getMoreModpacks() {
-    // TODO: implement getMoreModpacks
-    throw UnimplementedError();
+  Future<List> getMoreModpacks() async{
+      index += pageSize;
+    
+        List categories = [];
+
+    if(categoriesSearch != []) {
+      List hits = await _requestCategories();
+
+      for (String cate in categoriesSearch) {
+
+        for (var hit in hits) {
+          if(hit["name"] == cate) {
+            categories.add(hit["id"]);
+          }
+        }
+      }
+    }
+
+    String url = '$baseUrl/v1/mods/search?index=$index&pageSize=$pageSize&gameId=432&sortField=1&sortOrder=desc&classId=4471&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categoriesSearch';
+    print(
+        url);
+    final res = await http.get(
+        Uri.parse(
+            url),
+        headers: userHeader);
+    final hits = jsonDecode(utf8.decode(res.bodyBytes))["data"];
+
+
+    return hits;
   }
 
   @override

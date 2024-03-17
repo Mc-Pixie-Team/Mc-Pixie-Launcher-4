@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/widgets/providers/dropdown.dart';
-import 'package:mclauncher4/src/widgets/providers/dropdown_menu.dart';
+import 'package:mclauncher4/src/widgets/providers_widget/dropdown.dart';
+import 'package:mclauncher4/src/widgets/providers_widget/dropdown_menu.dart';
 
 class Debugpage extends StatefulWidget {
   const Debugpage({Key? key}) : super(key: key);

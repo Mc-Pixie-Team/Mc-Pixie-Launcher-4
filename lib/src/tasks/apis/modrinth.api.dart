@@ -177,6 +177,7 @@ class ModrinthApi implements Api {
     modpackData =await _getModpack(modpackData["project_id"]);
     List rawVersion = await _getMultipleVersion(modpackData["versions"]);
 
+
     for (Map version in rawVersion){
   versions.add(UMF(
           icon: modpackData["icon_url"],
@@ -204,6 +205,7 @@ class ModrinthApi implements Api {
       icon: modpackData["icon_url"],
       versions: versions,
       original: modpackData,
+      body: modpackData["body"],
     );
   }
 

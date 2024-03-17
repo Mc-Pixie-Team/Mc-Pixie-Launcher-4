@@ -164,7 +164,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
           ),
         ),
       ),
-      divider.Divider()
+      divider.CustomDivider()
     ]);
   }
 }

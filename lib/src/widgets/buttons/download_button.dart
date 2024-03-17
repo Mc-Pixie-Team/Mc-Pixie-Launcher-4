@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
-import 'package:mclauncher4/src/widgets/providers/browse_card.dart';
+import 'package:mclauncher4/src/widgets/providers_widget/browse_card.dart';
 
 class DownloadButton extends StatefulWidget {
   MainState mainState;

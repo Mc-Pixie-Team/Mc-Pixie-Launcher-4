@@ -8,7 +8,7 @@ import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/carousel/carousel.dart';
 import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
-import 'package:mclauncher4/src/widgets/providers/browse_card.dart';
+import 'package:mclauncher4/src/widgets/providers_widget/browse_card.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as divider;
@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                                                SizedBox(
                                                 height: 10,
                                               ),
-                                              divider.Divider(size: 70, ),
+                                              divider.CustomDivider(size: 70, ),
                                              isEmpty
                                           ? Padding(
                                               padding: EdgeInsets.only(top: 150),

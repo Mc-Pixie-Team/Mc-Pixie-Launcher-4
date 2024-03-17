@@ -50,7 +50,7 @@ class _FileTableState extends State<FileTable> {
         ],
       ),
       SizedBox(height: 8,),
-       divider.Divider(size: 30,),
+       divider.CustomDivider(size: 30,),
       Expanded(
           child: Stack(children: [
         AnimatedOpacity(

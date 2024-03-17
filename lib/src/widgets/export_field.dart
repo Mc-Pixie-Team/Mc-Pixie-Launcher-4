@@ -70,7 +70,7 @@ class _ExportFieldState extends State<ExportField> {
           SizedBox(
             height: 18,
           ),
-          Divider.Divider(
+          Divider.CustomDivider(
             size: 24,
           ),
           Expanded(

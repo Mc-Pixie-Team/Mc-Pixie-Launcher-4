@@ -1,33 +1,19 @@
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class Divider extends StatefulWidget {
+class CustomDivider extends StatefulWidget {
   double size;
   double thickness;
-  Divider({Key? key, this.size = 10, this.thickness = 1}) : super(key: key);
+  Color? color;
+  CustomDivider({Key? key, this.size = 10, this.thickness = 1, this.color}) : super(key: key);
 
   @override
-  _DividerState createState() => _DividerState();
+  _CustomDividerState createState() => _CustomDividerState();
 }
 
-class _DividerState extends State<Divider> {
+class _CustomDividerState extends State<CustomDivider> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: widget.size, right: widget.size),
-      child: Container(
-        decoration: ShapeDecoration(
-          shape: RoundedRectangleBorder(
-            side: BorderSide(
-              width: 0.50,
-              strokeAlign: BorderSide.strokeAlignCenter,
-              color: Theme.of(context).colorScheme.outline,
-            ),
-          ),
-        ),
-        width: double.infinity,
-        height: widget.thickness,
-      ),
-    );
+    return Divider(indent: widget.size, endIndent: widget.size, thickness: widget.thickness, color: widget.color ?? Theme.of(context).colorScheme.outline,);
   }
 }

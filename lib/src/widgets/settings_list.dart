@@ -51,7 +51,7 @@ class _SettingsListState extends State<SettingsList> {
                           padding: EdgeInsets.only(left: 5, right: 5),
                           child: Container(
                             width: 550.66,
-                            decoration: const ShapeDecoration(
+                            decoration: ShapeDecoration(
                               shape: RoundedRectangleBorder(
                                 side: BorderSide(
                                   width: 0.50,

@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
-import 'package:webview_cef/webview_cef.dart';
+
 
 void main() async{
   supabaseHelpers().init();
   DiscordRP().initCS("1144740158374158366");
    Paint.enableDithering = true;
   await Path.init();
-  await WebViewGlobal.controller.initialize();
   runApp(
        McLauncher());
     final win = appWindow;

@@ -3,21 +3,20 @@
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:path/path.dart' as path;
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
+import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
 import 'package:mclauncher4/src/widgets/file_table/file_table.dart';
 import 'package:mclauncher4/src/widgets/mod_picture.dart';
-import 'package:transparent_image/transparent_image.dart';
-import 'package:mclauncher4/src/widgets/divider.dart' as divider;
 import 'package:flutter/foundation.dart';
-import 'package:webview_cef/webview_cef.dart';
+import 'package:webview_windows/webview_windows.dart';
 
 class ModPage extends StatefulWidget {
   UMF modpackData;
@@ -263,9 +262,10 @@ class _ModPageState extends State<ModPage> {
                             ? Text(
                                 "no body found! or details could not be loaded")
                             : WebviewWidget(
-                                body: details!.body!,
-                                cacheFilePath: File(
-                                    '/Users/joshig/Documents/GitHub/Mc-Pixie-Launcher-4/lib/src/html_cache/index.html'))),
+                    cachHTMLFile: File(
+                      path.join( getHTMLcachePath(), "index.html")),
+                    body: details!.body!,
+                  )),
                 transitionBuilder:
                     (child, primaryAnimation, secondaryAnimation) =>
                         SharedAxisTransition(

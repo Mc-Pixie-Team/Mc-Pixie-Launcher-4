@@ -54,6 +54,10 @@ String getInstancePath() {
   //return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\instance';
   return path.join(getDocumentsPath(), Path.instance_name, "instance");
 }
+String getHTMLcachePath() {
+  //return '${(await getApplicationDocumentsDirectory()).path}\\PixieLauncherInstances\\instance';
+  return path.join(getDocumentsPath(), Path.instance_name, "htmlcache");
+}
 
 
 //--- 

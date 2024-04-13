@@ -1,10 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math' as math;
-import 'dart:ui' as ui;
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/app.dart';
 import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
@@ -19,24 +16,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  double _currentSliderPrimaryValue = 2048;
-  double _currentSliderSecondaryValue = 4096;
-  late int min;
-  late int max;
-  late int divisons;
 
-  int maxInGB = 16;
-  int GIGABYTE = 1024 * 1024;
+ var settingsBox = Hive.box('settings');
 
-  int MEGABYTE = 1024;
 
-  _SettingsPageState() {
-    min = 2048;
-    max = maxInGB * MEGABYTE;
-    divisons = 24;
-  }
 
-  bool islight = true;
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,7 +36,9 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Center(
             child: SizedBox(
                 width: 480,
-                child: Column(
+                child:  ValueListenableBuilder(
+      valueListenable: settingsBox.listenable(),
+      builder: (context, box, widget) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
@@ -77,34 +65,20 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Column(
                         children: [
                           SizedBox(height: 13),
-                          SettingsSwitchTrans(text: "Start project on install", settingsKey: SettingsKeys.maxRamUsage, value: true, onpressed:(value) {
-                           
+                          SettingsSwitchTrans(text: "Start project on install",  value: settingsBox.get(SettingsKeys.startAfterInstall), onpressed:(value) {
+                           settingsBox.put(SettingsKeys.startAfterInstall, value);
                           },),
                           SizedBox(height: 13),
                           divider.CustomDivider(size: 15, color: Color(0x23A6A6A6),),
                             SizedBox(height: 13),
-                          SettingsSwitchTrans(text: "Dark/light mode", settingsKey: SettingsKeys.maxRamUsage, value: islight, onpressed: (value) {
-                            if(value) {
-                              McLauncher.of(context).changeTheme(ThemeMode.dark);
-                               setState(() {
-                                islight = value;
-                              });
-                            }else {
-                              McLauncher.of(context).changeTheme(ThemeMode.light);
-                              setState(() {
-                                islight = value;
-                              });
-                            }
-                          },),
-                          SizedBox(height: 13),
-                          divider.CustomDivider(size: 15, color: Color(0x23A6A6A6),),
-                            SizedBox(height: 13),
+                       
+                     
                          
                           
                         ],
                       ),
                     )
                   ],
-                ))));
+                )))));
   }
 }

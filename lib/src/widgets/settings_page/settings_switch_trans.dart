@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 class SettingsSwitchTrans extends StatefulWidget {
   String text;
-  String settingsKey;
   bool value;
   Function(bool value) onpressed;
-  SettingsSwitchTrans({ Key? key, required this.text, required this.settingsKey, required this.value, required this.onpressed }) : super(key: key);
+  SettingsSwitchTrans({ Key? key, required this.text, required this.value, required this.onpressed }) : super(key: key);
 
   @override
   _SettingsSwitchTransState createState() => _SettingsSwitchTransState();

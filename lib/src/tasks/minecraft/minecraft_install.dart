@@ -3,6 +3,7 @@ import "package:mclauncher4/src/objects/accounts/minecraft.dart";
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import "package:mclauncher4/src/tasks/java/java.dart";
+import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import "package:path_provider/path_provider.dart" as path_provider;
 import "dart:convert";
@@ -11,7 +12,8 @@ import '../utils/downloads_utils.dart';
 import '../utils/path.dart';
 import 'dart:io' show Platform;
 import 'package:path/path.dart' as path;
-
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 class Minecraft with ChangeNotifier {
   ClientInstallState _state = ClientInstallState.downloadingLibraries;
   ClientInstallState get installstate => _state;
@@ -93,9 +95,11 @@ class Minecraft with ChangeNotifier {
     } else {
       args = await getArgs(packagejson, instanceName);
     }
+    var settingsBox = Hive.box("settings");
 
     print(args);
-    launchcommand = ["-Xmx16064m", "-Xms256m", ...args["jvm"]!, packagejson["mainClass"], ...args["game"]!];
+
+    launchcommand = ["-Xmx${settingsBox.get(SettingsKeys.maxRamUsage)}m", "-Xms${settingsBox.get(SettingsKeys.minRamUsage)}m", ...args["jvm"]!, packagejson["mainClass"], ...args["game"]!];
 
     return launchcommand;
   }

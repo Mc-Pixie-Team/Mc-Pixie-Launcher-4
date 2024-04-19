@@ -46,7 +46,6 @@ class CurseforgeApi implements Api {
         name: modpackData["name"],
         description: modpackData["summary"],
         downloads: modpackData["downloadCount"],
-        likes: 1,
         icon: modpackData["logo"]["thumbnailUrl"],
         author: modpackData["authors"][0]["name"],
         categories: categories,
@@ -109,6 +108,7 @@ class CurseforgeApi implements Api {
         downloads: hit["downloadCount"],
         icon: modpackData["logo"]["thumbnailUrl"],
       author: modpackData["authors"][0]["name"],
+       modloader: ["Fabric"],
         MLVersion: null,
         MCVersion: hit["gameVersions"][0],
         ));
@@ -116,6 +116,7 @@ class CurseforgeApi implements Api {
 
     return DUMF(
         name: modpackData["name"],
+        
         description: modpackData["summary"],
         downloads: modpackData["downloadCount"],
         likes: 1,

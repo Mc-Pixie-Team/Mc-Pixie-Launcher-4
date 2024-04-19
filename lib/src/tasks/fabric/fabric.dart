@@ -80,8 +80,8 @@ class Fabric with ChangeNotifier implements Modloader {
     var result =
         await Process.start(exec, launchcommand, workingDirectory: path.join(getInstancePath(), instanceName));
 
-    stdout.addStream(result.stdout);
-    stderr.addStream(result.stderr);
+    // stdout.addStream(result.stdout);
+    // stderr.addStream(result.stderr);
 
     print(result.pid);
 

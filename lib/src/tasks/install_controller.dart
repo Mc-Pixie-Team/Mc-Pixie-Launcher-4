@@ -5,12 +5,12 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/app.dart';
+import 'package:mclauncher4/src/pages/installed_modpacks_Ui_handler.dart';
 import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
 import 'package:mclauncher4/src/tasks/Models/start_message.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/forge/forge.dart';
-import 'package:mclauncher4/src/tasks/installer/modrinth/modrinth_install.dart';
+import 'package:stream_disposable/stream_disposable.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
@@ -25,13 +25,23 @@ class InstallController with ChangeNotifier {
   UMF modpackData;
   String? processid;
   MainState mainstate;
+  BuildContext? context;
+  StreamController<String> _streamController = StreamController<String>();
+  late Stream<String> _stream;
   InstallController(
       {required this.handler,
       required this.modpackData,
+      this.context,
       this.processid,
       this.mainstate = MainState.notinstalled,
       this.replace = true}) {
+       
+     _stream  = _streamController.stream;
+     _stream.listen(print);
+
     processid = processid ?? const Uuid().v1();
+
+   
   }
 
   bool replace;
@@ -40,12 +50,17 @@ class InstallController with ChangeNotifier {
   MainState get state => mainstate;
   double get progress => _progress;
   String get processId => processid!;
-
+  Stream<String> get stream => _stream;
   Isolate? _isolate;
   Process? _result;
 
   static int instances = 0;
 
+  onHandleStdout(Iterable<int> out) {
+     
+      _streamController.add(String.fromCharCodes(out));
+  }
+ 
   void start() async {
 
     print('start');
@@ -60,6 +75,8 @@ class InstallController with ChangeNotifier {
     await Future.delayed(Duration(milliseconds: 300));
     mainstate = MainState.running;
     notifyListeners();
+
+    _result!.stdout.listen(onHandleStdout);
 
     _result!.exitCode.then((value) {
       mainstate = MainState.installed;
@@ -102,11 +119,13 @@ class InstallController with ChangeNotifier {
   
     if (dir.existsSync()) dir.delete(recursive: true);
 
-    Modpacks.globalinstallContollers.removeKeyFromAnimatedBuilder(processId);
+    InstalledModpacksUIHandler.globalinstallContollers.removeKeyFromAnimatedBuilder(processId);
      print('deleted');
     mainstate = MainState.notinstalled;
     notifyListeners();
   }
+
+  // MARK:  <-----Install Isolate----->
 
   void install({String? version}) async {
     print("Installing with:" + handler.getTitlename());
@@ -126,8 +145,10 @@ class InstallController with ChangeNotifier {
 
     ReceivePort receivePort = ReceivePort();
     ReceivePort exitPort = ReceivePort();
+    ReceivePort errorPort = ReceivePort();
 
     receivePort.listen((message) {
+      print("receive is called");
       if (message is InstallerMessage) {
         mainstate = message.mainState;
         _progress = message.progress;
@@ -135,9 +156,18 @@ class InstallController with ChangeNotifier {
       }
     });
     exitPort.listen((message) {
-      print(message);
+      print("exit is called");
+      print( "message: " +message.toString());
       removeUIChanges();
       InstallController.instances--;
+    });
+    errorPort.listen((message) {
+      print("error is called");
+      print( "message: " +message.toString());
+      mainstate = MainState.notinstalled;
+      notifyListeners();
+      onError(message);
+   
     });
 
 
@@ -150,13 +180,16 @@ class InstallController with ChangeNotifier {
         (args) => isolateEntry(args),
         [
           receivePort.sendPort,
+          exitPort.sendPort,
           StartMessage(
               token: rootToken,
               handler: handler,
               modpackData: modpackData,
               processId: processId,
-              version: version == null ? null : Version.parse(version))
+              version: version == null ? null : Version.parse(version)),
+        
         ],
+        onError: errorPort.sendPort,
         onExit: exitPort.sendPort,
         debugName: "Install of $processId",
         errorsAreFatal: true,);
@@ -172,7 +205,7 @@ class InstallController with ChangeNotifier {
 
     //init for all pathes
     await Path.init();
-
+    
     Timer timer = Timer.periodic(Duration(milliseconds: 200), (timer) {
       (args.first as SendPort).send(InstallerMessage(
         mainState: installer.installState,
@@ -207,11 +240,12 @@ class InstallController with ChangeNotifier {
       mainState: MainState.installed,
       progress: 100,
     ));
+    print("before compeltion");
     Isolate.exit();
+    
   }
 
-  ///  <-------Utils------->
-
+  // MARK:  <-----Utils----->
   // Waits until value changes
   Future waitWhile(bool test(), [Duration pollInterval = Duration.zero]) {
     var completer = Completer();
@@ -227,14 +261,30 @@ class InstallController with ChangeNotifier {
     return completer.future;
   }
 
+  onError(Object error) {
+    print("error");
+    delete();
+    if(context == null) return;
+    if(error is List){
+
+        setErrorDialog(NavigationService.navigatorKey.currentContext!, error[0].toString());  
+    }
+
+   
+  }
+
+
+
+ // MARK:  <-----UI Handling----->
   setUIChanges() {
-    if (Modpacks.globalinstallContollers.value
+    if (InstalledModpacksUIHandler.globalinstallContollers.value
         .where((Widget element) => element.key == Key(processId))
         .isEmpty) {
-      Modpacks.globalinstallContollers.add(AnimatedBuilder(
+      InstalledModpacksUIHandler.globalinstallContollers.add(AnimatedBuilder(
         key: Key(processId),
         animation: this,
         builder: (context, child) => InstalledCard(
+          stream: stream,
           processId: processId,
           modpackData: modpackData,
           state: state,
@@ -262,6 +312,26 @@ class InstallController with ChangeNotifier {
   }
 
   removeUIChanges() {
+    print("remove changeds");
     SidePanel().removeFromTaskWidget(processId);
   }
+
+  setErrorDialog(BuildContext context, String errorDialog) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Oh no an Error occured!"), 
+            content: Text(errorDialog),
+            actions: [
+             TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Close"))
+              
+            ],
+          );
+        });
+  } 
 }

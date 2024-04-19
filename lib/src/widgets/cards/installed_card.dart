@@ -3,11 +3,15 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/pages/home_page/installed_mod_page.dart';
+import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/IO_controller.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
+import 'package:mclauncher4/src/theme/custom_page_transition.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
 import 'package:mclauncher4/src/widgets/export_field.dart';
@@ -17,6 +21,7 @@ import 'package:path/path.dart' as path;
 class InstalledCard extends StatefulWidget {
   final MainState state;
   final double progress;
+  final Stream<String> stream;
   final VoidCallback onCancel;
   final VoidCallback onOpen;
   final VoidCallback onDelete;
@@ -24,6 +29,7 @@ class InstalledCard extends StatefulWidget {
   final String processId;
   InstalledCard(
       {Key? key,
+      required this.stream,
       required this.onDelete,
       required this.processId,
       required this.modpackData,
@@ -53,6 +59,7 @@ class _InstalledCardState extends State<InstalledCard> {
   @override
   void initState() {
     print('init');
+ 
     super.initState();
   }
 
@@ -102,9 +109,29 @@ class _InstalledCardState extends State<InstalledCard> {
   });
   }
 
+  onOpen(BuildContext context) {
+    print("hre");
+       Navigator.push(
+    context,
+   SlowMaterialPageRoute(allowSnapshotting: false, builder: (context) =>  InstalledModPage(stream: widget.stream,),
+  ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return MouseRegion(
+            cursor: MouseCursor.defer,
+           
+            child: GestureDetector(
+               
+                onTapUp: (details)  => onOpen(context),
+           
+                 // _controller.reverse();
+               
+                 
+
+                
+                child:  Container(
         width: 180,
         height: 260,
         decoration: ShapeDecoration(
@@ -115,6 +142,7 @@ class _InstalledCardState extends State<InstalledCard> {
           ),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+         
           Padding(
               padding: EdgeInsets.all(10),
               child: AspectRatio(
@@ -203,6 +231,6 @@ class _InstalledCardState extends State<InstalledCard> {
                                                           onDownload: () {},
                                                         ))))))))
                       ]))))
-        ]));
+        ]))));
   }
 }

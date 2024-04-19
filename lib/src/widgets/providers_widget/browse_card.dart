@@ -153,15 +153,17 @@ class _BrowseCardState extends State<BrowseCard>
                                 Expanded(
                                   child: Container(),
                                 ),
-                                Row(
+                               Row(
                                   children: [
-                                    SvgPicture.asset(
+                                 widget.modpackData.likes == null ? Container() :   Row(children: [
+                                         SvgPicture.asset(
                                       'assets/svg/heart-icon.svg',
                                       width: 12,
                                     ),
-                                    SizedBox(
+                                     SizedBox(
                                       width: 5,
                                     ),
+                                    
                                     Text(
                                       widget.modpackData.likes! > 999
                                           ? (((widget.modpackData.likes! / 1000)
@@ -179,9 +181,11 @@ class _BrowseCardState extends State<BrowseCard>
                                         height: 0,
                                       ),
                                     ),
-                                    SizedBox(
+                                     SizedBox(
                                       width: 15,
                                     ),
+                                    ],),
+                                 
                                     SvgPicture.asset(
                                       'assets/svg/download-full-icon.svg',
                                       width: 14,

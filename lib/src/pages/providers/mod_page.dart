@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:flutter_svg/svg.dart';
 import 'package:path/path.dart' as path;
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +96,7 @@ class _ModPageState extends State<ModPage> {
           borderRadius: BorderRadius.circular(18)),
       child: Stack(
         children: [
+     
           Positioned(
               top: 35,
               left: 20,
@@ -160,6 +162,7 @@ class _ModPageState extends State<ModPage> {
                                       'k'
                                   : widget.modpackData.downloads!.toString(),
                             ),
+                            modloaderstring == "" ? Container() :
                             StackedItem(
                                 type1: modloaderstring,
                                 type2: widget.modpackData.MLVersion ?? "N/A"),

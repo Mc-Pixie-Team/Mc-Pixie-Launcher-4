@@ -100,7 +100,7 @@ class ModrinthInstaller {
       Map dependenceJson = jsonDecode(utf8.decode(res.bodyBytes));
       // print(dependenceJson);
       await _downloadFiles(dependenceJson["files"], instanceName);
-
+         
           });
     await Future.wait(downloads);
 

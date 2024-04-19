@@ -13,6 +13,7 @@ void main() async{
   DiscordRP().initCS("1144740158374158366");
   await Path.init();
   await Hive.openBox("settings");
+  
   runApp(
        McLauncher());
       if(Platform.isMacOS) {

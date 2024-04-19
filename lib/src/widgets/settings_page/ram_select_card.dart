@@ -30,7 +30,7 @@ class _RamSelectCardState extends State<RamSelectCard> {
     min = 0;
     max = maxInGB * MEGABYTE;
     print("max: ${max}, min: ${min}");
-    divisons = 128;
+    divisons = 64;
     print(divisons);
   }
 
@@ -39,10 +39,10 @@ class _RamSelectCardState extends State<RamSelectCard> {
   @override
   void initState() {
     _currentSliderPrimaryValue =
-        (settingsBox.get(SettingsKeys.minRamUsage, defaultValue: 2048.0) as int)
+        (settingsBox.get(SettingsKeys.minRamUsage, defaultValue: 256.0) as int)
             .toDouble();
     _currentSliderSecondaryValue =
-        (settingsBox.get(SettingsKeys.maxRamUsage, defaultValue: 4096.0) as int)
+        (settingsBox.get(SettingsKeys.maxRamUsage, defaultValue: 2048.0) as int)
             .toDouble();
 
     super.initState();

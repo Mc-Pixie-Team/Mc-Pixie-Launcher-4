@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/pages/installed_modpacks_Ui_handler.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/carousel/carousel.dart';
@@ -27,13 +27,13 @@ class _HomePageState extends State<HomePage> {
     {'name': 'The Earea ATM', 'description': 'something bad is about to happen'},
   ];
 
-  bool get isEmpty => Modpacks.globalinstallContollers.value.length < 1;
+  bool get isEmpty => InstalledModpacksUIHandler.globalinstallContollers.value.length < 1;
 
 
   Widget  modpackList(BuildContext context) => DynMouseScroll(
                         animationCurve: Curves.easeOutExpo,
                         scrollSpeed: 1.0,
-                        durationMS: 650,
+                    durationMS: 650,
                         builder: (context, _scrollController, physics) => SingleChildScrollView(
                             physics: physics,
                             controller: _scrollController,
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   Carousel(items: items),
                                   ValueListenableBuilder(
-                                      valueListenable: Modpacks.globalinstallContollers,
+                                      valueListenable: InstalledModpacksUIHandler.globalinstallContollers,
                                       builder: (context, value, child) =>
                                            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                               Padding(

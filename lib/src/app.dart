@@ -2,9 +2,9 @@ import 'dart:io' show Platform, exit;
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
-import 'package:mclauncher4/src/pages/home_page.dart';
+import 'package:mclauncher4/src/pages/home_page/home_page.dart';
 import 'package:mclauncher4/src/pages/debug_page.dart';
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/pages/installed_modpacks_Ui_handler.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
@@ -49,14 +49,14 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   }
 }
 
+class NavigationService { 
+  static GlobalKey<NavigatorState> navigatorKey = 
+  GlobalKey<NavigatorState>();
+}
+
 class McLauncher extends StatefulWidget {
   const McLauncher({super.key});
 
-
-
-
-
-  
   @override
   State<StatefulWidget> createState() => _McLauncherState();
     // TODO: implement createState
@@ -84,6 +84,7 @@ class _McLauncherState extends State<McLauncher>{
     return MaterialApp(
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
+        navigatorKey: NavigationService.navigatorKey,
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,
@@ -151,10 +152,10 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     // TODO: implement initState
     MinecraftAccountUtils().initOnFirstStart();
-    Modpacks.generateManifest();
+    InstalledModpacksHandler.generateManifest();
 
-    Modpacks.getPacksformManifest()
-        .then((value) => Modpacks.globalinstallContollers.addAll(value));
+   InstalledModpacksHandler.getPacksformManifest()
+        .then((value) => InstalledModpacksUIHandler.globalinstallContollers.addAll(value));
 
     super.initState();
   }

@@ -12,16 +12,17 @@ import 'package:mclauncher4/src/tasks/utils/path.dart';
 
 import 'package:path/path.dart' as path;
 
-class Modpacks {
-  static generateManifest() async {
+
+class InstalledModpacksHandler {
+
+    static generateManifest() async {
     File manifest = File("${ getInstancePath()}/manifest.json");
     if (manifest.existsSync()) return;
     manifest.createSync(recursive: true);
     manifest.writeAsStringSync("[]");
   }
 
-  static ValueNotifierList<Widget> globalinstallContollers = ValueNotifierList([]);
-  static Future<List<Widget>> getPacksformManifest() async {
+    static Future<List<Widget>> getPacksformManifest() async {
     
     List manifest =  jsonDecode(await File(path.join(getInstancePath(), "manifest.json")).readAsString());
 
@@ -39,6 +40,7 @@ class Modpacks {
         animation: installcontroller,
         key: Key(installcontroller.processId),
         builder: (context, child) => InstalledCard(
+          stream: installcontroller.stream,
           processId: installcontroller.processId,
           modpackData: installcontroller.modpackData,
           state: installcontroller.state,
@@ -50,6 +52,14 @@ class Modpacks {
       );
     });
   }
+}
+
+
+class InstalledModpacksUIHandler {
+
+
+  static ValueNotifierList<Widget> globalinstallContollers = ValueNotifierList([]);
+
 }
 
 class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {

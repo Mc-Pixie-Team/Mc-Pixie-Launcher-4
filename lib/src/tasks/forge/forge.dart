@@ -82,16 +82,12 @@ class Forge with ChangeNotifier implements Modloader {
     );
 
     print(launchcommand);
-    // var tempFile = File(
-    //     "${(await path_provider.getTemporaryDirectory()).path}/pixie/temp_command.ps1");
-    // await tempFile.create(recursive: true);
-    // await tempFile.writeAsString(launchcommand);
 
     var result = await Process.start(Java.getJavaJdk(version), launchcommand,
         workingDirectory: path.join(getInstancePath(), instanceName));
 
     stdout.addStream(result.stdout);
-    stderr.addStream(result.stderr);
+     result.stderr.listen((out) => throw String.fromCharCodes(out));
     return result;
   }
 

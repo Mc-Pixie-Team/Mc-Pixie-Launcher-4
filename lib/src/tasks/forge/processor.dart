@@ -161,7 +161,8 @@ class Processor with ChangeNotifier {
   }
 
   onHandleStdout(Iterable<int> out) {
-    print(String.fromCharCodes(out));
+    throw String.fromCharCodes(out);
+   
   }
 
   Future<List<String>> _getStack(List classes, List libraries, String jarname) async {

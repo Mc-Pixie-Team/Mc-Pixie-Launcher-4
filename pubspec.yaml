@@ -67,6 +67,8 @@ dependencies:
   dyn_mouse_scroll: ^1.0.7
   smooth_list_view: ^1.0.4
   figma_squircle: ^0.5.3
+  flutter_carousel_widget: ^2.2.0
+  stream_disposable: ^2.0.0
       
 
 

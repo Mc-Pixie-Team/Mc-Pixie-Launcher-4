@@ -1,10 +1,11 @@
 // ignore_for_file: sort_child_properties_last
 
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:animations/animations.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/pages/installed_modpacks_Ui_handler.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
@@ -39,12 +40,17 @@ class _ModListPageState extends State<ModListPage> {
   List installContollers = [];
   List modpacklist = [];
   late Api _handler;
+
+  
+
   
   Future<dynamic> get mv async {
+    
     return await _handler.getAllMV();
+    
   }
 
-  Future<List> get modpacklistfuture async {
+  Future<List>  modpacklistfuture(BuildContext context) async {
     print("get modrinth future");
     var returntype = await _handler.getModpackList();
     Future.delayed(Duration(milliseconds: 200)).then((value) {
@@ -52,7 +58,7 @@ class _ModListPageState extends State<ModListPage> {
         if (_scrollController.position.pixels ==
             (_scrollController.position.maxScrollExtent )) {
           print('new');
-          await getMoreData();
+          await getMoreData(context);
         }
       });
     });
@@ -62,7 +68,7 @@ class _ModListPageState extends State<ModListPage> {
   bool iscalled = false;
   String querytext = "";
   List filterStrings = [];
-  getMoreData() async {
+  getMoreData(BuildContext context) async {
     if (iscalled) return;
     iscalled = true;
     print('getmore data');
@@ -71,6 +77,7 @@ class _ModListPageState extends State<ModListPage> {
     installContollers.addAll(List.generate(
         rawModpacks.length,
         (index) => InstallController(
+          context: context,
                               handler: _handler,
                               modpackData:
                                   _handler.convertToUMF(rawModpacks[index]))));
@@ -99,6 +106,7 @@ class _ModListPageState extends State<ModListPage> {
       return false;
     }
   }
+
 
   void removeAtIndex(int index) {
     setState(() {
@@ -173,6 +181,7 @@ class _ModListPageState extends State<ModListPage> {
             color: Theme.of(context).colorScheme.surfaceVariant,
         ),
         child: Stack(children: [
+             
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +212,7 @@ class _ModListPageState extends State<ModListPage> {
               Expanded(
                   child: FutureBuilder(
                 key: key,
-                future: modpacklistfuture,
+                future: modpacklistfuture(context),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Center(
@@ -225,6 +234,7 @@ class _ModListPageState extends State<ModListPage> {
                       installContollers = List.generate(
                           modpacklist.length,
                           (index) => InstallController(
+                            context: context,
                               handler: _handler,
                               modpackData:
                                   _handler.convertToUMF(modpacklist[index])));

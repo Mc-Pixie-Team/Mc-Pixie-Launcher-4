@@ -1,5 +1,5 @@
 # Mc-Pixie Launcher
-<a href="https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/"><img src="https://img.shields.io/badge/macOS%20%7C%20Windows%20%7C%20Linux-blue?logo=flutter" alt="Platform"/></a>
+<a href="https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/"><img src="https://img.shields.io/badge/Windows-blue?logo=flutter" alt="Platform"/></a>
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/blob/master/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/Mc-Pixie-Team/Mc-Pixie-Launcher-4.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/releases)
 [![GitHub issues](https://img.shields.io/github/issues/Mc-Pixie-Team/Mc-Pixie-Launcher-4.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/issues)

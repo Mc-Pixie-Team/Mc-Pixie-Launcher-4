@@ -13,7 +13,7 @@ import 'package:mclauncher4/src/tasks/utils/path.dart';
 
 import 'package:path/path.dart' as path;
 
-class Modpacks {
+class InstalledModpacksHandler {
   static generateManifest() async {
     File manifest = File("${ getInstancePath()}/manifest.json");
     if (manifest.existsSync()) return;
@@ -40,10 +40,7 @@ class Modpacks {
         animation: installcontroller,
         key: Key(installcontroller.processId),
         builder: (context, child) => InstalledCard(
-<<<<<<< Updated upstream:lib/src/pages/installed_modpacks_handler.dart
-=======
           stdout: installcontroller.stdout,
->>>>>>> Stashed changes:lib/src/pages/installed_modpacks_ui_handler.dart
           processId: installcontroller.processId,
           modpackData: installcontroller.modpackData,
           state: installcontroller.state,
@@ -57,48 +54,6 @@ class Modpacks {
   }
 }
 
-<<<<<<< Updated upstream:lib/src/pages/installed_modpacks_handler.dart
-class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
-  ValueNotifierList(List<Widget> value) : super(value);
-
-  void add(Widget valueToAdd) {
-    
-    value = [...value, valueToAdd];
-    notifyListeners();
-  }
-
-  void insert(int index, Widget element ) {
-    value.insert(index, element);
-    notifyListeners();
-  }
-
-  void addAll(List<Widget> valuetoAddall) {
-    value.addAll(valuetoAddall);
-  }
-
-  void removeLast() {
-    value.removeLast();
-    notifyListeners();
-  }
-
-  void remove(Widget valueToRemove) {
-    value = value.where((value) => value != valueToRemove).toList();
-    notifyListeners();
-  }
-
-  void removeKeyFromAnimatedBuilder(String key) {
-    value = value.where((value) {
-      if (value is AnimatedBuilder) {
-        AnimatedBuilder builder = value as AnimatedBuilder;
-
-        return builder.key != Key(key);
-      }
-      return false;
-    }).toList();
-    notifyListeners();
-  }
-}
-=======
 
 class InstalledModpacksUIHandler {
   //test
@@ -107,4 +62,3 @@ class InstalledModpacksUIHandler {
 
 }
 
->>>>>>> Stashed changes:lib/src/pages/installed_modpacks_ui_handler.dart

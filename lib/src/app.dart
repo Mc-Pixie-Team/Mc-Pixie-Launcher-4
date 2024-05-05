@@ -4,15 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/home_page.dart';
 import 'package:mclauncher4/src/pages/debug_page.dart';
-<<<<<<< Updated upstream
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
-=======
-import 'package:mclauncher4/src/pages/installed_modpacks_ui_handler.dart';
->>>>>>> Stashed changes
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
-import 'package:mclauncher4/src/tasks/auth/supabase.dart';
+import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
 import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
@@ -88,11 +84,8 @@ class _McLauncherState extends State<McLauncher>{
     return MaterialApp(
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
-<<<<<<< Updated upstream
-=======
         
-        navigatorKey: NavigationService.navigatorKey,
->>>>>>> Stashed changes
+        navigatorKey: GlobalKey<NavigatorState>(),
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,
@@ -160,15 +153,9 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     // TODO: implement initState
     MinecraftAccountUtils().initOnFirstStart();
-    Modpacks.generateManifest();
 
-<<<<<<< Updated upstream
-    Modpacks.getPacksformManifest()
-        .then((value) => Modpacks.globalinstallContollers.addAll(value));
-=======
    InstalledModpacksHandler.getPacksformManifest()
         .then((value) => InstalledModpacksUIHandler.installCardChildren.addAll(value));
->>>>>>> Stashed changes
 
     super.initState();
   }

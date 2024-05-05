@@ -2,13 +2,8 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream:lib/src/pages/home_page.dart
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
-=======
 
-import 'package:mclauncher4/src/pages/installed_modpacks_ui_handler.dart';
->>>>>>> Stashed changes:lib/src/pages/home_page/home_page.dart
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/carousel/carousel.dart';
@@ -31,11 +26,6 @@ class _HomePageState extends State<HomePage> {
     {'name': 'The Earea ATM', 'description': 'something bad is about to happen', 'pictureId': "https://unsplash.com/photos/xkFhOdId7mA/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8MTl8fG1pbmVjcmFmdHxkZXwwfHx8fDE3MTM2MTk0MDd8MA&force=true&w=1920"},
   ];
 
-<<<<<<< Updated upstream:lib/src/pages/home_page.dart
-  bool get isEmpty => Modpacks.globalinstallContollers.value.length < 1;
-=======
-
->>>>>>> Stashed changes:lib/src/pages/home_page/home_page.dart
 
 
   Widget  modpackList(BuildContext context) => DynMouseScroll(
@@ -56,17 +46,11 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   Carousel(items: items),
                                   ValueListenableBuilder(
-<<<<<<< Updated upstream:lib/src/pages/home_page.dart
-                                      valueListenable: Modpacks.globalinstallContollers,
-                                      builder: (context, value, child) =>
-                                           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-=======
                                       valueListenable: InstalledModpacksUIHandler.installCardChildren,
                                       builder: (context, value, child) {
                                         print("inner list lengt " + InstalledModpacksUIHandler.installCardChildren.value.length.toString());
                                           bool isEmpty = InstalledModpacksUIHandler.installCardChildren.value.length == 0;
                                          return  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
->>>>>>> Stashed changes:lib/src/pages/home_page/home_page.dart
                                               Padding(
                                                 padding: EdgeInsets.only(left: 75, top: 5),
                                                 child: Text(

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/carousel/carousel_item.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 
 
@@ -16,7 +17,7 @@ class Carousel extends StatefulWidget {
 class _CarouselState extends State<Carousel> {
   int currentindex = 1;
   bool isdisposed = false;
-
+  late Timer timer;
   @override
   void dispose() {
     isdisposed = true;
@@ -27,11 +28,7 @@ class _CarouselState extends State<Carousel> {
   void initState() {
     super.initState();
     isdisposed = false;
-<<<<<<< Updated upstream
-   var timer = Timer.periodic(Duration(seconds: 5), (timer) {
-=======
    timer = Timer.periodic(Duration(seconds: 6), (timer) {
->>>>>>> Stashed changes
       if (currentindex >= widget.items.length - 1) {
         currentindex = 0;
       } else {
@@ -62,19 +59,6 @@ class _CarouselState extends State<Carousel> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: List.generate(
-<<<<<<< Updated upstream
-                      widget.items.length,
-                      (index) => Padding(
-                            padding: EdgeInsets.only(left: 20),
-                            child: GestureDetector(
-                                onTap: () => changeindex(index),
-                                child: CarouselItem(
-                                    onPressed: () {},
-                                    name: widget.items[index]['name'],
-                                    descripton: widget.items[index]['description'],
-                                    isopened: currentindex == index)),
-                          ))))),
-=======
                     widget.items.length,
                     (index) => Padding(
                         padding: EdgeInsets.only(left: 20),
@@ -149,7 +133,6 @@ class _CarouselState extends State<Carousel> {
                               ]),
                             ))),
                   )))),
->>>>>>> Stashed changes
       SizedBox(
         height: 11,
       ),

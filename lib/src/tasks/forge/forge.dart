@@ -90,11 +90,6 @@ class Forge with ChangeNotifier implements Modloader {
     var result = await Process.start(Java.getJavaJdk(version), launchcommand,
         workingDirectory: path.join(getInstancePath(), instanceName));
 
-<<<<<<< Updated upstream
-    stdout.addStream(result.stdout);
-    stderr.addStream(result.stderr);
-=======
->>>>>>> Stashed changes
     return result;
   }
 

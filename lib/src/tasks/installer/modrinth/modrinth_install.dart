@@ -139,6 +139,7 @@ class ModrinthInstaller {
     ///check if minecraft is installed
     if (_checkForInstall( mfilePath)) {
       _state = MainState.downloadingMinecraft;
+      _progress = 0.0;
       //install minecraft
       print('need to install minecraft: $version');
       print(mfilePath);
@@ -172,10 +173,15 @@ class ModrinthInstaller {
         Downloader _downloader =  Downloader(file["url"],path.join(filepath, file["filename"]) );
         await _downloader.startDownload(onProgress: (p0) => _progress = p0,);
 
-        _downloader.unzip(deleteOld: true);
+      _state = MainState.unzipping;
+      _progress = 0.0;
+       await _downloader.unzip(deleteOld: true, onZipProgress: (p0) => _progress = p0);
+
 
         await Utils.copyDirectory(source: Directory(path.join(filepath, "overrides")), destination: Directory(destination));
         await Utils.copyFile(source: File(path.join(filepath, "modrinth.index.json")), destination: File(path.join(destination, "modrinth.index.json")));
+       _state = MainState.downloadingMods;
+      _progress = 0.0;
 
       } else if (file["url"].split('.').last == 'jar') {
         if (!(file["primary"])) continue;

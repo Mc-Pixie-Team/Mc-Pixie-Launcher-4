@@ -1,100 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const blackTextSchemes = TextTheme(
   displayLarge: TextStyle(
     color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w600,
-    fontFamily: "SF Pro Display",
-    fontSize: 57,
+    fontFamily: "Inter",
+    fontSize: 58,
 
   ),
   displayMedium: TextStyle(
-    fontFamily: "SF Pro Display",
+    fontFamily: "Inter",
     color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w600,
-    fontSize: 48,
+    fontSize: 52,
 
   ),
   displaySmall: TextStyle(
-    fontFamily: "SF Pro Display",
+    fontFamily: "Inter",
     color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w600,
-    fontSize: 32,
+    fontSize: 34,
 
   ),
   headlineLarge: TextStyle(
-    fontFamily: "SF Pro Display",
+    fontFamily: "Inter",
     fontWeight: FontWeight.w600,
     fontSize: 30,
 
   ),
   headlineMedium: TextStyle(
-    fontFamily: "SF Pro Display",
+    fontFamily: "Inter",
     fontWeight: FontWeight.w400,
     fontSize: 28,
 
   ),
   headlineSmall: TextStyle(
-    fontFamily: "SF Pro Display",
+    fontFamily: "Inter",
     fontWeight: FontWeight.w400,
     fontSize: 20,
 
   ),
   titleLarge: TextStyle(
-    fontFamily: "SF Pro Display",
+    fontFamily: "Inter",
     fontWeight: FontWeight.w700,
     fontSize: 22,
 
   ),
   titleMedium: TextStyle(
-    fontFamily: "SF Pro Text",
+    fontFamily: "Inter",
     fontWeight: FontWeight.w500,
     fontSize: 16,
 
   ),
   titleSmall: TextStyle(
-    fontFamily: "SF Pro Text",
+    fontFamily: "Inter",
     fontWeight: FontWeight.w500,
     fontSize: 14,
 
   ),
   labelLarge: TextStyle(
-    fontFamily: "SF Pro Text",
+    fontFamily: "Inter",
     color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w300,
     fontSize: 17,
 
   ),
   labelMedium: TextStyle(
-    fontFamily: "SF Pro Text",
+    fontFamily: "Inter",
     color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w300,
     fontSize: 14,
 
   ),
   labelSmall: TextStyle(
-    fontFamily: "SF Pro Text",
+    fontFamily: "Inter",
     color: Color.fromARGB(255, 255, 255, 255),
     fontWeight: FontWeight.w200,
     fontSize: 11,
 
   ),
   bodyLarge: TextStyle(
-    fontFamily: "SF Pro Text",
+    fontFamily: "Inter",
     color: Color.fromARGB(255, 168, 168, 168),
     fontWeight: FontWeight.w400,
     fontSize: 18,
   
   ),
   bodyMedium: TextStyle(
-    fontFamily: "SF Pro Text",
+    fontFamily: "Inter",
     color: Color.fromARGB(255, 168, 168, 168),
     fontWeight: FontWeight.w400,
     fontSize: 14,
  
   ),
   bodySmall: TextStyle(
-    fontFamily: "SF Pro Text",
+    fontFamily: "Inter",
     color: Color.fromARGB(255, 168, 168, 168),
     fontWeight: FontWeight.w400,
     fontSize: 11,

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/IO_controller.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
+import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
@@ -14,9 +15,16 @@ import 'package:mclauncher4/src/widgets/export_field.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:path/path.dart' as path;
 
+
+
+
 class InstalledCard extends StatefulWidget {
   final MainState state;
   final double progress;
+<<<<<<< Updated upstream
+=======
+  final ValueNotifierList stdout;
+>>>>>>> Stashed changes
   final VoidCallback onCancel;
   final VoidCallback onOpen;
   final VoidCallback onDelete;
@@ -24,6 +32,10 @@ class InstalledCard extends StatefulWidget {
   final String processId;
   InstalledCard(
       {Key? key,
+<<<<<<< Updated upstream
+=======
+      required this.stdout,
+>>>>>>> Stashed changes
       required this.onDelete,
       required this.processId,
       required this.modpackData,
@@ -102,6 +114,18 @@ class _InstalledCardState extends State<InstalledCard> {
   });
   }
 
+<<<<<<< Updated upstream
+=======
+
+  onOpen(BuildContext context) {
+    print("hre");
+       Navigator.push(
+    context,
+  SlowMaterialPageRoute(allowSnapshotting: false, builder: (context) => InstalledModPage(stdout: widget.stdout,),
+  ));
+  }
+
+>>>>>>> Stashed changes
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -32,7 +32,7 @@ enum ClientInstallState {
   finished,
 }
 
-enum MainState { downloadingMods, downloadingMinecraft, downloadingML, running, installed, notinstalled, fetching }
+enum MainState { downloadingMods, downloadingMinecraft, downloadingML, running, installed, notinstalled, fetching, unzipping }
 
 enum Modinstall {
   downloadingMod,

@@ -67,6 +67,14 @@ dependencies:
   dyn_mouse_scroll: ^1.0.7
   smooth_list_view: ^1.0.4
   figma_squircle: ^0.5.3
+<<<<<<< Updated upstream
+=======
+  flutter_carousel_widget: ^2.2.0
+  stream_disposable: ^2.0.0
+  async_zip: 
+    git:
+      url: https://github.com/joshiGaming/async-zip.git
+>>>>>>> Stashed changes
       
 
 
@@ -123,44 +131,87 @@ flutter:
   fonts:
     - family: SF Pro Text
       fonts:
-        - asset: assets/fonts/SF-Pro-Text-Black.otf
+        - asset: assets/fonts/SF/SF-Pro-Text-Black.otf
           weight: 900
-        - asset: assets/fonts/SF-Pro-Text-Heavy.otf
+        - asset: assets/fonts/SF/SF-Pro-Text-Heavy.otf
           weight: 800        
-        - asset: assets/fonts/SF-Pro-Text-Bold.otf
+        - asset: assets/fonts/SF/SF-Pro-Text-Bold.otf
           weight: 700     
-        - asset: assets/fonts/SF-Pro-Text-Semibold.otf
+        - asset: assets/fonts/SF/SF-Pro-Text-Semibold.otf
           weight: 600     
-        - asset: assets/fonts/SF-Pro-Text-Medium.otf
+        - asset: assets/fonts/SF/SF-Pro-Text-Medium.otf
           weight: 500    
-        - asset: assets/fonts/SF-Pro-Text-Regular.otf
+        - asset: assets/fonts/SF/SF-Pro-Text-Regular.otf
           weight: 400  
-        - asset: assets/fonts/SF-Pro-Text-Light.otf
+        - asset: assets/fonts/SF/SF-Pro-Text-Light.otf
           weight: 300
-        - asset: assets/fonts/SF-Pro-Text-Thin.otf
+        - asset: assets/fonts/SF/SF-Pro-Text-Thin.otf
           weight: 200     
-        - asset: assets/fonts/SF-Pro-Text-Ultralight.otf
+        - asset: assets/fonts/SF/SF-Pro-Text-Ultralight.otf
           weight: 100   
     - family: SF Pro Display
       fonts:
-        - asset: assets/fonts/SF-Pro-Display-Black.otf
+        - asset: assets/fonts/SF/SF-Pro-Display-Black.otf
           weight: 900
-        - asset: assets/fonts/SF-Pro-Display-Heavy.otf
+        - asset: assets/fonts/SF/SF-Pro-Display-Heavy.otf
           weight: 800        
-        - asset: assets/fonts/SF-Pro-Display-Bold.otf
+        - asset: assets/fonts/SF/SF-Pro-Display-Bold.otf
           weight: 700     
-        - asset: assets/fonts/SF-Pro-Display-Semibold.otf
+        - asset: assets/fonts/SF/SF-Pro-Display-Semibold.otf
           weight: 600     
-        - asset: assets/fonts/SF-Pro-Display-Medium.otf
+        - asset: assets/fonts/SF/SF-Pro-Display-Medium.otf
           weight: 500    
-        - asset: assets/fonts/SF-Pro-Display-Regular.otf
+        - asset: assets/fonts/SF/SF-Pro-Display-Regular.otf
           weight: 400  
-        - asset: assets/fonts/SF-Pro-Display-Light.otf
+        - asset: assets/fonts/SF/SF-Pro-Display-Light.otf
           weight: 300
-        - asset: assets/fonts/SF-Pro-Display-Thin.otf
+        - asset: assets/fonts/SF/SF-Pro-Display-Thin.otf
           weight: 200     
-        - asset: assets/fonts/SF-Pro-Display-Ultralight.otf
-          weight: 100     
+        - asset: assets/fonts/SF/SF-Pro-Display-Ultralight.otf
+          weight: 100
+    - family: Onest
+      fonts: 
+       - asset: assets/fonts/Onest/Onest-Black.ttf
+         weight: 900
+       - asset: assets/fonts/Onest/Onest-ExtraBold.ttf
+         weight: 800
+       - asset: assets/fonts/Onest/Onest-Bold.ttf
+         weight: 700
+       - asset: assets/fonts/Onest/Onest-SemiBold.ttf
+         weight: 600
+       - asset: assets/fonts/Onest/Onest-Medium.ttf
+         weight: 500
+       - asset: assets/fonts/Onest/Onest-Regular.ttf
+         weight: 400
+       - asset: assets/fonts/Onest/Onest-Light.ttf
+         weight: 300
+       - asset: assets/fonts/Onest/Onest-ExtraLight.ttf
+         weight: 200
+       - asset: assets/fonts/Onest/Onest-Thin.ttf
+         weight: 100
+    - family: Inter
+      fonts: 
+       - asset: assets/fonts/Inter/Inter-Black.ttf
+         weight: 900
+       - asset: assets/fonts/Inter/Inter-ExtraBold.ttf
+         weight: 800
+       - asset: assets/fonts/Inter/Inter-Bold.ttf
+         weight: 700
+       - asset: assets/fonts/Inter/Inter-SemiBold.ttf
+         weight: 600
+       - asset: assets/fonts/Inter/Inter-Medium.ttf
+         weight: 500
+       - asset: assets/fonts/Inter/Inter-Regular.ttf
+         weight: 400
+       - asset: assets/fonts/Inter/Inter-Light.ttf
+         weight: 300
+       - asset: assets/fonts/Inter/Inter-ExtraLight.ttf
+         weight: 200
+       - asset: assets/fonts/Inter/Inter-Thin.ttf
+         weight: 100
+
+         
+             
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

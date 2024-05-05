@@ -29,7 +29,8 @@ class _DownloadButtonState extends State<DownloadButton> {
   bool get _isDownloading =>
       widget.mainState == MainState.downloadingMinecraft ||
       widget.mainState == MainState.downloadingML ||
-      widget.mainState == MainState.downloadingMods;
+      widget.mainState == MainState.downloadingMods ||
+      widget.mainState == MainState.unzipping;
   bool get _isFetching => widget.mainState == MainState.fetching;
   double get downloadProgress => widget.mainprogress;
 

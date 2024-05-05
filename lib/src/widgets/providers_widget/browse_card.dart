@@ -201,7 +201,7 @@ class _BrowseCardState extends State<BrowseCard>
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 15,
-                                        fontFamily: 'Roboto',
+                                   
                                         fontWeight: FontWeight.w400,
                                         height: 0,
                                       ),
@@ -229,7 +229,7 @@ class _BrowseCardState extends State<BrowseCard>
                                                               226,
                                                               226),
                                                           fontSize: 13,
-                                                          fontFamily: 'Roboto',
+                                                       
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           height: 0,

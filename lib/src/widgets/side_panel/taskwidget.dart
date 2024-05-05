@@ -66,6 +66,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
   String get titleText {
     if (widget.state == MainState.running) return "Running: $getName";
     if (widget.state == MainState.downloadingML) return "Installing Modloader";
+    if (widget.state == MainState.unzipping) return "Unzipping: $getName";
     return "Installing: $getName";
   }
 

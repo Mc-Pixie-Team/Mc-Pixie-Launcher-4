@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'package:mclauncher4/src/tasks/utils/zip.dart';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:path/path.dart' as path;
+import 'package:async_zip/async_zip.dart';
 
 class Downloader {
   final String downloadUrl;
@@ -59,7 +60,7 @@ class Downloader {
     client.close();
   }
 
-  void unzip({bool deleteOld = false, String? unzipPath}) {
+  Future unzip({bool deleteOld = false, String? unzipPath, Function(double)? onZipProgress}) async {
     
     if (!File(savedDir).existsSync())
       throw Exception("File ${savedDir} cannot be found!");
@@ -67,18 +68,33 @@ class Downloader {
     final exportDir = unzipPath ?? path.join(path.dirname(savedDir));
 
     
-    ZipFHandler.unzipIntoDir(exportDir: exportDir, zipFile: savedDir);
+   
+
+var copied = 0.0;
+var percentage = 0.0;
+await extractZipArchive(File(savedDir), Directory(exportDir), callback: (entry, totalEntries) {
+  if(onZipProgress == null) return;
+
+  copied++;
+  final newPercentage = (copied * 100 / totalEntries);
+  if ((newPercentage - percentage) > 0.9) {
+    percentage = newPercentage;
+    onZipProgress.call(percentage);
+  }
+});
+
+
 
     if (deleteOld) File(savedDir).delete();
   }
 
 
-  Future<void> unzipSingleFile({bool deleteOld = false, required entryname}) async{
-    final exportDir = path.join(path.dirname(savedDir));
+  // Future<void> unzipSingleFile({bool deleteOld = false, required entryname}) async{
+  //   final exportDir = path.join(path.dirname(savedDir));
 
-    ZipFHandler.unzipSingleFile(exportDir: exportDir, zipFile: savedDir, entryname: entryname);
-    if (deleteOld) File(savedDir).delete();
-  }
+  //   ZipFHandler.unzipSingleFile(exportDir: exportDir, zipFile: savedDir, entryname: entryname);
+  //   if (deleteOld) File(savedDir).delete();
+  // }
 
   String getDir() {
     return Directory.current.path.toString();

@@ -4,7 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/home_page.dart';
 import 'package:mclauncher4/src/pages/debug_page.dart';
+<<<<<<< Updated upstream
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+=======
+import 'package:mclauncher4/src/pages/installed_modpacks_ui_handler.dart';
+>>>>>>> Stashed changes
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
@@ -84,6 +88,11 @@ class _McLauncherState extends State<McLauncher>{
     return MaterialApp(
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
+<<<<<<< Updated upstream
+=======
+        
+        navigatorKey: NavigationService.navigatorKey,
+>>>>>>> Stashed changes
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,
@@ -153,8 +162,13 @@ class _MainPageState extends State<MainPage> {
     MinecraftAccountUtils().initOnFirstStart();
     Modpacks.generateManifest();
 
+<<<<<<< Updated upstream
     Modpacks.getPacksformManifest()
         .then((value) => Modpacks.globalinstallContollers.addAll(value));
+=======
+   InstalledModpacksHandler.getPacksformManifest()
+        .then((value) => InstalledModpacksUIHandler.installCardChildren.addAll(value));
+>>>>>>> Stashed changes
 
     super.initState();
   }
@@ -215,12 +229,14 @@ class _MainPageState extends State<MainPage> {
 
           //  await SecureStorage.storage.delete(key: "test");
           //  await SecureStorage.storage.write(key: "test", value: "[${math.Random.secure().nextInt(25)}]", mOptions: MacOsOptions(accessibility: KeychainAccessibility.first_unlock_this_device));
-
+await MinecraftAccountUtils().saveAccounts([]);
         //  await SecureStorage.storage.deleteAll();
 
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-         print(prefs.getInt(SettingsKeys.minRamUsage));
-          print(prefs.getInt(SettingsKeys.maxRamUsage));
+        // final SharedPreferences prefs = await SharedPreferences.getInstance();
+        //  print(prefs.getInt(SettingsKeys.minRamUsage));
+        //   print(prefs.getInt(SettingsKeys.maxRamUsage));
+        // InstalledModpacksUIHandler.installCardChildren.add(Container(height: 100, width: 100,color: Colors.green,));
+        //  print( InstalledModpacksUIHandler.installCardChildren.value.length);
        
           // print(await SecureStorage.storage.read(key: "test"));
           // print(await SecureStorage.isKeyRegistered("accounts"));
@@ -360,12 +376,13 @@ class _MainPageState extends State<MainPage> {
                                     print('change: ' + index.toString());
                                     pageIndex_old = pageIndex;
 
-                                    if (index != pageIndex_old) {
-                                      if (Navigator.canPop(innercontext)) {
-                                        Navigator.pop(innercontext);
+ if (Navigator.canPop(innercontext)) {
+                                      Navigator.pop(innercontext);
                                         await Future.delayed(
                                             Duration(milliseconds: 450));
                                       }
+                                    if (index != pageIndex_old) {
+                                     
 
                                       setState(() {
                                         pageIndex = index;

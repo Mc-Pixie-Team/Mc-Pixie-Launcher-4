@@ -2,13 +2,17 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream:lib/src/pages/home_page.dart
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+=======
+
+import 'package:mclauncher4/src/pages/installed_modpacks_ui_handler.dart';
+>>>>>>> Stashed changes:lib/src/pages/home_page/home_page.dart
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/carousel/carousel.dart';
-import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
-import 'package:mclauncher4/src/widgets/providers_widget/browse_card.dart';
+
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as divider;
@@ -21,13 +25,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Map> items = [
-    {'name': 'Fabulously Optimized', 'description': 'Improve your workflow'},
-    {'name': 'Cobllemon', 'description': 'fast for more'},
-    {'name': 'The Revenge', 'description': 'the big new recomming of something bad'},
-    {'name': 'The Earea ATM', 'description': 'something bad is about to happen'},
+    {'name': 'Fabulously Optimized', 'description': 'Improve your workflow', 'pictureId': "https://unsplash.com/photos/d2w-_1LJioQ/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8Nnx8bWluZWNyYWZ0fGRlfDB8fHx8MTcxMzYxOTQwN3ww&force=true&w=1920"},
+    {'name': 'Cobllemon', 'description': 'fast for more', 'pictureId': "https://unsplash.com/photos/EgL0EtzL0Wc/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8M3x8bWluZWNyYWZ0fGRlfDB8fHx8MTcxMzYxOTQwN3ww&force=true&w=1920"},
+    {'name': 'The Revenge', 'description': 'the big new recomming of something bad', 'pictureId': "https://unsplash.com/photos/PzKMcReo2Q4/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8N3x8bWluZWNyYWZ0fGRlfDB8fHx8MTcxMzYxOTQwN3ww&force=true&w=1920"},
+    {'name': 'The Earea ATM', 'description': 'something bad is about to happen', 'pictureId': "https://unsplash.com/photos/xkFhOdId7mA/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8MTl8fG1pbmVjcmFmdHxkZXwwfHx8fDE3MTM2MTk0MDd8MA&force=true&w=1920"},
   ];
 
+<<<<<<< Updated upstream:lib/src/pages/home_page.dart
   bool get isEmpty => Modpacks.globalinstallContollers.value.length < 1;
+=======
+
+>>>>>>> Stashed changes:lib/src/pages/home_page/home_page.dart
 
 
   Widget  modpackList(BuildContext context) => DynMouseScroll(
@@ -44,15 +52,23 @@ class _HomePageState extends State<HomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(
-                                    height:  71,
+                                    height:  61,
                                   ),
                                   Carousel(items: items),
                                   ValueListenableBuilder(
+<<<<<<< Updated upstream:lib/src/pages/home_page.dart
                                       valueListenable: Modpacks.globalinstallContollers,
                                       builder: (context, value, child) =>
                                            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+=======
+                                      valueListenable: InstalledModpacksUIHandler.installCardChildren,
+                                      builder: (context, value, child) {
+                                        print("inner list lengt " + InstalledModpacksUIHandler.installCardChildren.value.length.toString());
+                                          bool isEmpty = InstalledModpacksUIHandler.installCardChildren.value.length == 0;
+                                         return  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+>>>>>>> Stashed changes:lib/src/pages/home_page/home_page.dart
                                               Padding(
-                                                padding: EdgeInsets.only(left: 75, top: 20),
+                                                padding: EdgeInsets.only(left: 75, top: 5),
                                                 child: Text(
                                                   'Installed:',
                                                   style: Theme.of(context).typography.black.headlineSmall,
@@ -80,13 +96,14 @@ class _HomePageState extends State<HomePage> {
                                                           spacing: 40.0, // gap between adjacent chips
                                                           runSpacing: 60.0,
                                                           children: value)))
-                                            ]))
+                                            ]); })
                                 ],
                               ),
                             )));
 
   @override
   Widget build(BuildContext context) {
+     print("build inner list lengt " + InstalledModpacksUIHandler.installCardChildren.value.length.toString());
     return Container(
         clipBehavior: Clip.antiAlias,
         height: double.infinity,
@@ -102,13 +119,10 @@ class _HomePageState extends State<HomePage> {
           Positioned.fill(
               child: Align(
                   alignment: Alignment.topLeft,
-                  child: ClipRect(
-                    child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                        child: Container(
+                  child: Container(
                           width: double.infinity,
                           height: 60,
-                          color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.4),
+                         
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -148,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         )),
-                  )))
+                  )
         ]));
   }
 }

@@ -7,6 +7,7 @@ import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
+import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
 import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 
@@ -39,6 +40,10 @@ class Modpacks {
         animation: installcontroller,
         key: Key(installcontroller.processId),
         builder: (context, child) => InstalledCard(
+<<<<<<< Updated upstream:lib/src/pages/installed_modpacks_handler.dart
+=======
+          stdout: installcontroller.stdout,
+>>>>>>> Stashed changes:lib/src/pages/installed_modpacks_ui_handler.dart
           processId: installcontroller.processId,
           modpackData: installcontroller.modpackData,
           state: installcontroller.state,
@@ -52,6 +57,7 @@ class Modpacks {
   }
 }
 
+<<<<<<< Updated upstream:lib/src/pages/installed_modpacks_handler.dart
 class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
   ValueNotifierList(List<Widget> value) : super(value);
 
@@ -92,3 +98,13 @@ class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
     notifyListeners();
   }
 }
+=======
+
+class InstalledModpacksUIHandler {
+  //test
+
+  static ValueNotifierList<Widget> installCardChildren = ValueNotifierList([]);
+
+}
+
+>>>>>>> Stashed changes:lib/src/pages/installed_modpacks_ui_handler.dart

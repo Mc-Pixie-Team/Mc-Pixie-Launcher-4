@@ -98,7 +98,7 @@ class DownloadUtils with ChangeNotifier {
 
             await _downloader.startDownload();
             //unzipPath: path.join(getbinpath(), version.toString())
-            _downloader.unzip(
+          await  _downloader.unzip(
                 unzipPath: path.join(getbinpath(), version.toString()));
             print("done with export");
           }

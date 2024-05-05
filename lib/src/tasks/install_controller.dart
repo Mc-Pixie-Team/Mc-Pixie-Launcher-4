@@ -5,12 +5,21 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
 import 'package:mclauncher4/src/tasks/Models/start_message.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/installer/modrinth/modrinth_install.dart';
+=======
+import 'package:mclauncher4/src/app.dart';
+import 'package:mclauncher4/src/pages/installed_modpacks_ui_handler.dart';
+import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
+import 'package:mclauncher4/src/tasks/Models/start_message.dart';
+import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
+>>>>>>> Stashed changes
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
@@ -25,12 +34,24 @@ class InstallController with ChangeNotifier {
   UMF modpackData;
   String? processid;
   MainState mainstate;
+<<<<<<< Updated upstream
+=======
+  BuildContext? context;
+  ValueNotifierList _stdout = ValueNotifierList([]);
+>>>>>>> Stashed changes
   InstallController(
       {required this.handler,
       required this.modpackData,
       this.processid,
       this.mainstate = MainState.notinstalled,
       this.replace = true}) {
+<<<<<<< Updated upstream
+=======
+       
+   
+   
+
+>>>>>>> Stashed changes
     processid = processid ?? const Uuid().v1();
   }
 
@@ -40,12 +61,24 @@ class InstallController with ChangeNotifier {
   MainState get state => mainstate;
   double get progress => _progress;
   String get processId => processid!;
+<<<<<<< Updated upstream
 
+=======
+  ValueNotifierList get stdout => _stdout;
+>>>>>>> Stashed changes
   Isolate? _isolate;
   Process? _result;
 
   static int instances = 0;
 
+<<<<<<< Updated upstream
+=======
+  onHandleStdout(Iterable<int> out) {
+     
+      _stdout.add(String.fromCharCodes(out));
+  }
+ 
+>>>>>>> Stashed changes
   void start() async {
 
     print('start');
@@ -61,6 +94,12 @@ class InstallController with ChangeNotifier {
     mainstate = MainState.running;
     notifyListeners();
 
+<<<<<<< Updated upstream
+=======
+    _result!.stdout.listen(onHandleStdout);
+    _result!.stderr.listen(onHandleStdout);
+
+>>>>>>> Stashed changes
     _result!.exitCode.then((value) {
       mainstate = MainState.installed;
       notifyListeners();
@@ -70,6 +109,8 @@ class InstallController with ChangeNotifier {
   }
 
   void cancel() {
+
+    print("killing isolate");
     if (_result != null) {
       _result!.kill();
       mainstate = MainState.installed;
@@ -82,7 +123,7 @@ class InstallController with ChangeNotifier {
       return;
     }
 
-    _isolate!.kill(priority: -1);
+    _isolate!.kill(priority: Isolate.immediate);
     _progress = 0.0;
 
     //Exception: called from here
@@ -91,7 +132,7 @@ class InstallController with ChangeNotifier {
 
   void delete() async {
     File manifestfile = File( path.join(getInstancePath(), "manifest.json"));
-    List manifest = jsonDecode(manifestfile.readAsStringSync());
+    List manifest = jsonDecode(await manifestfile.readAsString());
     final dir = Directory(path.join(getInstancePath(), processid));
 
     manifest.removeWhere((element) {
@@ -102,7 +143,11 @@ class InstallController with ChangeNotifier {
   
     if (dir.existsSync()) dir.delete(recursive: true);
 
+<<<<<<< Updated upstream
     Modpacks.globalinstallContollers.removeKeyFromAnimatedBuilder(processId);
+=======
+   removeFromInstallList();
+>>>>>>> Stashed changes
      print('deleted');
     mainstate = MainState.notinstalled;
     notifyListeners();
@@ -187,9 +232,14 @@ class InstallController with ChangeNotifier {
         localversion: startMessage.version);
 
     timer.cancel();
-
-    List manifest = jsonDecode(
+     List manifest = [];
+    try {
+      manifest = jsonDecode(
         File( path.join(getInstancePath(), "manifest.json")).readAsStringSync());
+    } catch (e){
+      print("couldnt accses manifest");
+    }
+    
 
     Map manifestaddon = {
       "processId": startMessage.processId,
@@ -228,6 +278,7 @@ class InstallController with ChangeNotifier {
   }
 
   setUIChanges() {
+<<<<<<< Updated upstream
     if (Modpacks.globalinstallContollers.value
         .where((Widget element) => element.key == Key(processId))
         .isEmpty) {
@@ -235,6 +286,19 @@ class InstallController with ChangeNotifier {
         key: Key(processId),
         animation: this,
         builder: (context, child) => InstalledCard(
+=======
+      print(' ab lengt ' + InstalledModpacksUIHandler.installCardChildren.value.length.toString());
+    if (InstalledModpacksUIHandler.installCardChildren.value
+        .where((Widget element) => element.key == Key(processId))
+        .isEmpty) {
+          print("add to");
+          
+      InstalledModpacksUIHandler.installCardChildren.addAll( [AnimatedBuilder(
+        key: Key(processId),
+        animation: this,
+        builder: (context, child) => InstalledCard(
+          stdout: stdout,
+>>>>>>> Stashed changes
           processId: processId,
           modpackData: modpackData,
           state: state,
@@ -243,8 +307,9 @@ class InstallController with ChangeNotifier {
           onOpen: start,
           onDelete: delete,
         ),
-      ));
+      )]);
     }
+    print('lengt ' + InstalledModpacksUIHandler.installCardChildren.value.length.toString());
 
     //Calls SidePanel instance
     SidePanel().addToTaskWidget(
@@ -260,8 +325,35 @@ class InstallController with ChangeNotifier {
                 )),
         processId);
   }
+  removeFromInstallList() {
+    InstalledModpacksUIHandler.installCardChildren.removeKeyFromAnimatedBuilder(processId);
+  }
+
+
 
   removeUIChanges() {
     SidePanel().removeFromTaskWidget(processId);
   }
+<<<<<<< Updated upstream
+=======
+
+  setErrorDialog(BuildContext context, String errorDialog) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Oh no an Error occured!"), 
+            content:  SelectableText(errorDialog),
+            actions: [
+             TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Close"))
+              
+            ],
+          );
+        });
+  } 
+>>>>>>> Stashed changes
 }

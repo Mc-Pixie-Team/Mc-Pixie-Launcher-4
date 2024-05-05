@@ -1,4 +1,0 @@
-LIBRARY   zip
-EXPORTS
-   zipext
-   fileext

@@ -1,2 +1,0 @@
-void zipext()
-int fileext()

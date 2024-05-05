@@ -73,10 +73,17 @@ class Utils {
 
       final fileitems = source.list();
 
-      fileitems.listen((fileEntity) async{ 
+   await fileitems.listen((fileEntity) async{ 
         final newPath = destination.path + Platform.pathSeparator + path.basename(fileEntity.path);
         if(fileEntity is File) {
-         await copyFile( source: fileEntity,  destination: File( newPath));
+          
+          fileEntity.copySync(newPath);
+          // try {
+          //   await copyFile( source: fileEntity,  destination: File( newPath));
+          // } catch (e) {
+        
+          // }
+         
         }else if(fileEntity is Directory) {
           await copyDirectory(source: fileEntity, destination: Directory(newPath));
         }

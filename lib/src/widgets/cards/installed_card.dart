@@ -121,7 +121,9 @@ class _InstalledCardState extends State<InstalledCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: () => onOpen(context),
+      child: Container(
         width: 180,
         height: 260,
         decoration: ShapeDecoration(
@@ -220,6 +222,6 @@ class _InstalledCardState extends State<InstalledCard> {
                                                           onDownload: () {},
                                                         ))))))))
                       ]))))
-        ]));
+        ])));
   }
 }

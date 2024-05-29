@@ -41,17 +41,17 @@ class Microsoft {
   Future<String> launchMSA() async {
     var result;
 
-    if(Platform.isWindows) {
-result = await Process.run("rundll32", [
-      'url.dll,FileProtocolHandler',
-      'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
-    ]);
-    }else {
+    if (Platform.isWindows) {
+      result = await Process.run("rundll32", [
+        'url.dll,FileProtocolHandler',
+        'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
+      ]);
+    } else {
       result = await Process.run("open", [
-      'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
-    ]);
+        'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
+      ]);
     }
-     
+
     String token = "";
     var server = await HttpServer.bind(InternetAddress.anyIPv6, 25458, shared: true);
     server.idleTimeout = Duration(seconds: 20);
@@ -68,31 +68,23 @@ result = await Process.run("rundll32", [
   }
 
   Future<Map> microsoftSignIn(token, bool isReauth) async {
-    Uri uri = Uri.parse('https://login.live.com/oauth20_token.srf');
-    print(uri);
-    String clientId = "91f49b7b-7e40-461f-9eb0-2389c32c0cd6";
-    String clientSecret = "-.O8Q~BCSm2qhiKjPkN9oHbTT6q2ZzD1Kj8V9ax.";
-
     if (!isReauth) {
       http.Response firstAuthResponse = await http.post(
-        uri,
-        headers: {'Content-Type': "application/x-www-form-urlencoded"},
-        body:
-            "client_id=$clientId&client_secret=$clientSecret&code=$token&grant_type=authorization_code&redirect_uri=http://localhost:25458",
+        Uri.parse('https://n8n.mc-pixie.com/webhook/d16395b2-c5bf-4a21-99c4-3fd44f74ad7e?code=$token&isRefresh=false'),
       );
+      print(jsonDecode(firstAuthResponse.body));
       Map rsp = jsonDecode(firstAuthResponse.body);
 
+      rsp = rsp["data"][0];
       return {"access_token": rsp["access_token"], "refreshToken": rsp["refresh_token"]};
     } else if (isReauth) {
       http.Response firstAuthResponse = await http.post(
-        uri,
-        headers: {'Content-Type': "application/x-www-form-urlencoded"},
-        body:
-            "client_id=$clientId&client_secret=$clientSecret&refresh_token=$token&grant_type=refresh_token&redirect_uri=http://localhost:25458",
+        Uri.parse('https://n8n.mc-pixie.com/webhook/d16395b2-c5bf-4a21-99c4-3fd44f74ad7e?code=$token&isRefresh=true'),
       );
       print(firstAuthResponse.reasonPhrase);
+      print(jsonDecode(firstAuthResponse.body));
       Map rsp = jsonDecode(firstAuthResponse.body);
-
+      rsp = rsp["data"][0];
       return {"access_token": rsp["access_token"], "refreshToken": rsp["refresh_token"]};
     }
     return {"access_token": "", "refreshToken": ""};
@@ -112,8 +104,8 @@ result = await Process.run("rundll32", [
       "TokenType": "JWT"
     };
 
-    http.Response firstAuthResponse = await http.post(uri,
-        headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
+    http.Response firstAuthResponse =
+        await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
     print(firstAuthResponse.body);
 
     Map rsp = jsonDecode(firstAuthResponse.body);
@@ -134,8 +126,8 @@ result = await Process.run("rundll32", [
       "TokenType": "JWT"
     };
 
-    http.Response firstAuthResponse = await http.post(uri,
-        headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
+    http.Response firstAuthResponse =
+        await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
     print(firstAuthResponse.statusCode);
     if (firstAuthResponse.statusCode != 401) {
       Map rsp = jsonDecode(firstAuthResponse.body);
@@ -156,8 +148,8 @@ result = await Process.run("rundll32", [
 
     Map data = {"identityToken": "XBL3.0 x=$xboxUserHash;$authXSTSToken", "ensureLegacyEnabled": true};
 
-    http.Response firstAuthResponse = await http.post(uri,
-        headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
+    http.Response firstAuthResponse =
+        await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
     print(firstAuthResponse.body);
     print(firstAuthResponse.statusCode);
     //Map rsp = jsonDecode(firstAuthResponse.body);

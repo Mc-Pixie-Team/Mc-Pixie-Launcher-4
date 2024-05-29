@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/pages/home_page/installed_mod_page.dart';
+import 'package:mclauncher4/src/pages/installed_mod/installed_mod_page.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/IO_controller.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';

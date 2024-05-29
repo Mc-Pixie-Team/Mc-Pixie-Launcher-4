@@ -11,6 +11,8 @@ import 'package:mclauncher4/src/widgets/divider.dart' as divider;
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
+
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
@@ -25,6 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Container(
         clipBehavior: Clip.antiAlias,
         height: double.infinity,
@@ -52,6 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       height: 90,
                     ),
                     RamSelectCard(),
+                    
                     SizedBox(
                       height: 30,
                     ),

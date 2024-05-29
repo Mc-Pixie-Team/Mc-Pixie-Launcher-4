@@ -27,106 +27,103 @@ class ModrinthInstaller {
   MainState get installState => _state;
   double get progress => _progress;
 
-  getModpack(String id) async {
-    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
+  _getModpack(String id) async {
+    var res =
+        await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
     return jsonDecode(utf8.decode(res.bodyBytes));
   }
 
-  Future<Map<String, dynamic>> getModpackVersion(String version) async {
-    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/version/$version'));
+  Future<Map<String, dynamic>> _getModpackVersion(String version) async {
+    var res = await http
+        .get(Uri.parse('https://api.modrinth.com/v2/version/$version'));
     // TODO: implement getModpack
     return jsonDecode(utf8.decode(res.bodyBytes));
   }
 
- Future<Process> start(String processId) async{
+  Future<Process> start(String processId) async {
     late ModloaderVersion modloaderVersion;
-   late Modloader modloader;
+    late Modloader modloader;
     String destination =
-       path.join(getInstancePath(), processId, "modrinth.index.json");
+        path.join(getInstancePath(), processId, "modrinth.index.json");
     Map depend =
         (jsonDecode(await File(destination).readAsString()))["dependencies"];
-   
-
 
     if (depend["fabric-loader"] != null) {
       modloader = Fabric();
-        modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
-    }else if (depend["forge"] != null) {
-        modloader = Forge();
+      modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
+    } else if (depend["forge"] != null) {
+      modloader = Forge();
       modloaderVersion = ModloaderVersion.parse(depend["forge"]);
     }
 
     Version version = Version.parse(depend["minecraft"]);
 
-      return  await modloader.run(processId, version, modloaderVersion);
-
-
+    return await modloader.run(processId, version, modloaderVersion);
   }
 
-
-  install( {required Map modpackData, required String instanceName, Version? localversion}) async {
-    
-
-    if( modpackData["dependencies"] == null) {
-          Map modpackproject = await getModpack(modpackData["project_id"]);
-    modpackData = await getModpackVersion( (modpackproject["versions"] as List).last);
+  install(
+      {required Map modpackData,
+      required String instanceName,
+      Version? localversion}) async {
+    if (modpackData["dependencies"] == null) {
+      Map modpackproject = await _getModpack(modpackData["project_id"]);
+      modpackData =
+          await _getModpackVersion((modpackproject["versions"] as List).last);
     }
     print(modpackData);
 
     _state = MainState.downloadingMods;
     print("downloading mods");
 
-    int _total = modpackData["dependencies"].length + 1;
+    await _downloadMrPack(modpackData["files"][0], instanceName);
+
+    String destination =
+        path.join(getInstancePath(), instanceName, "modrinth.index.json");
+    Map depend =
+        (jsonDecode(await File(destination).readAsString()));
+    Version version = Version.parse(depend["dependencies"]['minecraft']);
+
+    int _total = depend["files"].length + 1;
     int _received = 0;
 
-    await _downloadFiles(modpackData["files"], instanceName);
-    _received++;
-
-    _progress = (_received / _total) * 100;
-
-    final downloads_at_same_time  = 15;
-    int _totalitems = modpackData["dependencies"].length;
+    final downloads_at_same_time = 15;
+    int _totalitems = depend["files"].length;
     print(_totalitems);
-    for (var i = 0; modpackData["dependencies"].length > i; ) {
+    for (var i = 0; depend["files"].length > i;) {
       print(i);
-     Iterable<Future<dynamic>> downloads = Iterable.generate(
-          downloads_at_same_time > _totalitems ? _totalitems : downloads_at_same_time,
-          (index) async {
-            print("downloading:" + i.toString());
-        var dependence = modpackData["dependencies"][i + index];
-      var res = await http.get(Uri.parse('https://api.modrinth.com/v2/version/${dependence["version_id"]}'));
-      // print(dependence["version_id"]);
-      if (dependence["version_id"] == null) return;
-      Map dependenceJson = jsonDecode(utf8.decode(res.bodyBytes));
-      // print(dependenceJson);
-      await _downloadFiles(dependenceJson["files"], instanceName);
+      Iterable<Future<dynamic>> downloads = Iterable.generate(
+          downloads_at_same_time > _totalitems
+              ? _totalitems
+              : downloads_at_same_time, (index) async {
+        print("downloading:" + i.toString());
 
-          });
-    await Future.wait(downloads);
+        // print(dependenceJson);
+        await _downloadFiles(
+            depend["files"][i + index], instanceName);
+      });
+      await Future.wait(downloads);
 
       i += downloads_at_same_time;
       _totalitems = _totalitems - downloads_at_same_time;
-      _received += downloads_at_same_time > _totalitems ? _totalitems : downloads_at_same_time;
+      _received += downloads_at_same_time > _totalitems
+          ? _totalitems
+          : downloads_at_same_time;
       _progress = (_received / _total) * 100;
-      
     }
 
-    String destination = path.join(getInstancePath(), instanceName, "modrinth.index.json");
-    Map depend = (jsonDecode(await File(destination).readAsString()))["dependencies"];
-    Version version = Version.parse(depend['minecraft']);
-
-    if (depend["forge"] != null) {
-      modloaderVersion = ModloaderVersion.parse(depend["forge"]);
+    if (depend["dependencies"]["forge"] != null) {
+      modloaderVersion = ModloaderVersion.parse(depend["dependencies"]["forge"]);
       modloader = Forge();
-    } else if (depend["fabric-loader"] != null) {
-      modloaderVersion = ModloaderVersion.parse(depend["fabric-loader"]);
+    } else if (depend["dependencies"]["fabric-loader"] != null) {
+      modloaderVersion = ModloaderVersion.parse(depend["dependencies"]["fabric-loader"]);
       modloader = Fabric();
     } else {
       throw Exception(
           "Could not find a mod loader in modrinth.index.json! \n is the file corupted? Please check the formatting");
     }
 
-    String mfilePath = path.join(getworkpath(), "versions", version.toString(), "$version.json");
+    String mfilePath = path.join(
+        getworkpath(), "versions", version.toString(), "$version.json");
 
     modloader!.addListener(() {
       _progress = modloader!.mainprogress;
@@ -137,7 +134,7 @@ class ModrinthInstaller {
     });
 
     ///check if minecraft is installed
-    if (_checkForInstall( mfilePath)) {
+    if (_checkForInstall(mfilePath)) {
       _state = MainState.downloadingMinecraft;
       _progress = 0.0;
       //install minecraft
@@ -147,7 +144,8 @@ class ModrinthInstaller {
     }
 
     //check with dynamic [Modloader] if installed
-    if (_checkForInstall(await modloader!.getSafeDir(version, modloaderVersion))) {
+    if (_checkForInstall(
+        await modloader!.getSafeDir(version, modloaderVersion))) {
       _state = MainState.downloadingML;
       print('need to install : $version-$modloaderVersion');
       await modloader!.install(version, modloaderVersion);
@@ -160,39 +158,47 @@ class ModrinthInstaller {
     return (!(File(path).existsSync()));
   }
 
-  _downloadFiles(List files, String instanceName) async {
+  _downloadMrPack(Map file, String instanceName) async {
+    if (file["url"] == null ||
+        file["filename"] == null ||
+        (!(file["filename"].split('.').last == 'mrpack')))
+      throw "Mrpack is not valid !";
 
+    String filepath = path.join(getTempCommandPath(), instanceName);
+    String destination = path.join(getInstancePath(), instanceName);
+    Downloader _downloader =
+        Downloader(file["url"], path.join(filepath, file["filename"]));
+    await _downloader.startDownload(
+      onProgress: (p0) => _progress = p0,
+    );
 
-    for (var file in files) {
-      // print(file["url"]);
-  
-     String filepath = path.join(getTempCommandPath(), instanceName);
-      String destination = path.join(getInstancePath(), instanceName);
+    _state = MainState.unzipping;
+    _progress = 0.0;
+    await _downloader.unzip(
+        deleteOld: true, onZipProgress: (p0) => _progress = p0);
 
-      if (file["filename"].split('.').last == 'mrpack') {
-        Downloader _downloader =  Downloader(file["url"],path.join(filepath, file["filename"]) );
-        await _downloader.startDownload(onProgress: (p0) => _progress = p0,);
+    await Utils.copyDirectory(
+        source: Directory(path.join(filepath, "overrides")),
+        destination: Directory(destination));
+    await Utils.copyFile(
+        source: File(path.join(filepath, "modrinth.index.json")),
+        destination: File(path.join(destination, "modrinth.index.json")));
+    _state = MainState.downloadingMods;
+    _progress = 0.0;
+  }
 
-      _state = MainState.unzipping;
-      _progress = 0.0;
-       await _downloader.unzip(deleteOld: true, onZipProgress: (p0) => _progress = p0);
-
-
-        await Utils.copyDirectory(source: Directory(path.join(filepath, "overrides")), destination: Directory(destination));
-        await Utils.copyFile(source: File(path.join(filepath, "modrinth.index.json")), destination: File(path.join(destination, "modrinth.index.json")));
-       _state = MainState.downloadingMods;
-      _progress = 0.0;
-
-      } else if (file["url"].split('.').last == 'jar') {
-        if (!(file["primary"])) continue;
-
-        String filepath2 = path.join(destination, 'mods', file["filename"]);
-        Downloader _downloader =  Downloader(file["url"], filepath2);
-
-       await _downloader.startDownload();
-
-      }
-    }
+  _downloadFiles(Map file, String instanceName) async {
    
+      // print(file["url"]);
+
+
+      String destination = path.join(getInstancePath(), instanceName, file["path"] );
+      
+
+        Downloader _downloader = Downloader(file["downloads"][0], destination); //takes always the first download
+
+        await _downloader.startDownload();
+      
+    
   }
 }

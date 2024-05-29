@@ -45,7 +45,7 @@ class _FileTableState extends State<FileTable> {
           SizedBox(
             width: 80,
           ),
-          Text(" Version",
+          Text(" Downloads",
               style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline))
         ],
       ),

@@ -6,6 +6,7 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
+import 'package:mclauncher4/src/widgets/cards/add_card.dart';
 import 'package:mclauncher4/src/widgets/carousel/carousel.dart';
 
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
@@ -49,7 +50,10 @@ class _HomePageState extends State<HomePage> {
                                       valueListenable: InstalledModpacksUIHandler.installCardChildren,
                                       builder: (context, value, child) {
                                         print("inner list lengt " + InstalledModpacksUIHandler.installCardChildren.value.length.toString());
-                                          bool isEmpty = InstalledModpacksUIHandler.installCardChildren.value.length == 0;
+                                       
+                                          List<Widget> innergrid = [];
+                                          innergrid.addAll(value);
+                                          innergrid.add(AddCard());
                                          return  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                               Padding(
                                                 padding: EdgeInsets.only(left: 75, top: 5),
@@ -62,15 +66,7 @@ class _HomePageState extends State<HomePage> {
                                                 height: 10,
                                               ),
                                               divider.CustomDivider(size: 70, ),
-                                             isEmpty
-                                          ? Padding(
-                                              padding: EdgeInsets.only(top: 150),
-                                              child: Center(
-                                                  child: Text(
-                                                'Nothing found :(',
-                                                style: Theme.of(context).typography.black.bodyLarge,
-                                              )),
-                                            ) :
+                                            
                                               Padding(
                                                   padding: EdgeInsets.only(left: 80, top: 50),
                                                   child: Align(
@@ -79,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                                                           alignment: WrapAlignment.start,
                                                           spacing: 40.0, // gap between adjacent chips
                                                           runSpacing: 60.0,
-                                                          children: value)))
+                                                          children: innergrid)))
                                             ]); })
                                 ],
                               ),

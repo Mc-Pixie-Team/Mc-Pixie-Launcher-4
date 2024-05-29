@@ -7,6 +7,7 @@ class UMF {
     this.likes,
     this.categories,
     this.icon,
+    this.body,
     this.modloader = const [],
     this.MLVersion,
     this.MCVersion,
@@ -20,6 +21,7 @@ class UMF {
   int? likes;
   List<dynamic>? categories;
   String? icon;
+  String? body;
   List<String> modloader;
   String? MLVersion;
   String? MCVersion;
@@ -37,6 +39,7 @@ class UMF {
       "modloader": umf.modloader,
       "MLVersion": umf.MLVersion,
       "MCVersion": umf.MCVersion,
+      "body": umf.body,
       "original": umf.original
     };
   }
@@ -54,6 +57,7 @@ class UMF {
     likes: json["likes"],
     categories: json["categories"],
     icon: json["icon"],
+    body: json["body"],
    modloader: modloaderlist,
     MLVersion: json["MLVersion"],
     MCVersion: json["MCVersion"],

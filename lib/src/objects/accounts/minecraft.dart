@@ -45,6 +45,7 @@ class MinecraftAccountUtils {
     return uuid;
   }
 
+
   Future<void> saveAccounts(List<MinecraftAccount> accounts) async {
     List saveData = [];
     for (var element in accounts) {

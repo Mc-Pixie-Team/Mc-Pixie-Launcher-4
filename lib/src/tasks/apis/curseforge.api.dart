@@ -41,12 +41,12 @@ class CurseforgeApi implements Api {
     List categories = List.generate(modpackData["categories"].length,
         ((index) => modpackData["categories"][index]["name"]));
 
+
     return UMF(
         original: modpackData,
         name: modpackData["name"],
         description: modpackData["summary"],
         downloads: modpackData["downloadCount"],
-        likes: 1,
         icon: modpackData["logo"]["thumbnailUrl"],
         author: modpackData["authors"][0]["name"],
         categories: categories,
@@ -118,7 +118,6 @@ class CurseforgeApi implements Api {
         name: modpackData["name"],
         description: modpackData["summary"],
         downloads: modpackData["downloadCount"],
-        likes: 1,
         icon: modpackData["logo"]["thumbnailUrl"],
         author: modpackData["authors"][0]["name"],
         versions: versions,

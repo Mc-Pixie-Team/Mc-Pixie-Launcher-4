@@ -19,6 +19,11 @@ import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:path/path.dart' as path;
 
+
+
+
+
+
 class CurseforgeInstaller {
 
 

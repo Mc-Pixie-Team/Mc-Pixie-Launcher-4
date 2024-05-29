@@ -87,7 +87,7 @@ class InstallController with ChangeNotifier {
 
     print("killing isolate");
     if (_result != null) {
-      _result!.kill();
+     _result!.kill();
       mainstate = MainState.installed;
       notifyListeners();
       return;
@@ -272,8 +272,8 @@ class InstallController with ChangeNotifier {
     }
     print('lengt ' + InstalledModpacksUIHandler.installCardChildren.value.length.toString());
 
-    //Calls SidePanel instance
-    SidePanel().addToTaskWidget(
+    // Calls SidePanel instance
+   StaticSidePanelController.controller.addToTaskWidget(
         AnimatedBuilder(
             animation: this,
             builder: (context, child) => TaskwidgetItem(
@@ -293,7 +293,7 @@ class InstallController with ChangeNotifier {
 
 
   removeUIChanges() {
-    SidePanel().removeFromTaskWidget(processId);
+   StaticSidePanelController.controller.removeFromTaskWidget(processId);
   }
 
   setErrorDialog(BuildContext context, String errorDialog) {

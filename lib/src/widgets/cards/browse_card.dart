@@ -20,7 +20,7 @@ import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
 import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:transparent_image/transparent_image.dart';
-
+import 'package:numeral/numeral.dart';
 // ignore: must_be_immutable
 class BrowseCard extends StatefulWidget {
   UMF modpackData;
@@ -59,10 +59,11 @@ class _BrowseCardState extends State<BrowseCard>
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 130));
 
-    _animation = Tween(begin: 1.0, end: 0.97).animate(CurvedAnimation(
+    _animation = Tween(begin: 1.0, end: 0.96).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOutQuart,
     ));
+    Numeral.digits = 1;
 
     super.initState();
   }
@@ -155,22 +156,17 @@ class _BrowseCardState extends State<BrowseCard>
                                 ),
                                 Row(
                                   children: [
-                                    SvgPicture.asset(
+                                widget.modpackData.likes != null ?  Row(children: [
+                                   SvgPicture.asset(
                                       'assets/svg/heart-icon.svg',
                                       width: 12,
-                                    ),
+                                    ) ,
                                     SizedBox(
                                       width: 5,
                                     ),
                                     Text(
-                                      widget.modpackData.likes! > 999
-                                          ? (((widget.modpackData.likes! / 1000)
-                                                          as double)
-                                                      .round())
-                                                  .toString() +
-                                              'k'
-                                          : widget.modpackData.likes!
-                                              .toString(),
+                                      widget.modpackData.likes!.numeral(),
+                                         
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 15,
@@ -182,6 +178,7 @@ class _BrowseCardState extends State<BrowseCard>
                                     SizedBox(
                                       width: 15,
                                     ),
+                                 ],): SizedBox.shrink(), 
                                     SvgPicture.asset(
                                       'assets/svg/download-full-icon.svg',
                                       width: 14,
@@ -190,21 +187,7 @@ class _BrowseCardState extends State<BrowseCard>
                                       width: 5,
                                     ),
                                     Text(
-                                      widget.modpackData.downloads! > 999
-                                          ? (((widget.modpackData.downloads! /
-                                                          1000) as double)
-                                                      .round())
-                                                  .toString() +
-                                              'k'
-                                          : widget.modpackData.downloads!
-                                              .toString(),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                   
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                      ),
+                                      widget.modpackData.downloads!.numeral()
                                     ),
                                     SizedBox(width: 15),
                                     Expanded(
@@ -213,7 +196,7 @@ class _BrowseCardState extends State<BrowseCard>
                                             child: ListView.separated(
                                                 scrollDirection:
                                                     Axis.horizontal,
-                                                itemBuilder: (context, index) {
+                                               itemBuilder: (context, index) {
                                                   return Padding(
                                                       padding: EdgeInsets.only(
                                                           left: 5, right: 5),

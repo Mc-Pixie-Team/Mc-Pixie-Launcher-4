@@ -7,8 +7,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {});
+
+  testWidgets('MyWidget asserts invalid bounds', (WidgetTester tester) async {
+    SidePanelController controller = SidePanelController();
+    assert(controller != null);
+      print("test" + DateTime.now().second.toString());
+  await tester.pumpWidget(SidePanel(controller: controller), Duration(seconds: 2),);
+
+  print("test" + DateTime.now().second.toString());
+
+  
+  expect(tester.takeException(),isFlutterError); // or isNull, as appropriate.
+});
 }

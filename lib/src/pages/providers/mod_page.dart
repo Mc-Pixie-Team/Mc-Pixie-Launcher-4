@@ -226,9 +226,7 @@ class _ModPageState extends State<ModPage> {
                       ]))
                 ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
+           
               Expanded(
                   child: PageTransitionSwitcher(
                 reverse: !isVersions,
@@ -238,34 +236,14 @@ class _ModPageState extends State<ModPage> {
                         providerString: widget.handlerString,
                         details: details,
                       )
-                    : ShaderMask(
-                        shaderCallback: (Rect rect) {
-                          return const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Color.fromARGB(255, 177, 70, 21),
-                              Colors.transparent,
-                              Colors.transparent,
-                              Colors.transparent,
-                            ],
-                            stops: [
-                              0.0,
-                              0.1,
-                              0.1,
-                              1.0
-                            ], // 10% purple, 80% transparent, 10% purple
-                          ).createShader(rect);
-                        },
-                        blendMode: BlendMode.dstOut,
-                        child: details?.body == null
+                    : details?.body == null
                             ? Text(
                                 "no body found! or details could not be loaded")
                             : WebviewWidget(
                     cachHTMLFile: File(
                       path.join( getHTMLcachePath(), "index.html")),
                     body: details!.body!,
-                  )),
+                  ),
                 transitionBuilder:
                     (child, primaryAnimation, secondaryAnimation) =>
                         SharedAxisTransition(

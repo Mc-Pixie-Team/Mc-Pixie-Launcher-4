@@ -2,7 +2,7 @@ import 'dart:io' show Platform, exit;
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
-import 'package:mclauncher4/src/pages/home_page.dart';
+import 'package:mclauncher4/src/pages/home_page/home_page.dart';
 import 'package:mclauncher4/src/pages/debug_page.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
@@ -52,28 +52,23 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 class McLauncher extends StatefulWidget {
   const McLauncher({super.key});
 
-
-
-
-
-  
   @override
   State<StatefulWidget> createState() => _McLauncherState();
-    // TODO: implement createState
-  
-    static _McLauncherState of(BuildContext context) => 
-      context.findAncestorStateOfType<_McLauncherState>()!;
-  
-}
-class _McLauncherState extends State<McLauncher>{
+  // TODO: implement createState
 
+  static _McLauncherState of(BuildContext context) =>
+      context.findAncestorStateOfType<_McLauncherState>()!;
+}
+
+class _McLauncherState extends State<McLauncher> {
   Future<String> get customWait async {
     await Future.delayed(Duration(seconds: 10));
     return "done!";
   }
-   ThemeMode _themeMode = ThemeMode.system;
 
-    void changeTheme(ThemeMode themeMode) {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void changeTheme(ThemeMode themeMode) {
     setState(() {
       _themeMode = themeMode;
     });
@@ -84,7 +79,6 @@ class _McLauncherState extends State<McLauncher>{
     return MaterialApp(
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
-        
         navigatorKey: GlobalKey<NavigatorState>(),
         theme: ThemeData(
             useMaterial3: true,
@@ -96,10 +90,8 @@ class _McLauncherState extends State<McLauncher>{
             colorScheme: darkColorScheme,
             typography: Typography(black: blackTextSchemes)),
         themeMode: _themeMode,
-        home:
-        Material(child:
-        MainPage()),
-          builder: (context, child) => Stack(children: [
+        home: Material(child: MainPage()),
+        builder: (context, child) => Stack(children: [
               child!,
               SizedBox(
                 height: 35,
@@ -112,10 +104,8 @@ class _McLauncherState extends State<McLauncher>{
                       ],
                     )),
               ),
-            ])
-        );
+            ]));
   }
-
 }
 
 class MainPage extends StatefulWidget {
@@ -138,9 +128,15 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    ModListPage(providerString: "modrinth", key: Key("modrinth"),),
+    ModListPage(
+      providerString: "modrinth",
+      key: Key("modrinth"),
+    ),
     const Debugpage(),
-    ModListPage(providerString: "curseforge", key: Key("curseforge"),),
+    ModListPage(
+      providerString: "curseforge",
+      key: Key("curseforge"),
+    ),
     Container(
       key: Key('5'),
       color: Color.fromARGB(255, 146, 91, 218),
@@ -154,8 +150,16 @@ class _MainPageState extends State<MainPage> {
     // TODO: implement initState
     MinecraftAccountUtils().initOnFirstStart();
 
-   InstalledModpacksHandler.getPacksformManifest()
-        .then((value) => InstalledModpacksUIHandler.installCardChildren.addAll(value));
+    InstalledModpacksHandler.getPacksformManifest().then((value) {
+      InstalledModpacksUIHandler.installCardChildren.value
+          .removeWhere((element) {
+        for (var i in value) {
+          if (element.key == i.key) return true;
+        }
+        return false;
+      });
+      InstalledModpacksUIHandler.installCardChildren.value.addAll(value);
+    });
 
     super.initState();
   }
@@ -206,8 +210,6 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -216,22 +218,29 @@ class _MainPageState extends State<MainPage> {
 
           //  await SecureStorage.storage.delete(key: "test");
           //  await SecureStorage.storage.write(key: "test", value: "[${math.Random.secure().nextInt(25)}]", mOptions: MacOsOptions(accessibility: KeychainAccessibility.first_unlock_this_device));
-await MinecraftAccountUtils().saveAccounts([]);
-        //  await SecureStorage.storage.deleteAll();
+          await MinecraftAccountUtils().saveAccounts([]);
+          //  await SecureStorage.storage.deleteAll();
 
-        // final SharedPreferences prefs = await SharedPreferences.getInstance();
-        //  print(prefs.getInt(SettingsKeys.minRamUsage));
-        //   print(prefs.getInt(SettingsKeys.maxRamUsage));
-        // InstalledModpacksUIHandler.installCardChildren.add(Container(height: 100, width: 100,color: Colors.green,));
-        //  print( InstalledModpacksUIHandler.installCardChildren.value.length);
-       
+          StaticSidePanelController.controller.push(
+              Container(
+                color: Colors.green,
+                width: 200.0,
+              ),
+              200.0);
+          // final SharedPreferences prefs = await SharedPreferences.getInstance();
+          //  print(prefs.getInt(SettingsKeys.minRamUsage));
+          //   print(prefs.getInt(SettingsKeys.maxRamUsage));
+          // InstalledModpacksUIHandler.installCardChildren.add(Container(height: 100, width: 100,color: Colors.green,));
+          //  print( InstalledModpacksUIHandler.installCardChildren.value.length);
+
           // print(await SecureStorage.storage.read(key: "test"));
           // print(await SecureStorage.isKeyRegistered("accounts"));
           // print( await SecureStorage.storage.readAll());
           //await MinecraftAccountUtils().saveAccounts([]);
           //   print("start install");
-         // getDeviceInfos();
-          
+          // getDeviceInfos();
+          // print(SidePanel.state.gettest);
+          // SidePanel.push(Container(height: double.infinity, width: 100.0, color: Colors.green,), 100.0);
           // await Minecraft().install(Version(1,18,2));
           // print("start url");
           //     Map res = await DownloadUtils().getJson(Version(1,18,2));
@@ -363,14 +372,12 @@ await MinecraftAccountUtils().saveAccounts([]);
                                     print('change: ' + index.toString());
                                     pageIndex_old = pageIndex;
 
- if (Navigator.canPop(innercontext)) {
+                                    if (Navigator.canPop(innercontext)) {
                                       Navigator.pop(innercontext);
-                                        await Future.delayed(
-                                            Duration(milliseconds: 450));
-                                      }
+                                      await Future.delayed(
+                                          Duration(milliseconds: 450));
+                                    }
                                     if (index != pageIndex_old) {
-                                     
-
                                       setState(() {
                                         pageIndex = index;
                                       });
@@ -411,31 +418,34 @@ await MinecraftAccountUtils().saveAccounts([]);
                   child: Padding(
                       padding: edgeInsets, child: _getNavigator(context))),
 
-              SidePanel()
+              SidePanel(
+                controller: StaticSidePanelController.controller,
+              )
 
               // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
             ],
-          ),])
+          ),
+        ])
 
-          // shouldSplashedDisplayed
-          //     ? AnimatedOpacity(
-          //         onEnd: () {
-          //           setState(() {
-          //             shouldSplashedDisplayed = false;
-          //           });
+        // shouldSplashedDisplayed
+        //     ? AnimatedOpacity(
+        //         onEnd: () {
+        //           setState(() {
+        //             shouldSplashedDisplayed = false;
+        //           });
 
-          //         },
-          //         opacity: isSplashed ? 1.0 : 0.0,
-          //         curve: Curves.easeOutExpo,
-          //         duration: Duration(milliseconds: 800),
-          //         child: Container(
-          //           height: double.infinity,
-          //           width: double.infinity,
-          //           color: Theme.of(context).colorScheme.background,
-          //           child: SplashScreen(),
-          //         ),
-          //       )
-          //     : Container(),
+        //         },
+        //         opacity: isSplashed ? 1.0 : 0.0,
+        //         curve: Curves.easeOutExpo,
+        //         duration: Duration(milliseconds: 800),
+        //         child: Container(
+        //           height: double.infinity,
+        //           width: double.infinity,
+        //           color: Theme.of(context).colorScheme.background,
+        //           child: SplashScreen(),
+        //         ),
+        //       )
+        //     : Container(),
         );
   }
 }
@@ -460,8 +470,6 @@ class WindowButtons extends StatelessWidget {
     return Row(
       children: [
         //Code by Mc-PIXIE
-
-        
 
         MinimizeWindowButton(
           colors: buttonColors,

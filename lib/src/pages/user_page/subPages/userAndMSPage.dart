@@ -26,7 +26,7 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
 
   onReturn() {
     print('return');
-    SidePanel().pop(
+   StaticSidePanelController.controller.push(
         Container(
             height: double.infinity,
             width: double.infinity,

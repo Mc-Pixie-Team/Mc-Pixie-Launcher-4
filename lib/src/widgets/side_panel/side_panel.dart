@@ -7,38 +7,67 @@ import 'package:mclauncher4/src/widgets/side_panel/taskwidget.dart';
 import 'package:vector_math/vector_math.dart' as vec;
 import 'dart:io' show Platform;
 
-class SidePanel extends StatefulWidget {
-  var state = _SidePanelState();
-  static final SidePanel _instance = SidePanel._internal();
 
-  factory SidePanel() {
-    return _instance;
-  }
+class StaticSidePanelController {
 
-  SidePanel._internal();
-  Widget? currentWidget;
-  void pop(Widget parent, double width) {
-    state.setNewWidget(parent, width);
+static SidePanelController controller = SidePanelController();
+}
+
+
+class SidePanelController {
+
+  Function(Widget parent, double width)? _pushCallBack;
+
+  Function(Widget parent)? _setSecondaryCallBack;
+
+  Function? _removeSecondaryCallBack;
+
+  Function(Widget item, String processId)? _addToTaskWidgetCallback;
+
+  Function(String processId)? _removeFromTaskWidgetCallback;
+
+  void push(Widget parent, double width) {
+    if (_pushCallBack == null)
+      throw Exception("Side Panel Controller isnt initialized!");
+
+    _pushCallBack!.call(parent, width);
   }
 
   void setSecondary(Widget parent) {
-    state.setNewSecondary(parent);
+    if (_setSecondaryCallBack == null)
+      throw Exception("Side Panel Controller isnt initialized!");
+
+    _setSecondaryCallBack!.call(parent);
   }
 
   void removeSecondary() {
-    state.removeSecondary();
+    if (_removeSecondaryCallBack == null)
+      throw Exception("Side Panel Controller isnt initialized!");
+
+    _removeSecondaryCallBack!.call();
   }
 
   void addToTaskWidget(Widget item, String processId) {
-    state.addToTaskWidget(item, processId);
+    if (_addToTaskWidgetCallback == null)
+      throw Exception("Side Panel Controller isnt initialized!");
+
+    _addToTaskWidgetCallback!.call(item, processId);
   }
 
   removeFromTaskWidget(String processId) {
-    state.removeFromTaskWidget(processId);
+    if(_removeFromTaskWidgetCallback == null)  throw Exception("Side Panel Controller isnt initialized!");
+
+    _removeFromTaskWidgetCallback!.call(processId);
   }
+}
+
+// ignore: must_be_immutable
+class SidePanel extends StatefulWidget {
+  SidePanelController controller;
+  SidePanel({required this.controller});
 
   @override
-  _SidePanelState createState() => state;
+  _SidePanelState createState() => _SidePanelState();
 }
 
 class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
@@ -59,16 +88,27 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    print("initState in inner SidePanelState build");
     isdisposed = false;
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 1500));
-    ani = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutExpo));
-    _controllersec = AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
-    ani2 = Tween(begin: 1.0, end: 0.0)
-        .animate(CurvedAnimation(reverseCurve: Curves.easeInExpo, parent: _controllersec, curve: Curves.easeOutExpo));
 
+    _controller = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    ani = Tween(begin: 1.0, end: 0.0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutExpo));
+    _controllersec = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1000));
+    ani2 = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+        reverseCurve: Curves.easeInExpo,
+        parent: _controllersec,
+        curve: Curves.easeOutExpo));
     _controller.addListener(() {
       setState(() {});
     });
+    widget.controller._pushCallBack = setNewWidget;
+    widget.controller._setSecondaryCallBack = setNewSecondary;
+    widget.controller._removeSecondaryCallBack = removeSecondary;
+    widget.controller._addToTaskWidgetCallback = addToTaskWidget;
+    widget.controller._removeFromTaskWidgetCallback = removeFromTaskWidget;
 
     super.initState();
   }
@@ -90,7 +130,9 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
         'assets/images/backgound_blue.jpg',
         fit: BoxFit.cover,
       ),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: Color.fromARGB(0, 27, 124, 204)));
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Color.fromARGB(0, 27, 124, 204)));
 
   startfirstAnimation() {
     _controller.reset();
@@ -126,7 +168,8 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
       setNewSecondary(taskwidget);
       return;
     }
-    if (_controllersec.status == AnimationStatus.dismissed || _secondaryWidget!.runtimeType != TaskWidget) {
+    if (_controllersec.status == AnimationStatus.dismissed ||
+        _secondaryWidget!.runtimeType != TaskWidget) {
       setNewSecondary(taskwidget);
     }
     if (_controllersec.status == AnimationStatus.completed) {
@@ -138,7 +181,6 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
 
   setNewWidget(Widget parent, double width) {
     // if (isdisposed || isanimating) return;
-    widget.currentWidget = parent;
     width_old = this.width;
     this.width = width;
     newWidget = parent;
@@ -185,17 +227,17 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
     _controllersec.reverse();
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
+    print("rebuild in inner SidePanelState build");
     return Padding(
-        padding: EdgeInsets.only(left: 0, top: Platform.isMacOS ? 12 : 43, right: 10, bottom: 12),
+        padding: EdgeInsets.only(
+            left: 0, top: Platform.isMacOS ? 12 : 43, right: 10, bottom: 12),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Expanded(
               child: Container(
-                  width: lerpDouble((width_old ?? defaultWidth), (width ?? defaultWidth), ((ani.value * -1) + 1)),
+                  width: lerpDouble((width_old ?? defaultWidth),
+                      (width ?? defaultWidth), ((ani.value * -1) + 1)),
                   height: double.infinity,
                   child: OverflowBox(
                       child: Stack(
@@ -206,18 +248,23 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
                             offset: Offset(100.0 * ((ani.value * -1) + 1), 0),
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: SizedBox(width: (this.width_old ?? defaultWidth), child: currentWidget),
+                              child: SizedBox(
+                                  width: (this.width_old ?? defaultWidth),
+                                  child: currentWidget),
                             )),
                       ),
                       Align(
                           alignment: Alignment(1, 1),
                           child: Transform.translate(
-                            offset: Offset((width ?? defaultWidth) * ani.value, 0),
+                            offset:
+                                Offset((width ?? defaultWidth) * ani.value, 0),
                             child: newWidget == null
                                 ? Container()
                                 : SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
-                                    child: SizedBox(width: (width ?? defaultWidth), child: newWidget),
+                                    child: SizedBox(
+                                        width: (width ?? defaultWidth),
+                                        child: newWidget),
                                   ),
                           )),
                     ],
@@ -226,15 +273,24 @@ class _SidePanelState extends State<SidePanel> with TickerProviderStateMixin {
               animation: ani2,
               builder: (context, child) {
                 return Padding(
-                    padding: EdgeInsets.only(top: secondaryWidget != null ? 10.0 : 10.0 * ((ani2.value * -1) + 1)),
+                    padding: EdgeInsets.only(
+                        top: secondaryWidget != null
+                            ? 10.0
+                            : 10.0 * ((ani2.value * -1) + 1)),
                     child: SizedBox(
-                      width: lerpDouble((width_old ?? defaultWidth), (width ?? defaultWidth), ((ani.value * -1) + 1)),
-                      height: secondaryWidget != null ? defaultHeight : defaultHeight * ((ani2.value * -1) + 1),
+                      width: lerpDouble((width_old ?? defaultWidth),
+                          (width ?? defaultWidth), ((ani.value * -1) + 1)),
+                      height: secondaryWidget != null
+                          ? defaultHeight
+                          : defaultHeight * ((ani2.value * -1) + 1),
                       child: Stack(
                         alignment: Alignment.topLeft,
                         children: [
                           Transform.translate(
-                              offset: Offset(0, (defaultHeight + 20) * ((ani2.value * -1) + 1)),
+                              offset: Offset(
+                                  0,
+                                  (defaultHeight + 20) *
+                                      ((ani2.value * -1) + 1)),
                               child: secondaryWidget ?? Container()),
                           Transform.translate(
                             offset: Offset(0, defaultHeight * ani2.value),

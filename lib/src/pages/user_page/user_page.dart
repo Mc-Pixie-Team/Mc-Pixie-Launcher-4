@@ -190,31 +190,31 @@ class _UserPageState extends State<UserPage> {
                     "Subscriptions & Servers"
                   ], functions: [
                     () {
-                      SidePanel().pop(UserAndMSPage(), 555);
+                     StaticSidePanelController.controller.push(UserAndMSPage(), 555);
                     },
                     () {
-                      SidePanel().pop(
+                     StaticSidePanelController.controller.push(
                           Container(
                             color: Colors.teal,
                           ),
                           550);
                     },
                     () {
-                      SidePanel().pop(
+                      StaticSidePanelController.controller.push(
                           Container(
                             color: Colors.teal,
                           ),
                           550);
                     },
                     () {
-                      SidePanel().pop(
+                      StaticSidePanelController.controller.push(
                           Container(
                             color: Colors.teal,
                           ),
                           550);
                     },
                     () {
-                      SidePanel().pop(
+                      StaticSidePanelController.controller.push(
                           Container(
                             color: Colors.teal,
                           ),

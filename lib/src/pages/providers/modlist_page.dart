@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:animations/animations.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
@@ -12,7 +13,7 @@ import 'package:mclauncher4/src/tasks/java/java.dart';
 import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/widgets/buttons/circular_button.dart';
 import 'package:mclauncher4/src/widgets/cards/java_install_card.dart';
-import 'package:mclauncher4/src/widgets/providers_widget/browse_card.dart';
+import 'package:mclauncher4/src/widgets/cards/browse_card.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
 import 'package:mclauncher4/src/widgets/providers_widget/dropdown_menu.dart';
 import 'package:mclauncher4/src/widgets/searchbar.dart' as Searchbar;
@@ -31,7 +32,7 @@ class ModListPage extends StatefulWidget {
   _ModListPageState createState() => _ModListPageState();
 }
 
-class _ModListPageState extends State<ModListPage> {
+class _ModListPageState extends State<ModListPage> with SingleTickerProviderStateMixin{
   ScrollController _scrollController = ScrollController();
   ScrollController _secondController = ScrollController();
   late Widget addButton;
@@ -111,6 +112,9 @@ class _ModListPageState extends State<ModListPage> {
 
   @override
   void initState() {
+ 
+
+    
    _handler = ApiHandler().getApi(widget.providerString);
     addButton = CircularButton(
       child: Icon(
@@ -173,10 +177,11 @@ class _ModListPageState extends State<ModListPage> {
             color: Theme.of(context).colorScheme.surfaceVariant,
         ),
         child: Stack(children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+         Column(
+           mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              
               Padding(
                 padding: EdgeInsets.only(top: 70, left: 30, bottom: 9),
                 child: SlideInAnimation(
@@ -194,6 +199,8 @@ class _ModListPageState extends State<ModListPage> {
                   style: Theme.of(context).typography.black.displaySmall,
                 )),
               ),
+             
+             
               Divider.CustomDivider(
                 size: 14,
               ),

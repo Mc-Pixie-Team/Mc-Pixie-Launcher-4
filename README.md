@@ -1,6 +1,6 @@
 # Mc-Pixie Launcher
 <a href="https://pub.dev/packages/webview_cef"><img src="https://img.shields.io/badge/Windows-blue?logo=flutter" alt="Platform"/></a>
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/blob/master/LICENSE)
+[![GitHub License](https://img.shields.io/github/license/Mc-Pixie-Team/Mc-Pixie-Launcher-4)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/blob/main/LICENSE)
 [![GitHub release](https://img.shields.io/github/release/Mc-Pixie-Team/Mc-Pixie-Launcher-4.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/releases)
 [![GitHub issues](https://img.shields.io/github/issues/Mc-Pixie-Team/Mc-Pixie-Launcher-4.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/issues)
 [![GitHub stars](https://img.shields.io/github/stars/Mc-Pixie-Team/Mc-Pixie-Launcher-4.svg)](https://github.com/Mc-Pixie-Team/Mc-Pixie-Launcher-4/stargazers)

@@ -10,6 +10,7 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
 import 'package:mclauncher4/src/tasks/Models/start_message.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
 import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
@@ -26,11 +27,13 @@ class InstallController with ChangeNotifier {
   String? processid;
   MainState mainstate;
   BuildContext? context;
+  bool isVersion;
   ValueNotifierList _stdout = ValueNotifierList([]);
   InstallController(
       {required this.handler,
       required this.modpackData,
       this.processid,
+      this.isVersion = true,
       this.mainstate = MainState.notinstalled,
       this.replace = true}) {
        
@@ -116,7 +119,13 @@ class InstallController with ChangeNotifier {
     });
     await manifestfile.writeAsString(jsonEncode(manifest));
   
-    if (dir.existsSync()) dir.delete(recursive: true);
+    if (dir.existsSync()) {
+      try {
+        dir.delete(recursive: true);
+      }catch (e) {
+               setErrorDialog(context, e.toString());
+      }
+    } 
 
    removeFromInstallList();
      print('deleted');
@@ -129,8 +138,14 @@ class InstallController with ChangeNotifier {
     print('start download');
     mainstate = MainState.fetching;
     notifyListeners();
-    setUIChanges();
 
+    if(!isVersion) {
+      print("getting newest version from Modpack");
+     modpackData = (await handler.getLatestModpackVersionFromLiteUMF(modpackData));
+    }
+    setUIChanges();
+    print("NAME OF MODPACK:" + modpackData.name!);
+    print("NAME OF THE VERSION OF THE MODPACK:" + modpackData.versionName!);
     print(modpackData.icon);
   
   ///To show the fetching animation
@@ -142,7 +157,7 @@ class InstallController with ChangeNotifier {
 
     ReceivePort receivePort = ReceivePort();
     ReceivePort exitPort = ReceivePort();
-
+    ReceivePort errorPort = ReceivePort();
     receivePort.listen((message) {
       if (message is InstallerMessage) {
         mainstate = message.mainState;
@@ -153,7 +168,15 @@ class InstallController with ChangeNotifier {
     exitPort.listen((message) {
       print(message);
       removeUIChanges();
+      
       InstallController.instances--;
+    });
+    errorPort.listen((message) {
+      mainstate = MainState.notinstalled;
+
+      print("from massenger: " + message.toString());
+      notifyListeners();
+       setErrorDialog(context,  message.toString());
     });
 
 
@@ -175,7 +198,8 @@ class InstallController with ChangeNotifier {
         ],
         onExit: exitPort.sendPort,
         debugName: "Install of $processId",
-        errorsAreFatal: true,);
+        onError: errorPort.sendPort,
+       );
   }
 
   static void isolateEntry(List args) async {
@@ -255,20 +279,11 @@ class InstallController with ChangeNotifier {
         .isEmpty) {
           print("add to");
           
-      InstalledModpacksUIHandler.installCardChildren.addAll( [AnimatedBuilder(
-        key: Key(processId),
-        animation: this,
-        builder: (context, child) => InstalledCard(
-          stdout: stdout,
-          processId: processId,
-          modpackData: modpackData,
-          state: state,
-          progress: progress,
-          onCancel: cancel,
-          onOpen: start,
-          onDelete: delete,
+      InstalledModpacksUIHandler.installCardChildren.addAll( [InstalledCard(
+          key: Key(processId),
+          controllerInstance: this,
         ),
-      )]);
+      ]);
     }
     print('lengt ' + InstalledModpacksUIHandler.installCardChildren.value.length.toString());
 
@@ -296,9 +311,10 @@ class InstallController with ChangeNotifier {
    StaticSidePanelController.controller.removeFromTaskWidget(processId);
   }
 
-  setErrorDialog(BuildContext context, String errorDialog) {
+  setErrorDialog(BuildContext? context, String errorDialog) {
+    print("printing error");
     showDialog(
-        context: context,
+        context: context ?? navigatorKey.currentContext!,
         builder: (context) {
           return AlertDialog(
             title: Text("Oh no an Error occured!"), 

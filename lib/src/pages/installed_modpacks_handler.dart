@@ -36,19 +36,11 @@ class InstalledModpacksHandler {
           handler: _handler,
           modpackData: UMF.parse(manifest[index])); // MainState.installed
 
-      return AnimatedBuilder(
-        animation: installcontroller,
-        key: Key(installcontroller.processId),
-        builder: (context, child) => InstalledCard(
-          stdout: installcontroller.stdout,
-          processId: installcontroller.processId,
-          modpackData: installcontroller.modpackData,
-          state: installcontroller.state,
-          progress: installcontroller.progress,
-          onCancel: installcontroller.cancel,
-          onDelete: installcontroller.delete,
-          onOpen: installcontroller.start
-        ),
+      return 
+       InstalledCard(
+          key: Key(installcontroller.processId),
+          controllerInstance: installcontroller,
+        
       );
     });
   }

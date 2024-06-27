@@ -78,10 +78,14 @@ abstract class Api {
   }
 
 
-  UMF convertToUMF(Map modpackData) {
+  UMF convertToLiteUMF(Map modpackData) {
     throw Exception("Do not call the normal API class, this is just a Template function!");
   }
   Future<DUMF> getDUMF(Map modpackData) {
+    throw Exception("Do not call the normal API class, this is just a Template function!");
+  }
+
+  Future<UMF> getLatestModpackVersionFromLiteUMF(UMF dum) async{
     throw Exception("Do not call the normal API class, this is just a Template function!");
   }
 

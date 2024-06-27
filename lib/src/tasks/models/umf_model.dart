@@ -1,6 +1,7 @@
 class UMF {
   UMF({
     this.name,
+    this.versionName,
     this.author,
     this.description,
     this.downloads,
@@ -15,6 +16,7 @@ class UMF {
   });
 
   String? name;
+  String? versionName;
   String? author;
   String? description;
   int? downloads;
@@ -30,6 +32,7 @@ class UMF {
   static toJson(UMF umf) {
     return {
       "name": umf.name,
+      "versionName": umf.versionName,
       "author": umf.author,
       "description": umf.description,
       "downloads": umf.downloads,
@@ -51,6 +54,7 @@ class UMF {
     return UMF(
       
     name: json["name"],
+    versionName: json["versionName"],
     author: json["author"],
     description:  json["description"],
     downloads: json["downloads"],

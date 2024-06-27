@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
 
@@ -52,10 +50,7 @@ class MinecraftAccountUtils {
       Map elemNew = element.toMap();
       saveData.add(elemNew);
     }
-    print("new data");
-    print(jsonEncode(saveData));
    await SecureStorage.writeSecureData("account", jsonEncode(saveData));
-   print('data: '+  await SecureStorage.readSecureData("account"));
   }
 
   Future<List<MinecraftAccount>> getAccounts() async {
@@ -79,7 +74,6 @@ class MinecraftAccountUtils {
       }
     }
     if (newAcc) {
-      print("set new acc");
       accList.add(account);
       await saveAccounts(accList);
       await setStandard(account);

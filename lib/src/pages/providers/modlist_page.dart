@@ -74,7 +74,7 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
         (index) => InstallController(
                               handler: _handler,
                               modpackData:
-                                  _handler.convertToUMF(rawModpacks[index]))));
+                                  _handler.convertToLiteUMF(rawModpacks[index]))));
     setState(() {});
     iscalled = false;
   }
@@ -232,9 +232,10 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
                       installContollers = List.generate(
                           modpacklist.length,
                           (index) => InstallController(
+                            isVersion: false,
                               handler: _handler,
                               modpackData:
-                                  _handler.convertToUMF(modpacklist[index])));
+                                  _handler.convertToLiteUMF(modpacklist[index])));
                     }
                     return ShaderMask(
                         shaderCallback: (Rect rect) {

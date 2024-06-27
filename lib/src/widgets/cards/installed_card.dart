@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/pages/installed_mod/installed_mod_page.dart';
+import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/models/download_states.dart';
 import 'package:mclauncher4/src/tasks/IO_controller.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
@@ -21,40 +22,30 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 
 
 class InstalledCard extends StatefulWidget {
-  final MainState state;
-  final double progress;
-  final ValueNotifierList stdout;
-  final VoidCallback onCancel;
-  final VoidCallback onOpen;
-  final VoidCallback onDelete;
-  final UMF modpackData;
-  final String processId;
+  final InstallController controllerInstance;
+
   InstalledCard(
       {Key? key,
-      required this.stdout,
-      required this.onDelete,
-      required this.processId,
-      required this.modpackData,
-      required this.state,
-      required this.progress,
-      required this.onCancel,
-      required this.onOpen})
+      required this.controllerInstance,})
       : super(key: key);
 
-  String get process_id => processId;
+  String get process_id => controllerInstance.processId;
 
   @override
   _InstalledCardState createState() => _InstalledCardState();
 }
 
 class _InstalledCardState extends State<InstalledCard> {
+
+
+
   bool ishovered = false;
   late bool isDownloading;
   bool get _isDownloading =>
-      widget.state == MainState.downloadingMinecraft ||
-      widget.state == MainState.downloadingML ||
-      widget.state == MainState.downloadingMods ||
-      widget.state == MainState.running;
+      widget.controllerInstance.state == MainState.downloadingMinecraft ||
+      widget.controllerInstance.state == MainState.downloadingML ||
+      widget.controllerInstance.state == MainState.downloadingMods ||
+      widget.controllerInstance.state == MainState.running;
 
   AsyncSnapshot<Uint8List> snapshot = AsyncSnapshot.nothing();
 
@@ -65,14 +56,14 @@ class _InstalledCardState extends State<InstalledCard> {
   }
 
   Widget iconhandler() {
-    print("icon: ${widget.modpackData.icon}");
-    if (widget.modpackData.icon != null) {
+    print("icon: ${widget.controllerInstance.modpackData.icon}");
+    if (widget.controllerInstance.modpackData.icon != null) {
       return FadeInImage.memoryNetwork(
-          fit: BoxFit.cover, placeholder: kTransparentImage, image: widget.modpackData.icon!);
+          fit: BoxFit.cover, placeholder: kTransparentImage, image: widget.controllerInstance.modpackData.icon!);
     }
 
     return Image.memory(
-      File(path.join(getInstancePath(), widget.processId, "icon.png")).readAsBytesSync(),
+      File(path.join(getInstancePath(), widget.controllerInstance.processId, "icon.png")).readAsBytesSync(),
       gaplessPlayback: true,
     );
     
@@ -90,7 +81,7 @@ class _InstalledCardState extends State<InstalledCard> {
           child: DefaultTextStyle(
               style: TextStyle(),
               child: ExportField(
-                processId: widget.processId,
+                processId: widget.controllerInstance.processId,
               ))),
       transitionBuilder: (context, anim1, anim2, child) {  
 
@@ -115,13 +106,14 @@ class _InstalledCardState extends State<InstalledCard> {
     print("hre");
        Navigator.push(
     context,
-  SlowMaterialPageRoute(allowSnapshotting: false, builder: (context) => InstalledModPage(stdout: widget.stdout,),
+  SlowCupertinoPageRoute(maintainState: false, allowSnapshotting: false, builder: (context) => InstalledModPage(controllerInstance: widget.controllerInstance,),
   ));
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      
       onTap: () => onOpen(context),
       child: Container(
         width: 180,
@@ -143,8 +135,9 @@ class _InstalledCardState extends State<InstalledCard> {
                       decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(10)),
                       child: iconhandler()))),
-          Expanded(
+         AnimatedBuilder(animation: widget.controllerInstance, builder: (context, child) => Expanded(
               child: MouseRegion(
+                
                   onEnter: (e) => setState(() {
                         ishovered = true;
                       }),
@@ -166,7 +159,7 @@ class _InstalledCardState extends State<InstalledCard> {
                               Padding(
                                   padding: EdgeInsets.only(left: 12),
                                   child: Text(
-                                    widget.modpackData.name!,
+                                    widget.controllerInstance.modpackData.name!,
                                     style: Theme.of(context).typography.black.titleMedium,
                                   )),
                               Padding(
@@ -178,7 +171,7 @@ class _InstalledCardState extends State<InstalledCard> {
                             ])),
                         Align(
                             alignment: Alignment.center,
-                            child: AnimatedOpacity(
+                            child:  AnimatedOpacity(
                                 duration: Duration(milliseconds: 100),
                                 opacity: _isDownloading
                                     ? 1
@@ -188,7 +181,7 @@ class _InstalledCardState extends State<InstalledCard> {
                                 child: Padding(
                                     padding: EdgeInsets.all(10).copyWith(top: 10, bottom: 15),
                                     child: GestureDetector(
-                                        onTap: widget.onOpen,
+                                        onTap: widget.controllerInstance.start,
                                         child: Container(
                                             height: double.infinity,
                                             width: double.infinity,
@@ -196,7 +189,7 @@ class _InstalledCardState extends State<InstalledCard> {
                                                 borderRadius: BorderRadius.circular(10),
                                                 color: Theme.of(context).colorScheme.surfaceVariant),
                                             child: Center(
-                                                child: widget.state == MainState.installed
+                                                child: widget.controllerInstance.state == MainState.installed
                                                     ? Row(
                                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                         children: [
@@ -208,20 +201,20 @@ class _InstalledCardState extends State<InstalledCard> {
                                                           SvgButton.asset('assets/svg/export-import-icon.svg',
                                                               onpressed: onExport),
                                                               SvgButton.asset('assets/svg/trash-icon.svg',
-                                                              onpressed: widget.onDelete)
+                                                              onpressed: widget.controllerInstance.delete)
                                                         ],
                                                       )
                                                     : SizedBox(
                                                         height: 23,
                                                         width: 23,
                                                         child: DownloadButton(
-                                                          mainState: widget.state,
-                                                          mainprogress: widget.progress,
-                                                          onCancel: widget.onCancel,
-                                                          onOpen: widget.onOpen,
+                                                          mainState: widget.controllerInstance.state,
+                                                          mainprogress: widget.controllerInstance.progress,
+                                                          onCancel: widget.controllerInstance.cancel,
+                                                          onOpen: widget.controllerInstance.start,
                                                           onDownload: () {},
                                                         ))))))))
-                      ]))))
-        ])));
+          ,]))))
+        )])));
   }
 }

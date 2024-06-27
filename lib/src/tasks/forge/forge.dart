@@ -78,7 +78,6 @@ class Forge with ChangeNotifier implements Modloader {
       instanceName,
       vanillaVersionJson,
       version,
-      ModloaderVersion,
     );
 
     print(launchcommand);
@@ -152,7 +151,7 @@ class Forge with ChangeNotifier implements Modloader {
       });
 
       List<String> ignoreList = ["net.minecraft:launchwrapper:1.12", "lzma:lzma:0.0.1", "java3d:vecmath:1.5.2"];
-      versionJson = Utils.convertLibraries(install_profileJson["versionInfo"], ignoreList, additionalLibs);
+      versionJson = Utils.convertLibraries(install_profileJson["versionInfo"]);
     }
 
     // print(versionJson);
@@ -194,6 +193,7 @@ class Forge with ChangeNotifier implements Modloader {
     await _downloader.downloadLibaries(versionJson, version, modloaderVersion);
     await _downloader.getOldUniversal(install_profileJson, version, modloaderVersion);
     await _createVersionDir(versionJson, version, modloaderVersion);
+    Directory(getTempForgePath()).deleteSync(recursive: true);
     //version is finished
     _state = ModloaderInstallState.finished;
     notifyListeners();

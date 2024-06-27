@@ -88,7 +88,7 @@ class _BrowseCardState extends State<BrowseCard>
           right: 32,
         ),
         child: MouseRegion(
-            cursor: MouseCursor.defer,
+            cursor: SystemMouseCursors.click,
             onExit: (PointerExitEvent event) => _controller.reverse(),
             child: GestureDetector(
                 onTapDown: (details) => _controller.forward(),
@@ -97,7 +97,7 @@ class _BrowseCardState extends State<BrowseCard>
                  // _controller.reverse();
                 Navigator.push(
     context,
-   SlowMaterialPageRoute(allowSnapshotting: false, builder: (context) =>  ModPage(handlerString: widget.handlerString, modpackData: widget.modpackData),
+   SlowCupertinoPageRoute( allowSnapshotting: false, builder: (context) =>  ModPage(handlerString: widget.handlerString, modpackData: widget.modpackData),
   ));
                  
 
@@ -118,7 +118,7 @@ class _BrowseCardState extends State<BrowseCard>
                           children: [
                             Padding(
                               padding: EdgeInsets.all(17),
-                              child: ModPicture(width: 127, url: widget.modpackData.icon!, color:  Theme.of(context).colorScheme.surfaceVariant,),
+                              child: ModPicture(width: 127, height: 127, url: widget.modpackData.icon!, color:  Theme.of(context).colorScheme.surfaceVariant,),
                             ),
                             Expanded(
                                 child: Column(
@@ -129,7 +129,7 @@ class _BrowseCardState extends State<BrowseCard>
                                   height: 25,
                                 ),
                                 Text(
-                                  widget.modpackData.name!,
+                                  widget.modpackData.name ?? "N/A",
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context)
@@ -143,7 +143,7 @@ class _BrowseCardState extends State<BrowseCard>
                                 SizedBox(
                                     width: 400,
                                     child: Text(
-                                      widget.modpackData.description!,
+                                      widget.modpackData.description ?? "N/a",
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: Theme.of(context)

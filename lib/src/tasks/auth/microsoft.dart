@@ -10,7 +10,6 @@ class Microsoft {
   Future<Map> authenticate() async {
     String msaToken = await launchMSA();
     Map authResponseMicrosoft = await microsoftSignIn(msaToken, false);
-    print(authResponseMicrosoft.toString());
     Map authTokenXboxLive = await xboxSignIn(authResponseMicrosoft["access_token"]);
     String authXSTSToken = await XSTSToken(authTokenXboxLive);
     Map minecraftUserToken = await minecraftBearerToken(authXSTSToken, authTokenXboxLive["uhs"]);
@@ -72,7 +71,6 @@ class Microsoft {
       http.Response firstAuthResponse = await http.post(
         Uri.parse('https://n8n.mc-pixie.com/webhook/d16395b2-c5bf-4a21-99c4-3fd44f74ad7e?code=$token&isRefresh=false'),
       );
-      print(jsonDecode(firstAuthResponse.body));
       Map rsp = jsonDecode(firstAuthResponse.body);
 
       rsp = rsp["data"][0];
@@ -81,8 +79,6 @@ class Microsoft {
       http.Response firstAuthResponse = await http.post(
         Uri.parse('https://n8n.mc-pixie.com/webhook/d16395b2-c5bf-4a21-99c4-3fd44f74ad7e?code=$token&isRefresh=true'),
       );
-      print(firstAuthResponse.reasonPhrase);
-      print(jsonDecode(firstAuthResponse.body));
       Map rsp = jsonDecode(firstAuthResponse.body);
       rsp = rsp["data"][0];
       return {"access_token": rsp["access_token"], "refreshToken": rsp["refresh_token"]};
@@ -92,7 +88,6 @@ class Microsoft {
 
   Future<Map> xboxSignIn(authTokenMicrosoft) async {
     Uri uri = Uri.parse('https://user.auth.xboxlive.com/user/authenticate');
-    print(uri);
 
     Map data = {
       "Properties": {
@@ -106,7 +101,6 @@ class Microsoft {
 
     http.Response firstAuthResponse =
         await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
-    print(firstAuthResponse.body);
 
     Map rsp = jsonDecode(firstAuthResponse.body);
 
@@ -115,7 +109,6 @@ class Microsoft {
 
   Future<String> XSTSToken(authTokenXboxLive) async {
     Uri uri = Uri.parse('https://xsts.auth.xboxlive.com/xsts/authorize');
-    print(uri);
 
     Map data = {
       "Properties": {
@@ -128,10 +121,10 @@ class Microsoft {
 
     http.Response firstAuthResponse =
         await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
-    print(firstAuthResponse.statusCode);
+   // print(firstAuthResponse.statusCode);
     if (firstAuthResponse.statusCode != 401) {
       Map rsp = jsonDecode(firstAuthResponse.body);
-      print(rsp["Token"]);
+     // print(rsp["Token"]);
       return rsp["Token"];
     } else {
       Map rsp = jsonDecode(firstAuthResponse.body);
@@ -144,14 +137,13 @@ class Microsoft {
 
   Future<Map> minecraftBearerToken(authXSTSToken, xboxUserHash) async {
     Uri uri = Uri.parse('https://api.minecraftservices.com/authentication/login_with_xbox');
-    print(uri);
 
     Map data = {"identityToken": "XBL3.0 x=$xboxUserHash;$authXSTSToken", "ensureLegacyEnabled": true};
 
     http.Response firstAuthResponse =
         await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
-    print(firstAuthResponse.body);
-    print(firstAuthResponse.statusCode);
+    // print(firstAuthResponse.body);
+    // print(firstAuthResponse.statusCode);
     //Map rsp = jsonDecode(firstAuthResponse.body);
 
     return jsonDecode(firstAuthResponse.body);
@@ -159,14 +151,13 @@ class Microsoft {
 
   Future<Map> minecraftUserDetails(minecraftAuthToken) async {
     Uri uri = Uri.parse('https://api.minecraftservices.com/minecraft/profile');
-    print(uri);
-    print('Bearer $minecraftAuthToken');
+  //  print('Bearer $minecraftAuthToken');
     http.Response firstAuthResponse = await http.get(
       uri,
       headers: {"Authorization": 'Bearer $minecraftAuthToken'},
     );
-    print(firstAuthResponse.body);
-    print(firstAuthResponse.statusCode);
+    // print(firstAuthResponse.body);
+    // print(firstAuthResponse.statusCode);
     //Map rsp = jsonDecode(firstAuthResponse.body);
 
     return jsonDecode(firstAuthResponse.body);

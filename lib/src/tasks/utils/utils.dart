@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:path/path.dart' as path;
@@ -7,6 +8,7 @@ import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import './path.dart';
 
 class Utils {
+
   static extractNativesfromjar(String pathfrom, String version) async {
     List<int> _bytes = [];
 
@@ -65,19 +67,20 @@ class Utils {
     archive = null;
   }
 
-  static Future<void> copyDirectory({required Directory source, required Directory destination}) async {
+  static void copyDirectory({required Directory source, required Directory destination}) {
+ 
     
-    if(!(await destination.exists())) {
-              await destination.create(recursive: true);
+    if(!( destination.existsSync())) {
+              destination.createSync(recursive: true);
           }
 
-      final fileitems = source.list();
+      final fileitems = source.listSync();
 
-   await fileitems.listen((fileEntity) async{ 
+ fileitems.forEach( (fileEntity){ 
         final newPath = destination.path + Platform.pathSeparator + path.basename(fileEntity.path);
         if(fileEntity is File) {
           
-          fileEntity.copySync(newPath);
+         fileEntity.copySync(newPath);
           // try {
           //   await copyFile( source: fileEntity,  destination: File( newPath));
           // } catch (e) {
@@ -85,9 +88,11 @@ class Utils {
           // }
          
         }else if(fileEntity is Directory) {
-          await copyDirectory(source: fileEntity, destination: Directory(newPath));
+        copyDirectory(source: fileEntity, destination: Directory(newPath));
         }
       });
+   
+      print("copy methode end");
   }
 
 
@@ -151,27 +156,20 @@ class Utils {
     return str.startsWith(prefix) && str.endsWith(suffix);
   }
 
-  static convertLibraries(Map versionJson, List<String> ignoreList, [additionallib]) {
-    List libraries = versionJson["libraries"];
+  static convertLibraries(List libraries,) {
     List newlibraries = [];
-    if (additionallib != null) {
-      newlibraries.addAll(additionallib);
-    }
-
     for (int i = 0; i < libraries.length; i++) {
       Map current = libraries[i];
       if (!(current["clientreq"] == null && current["serverreq"] == null)) {}
 
       // if (current["url"] == null || current["url"] == "") continue;
-      if (ignoreList.contains(current["name"])) continue;
       if (current["url"] == null || current["url"] == "") {
         newlibraries.add({
           "name": current["name"],
           "downloads": {
             "artifact": {
               "path": Utils.parseMaven(current["name"]),
-              "url": "https://repo1.maven.org/maven2/" + Utils.parseMaven(current["name"]),
-              "size": 100000
+              "url": path.join("https://libraries.minecraft.net", Utils.parseMaven(current["name"])),
             }
           }
         });
@@ -183,15 +181,14 @@ class Utils {
         "downloads": {
           "artifact": {
             "path": Utils.parseMaven(current["name"]),
-            "url": current["url"] + Utils.parseMaven(current["name"]),
-            "size": 100000
+            "url": path.join(current["url"], Utils.parseMaven(current["name"])),
           }
         }
       });
     }
 
-    versionJson["libraries"] = newlibraries;
-    return versionJson;
+
+    return newlibraries;
   }
 
   static List parseMavenList(String mavenString) {

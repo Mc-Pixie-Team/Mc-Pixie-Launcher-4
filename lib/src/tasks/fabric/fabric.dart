@@ -64,7 +64,6 @@ class Fabric with ChangeNotifier implements Modloader {
       instanceName,
       vanillaVersionJson,
       version,
-      modloaderVersion,
     );
 
     print(launchcommand);
@@ -100,7 +99,7 @@ class Fabric with ChangeNotifier implements Modloader {
 
     Map profileJson = jsonDecode(utf8.decode(res.bodyBytes));
 
-    profileJson = Utils.convertLibraries(profileJson, []);
+   // profileJson = Utils.convertLibraries(profileJson,);
 
     DownloadUtils _downloader = DownloadUtils();
     _downloader.addListener(() {

@@ -5,11 +5,13 @@ class ModPicture extends StatelessWidget {
   const ModPicture({
     super.key,
     required this.width,
+    required this.height,
     required this.url,
     required this.color,
   });
 
   final String url;
+  final double height;
   final double width;
   final Color color;
 
@@ -17,6 +19,7 @@ class ModPicture extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
+      height: height,
       child: Hero(
         tag: url,
         child: Container(

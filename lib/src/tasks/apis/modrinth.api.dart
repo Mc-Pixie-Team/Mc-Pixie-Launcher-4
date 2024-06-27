@@ -139,11 +139,11 @@ class ModrinthApi implements Api {
   }
 
   @override
-  UMF convertToUMF(Map modpackData) {
+  UMF convertToLiteUMF(Map modpackData) {
     modpackData["name"] = modpackData["name"] ?? modpackData["title"];
 
     return UMF(
-        name: modpackData["title"],
+        name: modpackData["name"],
         author: modpackData["author"],
         description: modpackData["description"],
         downloads: modpackData["downloads"],
@@ -152,7 +152,6 @@ class ModrinthApi implements Api {
         icon: modpackData["icon_url"],
         body: modpackData["body"],
         modloader: ["Fabric"],
-        MLVersion: null,
         MCVersion: modpackData["latest_version"],
         original: modpackData);
   }
@@ -180,11 +179,13 @@ class ModrinthApi implements Api {
 
 
     for (Map version in rawVersion){
+     
   versions.add(UMF(
           icon: modpackData["icon_url"],
           MCVersion: version["game_versions"].last,
           modloader: Utils.listTOListString(version["loaders"]),
-          name: version["name"].toString(),
+          name: modpackData["title"].toString(),
+          versionName:  version["name"].toString(),
           description: modpackData["description"].toString(),
           downloads: version["downloads"],
           original: version));
@@ -209,6 +210,26 @@ class ModrinthApi implements Api {
       body: modpackData["body"],
     );
   }
+
+    @override
+    Future<UMF> getLatestModpackVersionFromLiteUMF(UMF umf) async{
+      if(umf.original["dependencies"] != null) return umf; //if there are dependencies its not the lite version from the start anymore
+           Map modpackproject = await _getModpack(umf.original["project_id"]); // Gets the full Protect
+     var modpackVersion =
+          (await _getMultipleVersion(modpackproject["versions"] )).firstWhere((element) => element["version_type"] == "release", orElse: () => null); // gets the newest version
+
+     return UMF(
+      categories: umf.categories,
+          icon: modpackproject["icon_url"],
+          MCVersion: modpackVersion["game_versions"].last,
+          modloader: Utils.listTOListString(modpackVersion["loaders"]),
+          name: modpackproject["title"].toString(),
+          versionName:  modpackVersion["name"].toString(),
+          description: modpackproject["description"].toString(),
+          downloads: modpackVersion["downloads"],
+          original: modpackVersion);
+  }
+
 
   @override
   getTitlename() {

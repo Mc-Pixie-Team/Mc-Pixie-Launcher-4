@@ -1,5 +1,6 @@
-import 'dart:io' show Platform, exit;
+import 'dart:io' show Directory, File, Platform, exit;
 import 'dart:ui';
+import 'package:async_zip/async_zip.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/home_page/home_page.dart';
@@ -9,14 +10,24 @@ import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/tasks/forge/forge.dart';
 import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
+import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
 import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
+import 'package:mclauncher4/src/tasks/tools_test/forge/forge_install.dart';
+import 'package:mclauncher4/src/tasks/tools_test/install.dart';
+import 'package:mclauncher4/src/tasks/tools_test/minecraft_command.dart';
+import 'package:mclauncher4/src/tasks/tools_test/rutime.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
+import 'package:mclauncher4/src/tasks/tools_test/install_tools.dart';
+import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
+import 'package:path_provider/path_provider.dart';
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +38,7 @@ import 'widgets/divider.dart' as div;
 import 'package:animations/animations.dart';
 import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart' as path;
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
@@ -66,6 +78,7 @@ class _McLauncherState extends State<McLauncher> {
     return "done!";
   }
 
+  late Widget mainWidget;
   ThemeMode _themeMode = ThemeMode.system;
 
   void changeTheme(ThemeMode themeMode) {
@@ -75,11 +88,19 @@ class _McLauncherState extends State<McLauncher> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    mainWidget = buildMainWidget();
+    super.initState();
+  }
+
+  Widget buildMainWidget() {
     return MaterialApp(
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
-        navigatorKey: GlobalKey<NavigatorState>(),
+        navigatorKey: navigatorKey,
+        routes: {
+          "/test": (context) => Material(child: Debugpage()),
+        },
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: lightColorScheme,
@@ -90,7 +111,7 @@ class _McLauncherState extends State<McLauncher> {
             colorScheme: darkColorScheme,
             typography: Typography(black: blackTextSchemes)),
         themeMode: _themeMode,
-        home: Material(child: MainPage()),
+        home: MainPage(),
         builder: (context, child) => Stack(children: [
               child!,
               SizedBox(
@@ -106,10 +127,18 @@ class _McLauncherState extends State<McLauncher> {
               ),
             ]));
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return mainWidget;
+  }
 }
 
+// ignore: must_be_immutable
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  int pageIndex = 1;
+  int oldPageIndex = 1;
+  MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -120,14 +149,12 @@ class _MainPageState extends State<MainPage> {
 
   bool shouldSplashedDisplayed = true;
   bool isSplashed = true;
-  int pageIndex = 1;
-  int pageIndex_old = 1;
 
   EdgeInsets edgeInsets =
       EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
 
   final List<Widget> _pages = [
-    const HomePage(),
+    HomePage(),
     ModListPage(
       providerString: "modrinth",
       key: Key("modrinth"),
@@ -147,6 +174,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
+    print("Main app init Called");
     // TODO: implement initState
     MinecraftAccountUtils().initOnFirstStart();
 
@@ -170,24 +198,33 @@ class _MainPageState extends State<MainPage> {
 
   Navigator _getNavigator(BuildContext context) {
     return Navigator(
+      initialRoute: "/",
       observers: [HeroController(createRectTween: _createRectTween)],
       onGenerateRoute: (RouteSettings settings) {
-        return MaterialPageRoute(builder: (context) {
-          innercontext = context;
-          return PageTransitionSwitcher(
-            duration: const Duration(milliseconds: 400),
-            reverse: pageIndex < pageIndex_old,
-            child: Container(key: UniqueKey(), child: _pages[pageIndex]),
-            transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
-                SharedAxisTransition(
-              animation: primaryAnimation,
-              secondaryAnimation: secondaryAnimation,
-              transitionType: SharedAxisTransitionType.vertical,
-              fillColor: Colors.transparent,
-              child: child,
-            ),
-          );
-        });
+        print(settings.name);
+        //you need to code the routes using settings == "[route name]"
+        return CupertinoPageRoute(
+            settings: settings,
+            builder: (context) {
+              innercontext = context;
+              return PageTransitionSwitcher(
+                duration: const Duration(milliseconds: 400),
+                reverse: widget.pageIndex < widget.oldPageIndex,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18),
+                    key: UniqueKey(),
+                    child: _pages[widget.pageIndex]),
+                transitionBuilder:
+                    (child, primaryAnimation, secondaryAnimation) =>
+                        SharedAxisTransition(
+                  animation: primaryAnimation,
+                  secondaryAnimation: secondaryAnimation,
+                  transitionType: SharedAxisTransitionType.vertical,
+                  fillColor: Colors.transparent,
+                  child: child,
+                ),
+              );
+            });
       },
     );
   }
@@ -197,36 +234,58 @@ class _MainPageState extends State<MainPage> {
     //   Navigator.of(innercontext).pop();
     // }
 
-    pageIndex_old = pageIndex;
+    widget.oldPageIndex = widget.pageIndex;
 
-    if (index != pageIndex_old) {
+    if (index != widget.oldPageIndex) {
       if (Navigator.canPop(innercontext)) {
-        Navigator.pop(innercontext);
+        Navigator.popUntil(innercontext, (route) {
+          return route.settings.name == "/";
+        });
         await Future.delayed(Duration(milliseconds: 450));
       }
       setState(() {
-        pageIndex = index;
+        widget.pageIndex = index;
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
+          
           // print(await SecureStorage().readSecureData("accounts"));
 
           //  await SecureStorage.storage.delete(key: "test");
           //  await SecureStorage.storage.write(key: "test", value: "[${math.Random.secure().nextInt(25)}]", mOptions: MacOsOptions(accessibility: KeychainAccessibility.first_unlock_this_device));
-          await MinecraftAccountUtils().saveAccounts([]);
-          //  await SecureStorage.storage.deleteAll();
+          // await MinecraftAccountUtils().saveAccounts([]);
+          // //  await SecureStorage.storage.deleteAll();
 
-          StaticSidePanelController.controller.push(
-              Container(
-                color: Colors.green,
-                width: 200.0,
-              ),
-              200.0);
+          // StaticSidePanelController.controller.push(
+          //     Container(
+          //       color: Colors.green,
+          //       width: 200.0,
+          //     ),
+          //     200.0);
+
+          // showDialog(
+          //     context:  navigatorKey.currentContext!,
+          //     builder: (context) {
+          //       return AlertDialog(
+          //         title: Text("Oh no an Error occured!"),
+          //         content:  SelectableText("t"),
+          //         actions: [
+          //          TextButton(
+          //               onPressed: () {
+          //                 Navigator.of(context).pop();
+          //               },
+          //               child: Text("Close"))
+
+          //         ],
+          //       );
+          //     });
+
           // final SharedPreferences prefs = await SharedPreferences.getInstance();
           //  print(prefs.getInt(SettingsKeys.minRamUsage));
           //   print(prefs.getInt(SettingsKeys.maxRamUsage));
@@ -243,8 +302,18 @@ class _MainPageState extends State<MainPage> {
           // SidePanel.push(Container(height: double.infinity, width: 100.0, color: Colors.green,), 100.0);
           // await Minecraft().install(Version(1,18,2));
           // print("start url");
-          //     Map res = await DownloadUtils().getJson(Version(1,18,2));
-          //     print("start run");
+            //     Map res = await DownloadUtils().getJson(Version(1,21));
+            // //    List<dynamic> libraries = res["libraries"];
+            // //   await Installs.installLibraries(libraries, getlibarypath());
+            // //  await Installs.installAssets(res, getlibarypath());
+            // MinecraftCommand.getlaunchCommand(res, getlibarypath());
+        //  await MinecraftInstall.run(Version(1, 21));
+        //  print(Utils.parseMaven("net.minecraftforge:forge:1.7.10-10.13.4.1614-1.7.10"));
+       //  await ForgeInstall.install("1.16.5-36.2.40", getlibarypath());
+         print("Running minecraft");
+          await ForgeInstall.run("1.16.5-36.2.40", getlibarypath());
+            //Runtime.installJvmRuntime("java-runtime-delta", getlibarypath());
+           // print(Platform.environment['PROCESSOR_ARCHITECTURE']);
           //    Minecraft().run(res, '4656567332');
           // print(getTempCommandPath());
           //   supabaseHelpers().signoutUser();
@@ -370,16 +439,19 @@ class _MainPageState extends State<MainPage> {
                                   onClick: () async {
                                     int index = 0;
                                     print('change: ' + index.toString());
-                                    pageIndex_old = pageIndex;
+                                    widget.oldPageIndex = widget.pageIndex;
 
                                     if (Navigator.canPop(innercontext)) {
-                                      Navigator.pop(innercontext);
+                                      Navigator.popUntil(innercontext, (route) {
+                                        return route.settings.name == "/";
+                                      });
+
                                       await Future.delayed(
                                           Duration(milliseconds: 450));
                                     }
-                                    if (index != pageIndex_old) {
+                                    if (index != widget.oldPageIndex) {
                                       setState(() {
-                                        pageIndex = index;
+                                        widget.pageIndex = index;
                                       });
                                     }
                                   },

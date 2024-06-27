@@ -27,7 +27,7 @@ class Downloader {
     final client = http.Client();
     final request = http.Request('GET', url);
     final response = await client.send(request);
-
+    if (response.statusCode != 200) throw Exception("Error: " + response.statusCode.toString() ); 
     final file = File(savedDir);
     final saveStream = file.openWrite();
 

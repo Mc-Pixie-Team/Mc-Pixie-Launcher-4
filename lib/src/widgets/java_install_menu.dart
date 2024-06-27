@@ -20,17 +20,17 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
   int installStep = 1;
   int stepAmount = 2;
   install() async {
-    List<int> _bytes = await _downloader.downloadSingeFileAsBytes(
-        "https://cdn.azul.com/zulu/bin/zulu8.72.0.17-ca-jdk8.0.382-win_x64.zip");
+    // List<int> _bytes = await _downloader.downloadSingeFileAsBytes(
+    //     "https://cdn.azul.com/zulu/bin/zulu8.72.0.17-ca-jdk8.0.382-win_x64.zip");
 
-    Utils.extractZip(_bytes, '${ getinstances()}');
-    _bytes = [];
-    installStep++;
-    _bytes = await _downloader.downloadSingeFileAsBytes(
-        "https://cdn.azul.com/zulu/bin/zulu17.44.53-ca-jdk17.0.8.1-win_x64.zip");
+    // Utils.extractZip(_bytes, '${ getinstances()}');
+    // _bytes = [];
+    // installStep++;
+    // _bytes = await _downloader.downloadSingeFileAsBytes(
+    //     "https://cdn.azul.com/zulu/bin/zulu17.44.53-ca-jdk17.0.8.1-win_x64.zip");
 
-    Utils.extractZip(_bytes, '${ getinstances()}');
-    _bytes = [];
+    // Utils.extractZip(_bytes, '${ getinstances()}');
+    // _bytes = [];
 
     Navigator.pop(context);
   }

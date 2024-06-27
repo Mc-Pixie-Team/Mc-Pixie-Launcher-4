@@ -23,15 +23,16 @@ class ImportExportController with ChangeNotifier {
   ExportImport get state => _state;
 
   void import(filepath) async {
-    String process_id = Uuid().v1();
+  
+      String process_id = Uuid().v1();
     String filepath =  getTempCommandPath() + "\\$process_id";
 
     print("extracting");
     Utils.extractZip(File(filepath).readAsBytesSync(), filepath);
     Map pixieIndexJson = jsonDecode(File(filepath + "\\pixie.index.json").readAsStringSync());
     pixieIndexJson["processId"] = process_id;
-
-    await Utils.copyDirectory(
+    
+ Utils.copyDirectory(
        source: Directory(filepath + pixieIndexJson["override"]), destination: Directory("${ getinstances()}\\instance\\$process_id"));
 
     Api api = ApiHandler().getApi(pixieIndexJson["provider"]);

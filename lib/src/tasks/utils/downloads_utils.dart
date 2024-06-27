@@ -28,12 +28,12 @@ class DownloadUtils with ChangeNotifier {
       arch = "arm64";
     } else if (Platform.isWindows) {
       os = "windows";
-      arch = "x86";
+      arch = "64";
     } else if (Platform.isLinux) {
       os = "linux";
-      arch = "x86";
+      arch = "64";
     } else {
-      //  throw "plattform not supported!";
+        throw "plattform not supported!";
     }
   }
 
@@ -65,6 +65,7 @@ class DownloadUtils with ChangeNotifier {
 
 
         if (current["natives"] != null && current["natives"][os] != null) {
+          print(i + index);
           print("found valid native!");
           final lib = current["downloads"]["classifiers"]
               [current["natives"][os].replaceAll("\${arch}", arch)];
@@ -98,6 +99,7 @@ class DownloadUtils with ChangeNotifier {
 
             await _downloader.startDownload();
             //unzipPath: path.join(getbinpath(), version.toString())
+            print("before export");
           await  _downloader.unzip(
                 unzipPath: path.join(getbinpath(), version.toString()));
             print("done with export");
@@ -172,14 +174,16 @@ class DownloadUtils with ChangeNotifier {
   }
 
   Future<Map> getJson(Version version) async {
-    late String url;
+    String? url;
     var minecraftManifestRES = await http.get(Uri.parse(
         'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'));
     List minecraftManifest = jsonDecode(minecraftManifestRES.body)['versions'];
 
+      
     for (Map versionjson in minecraftManifest) {
       if (versionjson["id"] == "$version") url = versionjson["url"];
     }
+    if(url == null) throw "Could not find minecraft Version: $version";
     var packagejsonRES = await http.get(Uri.parse(url));
     Map packagejson = jsonDecode(packagejsonRES.body);
     return packagejson;
@@ -292,62 +296,5 @@ class DownloadUtils with ChangeNotifier {
     await Utils.extractForgeInstaller(_bytes, version, modloaderVersion);
   }
 
-  downloadSingeFile(String url, String to) async {
-    List<int> _bytes = [];
 
-    http.Response head_response = await http.head(Uri.parse(url));
-
-    int _totalsize = int.parse(head_response.headers["content-length"] ?? "");
-    int received = 0;
-    int receivedControll = 0;
-    print(_totalsize);
-
-    http.StreamedResponse? response =
-        await http.Client().send(http.Request('GET', Uri.parse(url)));
-
-    await response.stream.listen((value) {
-      _bytes.addAll(value);
-      received += value.length;
-      receivedControll += value.length;
-      if (receivedControll > _totalsize / 100) {
-        _progress = received / _totalsize;
-        _state = DownloadState.customDownload;
-        notifyListeners();
-        receivedControll = 0;
-      }
-    }).asFuture();
-
-    String parentDirectory = path.dirname(to);
-    await Directory(parentDirectory).create(recursive: true);
-    await File(to).writeAsBytes(_bytes);
-    _bytes = [];
-  }
-
-  Future<List<int>> downloadSingeFileAsBytes(String url) async {
-    List<int> _bytes = [];
-
-    http.Response head_response = await http.head(Uri.parse(url));
-
-    int _totalsize = int.parse(head_response.headers["content-length"] ?? "");
-    int received = 0;
-    int receivedControll = 0;
-    print(_totalsize);
-
-    http.StreamedResponse? response =
-        await http.Client().send(http.Request('GET', Uri.parse(url)));
-
-    await response.stream.listen((value) {
-      _bytes.addAll(value);
-      received += value.length;
-      receivedControll += value.length;
-      if (receivedControll > _totalsize / 100) {
-        _progress = received / _totalsize;
-        _state = DownloadState.customDownload;
-        notifyListeners();
-        receivedControll = 0;
-      }
-    }).asFuture();
-
-    return _bytes;
-  }
 }

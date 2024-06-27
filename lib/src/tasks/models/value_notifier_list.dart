@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 
 class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
   ValueNotifierList(List<Widget> value) : super(value);
@@ -35,10 +36,10 @@ class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
 
   void removeKeyFromAnimatedBuilder(String key) {
     value = value.where((value) {
-      if (value is AnimatedBuilder) {
-        AnimatedBuilder builder = value as AnimatedBuilder;
+      if (value is InstalledCard) {
+        
 
-        return builder.key != Key(key);
+        return value.key != Key(key);
       }
       return false;
     }).toList();

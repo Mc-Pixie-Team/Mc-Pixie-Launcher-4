@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:mclauncher4/src/widgets/modpack_widgets/modpack_title_icon_widget.dart';
 import 'package:path/path.dart' as path;
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
@@ -60,16 +61,6 @@ class _ModPageState extends State<ModPage> {
   void initState() {
     createIsolate();
 
-//    Future c = compute(ModrinthApi().getDUMF, widget.modpackData.original);
-//     print("init");
-// c.then((value) {
-//   if(isdisposed) return;
-//       setState(() {
-//            details = value;
-//       });
-
-//     });
-
     super.initState();
   }
 
@@ -84,10 +75,6 @@ class _ModPageState extends State<ModPage> {
 
   @override
   Widget build(BuildContext context) {
-    String modloaderstring = "";
-    for (String modl in widget.modpackData.modloader) {
-      modloaderstring += "$modl ";
-    }
 
     return Container(
       decoration: BoxDecoration(
@@ -110,67 +97,13 @@ class _ModPageState extends State<ModPage> {
           Positioned.fill(
             top: 50,
             child: Column(children: [
-              Row(children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 40),
-                  child: ModPicture(
-                    width: 140,
-                    url: widget.modpackData.icon!,
-                    color: Theme.of(context).colorScheme.surface,
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                SlideInAnimation(
-                    curve: Curves.easeOutQuad,
-                    duration: const Duration(milliseconds: 800),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Modpack",
-                          style: Theme.of(context)
-                              .typography
-                              .black
-                              .labelLarge!
-                              .copyWith(
-                                  color: Theme.of(context).colorScheme.primary),
-                        ),
-                        Text(
-                          widget.modpackData.name!,
-                          style:
-                              Theme.of(context).typography.black.displaySmall,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            StackedItem(
-                              type1: "Downloads",
-                              type2: widget.modpackData.downloads! > 999
-                                  ? (((widget.modpackData.downloads! / 1000)
-                                                  as double)
-                                              .round())
-                                          .toString() +
-                                      'k'
-                                  : widget.modpackData.downloads!.toString(),
-                            ),
-                            StackedItem(
-                                type1: modloaderstring,
-                                type2: widget.modpackData.MLVersion ?? "N/A"),
-                            StackedItem(
-                                type1: "Minecraft",
-                                type2: widget.modpackData.MCVersion ?? "N/A")
-                          ],
-                        )
-                      ],
-                    ))
-              ]),
+              ModpackTitleIconWidget(
+                  modloader: widget.modpackData.modloader,
+                  name: widget.modpackData.name,
+                  downloads: widget.modpackData.downloads,
+                  iconUrl: widget.modpackData.icon,
+                  mcVersion: widget.modpackData.MCVersion,
+                  mlVersion: widget.modpackData.MLVersion),
               const SizedBox(
                 height: 40,
               ),
@@ -191,13 +124,14 @@ class _ModPageState extends State<ModPage> {
                         ),
                         SizedBox(
                             width: 80,
-                            child: Center(child: AnimatedContainer(
+                            child: Center(
+                                child: AnimatedContainer(
                               margin: EdgeInsets.only(top: 5),
                               duration: Duration(milliseconds: 300),
                               height: 2,
                               curve: Curves.easeInOutCubic,
                               width: isVersions ? 0 : 80,
-                              color:  Theme.of(context).colorScheme.primary,
+                              color: Theme.of(context).colorScheme.primary,
                             )))
                       ])),
                   const SizedBox(
@@ -215,7 +149,8 @@ class _ModPageState extends State<ModPage> {
                                 .headlineSmall),
                         SizedBox(
                             width: 100,
-                            child: Center(child: AnimatedContainer(
+                            child: Center(
+                                child: AnimatedContainer(
                               margin: EdgeInsets.only(top: 5),
                               duration: Duration(milliseconds: 300),
                               height: 2,
@@ -226,7 +161,6 @@ class _ModPageState extends State<ModPage> {
                       ]))
                 ],
               ),
-           
               Expanded(
                   child: PageTransitionSwitcher(
                 reverse: !isVersions,
@@ -237,13 +171,12 @@ class _ModPageState extends State<ModPage> {
                         details: details,
                       )
                     : details?.body == null
-                            ? Text(
-                                "no body found! or details could not be loaded")
-                            : WebviewWidget(
-                    cachHTMLFile: File(
-                      path.join( getHTMLcachePath(), "index.html")),
-                    body: details!.body!,
-                  ),
+                        ? Text("no body found! or details could not be loaded")
+                        : WebviewWidget(
+                            cachHTMLFile: File(
+                                path.join(getHTMLcachePath(), "index.html")),
+                            body: details!.body!,
+                          ),
                 transitionBuilder:
                     (child, primaryAnimation, secondaryAnimation) =>
                         SharedAxisTransition(

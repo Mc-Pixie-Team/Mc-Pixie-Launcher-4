@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/tasks/java/java.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
+import 'package:mclauncher4/src/tasks/utils/downloader.dart';
 import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
@@ -26,8 +27,8 @@ class Processor with ChangeNotifier {
         // Der Datei pfad wird nun an den outputArgs heran gehängt
 
         String filepath = Utils.parseMaven(arg);
-        DownloadUtils()
-            .downloadSingeFile("https://maven.minecraftforge.net/$filepath", path.join(getlibarypath(), "libraries", filepath));
+        await Downloader("https://maven.minecraftforge.net/$filepath", path.join(getlibarypath(), "libraries", filepath)).startDownload();
+  
         outputArgs.add( path.join(getlibarypath(), "libraries", filepath));
       } else if (Utils.isSurrounded(arg, "{", "}")) {
         //hier checken wir ob das argument mit {} umklammert ist, wenn ja, dann entfernen wir diese. Wir suchen nun in der "DATA" (gucke in der install_profile.json nach) nach dem passenden schlüssel der gleich bennant ist

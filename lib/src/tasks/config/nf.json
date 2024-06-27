@@ -1,11 +1,45 @@
 {
-  "attribute_filter": {
-    "id": "name",
-    "value": "344df"
+  "external_id": null,
+  "uuid": "a53a8c13-3641-41cf-93ba-03ea6adf37df",
+  "identifier": "a53a8c13",
+  "name": "Test Server",
+  "description": "",
+  "status": null,
+  "suspended": false,
+  "limits": {
+    "memory": 10000,
+    "swap": 0,
+    "disk": 10000,
+    "io": 500,
+    "cpu": 400,
+    "threads": null,
+    "oom_disabled": true
   },
-
-  "DB-Field-Materialnummer": {
-    "id": "name2",
-    "value": "344dfdf"
-  }
+  "feature_limits": {
+    "databases": 1,
+    "allocations": 1,
+    "backups": 1
+  },
+  "user": 2,
+  "node": 1,
+  "allocation": 1,
+  "nest": 1,
+  "egg": 1,
+  "container": {
+    "startup_command": "java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
+    "image": "ghcr.io/pterodactyl/yolks:java_17",
+    "installed": 1,
+    "environment": {
+      "MINECRAFT_VERSION": "1.20.2",
+      "SERVER_JARFILE": "server.jar",
+      "DL_PATH": "",
+      "BUILD_NUMBER": "latest",
+      "STARTUP": "java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}}",
+      "P_SERVER_LOCATION": "de.pixie.mainframe.hetzner.fsn1.dc13",
+      "P_SERVER_UUID": "a53a8c13-3641-41cf-93ba-03ea6adf37df",
+      "P_SERVER_ALLOCATION_LIMIT": 1
+    }
+  },
+  "updated_at": "2024-06-07T21:33:42+00:00",
+  "created_at": "2024-06-07T21:30:06+00:00"
 }

@@ -17,7 +17,7 @@ class Version {
       return this.various!;
     }
 
-    return release.toString() + '.' + major.toString() + '${minor == null ? ".0" : "." + minor.toString()}';
+    return release.toString() + '.' + major.toString() + '${minor == null ? "" : "." + minor.toString()}';
   }
 
   static parse(String version) {

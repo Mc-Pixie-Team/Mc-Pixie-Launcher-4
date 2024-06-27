@@ -55,11 +55,6 @@ class Minecraft with ChangeNotifier {
    
     await _downloader.downloadClient(res);
 
-    // await _downloader.downloadLibaries(res);
-    // _state = InstallState.downloadingClient;
-    // await _downloader.downloadClient(res);
-    // _state = InstallState.downloadAssets;
-    // await _downloader.downloadAssets(res);
   }
 
   void run(Map packagejson, String instanceName) async {
@@ -81,7 +76,7 @@ class Minecraft with ChangeNotifier {
   }
 
   Future<List<String>> getlaunchCommand(String instanceName, Map packagejson,  Version version,
-      [ModloaderVersion? modloaderVersion]) async {
+     ) async {
     List<String> launchcommand;
     Map<String, List> args;
 
@@ -96,9 +91,6 @@ class Minecraft with ChangeNotifier {
       args = await getArgs(packagejson, instanceName);
     }
     var settingsBox = Hive.box("settings");
-
-    print(args);
-
     launchcommand = ["-Xmx${settingsBox.get(SettingsKeys.maxRamUsage)}m", "-Xms${settingsBox.get(SettingsKeys.minRamUsage)}m", ...args["jvm"]!, packagejson["mainClass"], ...args["game"]!];
 
     return launchcommand;
@@ -149,7 +141,7 @@ class Minecraft with ChangeNotifier {
     String natives_directory = path.join(getworkpath(), "bin", packagejson["id"]);
     String launcher_name = "Mc-pixie";
     String launcher_version = "4";
-    String auth_player_name = minecraftAccount!.username;
+    String auth_player_name = minecraftAccount.username;
     String version_name = packagejson["id"];
     String game_directory = path.join(getInstancePath(), instanceName);
     String assets_root = path.join(getworkpath(), "assets");

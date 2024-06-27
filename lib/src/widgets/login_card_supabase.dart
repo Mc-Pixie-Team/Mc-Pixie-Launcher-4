@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -263,7 +264,7 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                         .signInWithPassword(password: _textControllerPassword.text, email: _textControllerEmail.text);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const MainPage()),
+                      CupertinoPageRoute(builder: (context) =>  MainPage()),
                     );
                   } catch (e) {
                     print(e);

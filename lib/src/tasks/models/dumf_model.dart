@@ -2,26 +2,26 @@ import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 
 class DUMF {
   DUMF({
-    this.name,
-    this.author,
-    this.description,
+   required this.name,
+   required this.author,
+   required this.description,
     this.downloads,
     this.likes,
     this.categories,
-    this.icon,
-    this.body,
+   required this.icon,
+   required this.body,
     required this.versions,
     required this.original,
   });
 
-  String? name;
-  String? author;
-  String? description;
-  String? body;
+  String name;
+  String author;
+  String description;
+  String body;
   int? downloads;
   int? likes;
   List<dynamic>? categories;
-  String? icon;
+  String icon;
   List<UMF> versions;
   Map original;
 

@@ -65,11 +65,7 @@ class ModrinthInstaller {
       {required Map modpackData,
       required String instanceName,
       Version? localversion}) async {
-    if (modpackData["dependencies"] == null) {
-      Map modpackproject = await _getModpack(modpackData["project_id"]);
-      modpackData =
-          await _getModpackVersion((modpackproject["versions"] as List).last);
-    }
+
     print(modpackData);
 
     _state = MainState.downloadingMods;
@@ -177,12 +173,13 @@ class ModrinthInstaller {
     await _downloader.unzip(
         deleteOld: true, onZipProgress: (p0) => _progress = p0);
 
-    await Utils.copyDirectory(
+    Utils.copyDirectory(
         source: Directory(path.join(filepath, "overrides")),
         destination: Directory(destination));
     await Utils.copyFile(
         source: File(path.join(filepath, "modrinth.index.json")),
         destination: File(path.join(destination, "modrinth.index.json")));
+      Directory(path.join(filepath)).deleteSync(recursive: true);
     _state = MainState.downloadingMods;
     _progress = 0.0;
   }

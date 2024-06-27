@@ -6,7 +6,7 @@ import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:transparent_image/transparent_image.dart';
-
+import 'package:numeral/numeral.dart';
 class FileTableItem extends StatefulWidget {
   int index;
   UMF umf;
@@ -65,7 +65,7 @@ class _FileTableItemState extends State<FileTableItem> {
             width: 10,
           ),
           SizedBox(width: 230, child: 
-          Text(widget.umf.name!)),
+          Text(widget.umf.versionName!)),
        const SizedBox(
             width: 10,
           ),
@@ -73,14 +73,7 @@ class _FileTableItemState extends State<FileTableItem> {
         const SizedBox(
             width: 10,
           ),
-         Text(widget.umf.downloads! > 999
-                                          ? (((widget.umf.downloads! /
-                                                          1000) as double)
-                                                      .round())
-                                                  .toString() +
-                                              'k'
-                                          : widget.umf.downloads!
-                                              .toString(), style: Theme.of(context).typography.black.bodyMedium),
+         Text(widget.umf.downloads!.numeral(), style: Theme.of(context).typography.black.bodyMedium),
         ],
       ),
     );

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
+
+import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/cards/browse_card.dart';
 
 class DownloadButton extends StatefulWidget {
-  MainState mainState;
+  InstallState state;
   double mainprogress;
   VoidCallback onOpen;
   VoidCallback onCancel;
   VoidCallback onDownload;
   DownloadButton(
       {Key? key,
-      required this.mainState,
+      required this.state,
       required this.mainprogress,
       required this.onOpen,
       required this.onCancel,
@@ -23,23 +24,20 @@ class DownloadButton extends StatefulWidget {
 }
 
 class _DownloadButtonState extends State<DownloadButton> {
-  bool get _isInstalled => widget.mainState == MainState.installed;
-  bool get _isRunning => widget.mainState == MainState.running;
-  bool get _isNotInstalled => widget.mainState == MainState.notinstalled;
-  bool get _isDownloading =>
-      widget.mainState == MainState.downloadingMinecraft ||
-      widget.mainState == MainState.downloadingML ||
-      widget.mainState == MainState.downloadingMods ||
-      widget.mainState == MainState.unzipping;
-  bool get _isFetching => widget.mainState == MainState.fetching;
+  bool get _isInstalled => widget.state == InstallState.installed;
+  bool get _isRunning => widget.state  == InstallState.running;
+  bool get _isNotInstalled => widget.state  == InstallState.notInstalled;
+  bool get _isDownloading => widget.state  == InstallState.installing;
+ 
+  bool get _isFetching => widget.state  == InstallState.fetching;
   double get downloadProgress => widget.mainprogress;
 
   void _onPressed() {
     if (_isDownloading) widget.onCancel();
     if (_isFetching) return;
-    if (widget.mainState == MainState.running) widget.onCancel();
-    if (widget.mainState == MainState.installed) widget.onOpen();
-    if (widget.mainState == MainState.notinstalled) widget.onDownload();
+    if (widget.state == InstallState.running) widget.onCancel();
+    if (widget.state ==  InstallState.installed) widget.onOpen();
+    if (widget.state ==  InstallState.notInstalled) widget.onDownload();
   }
 
   @override

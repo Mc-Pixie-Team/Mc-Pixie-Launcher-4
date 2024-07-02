@@ -3,7 +3,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
+
+import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import '../divider.dart' as divider;
@@ -37,8 +38,8 @@ class _TaskpageState extends State<TaskWidget> {
 }
 
 class TaskwidgetItem extends StatefulWidget {
-  MainState state = MainState.notinstalled;
-
+  String state = "";
+  InstallState installState;
   double progress = 0.0;
   double mainprogress = 0.0;
   String name = "";
@@ -51,6 +52,7 @@ class TaskwidgetItem extends StatefulWidget {
     required this.cancel,
     required this.state,
     required this.progress,
+    required this.installState
   }) : super(key: key);
 
   @override
@@ -63,12 +65,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
     return widget.name;
   }
 
-  String get titleText {
-    if (widget.state == MainState.running) return "Running: $getName";
-    if (widget.state == MainState.downloadingML) return "Installing Modloader";
-    if (widget.state == MainState.unzipping) return "Unzipping: $getName";
-    return "Installing: $getName";
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +114,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: titleText,
+                        text: widget.state,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -126,7 +123,7 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                          
                         ),
                       ),
-                      widget.state == MainState.running ? TextSpan() :
+                      widget.installState == InstallState.running ? TextSpan() :
                       TextSpan(
                         text: ' ${min(widget.progress.ceil(), 100) }%',
                         style: TextStyle(
@@ -146,17 +143,20 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                   padding: EdgeInsets.only(left: 27, right: 24, top: 5),
                   child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
                     Expanded(
-                        child: LinearProgressIndicator(
-                      value: widget.progress / 100,
+                        child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: widget.progress / 100),
+        duration: const Duration(milliseconds: 200),
+        builder: (context, progress, child) => LinearProgressIndicator(
+                      value: progress,
                       borderRadius: BorderRadius.circular(18),
-                    )),
+                    ))),
                     SizedBox(
                       width: 15,
                     ),
                     SizedBox(
                         height: 20,
                         width: 20,
-                        child: DownloadButton(mainState: widget.state, onCancel: widget.cancel, onDownload: () {}, onOpen: () {}, mainprogress: widget.progress,))
+                        child: DownloadButton(state: widget.installState, onCancel: widget.cancel, onDownload: () {}, onOpen: () {}, mainprogress: widget.progress,))
                   ])),
                   SizedBox(
                 height: 10,

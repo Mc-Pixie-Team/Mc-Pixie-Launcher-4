@@ -9,12 +9,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
-import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
-import 'package:mclauncher4/src/tasks/forge/forge.dart';
+
+
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
+import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/theme/custom_page_transition.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
@@ -27,17 +27,17 @@ class BrowseCard extends StatefulWidget {
   VoidCallback onDownload;
   VoidCallback onCancel;
   VoidCallback onOpen;
-  MainState state;
-  double progress;
   String processId;
   String handlerString;
+
+  InstallModel installModel;
+
   BrowseCard({
     Key? key,
     required this.handlerString,
     required this.processId,
     required this.modpackData,
-    required this.progress,
-    required this.state,
+    required this.installModel,
     required this.onDownload,
     required this.onCancel,
     required this.onOpen,
@@ -257,12 +257,13 @@ class _BrowseCardState extends State<BrowseCard>
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          DownloadButton(
-                                              mainState: widget.state,
-                                              mainprogress: widget.progress,
+                                          AnimatedBuilder(animation: widget.installModel, builder: (context, child) => DownloadButton(
+                                              state: widget.installModel.installState,
+                                              mainprogress: widget.installModel.progress,
                                               onOpen: widget.onOpen,
                                               onCancel: widget.onCancel,
-                                              onDownload: widget.onDownload),
+                                              onDownload: widget.onDownload)),
+                                          
                                           SvgButton.asset(
                                               'assets/svg/network-icon.svg',
                                               onpressed: () {})

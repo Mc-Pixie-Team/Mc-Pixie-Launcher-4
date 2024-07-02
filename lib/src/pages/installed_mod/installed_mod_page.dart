@@ -3,7 +3,7 @@ import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
+
 import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
 import 'package:mclauncher4/src/tasks/utils/file_explorer.dart';
 import 'package:mclauncher4/src/widgets/explorer/explorer.dart';
@@ -84,14 +84,14 @@ class _InstalledModPageState extends State<InstalledModPage> {
                 width: double.infinity,
               )),
               AnimatedBuilder(
-                  animation: widget.controllerInstance,
+                  animation: widget.controllerInstance.installModel,
                   builder: (BuildContext context, Widget? child) =>
                       ModpackActionsMenu(
                           onDelete: () => onDelete(context),
                           onPlay: widget.controllerInstance.start,
                           onSecondMenuItem: onOpenFolder,
-                          state: widget.controllerInstance.state,
-                          progress: widget.controllerInstance.progress))
+                          state: widget.controllerInstance.installModel.installState,
+                          progress: widget.controllerInstance.installModel.progress))
             ],
           )
         ],

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
-import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
+import 'package:mclauncher4/src/tasks/storage/secure_storage.dart';
 
 class MinecraftAccount {
   String name;

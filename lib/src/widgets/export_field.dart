@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/IO_controller.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
+
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/widgets/rounded_text_button.dart';
 import 'package:mclauncher4/src/widgets/components/editable_text_field.dart';
@@ -150,39 +150,43 @@ class _ExportFieldState extends State<ExportField> {
               )),
               AnimatedBuilder(
                   animation: exportController,
-                  builder: (context, child) => exportController.state == ExportImport.notHandeled
-                      ? Row(mainAxisSize: MainAxisSize.min, children: [
-                          RoundedTextButton(
-                            text: "Cancel",
-                            onTap: () {
-                              if (!isexporting) Navigator.of(context).pop();
-                            },
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          RoundedTextButton(
-                            text: "Export",
-                            onTap: () async => await onPressed(),
-                          ),
-                        ])
-                      : SizedBox(
+                  builder: (context, child) => 
+                  // exportController.state == ExportImport.notHandeled
+                  //     ? Row(mainAxisSize: MainAxisSize.min, children: [
+                  //         RoundedTextButton(
+                  //           text: "Cancel",
+                  //           onTap: () {
+                  //             if (!isexporting) Navigator.of(context).pop();
+                  //           },
+                  //         ),
+                  //         SizedBox(
+                  //           width: 20,
+                  //         ),
+                  //         RoundedTextButton(
+                  //           text: "Export",
+                  //           onTap: () async => await onPressed(),
+                  //         ),
+                  //       ])
+                  //     : 
+                      SizedBox(
                           height: 50,
                           child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
                             Text(
-                              exportController.state == ExportImport.fetching
-                                  ? "Convert..."
-                                  : "${(exportController.progress * 100).round()}%",
-                              style: Theme.of(context).typography.black.bodyMedium,
+                              // exportController.state == ExportImport.fetching
+                              //     ? 
+                                  "Convert..."
+                              //     : "${(exportController.progress * 100).round()}%",
+                              // style: Theme.of(context).typography.black.bodyMedium
+                              ,
                             ),
                             SizedBox(
                                 width: 300,
                                 height: 5,
                                 child: LinearProgressIndicator(
                                   borderRadius: BorderRadius.circular(18),
-                                  value: exportController.state == ExportImport.fetching
-                                      ? null
-                                      : exportController.progress,
+                                  // value: exportController.state == ExportImport.fetching
+                                  //     ? null
+                                  //     : exportController.progress,
                                 ))
                           ]))),
               SizedBox(

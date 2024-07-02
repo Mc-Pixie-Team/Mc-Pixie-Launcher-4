@@ -3,14 +3,12 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/fabric/fabric.dart';
-import 'package:mclauncher4/src/tasks/forge/forge.dart';
-import 'package:mclauncher4/src/tasks/installer/modrinth/modrinth_install.dart';
+import 'package:mclauncher4/src/tasks/provider_installs/modrinth/modrinth_install.dart';
+import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
-import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:path/path.dart' as path;
@@ -90,7 +88,7 @@ class ModrinthApi implements Api {
   }
 
   @override
-  getDownloaderObject() {
+  ProviderInstaller getDownloaderObject() {
     return ModrinthInstaller();
   }
 

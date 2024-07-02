@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
+
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
+import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 
@@ -31,10 +32,10 @@ class InstalledModpacksHandler {
 
       InstallController installcontroller = InstallController(
           replace: false,
-          mainstate: MainState.installed,
+          installState: InstallState.installed,
           processid: manifest[index]["processId"],
           handler: _handler,
-          modpackData: UMF.parse(manifest[index])); // MainState.installed
+          modpackData: UMF.parse(manifest[index])); 
 
       return 
        InstalledCard(

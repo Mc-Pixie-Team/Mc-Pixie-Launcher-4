@@ -6,10 +6,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/pages/installed_mod/installed_mod_page.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
+
 import 'package:mclauncher4/src/tasks/IO_controller.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
+import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/theme/custom_page_transition.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
@@ -42,11 +43,7 @@ class _InstalledCardState extends State<InstalledCard> {
   bool ishovered = false;
   late bool isDownloading;
   bool get _isDownloading =>
-      widget.controllerInstance.state == MainState.downloadingMinecraft ||
-      widget.controllerInstance.state == MainState.downloadingML ||
-      widget.controllerInstance.state == MainState.downloadingMods ||
-      widget.controllerInstance.state == MainState.running;
-
+      widget.controllerInstance.installModel.state == InstallState.installing;
   AsyncSnapshot<Uint8List> snapshot = AsyncSnapshot.nothing();
 
   @override
@@ -135,7 +132,7 @@ class _InstalledCardState extends State<InstalledCard> {
                       decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(10)),
                       child: iconhandler()))),
-         AnimatedBuilder(animation: widget.controllerInstance, builder: (context, child) => Expanded(
+         AnimatedBuilder(animation: widget.controllerInstance.installModel, builder: (context, child) => Expanded(
               child: MouseRegion(
                 
                   onEnter: (e) => setState(() {
@@ -189,7 +186,7 @@ class _InstalledCardState extends State<InstalledCard> {
                                                 borderRadius: BorderRadius.circular(10),
                                                 color: Theme.of(context).colorScheme.surfaceVariant),
                                             child: Center(
-                                                child: widget.controllerInstance.state == MainState.installed
+                                                child: widget.controllerInstance.installModel.installState == InstallState.installed
                                                     ? Row(
                                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                         children: [
@@ -208,8 +205,8 @@ class _InstalledCardState extends State<InstalledCard> {
                                                         height: 23,
                                                         width: 23,
                                                         child: DownloadButton(
-                                                          mainState: widget.controllerInstance.state,
-                                                          mainprogress: widget.controllerInstance.progress,
+                                                          state: widget.controllerInstance.installModel.installState,
+                                                          mainprogress:widget.controllerInstance.installModel.progress,
                                                           onCancel: widget.controllerInstance.cancel,
                                                           onOpen: widget.controllerInstance.start,
                                                           onDownload: () {},

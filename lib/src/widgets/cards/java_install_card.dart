@@ -3,9 +3,8 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 
 import 'package:flutter/material.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
+
 import 'package:mclauncher4/src/tasks/utils/downloader.dart';
-import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';

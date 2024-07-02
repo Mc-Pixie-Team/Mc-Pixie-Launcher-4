@@ -1,6 +1,5 @@
 import 'dart:io' show Directory, File, Platform, exit;
 import 'dart:ui';
-import 'package:async_zip/async_zip.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/home_page/home_page.dart';
@@ -10,20 +9,21 @@ import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
-import 'package:mclauncher4/src/tasks/forge/forge.dart';
-import 'package:mclauncher4/src/tasks/minecraft/minecraft_install.dart';
+
 import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
 import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
-import 'package:mclauncher4/src/tasks/storrage/secure_storage.dart';
-import 'package:mclauncher4/src/tasks/tools_test/forge/forge_install.dart';
-import 'package:mclauncher4/src/tasks/tools_test/install.dart';
-import 'package:mclauncher4/src/tasks/tools_test/minecraft_command.dart';
-import 'package:mclauncher4/src/tasks/tools_test/rutime.dart';
-import 'package:mclauncher4/src/tasks/utils/downloads_utils.dart';
+import 'package:mclauncher4/src/tasks/storage/secure_storage.dart';
+import 'package:mclauncher4/src/tasks/installs/fabric/fabric_install.dart';
+import 'package:mclauncher4/src/tasks/installs/forge/forge_install.dart';
+import 'package:mclauncher4/src/tasks/installs/minecraft/minecraft_install.dart';
+import 'package:mclauncher4/src/tasks/installs/install_model.dart';
+import 'package:mclauncher4/src/tasks/installs/minecraft/minecraft_command.dart';
+import 'package:mclauncher4/src/tasks/installs/java/rutime.dart';
+
 import 'package:mclauncher4/src/tasks/utils/path.dart';
-import 'package:mclauncher4/src/tasks/tools_test/install_tools.dart';
+import 'package:mclauncher4/src/tasks/installs/install_tools.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
@@ -307,11 +307,14 @@ class _MainPageState extends State<MainPage> {
             // //   await Installs.installLibraries(libraries, getlibarypath());
             // //  await Installs.installAssets(res, getlibarypath());
             // MinecraftCommand.getlaunchCommand(res, getlibarypath());
-        //  await MinecraftInstall.run(Version(1, 21));
+  
+      // await MinecraftInstall.run(Version(1, 21), installModel);
         //  print(Utils.parseMaven("net.minecraftforge:forge:1.7.10-10.13.4.1614-1.7.10"));
-       //  await ForgeInstall.install("1.16.5-36.2.40", getlibarypath());
-         print("Running minecraft");
-          await ForgeInstall.run("1.16.5-36.2.40", getlibarypath());
+       // await ForgeInstall.install("1.16.5-36.2.40", getlibarypath(), installModel);
+    //   await FabricInstall.run("0.15.11", "1.21", getlibarypath(), installModel);
+       //Helpfull when a specific minecraft forge version wont load: https://www.minecraftforum.net/forums/support/java-edition-support/3048893-forge-1-7-2-crashes-with-no-error-message
+      //   print("Running minecraft");
+       //  await ForgeInstall.run("1.8.8-11.15.0.1654-1.8.8", getlibarypath());
             //Runtime.installJvmRuntime("java-runtime-delta", getlibarypath());
            // print(Platform.environment['PROCESSOR_ARCHITECTURE']);
           //    Minecraft().run(res, '4656567332');

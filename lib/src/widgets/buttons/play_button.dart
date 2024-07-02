@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
-import "package:mclauncher4/src/tasks/models/download_states.dart";
+import "package:mclauncher4/src/tasks/installs/install_model.dart";
 import "package:mclauncher4/src/widgets/components/size_transition_custom.dart";
 
 class PlayButton extends StatefulWidget {
-  MainState state;
+  InstallState state;
   VoidCallback onPressed;
   PlayButton({Key? key, required this.state, required this.onPressed}) : super(key: key);
 
@@ -24,13 +24,10 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
     super.initState();
   }
 
-  bool get isRunning => widget.state == MainState.running;
+  bool get isRunning => widget.state == InstallState.running;
   bool get isInstalling =>
-      widget.state == MainState.unzipping ||
-      widget.state == MainState.downloadingML ||
-      widget.state == MainState.downloadingMinecraft ||
-      widget.state == MainState.downloadingMods;
-  bool get isFetching => widget.state == MainState.fetching;
+      widget.state == InstallState.installing;
+  bool get isFetching => widget.state == InstallState.fetching;
 
   @override
   Widget build(BuildContext context) {

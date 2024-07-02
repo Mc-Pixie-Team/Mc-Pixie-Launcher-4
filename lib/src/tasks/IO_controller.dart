@@ -9,18 +9,18 @@ import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
+
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path/path.dart' as path;
 
 class ImportExportController with ChangeNotifier {
-  double _progress = 0.0;
-  ExportImport _state = ExportImport.notHandeled;
+  // double _progress = 0.0;
+  // ExportImport _state = ExportImport.notHandeled;
 
-  double get progress => _progress;
-  ExportImport get state => _state;
+  // double get progress => _progress;
+  // ExportImport get state => _state;
 
   void import(filepath) async {
   
@@ -28,7 +28,7 @@ class ImportExportController with ChangeNotifier {
     String filepath =  getTempCommandPath() + "\\$process_id";
 
     print("extracting");
-    Utils.extractZip(File(filepath).readAsBytesSync(), filepath);
+   // Utils.extractZip(File(filepath).readAsBytesSync(), filepath);
     Map pixieIndexJson = jsonDecode(File(filepath + "\\pixie.index.json").readAsStringSync());
     pixieIndexJson["processId"] = process_id;
     
@@ -52,7 +52,7 @@ class ImportExportController with ChangeNotifier {
         if (pathTo == null) return;
 
         print('exportModpack in modrinth');
-        _state = ExportImport.exporting;
+        // _state = ExportImport.exporting;
         notifyListeners();
 
         String filepath = path.join( getTempCommandPath(), "export-$processId", "override");
@@ -71,14 +71,14 @@ class ImportExportController with ChangeNotifier {
             await Directory(desinationPath).create();
           }
 
-          _progress = i / files.length;
+          // _progress = i / files.length;
           notifyListeners();
         }
 
         // await Utils.copyDirectory(
         //     Directory(await getInstancePath() + "\\$processId"),
         //     Directory(path + "\\override"));
-        _state = ExportImport.fetching;
+        // _state = ExportImport.fetching;
         notifyListeners();
 
         await Future.delayed(Duration(milliseconds: 200));

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mclauncher4/src/tasks/models/download_states.dart';
+
+import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/widgets/buttons/play_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:mclauncher4/src/widgets/providers_widget/dropdown.dart';
 
 class ModpackActionsMenu extends StatefulWidget {
-  MainState state;
+  InstallState state;
   double progress;
   VoidCallback? onPlay;
   VoidCallback? onDelete;

@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/installer/curseforge/curseforge_install.dart';
+import 'package:mclauncher4/src/tasks/provider_installs/curseforge/curseforge_install.dart';
+import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:http/http.dart' as http;
@@ -153,7 +154,7 @@ class CurseforgeApi implements Api {
   }
 
   @override
-  getDownloaderObject() {
+  ProviderInstaller getDownloaderObject() {
     //getDownloaderObject
     return CurseforgeInstaller();
   }

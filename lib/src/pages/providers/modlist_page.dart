@@ -9,8 +9,6 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
-import 'package:mclauncher4/src/tasks/java/java.dart';
-import 'package:mclauncher4/src/tasks/modloaders.dart';
 import 'package:mclauncher4/src/widgets/buttons/circular_button.dart';
 import 'package:mclauncher4/src/widgets/cards/java_install_card.dart';
 import 'package:mclauncher4/src/widgets/cards/browse_card.dart';
@@ -32,7 +30,8 @@ class ModListPage extends StatefulWidget {
   _ModListPageState createState() => _ModListPageState();
 }
 
-class _ModListPageState extends State<ModListPage> with SingleTickerProviderStateMixin{
+class _ModListPageState extends State<ModListPage>
+    with SingleTickerProviderStateMixin {
   ScrollController _scrollController = ScrollController();
   ScrollController _secondController = ScrollController();
   late Widget addButton;
@@ -40,7 +39,7 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
   List installContollers = [];
   List modpacklist = [];
   late Api _handler;
-  
+
   Future<dynamic> get mv async {
     return await _handler.getAllMV();
   }
@@ -51,7 +50,7 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
     Future.delayed(Duration(milliseconds: 200)).then((value) {
       _scrollController.addListener(() async {
         if (_scrollController.position.pixels ==
-            (_scrollController.position.maxScrollExtent )) {
+            (_scrollController.position.maxScrollExtent)) {
           print('new');
           await getMoreData();
         }
@@ -72,33 +71,10 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
     installContollers.addAll(List.generate(
         rawModpacks.length,
         (index) => InstallController(
-                              handler: _handler,
-                              modpackData:
-                                  _handler.convertToLiteUMF(rawModpacks[index]))));
+            handler: _handler,
+            modpackData: _handler.convertToLiteUMF(rawModpacks[index]))));
     setState(() {});
     iscalled = false;
-  }
-
-  bool checkForJava() {
-    if (Java.isJavaInstalled) {
-      return true;
-    } else {
-      showGeneralDialog(
-        barrierLabel: 'Java not installed',
-        barrierColor: Colors.black38,
-        transitionDuration: Duration(milliseconds: 200),
-        pageBuilder: (ctx, anim1, anim2) => Center(child: JavaInstallCard()),
-        transitionBuilder: (ctx, anim1, anim2, child) => BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-          child: FadeTransition(
-            child: child,
-            opacity: anim1,
-          ),
-        ),
-        context: context,
-      );
-      return false;
-    }
   }
 
   void removeAtIndex(int index) {
@@ -112,10 +88,7 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
 
   @override
   void initState() {
- 
-
-    
-   _handler = ApiHandler().getApi(widget.providerString);
+    _handler = ApiHandler().getApi(widget.providerString);
     addButton = CircularButton(
       child: Icon(
         Icons.add,
@@ -174,14 +147,13 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-            color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceVariant,
         ),
         child: Stack(children: [
-         Column(
-           mainAxisAlignment: MainAxisAlignment.start,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
               Padding(
                 padding: EdgeInsets.only(top: 70, left: 30, bottom: 9),
                 child: SlideInAnimation(
@@ -199,8 +171,6 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
                   style: Theme.of(context).typography.black.displaySmall,
                 )),
               ),
-             
-             
               Divider.CustomDivider(
                 size: 14,
               ),
@@ -232,10 +202,10 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
                       installContollers = List.generate(
                           modpacklist.length,
                           (index) => InstallController(
-                            isVersion: false,
+                              isVersion: false,
                               handler: _handler,
-                              modpackData:
-                                  _handler.convertToLiteUMF(modpacklist[index])));
+                              modpackData: _handler
+                                  .convertToLiteUMF(modpacklist[index])));
                     }
                     return ShaderMask(
                         shaderCallback: (Rect rect) {
@@ -257,55 +227,44 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
                           ).createShader(rect);
                         },
                         blendMode: BlendMode.dstOut,
-                        child:   ListView.builder(
-                                controller: _scrollController,
-                              
-                                itemCount: modpacklist.length +1,
-                                itemBuilder: ((context, index) {               
-                                  
-                                  if(index == modpacklist.length ) {
-                                    print("returned");
-                                  return SizedBox(height: 100, child: Center(child:  LoadingAnimationWidget.staggeredDotsWave(
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 30)));
-                                  }
+                        child: ListView.builder(
+                            controller: _scrollController,
+                            itemCount: modpacklist.length + 1,
+                            itemBuilder: ((context, index) {
+                              if (index == modpacklist.length) {
+                                print("returned");
+                                return SizedBox(
+                                    height: 100,
+                                    child: Center(
+                                        child: LoadingAnimationWidget
+                                            .staggeredDotsWave(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                                size: 30)));
+                              }
 
-                                  InstallController installcontroller =
-                                      installContollers[index];
+                              InstallController installcontroller =
+                                  installContollers[index];
 
-                                  return 
-                                          AnimatedBuilder(
-                                              key: Key(
-                                                  installcontroller.processId),
-                                              animation: installcontroller,
-                                              builder: (context, child) =>
-                                                  BrowseCard(
-                                                   handlerString: widget.providerString,
-                                                    processId: installcontroller
-                                                        .processId,
-                                                    modpackData:
-                                                        installcontroller
-                                                            .modpackData,
-                                                    state:
-                                                        installcontroller.state,
-                                                    progress: installcontroller
-                                                        .progress,
-                                                    onCancel: () {
-                                                      installcontroller
-                                                          .cancel();
-                                                    },
-                                                    onDownload: () async {
-                                                      if (checkForJava() ==
-                                                          false) return;
-                                                      installcontroller.install(
-                                                          version:
-                                                              _handler.version);
-                                                    },
-                                                    onOpen: () async {
-                                                      installcontroller.start();
-                                                    },
-                                                  ));
-                                })));
+                              return BrowseCard(
+                                key: Key(installcontroller.processId),
+                                installModel: installcontroller.installModel,
+                                handlerString: widget.providerString,
+                                processId: installcontroller.processId,
+                                modpackData: installcontroller.modpackData,
+                                onCancel: () {
+                                  installcontroller.cancel();
+                                },
+                                onDownload: () async {
+                                  installcontroller.install(
+                                      version: _handler.version);
+                                },
+                                onOpen: () async {
+                                  installcontroller.start();
+                                },
+                              );
+                            })));
                   }
                   ;
 
@@ -395,7 +354,6 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
                   ],
                 ),
               )),
-        
         ]));
   }
 }

@@ -100,11 +100,11 @@ class _InstalledCardState extends State<InstalledCard> {
 
 
   onOpen(BuildContext context) {
-    print("hre");
+    if(widget.controllerInstance.installModel.installState != InstallState.installed) return;
        Navigator.push(
-    context,
-  SlowCupertinoPageRoute(maintainState: false, allowSnapshotting: false, builder: (context) => InstalledModPage(controllerInstance: widget.controllerInstance,),
-  ));
+          context,
+          SlowCupertinoPageRoute(maintainState: false, allowSnapshotting: false, builder: (context) => InstalledModPage(controllerInstance: widget.controllerInstance,),
+       ));
   }
 
   @override

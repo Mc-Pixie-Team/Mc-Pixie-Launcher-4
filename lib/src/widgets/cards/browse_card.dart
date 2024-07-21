@@ -11,7 +11,6 @@ import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 
 
-import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/installs/install_model.dart';
@@ -93,7 +92,8 @@ class _BrowseCardState extends State<BrowseCard>
             child: GestureDetector(
                 onTapDown: (details) => _controller.forward(),
                 onTapUp: (details)  {
-           
+         
+                  
                  // _controller.reverse();
                 Navigator.push(
     context,
@@ -187,7 +187,7 @@ class _BrowseCardState extends State<BrowseCard>
                                       width: 5,
                                     ),
                                     Text(
-                                      widget.modpackData.downloads!.numeral()
+                                      (widget.modpackData.downloads ?? 1).numeral()
                                     ),
                                     SizedBox(width: 15),
                                     Expanded(

@@ -1,4 +1,5 @@
 import 'dart:io' show Directory, File, Platform, exit;
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
@@ -9,8 +10,6 @@ import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
-
-import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
 import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
@@ -21,7 +20,7 @@ import 'package:mclauncher4/src/tasks/installs/minecraft/minecraft_install.dart'
 import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/tasks/installs/minecraft/minecraft_command.dart';
 import 'package:mclauncher4/src/tasks/installs/java/rutime.dart';
-
+import 'package:mclauncher4/src/tasks/murmur_hash.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/installs/install_tools.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
@@ -332,6 +331,12 @@ class _MainPageState extends State<MainPage> {
           //   context,
           //   MaterialPageRoute(builder: (context) => const pixieLoginScreen()),
           // );
+      
+        Uint8List? buffer = await murmur2.get_jar_contents("C:/Users/joshi/Documents/PixieLauncherInstances/test/resourcepacks/ComplementaryReimagined_r5.1.1.zip");
+       int result = await murmur2.compute_hash(buffer);
+       buffer = null;
+      
+        print(result);
         }),
         body: Stack(children: [
           Row(

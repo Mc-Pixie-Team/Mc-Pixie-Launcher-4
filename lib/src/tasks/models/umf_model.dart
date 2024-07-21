@@ -1,3 +1,6 @@
+import 'package:fl_chart/fl_chart.dart';
+import 'package:mclauncher4/src/tasks/models/object_type.dart';
+
 class UMF {
   UMF({
     this.name,
@@ -9,9 +12,10 @@ class UMF {
     this.categories,
     this.icon,
     this.body,
-    this.modloader = const [],
+    this.modloader,
     this.MLVersion,
     this.MCVersion,
+    this.type,
     required this.original,
   });
 
@@ -24,9 +28,10 @@ class UMF {
   List<dynamic>? categories;
   String? icon;
   String? body;
-  List<String> modloader;
+  String? modloader;
   String? MLVersion;
   String? MCVersion;
+  ObjectType? type;
   Map original;
 
   static toJson(UMF umf) {
@@ -42,14 +47,13 @@ class UMF {
       "modloader": umf.modloader,
       "MLVersion": umf.MLVersion,
       "MCVersion": umf.MCVersion,
+      "type": umf.type.toString(),
       "body": umf.body,
       "original": umf.original
     };
   }
 
-  static parse(Map json) {
-
-    List<String> modloaderlist = List.generate((json["modloader"] as List).length, (index) => (json["modloader"] as List)[index].toString());
+  static UMF parse(Map json) {
 
     return UMF(
       
@@ -62,10 +66,65 @@ class UMF {
     categories: json["categories"],
     icon: json["icon"],
     body: json["body"],
-   modloader: modloaderlist,
+    modloader: json["modloader"],
     MLVersion: json["MLVersion"],
     MCVersion: json["MCVersion"],
-   original: json["original"]
+    type: _parsetype( json["type"]),
+    original: json["original"]
+  
+    );
+  }
+
+  static ObjectType? _parsetype(String? type) {
+      if(type == null) return null;
+
+      switch (type) {
+        case "ObjectType.mod":
+          return ObjectType.mod;
+        case "ObjectType.modpack":
+          return ObjectType.modpack;
+        case "ObjectType.resource":
+          return ObjectType.resource;
+        case "ObjectType.shader":
+          return ObjectType.shader;
+        case "ObjectType.world":
+          return ObjectType.world;
+      }
+
+  }
+
+  UMF copyWith({
+  String? name,
+  String? versionName,
+  String? author,
+  String? description,
+  int? downloads,
+  int? likes,
+  List<dynamic>? categories,
+  String? icon,
+  String? body,
+  String? modloader,
+  String? MLVersion,
+  String? MCVersion,
+  ObjectType? type,
+  Map? original,
+  })  {
+    return  UMF(
+      
+    name: name ?? this.name,
+    versionName: versionName ?? this.versionName,
+    author: author ?? this.author,
+    description:  description ?? this.description,
+    downloads: downloads ?? this.downloads,
+    likes: likes ?? this.likes,
+    categories: categories ?? this.categories,
+    icon: icon ?? this.icon,
+    body: body ?? this.body,
+    modloader: modloader ?? this.modloader,
+    MLVersion: MLVersion ?? this.MLVersion,
+    MCVersion: MCVersion ?? this.MCVersion,
+    type: type ?? this.type,
+    original: original ?? this.original
   
     );
   }

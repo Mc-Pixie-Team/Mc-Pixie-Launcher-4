@@ -31,7 +31,6 @@ class InstalledModpacksHandler {
       Api _handler = ApiHandler().getApi(manifest[index]["provider"]);
 
       InstallController installcontroller = InstallController(
-          replace: false,
           installState: InstallState.installed,
           processid: manifest[index]["processId"],
           handler: _handler,

@@ -10,7 +10,7 @@ class ModpackTitleIconWidget extends StatefulWidget {
   int? downloads;
   String? mlVersion;
   String? mcVersion;
-  List<String> modloader;
+  String modloader;
   
   ModpackTitleIconWidget(
       {Key? key,
@@ -27,15 +27,9 @@ class ModpackTitleIconWidget extends StatefulWidget {
 }
 
 class _ModpackTitleIconWidgetState extends State<ModpackTitleIconWidget> {
-  String modloaderstring = "";
 
   @override
   Widget build(BuildContext context) {
-     modloaderstring = "";
-    for (String modl in widget.modloader) {
-     
-   modloaderstring += "$modl ";
-    }
 
     return Row(
       children: [
@@ -82,7 +76,7 @@ class _ModpackTitleIconWidgetState extends State<ModpackTitleIconWidget> {
                       type2: widget.downloads!.numeral()
                     ),
                     StackedItem(
-                        type1: modloaderstring,
+                        type1: widget.modloader,
                         type2: widget.mlVersion ?? "N/A"),
                     StackedItem(
                         type1: "Minecraft",

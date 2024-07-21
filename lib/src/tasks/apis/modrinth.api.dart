@@ -6,7 +6,6 @@ import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/modrinth/modrinth_install.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
-import 'package:mclauncher4/src/tasks/models/modloaderVersion.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
@@ -149,7 +148,7 @@ class ModrinthApi implements Api {
         categories: modpackData["categories"],
         icon: modpackData["icon_url"],
         body: modpackData["body"],
-        modloader: ["Fabric"],
+        modloader: "Fabric",
         MCVersion: modpackData["latest_version"],
         original: modpackData);
   }
@@ -181,7 +180,7 @@ class ModrinthApi implements Api {
   versions.add(UMF(
           icon: modpackData["icon_url"],
           MCVersion: version["game_versions"].last,
-          modloader: Utils.listTOListString(version["loaders"]),
+          modloader: version["loaders"][0],
           name: modpackData["title"].toString(),
           versionName:  version["name"].toString(),
           description: modpackData["description"].toString(),
@@ -220,11 +219,12 @@ class ModrinthApi implements Api {
       categories: umf.categories,
           icon: modpackproject["icon_url"],
           MCVersion: modpackVersion["game_versions"].last,
-          modloader: Utils.listTOListString(modpackVersion["loaders"]),
+          modloader: modpackVersion["loaders"][0],
           name: modpackproject["title"].toString(),
           versionName:  modpackVersion["name"].toString(),
           description: modpackproject["description"].toString(),
           downloads: modpackVersion["downloads"],
+          body: modpackproject["body"],
           original: modpackVersion);
   }
 

@@ -46,11 +46,11 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(right: 49, ),
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(14)),
-      padding: EdgeInsets.all(9),
-      child: Row(
+      padding: EdgeInsets.all(9),      child: Row(
         children: [
         
           PlayButton(

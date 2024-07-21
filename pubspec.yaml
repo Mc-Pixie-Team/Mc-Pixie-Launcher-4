@@ -28,6 +28,16 @@ environment:
 # dependencies can be manually updated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
+
+msix_config:
+  display_name: Mc-Pixie Launcher
+  publisher_display_name: Mc-Pixie 
+  identity_name: Mc-Pixie.Mc-PixieLauncher
+  msix_version: 0.0.1.0
+  logo_path: C:\Users\joshi\Documents\GitHub\Mc-Pixie-Launcher-4\logo.png
+  capabilities: internetClient, 
+  publisher: CN=F7827B47-6515-4947-BED4-845A6E36960B
+
 dependencies:
 
     
@@ -83,6 +93,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  msix: ^3.16.7
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

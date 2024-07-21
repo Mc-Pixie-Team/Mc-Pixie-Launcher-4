@@ -98,7 +98,7 @@ class _ModPageState extends State<ModPage> {
             top: 50,
             child: Column(children: [
               ModpackTitleIconWidget(
-                  modloader: widget.modpackData.modloader,
+                  modloader: widget.modpackData.modloader ?? "",
                   name: widget.modpackData.name,
                   downloads: widget.modpackData.downloads,
                   iconUrl: widget.modpackData.icon,
@@ -175,7 +175,7 @@ class _ModPageState extends State<ModPage> {
                         : WebviewWidget(
                             cachHTMLFile: File(
                                 path.join(getHTMLcachePath(), "index.html")),
-                            body: details!.body!,
+                            body: details!.body == "" ? "<div> NOTING HERE </div>" : details!.body,
                           ),
                 transitionBuilder:
                     (child, primaryAnimation, secondaryAnimation) =>

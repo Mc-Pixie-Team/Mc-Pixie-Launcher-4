@@ -38,7 +38,7 @@ class InstallController {
       this.processid,
       this.isVersion = true,
       this.installState,
-      this.replace = true}) {
+     }) {
     installModel = InstallModel();
     processid = processid ?? const Uuid().v1();
     if (installState != null) {
@@ -46,7 +46,6 @@ class InstallController {
     }
   }
 
-  bool replace;
   String get processId => processid!;
   ValueNotifierList get stdout => _stdout;
   Isolate? _isolate;
@@ -152,6 +151,10 @@ class InstallController {
     receivePort.listen((message) {
       if (message is InstallerMessage) {
         installModel.setAll(message.getInstallerState, message.getState, message.getprogress);
+
+        if(message.isUMF) {
+          modpackData = message.umfData!;
+        }
       }
     });
     exitPort.listen((message) {
@@ -208,7 +211,7 @@ class InstallController {
     var installer = startMessage.getHandler.getDownloaderObject();
     //Call the main installer
     await installer.install(
-        modpackData: startMessage.modpackData.original,
+        umfData: startMessage.modpackData,
         instanceName: startMessage.processId,
         installModel: installModel);
 
@@ -235,6 +238,7 @@ class InstallController {
       (args.first as SendPort).send(InstallerMessage(
         progress: 100,
         state: "Done",
+        umfData: startMessage.modpackData,
         installState: InstallState.installed,
       ));
 

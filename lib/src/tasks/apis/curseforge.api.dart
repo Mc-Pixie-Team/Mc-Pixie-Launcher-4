@@ -91,7 +91,7 @@ class CurseforgeApi implements Api {
         Uri.parse('$baseUrl/v1/mods/${modpackData["id"]}/files'),
         headers: userHeader);
     final hits = await jsonDecode(utf8.decode(res.bodyBytes))["data"] as List;
-
+    print(modpackData["id"]);
     final res2 = await http.get(
         Uri.parse('$baseUrl/v1/mods/${modpackData["id"]}/description'),
         headers: userHeader);
@@ -133,15 +133,22 @@ class CurseforgeApi implements Api {
     Map? modpackVersion = (umf.original["latestFiles"] as List).firstWhere((element) { print(element["releaseType"]); return element["releaseType"] == 1;}, orElse: () => null); // gets the newest version of the modpack
 
       if(modpackVersion == null) {
-       modpackVersion == umf.original["latestFiles"][0];
+       modpackVersion = umf.original["latestFiles"][0];
       }
+
+
+    final res2 = await http.get(
+        Uri.parse('$baseUrl/v1/mods/${modpackVersion!["modId"]}/description'),
+        headers: userHeader);
+    final body = await jsonDecode(utf8.decode(res2.bodyBytes))["data"];
+
           String mcVersion =
           modpackVersion!["sortableGameVersions"][0]["gameVersionPadded"] == "0"
               ? modpackVersion["sortableGameVersions"][1]["gameVersionName"]
               : modpackVersion["sortableGameVersions"][0]["gameVersionName"];
 
     return UMF(
-        original: modpackVersion!,
+        original: modpackVersion,
         categories: umf.categories,
         description: umf.description,
         name: umf.original["name"],
@@ -149,6 +156,7 @@ class CurseforgeApi implements Api {
         downloads: modpackVersion["downloadCount"],
         icon: umf.original["logo"]["thumbnailUrl"],
         author: umf.original["authors"][0]["name"],
+        body: body,
         MCVersion: mcVersion,
       );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/pages/installed_mod/installed_mods_page.dart';
 import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 
 class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
@@ -39,6 +40,8 @@ class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
       if (value is InstalledCard) {
         
 
+        return value.key != Key(key);
+      }else if (value is ModItem) {
         return value.key != Key(key);
       }
       return false;

@@ -5,11 +5,13 @@ import 'package:localstorage/localstorage.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
+import 'package:mclauncher4/src/tasks/utils/keys.dart';
 
 class Microsoft {
   Future<Map> authenticate() async {
     String msaToken = await launchMSA();
     Map authResponseMicrosoft = await microsoftSignIn(msaToken, false);
+    print(authResponseMicrosoft.toString());
     Map authTokenXboxLive = await xboxSignIn(authResponseMicrosoft["access_token"]);
     String authXSTSToken = await XSTSToken(authTokenXboxLive);
     Map minecraftUserToken = await minecraftBearerToken(authXSTSToken, authTokenXboxLive["uhs"]);
@@ -39,15 +41,15 @@ class Microsoft {
 
   Future<String> launchMSA() async {
     var result;
-
+    Secret keys = await SecretLoader(secretPath: "secrets.json").load();
     if (Platform.isWindows) {
       result = await Process.run("rundll32", [
         'url.dll,FileProtocolHandler',
-        'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
+        'https://login.live.com/oauth20_authorize.srf?client_id=${keys.azureClientId}&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
       ]);
     } else {
       result = await Process.run("open", [
-        'https://login.live.com/oauth20_authorize.srf?client_id=91f49b7b-7e40-461f-9eb0-2389c32c0cd6&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
+        'https://login.live.com/oauth20_authorize.srf?client_id=${keys.azureClientId}&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
       ]);
     }
 
@@ -67,20 +69,30 @@ class Microsoft {
   }
 
   Future<Map> microsoftSignIn(token, bool isReauth) async {
+    Uri uri = Uri.parse('https://login.live.com/oauth20_token.srf');
+    print(uri);
+    Secret keys = await SecretLoader(secretPath: "secrets.json").load();
+    String clientId = keys.azureClientId;
+    String clientSecret = keys.azureClientSecret;
+
     if (!isReauth) {
       http.Response firstAuthResponse = await http.post(
-        Uri.parse('https://n8n.mc-pixie.com/webhook/d16395b2-c5bf-4a21-99c4-3fd44f74ad7e?code=$token&isRefresh=false'),
+        uri,
+        headers: {'Content-Type': "application/x-www-form-urlencoded"},
+        body: "client_id=$clientId&client_secret=$clientSecret&code=$token&grant_type=authorization_code&redirect_uri=http://localhost:25458",
       );
       Map rsp = jsonDecode(firstAuthResponse.body);
 
-      rsp = rsp["data"][0];
       return {"access_token": rsp["access_token"], "refreshToken": rsp["refresh_token"]};
     } else if (isReauth) {
       http.Response firstAuthResponse = await http.post(
-        Uri.parse('https://n8n.mc-pixie.com/webhook/d16395b2-c5bf-4a21-99c4-3fd44f74ad7e?code=$token&isRefresh=true'),
+        uri,
+        headers: {'Content-Type': "application/x-www-form-urlencoded"},
+        body: "client_id=$clientId&client_secret=$clientSecret&refresh_token=$token&grant_type=refresh_token&redirect_uri=http://localhost:25458",
       );
+      print(firstAuthResponse.reasonPhrase);
       Map rsp = jsonDecode(firstAuthResponse.body);
-      rsp = rsp["data"][0];
+
       return {"access_token": rsp["access_token"], "refreshToken": rsp["refresh_token"]};
     }
     return {"access_token": "", "refreshToken": ""};
@@ -88,6 +100,7 @@ class Microsoft {
 
   Future<Map> xboxSignIn(authTokenMicrosoft) async {
     Uri uri = Uri.parse('https://user.auth.xboxlive.com/user/authenticate');
+    print(uri);
 
     Map data = {
       "Properties": {
@@ -101,6 +114,7 @@ class Microsoft {
 
     http.Response firstAuthResponse =
         await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
+    print(firstAuthResponse.body);
 
     Map rsp = jsonDecode(firstAuthResponse.body);
 
@@ -109,6 +123,7 @@ class Microsoft {
 
   Future<String> XSTSToken(authTokenXboxLive) async {
     Uri uri = Uri.parse('https://xsts.auth.xboxlive.com/xsts/authorize');
+    print(uri);
 
     Map data = {
       "Properties": {
@@ -121,10 +136,10 @@ class Microsoft {
 
     http.Response firstAuthResponse =
         await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
-   // print(firstAuthResponse.statusCode);
+    print(firstAuthResponse.statusCode);
     if (firstAuthResponse.statusCode != 401) {
       Map rsp = jsonDecode(firstAuthResponse.body);
-     // print(rsp["Token"]);
+      print(rsp["Token"]);
       return rsp["Token"];
     } else {
       Map rsp = jsonDecode(firstAuthResponse.body);
@@ -137,13 +152,14 @@ class Microsoft {
 
   Future<Map> minecraftBearerToken(authXSTSToken, xboxUserHash) async {
     Uri uri = Uri.parse('https://api.minecraftservices.com/authentication/login_with_xbox');
+    print(uri);
 
     Map data = {"identityToken": "XBL3.0 x=$xboxUserHash;$authXSTSToken", "ensureLegacyEnabled": true};
 
     http.Response firstAuthResponse =
         await http.post(uri, headers: {'Content-Type': "application/json", "Accept": "application/json"}, body: jsonEncode(data));
-    // print(firstAuthResponse.body);
-    // print(firstAuthResponse.statusCode);
+    print(firstAuthResponse.body);
+    print(firstAuthResponse.statusCode);
     //Map rsp = jsonDecode(firstAuthResponse.body);
 
     return jsonDecode(firstAuthResponse.body);
@@ -151,13 +167,14 @@ class Microsoft {
 
   Future<Map> minecraftUserDetails(minecraftAuthToken) async {
     Uri uri = Uri.parse('https://api.minecraftservices.com/minecraft/profile');
-  //  print('Bearer $minecraftAuthToken');
+    print(uri);
+    print('Bearer $minecraftAuthToken');
     http.Response firstAuthResponse = await http.get(
       uri,
       headers: {"Authorization": 'Bearer $minecraftAuthToken'},
     );
-    // print(firstAuthResponse.body);
-    // print(firstAuthResponse.statusCode);
+    print(firstAuthResponse.body);
+    print(firstAuthResponse.statusCode);
     //Map rsp = jsonDecode(firstAuthResponse.body);
 
     return jsonDecode(firstAuthResponse.body);

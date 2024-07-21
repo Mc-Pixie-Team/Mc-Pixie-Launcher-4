@@ -41,3 +41,5 @@ logs/*
 .fvm/
 bin.zip
 
+# secrets
+secrets.json

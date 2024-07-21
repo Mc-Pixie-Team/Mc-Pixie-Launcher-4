@@ -8,6 +8,7 @@ import 'package:mclauncher4/src/pages/debug_page.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
+import 'package:mclauncher4/src/pages/user_page/MSPage.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
@@ -42,8 +43,7 @@ import 'package:path/path.dart' as path;
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
-  Set<PointerDeviceKind> get dragDevices =>
-      {PointerDeviceKind.touch, PointerDeviceKind.trackpad};
+  Set<PointerDeviceKind> get dragDevices => {PointerDeviceKind.touch, PointerDeviceKind.trackpad};
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) {
@@ -67,8 +67,7 @@ class McLauncher extends StatefulWidget {
   State<StatefulWidget> createState() => _McLauncherState();
   // TODO: implement createState
 
-  static _McLauncherState of(BuildContext context) =>
-      context.findAncestorStateOfType<_McLauncherState>()!;
+  static _McLauncherState of(BuildContext context) => context.findAncestorStateOfType<_McLauncherState>()!;
 }
 
 class _McLauncherState extends State<McLauncher> {
@@ -101,14 +100,8 @@ class _McLauncherState extends State<McLauncher> {
           "/test": (context) => Material(child: Debugpage()),
         },
         theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: lightColorScheme,
-            typography: Typography(black: blackTextSchemes),
-            scrollbarTheme: ScrollbarThemeData()),
-        darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: darkColorScheme,
-            typography: Typography(black: blackTextSchemes)),
+            useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes), scrollbarTheme: ScrollbarThemeData()),
+        darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
         themeMode: _themeMode,
         home: MainPage(),
         builder: (context, child) => Stack(children: [
@@ -118,10 +111,7 @@ class _McLauncherState extends State<McLauncher> {
                 child: Align(
                     alignment: Alignment.topLeft,
                     child: Row(
-                      children: [
-                        Expanded(child: MoveWindow()),
-                        WindowButtons()
-                      ],
+                      children: [Expanded(child: MoveWindow()), WindowButtons()],
                     )),
               ),
             ]));
@@ -149,8 +139,7 @@ class _MainPageState extends State<MainPage> {
   bool shouldSplashedDisplayed = true;
   bool isSplashed = true;
 
-  EdgeInsets edgeInsets =
-      EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
+  EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
 
   final List<Widget> _pages = [
     HomePage(),
@@ -158,7 +147,11 @@ class _MainPageState extends State<MainPage> {
       providerString: "modrinth",
       key: Key("modrinth"),
     ),
-    const Debugpage(),
+    Container(
+      key: Key('5'),
+      color: Color.fromARGB(255, 106, 218, 91),
+    ),
+    /* const Debugpage(), */
     ModListPage(
       providerString: "curseforge",
       key: Key("curseforge"),
@@ -168,7 +161,7 @@ class _MainPageState extends State<MainPage> {
       color: Color.fromARGB(255, 146, 91, 218),
     ),
     const SettingsPage(),
-    const UserPage(),
+    const MSPage(),
   ];
 
   @override
@@ -178,8 +171,7 @@ class _MainPageState extends State<MainPage> {
     MinecraftAccountUtils().initOnFirstStart();
 
     InstalledModpacksHandler.getPacksformManifest().then((value) {
-      InstalledModpacksUIHandler.installCardChildren.value
-          .removeWhere((element) {
+      InstalledModpacksUIHandler.installCardChildren.value.removeWhere((element) {
         for (var i in value) {
           if (element.key == i.key) return true;
         }
@@ -209,13 +201,8 @@ class _MainPageState extends State<MainPage> {
               return PageTransitionSwitcher(
                 duration: const Duration(milliseconds: 400),
                 reverse: widget.pageIndex < widget.oldPageIndex,
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
-                    key: UniqueKey(),
-                    child: _pages[widget.pageIndex]),
-                transitionBuilder:
-                    (child, primaryAnimation, secondaryAnimation) =>
-                        SharedAxisTransition(
+                child: ClipRRect(borderRadius: BorderRadius.circular(18), key: UniqueKey(), child: _pages[widget.pageIndex]),
+                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   transitionType: SharedAxisTransitionType.vertical,
@@ -248,12 +235,10 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton(onPressed: () async {
-          
+/*         floatingActionButton: FloatingActionButton(onPressed: () async {
           // print(await SecureStorage().readSecureData("accounts"));
 
           //  await SecureStorage.storage.delete(key: "test");
@@ -301,21 +286,21 @@ class _MainPageState extends State<MainPage> {
           // SidePanel.push(Container(height: double.infinity, width: 100.0, color: Colors.green,), 100.0);
           // await Minecraft().install(Version(1,18,2));
           // print("start url");
-            //     Map res = await DownloadUtils().getJson(Version(1,21));
-            // //    List<dynamic> libraries = res["libraries"];
-            // //   await Installs.installLibraries(libraries, getlibarypath());
-            // //  await Installs.installAssets(res, getlibarypath());
-            // MinecraftCommand.getlaunchCommand(res, getlibarypath());
-  
-      // await MinecraftInstall.run(Version(1, 21), installModel);
-        //  print(Utils.parseMaven("net.minecraftforge:forge:1.7.10-10.13.4.1614-1.7.10"));
-       // await ForgeInstall.install("1.16.5-36.2.40", getlibarypath(), installModel);
-    //   await FabricInstall.run("0.15.11", "1.21", getlibarypath(), installModel);
-       //Helpfull when a specific minecraft forge version wont load: https://www.minecraftforum.net/forums/support/java-edition-support/3048893-forge-1-7-2-crashes-with-no-error-message
-      //   print("Running minecraft");
-       //  await ForgeInstall.run("1.8.8-11.15.0.1654-1.8.8", getlibarypath());
-            //Runtime.installJvmRuntime("java-runtime-delta", getlibarypath());
-           // print(Platform.environment['PROCESSOR_ARCHITECTURE']);
+          //     Map res = await DownloadUtils().getJson(Version(1,21));
+          // //    List<dynamic> libraries = res["libraries"];
+          // //   await Installs.installLibraries(libraries, getlibarypath());
+          // //  await Installs.installAssets(res, getlibarypath());
+          // MinecraftCommand.getlaunchCommand(res, getlibarypath());
+
+          // await MinecraftInstall.run(Version(1, 21), installModel);
+          //  print(Utils.parseMaven("net.minecraftforge:forge:1.7.10-10.13.4.1614-1.7.10"));
+          // await ForgeInstall.install("1.16.5-36.2.40", getlibarypath(), installModel);
+          //   await FabricInstall.run("0.15.11", "1.21", getlibarypath(), installModel);
+          //Helpfull when a specific minecraft forge version wont load: https://www.minecraftforum.net/forums/support/java-edition-support/3048893-forge-1-7-2-crashes-with-no-error-message
+          //   print("Running minecraft");
+          //  await ForgeInstall.run("1.8.8-11.15.0.1654-1.8.8", getlibarypath());
+          //Runtime.installJvmRuntime("java-runtime-delta", getlibarypath());
+          // print(Platform.environment['PROCESSOR_ARCHITECTURE']);
           //    Minecraft().run(res, '4656567332');
           // print(getTempCommandPath());
           //   supabaseHelpers().signoutUser();
@@ -331,181 +316,171 @@ class _MainPageState extends State<MainPage> {
           //   context,
           //   MaterialPageRoute(builder: (context) => const pixieLoginScreen()),
           // );
-      
-        Uint8List? buffer = await murmur2.get_jar_contents("C:/Users/joshi/Documents/PixieLauncherInstances/test/resourcepacks/ComplementaryReimagined_r5.1.1.zip");
-       int result = await murmur2.compute_hash(buffer);
-       buffer = null;
-      
-        print(result);
-        }),
+
+          Uint8List? buffer =
+              await murmur2.get_jar_contents("C:/Users/joshi/Documents/PixieLauncherInstances/test/resourcepacks/ComplementaryReimagined_r5.1.1.zip");
+          int result = await murmur2.compute_hash(buffer);
+          buffer = null;
+
+          print(result);
+        }), */
         body: Stack(children: [
-          Row(
-            children: [
-              //   NavigationDrawer(children: children)
+      Row(
+        children: [
+          //   NavigationDrawer(children: children)
 
-              Container(
-                height: double.infinity,
-                width: 200,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      height: Platform.isMacOS ? 40 : 28,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 30),
-                      child: Align(
-                        child: MenuItem(
-                          onClick: () => onDrawerChange(6),
-                          title: 'Profile',
-                          icon: Icon(
-                            Icons.person,
-                            size: 20,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
+          Container(
+            height: double.infinity,
+            width: 200,
+            decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  height: Platform.isMacOS ? 40 : 28,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 30),
+                  child: Align(
+                    child: MenuItem(
+                      onClick: () => onDrawerChange(6),
+                      title: 'Profile',
+                      icon: Icon(
+                        Icons.person,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    Container(
-                      height: 15,
+                  ),
+                ),
+                Container(
+                  height: 15,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 30),
+                  child: MenuItem(
+                    onClick: () => onDrawerChange(5),
+                    title: 'Settings',
+                    icon: Icon(
+                      Icons.settings,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 30),
-                      child: MenuItem(
-                        onClick: () => onDrawerChange(5),
-                        title: 'Settings',
-                        icon: Icon(
-                          Icons.settings,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                        child: div.CustomDivider(
-                          size: 20,
-                        ),
-                        padding: EdgeInsets.only(top: 20, bottom: 20)),
-                    ItemDrawer(
-                        offset: 0,
-                        onChange: (index) {
-                          index = index + 1;
-                          onDrawerChange(index);
-                        },
-                        title: 'Providers',
-                        children: <ItemDrawerItem>[
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'Modrinth',
-                          ),
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'Pixie',
-                          ),
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'Curseforge',
-                          ),
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'FTB',
-                          ),
-                        ]),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, top: 10, bottom: 17),
-                        child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.all(
-                                    Radius.elliptical(18, 18))),
-                            width: double.infinity,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  left: 15,
-                                  right: 15,
-                                ),
-                                child: MenuItem(
-                                  width: 140,
-                                  onClick: () async {
-                                    int index = 0;
-                                    print('change: ' + index.toString());
-                                    widget.oldPageIndex = widget.pageIndex;
-
-                                    if (Navigator.canPop(innercontext)) {
-                                      Navigator.popUntil(innercontext, (route) {
-                                        return route.settings.name == "/";
-                                      });
-
-                                      await Future.delayed(
-                                          Duration(milliseconds: 450));
-                                    }
-                                    if (index != widget.oldPageIndex) {
-                                      setState(() {
-                                        widget.pageIndex = index;
-                                      });
-                                    }
-                                  },
-                                  title: 'My Modpacks',
-                                  icon: Icon(
-                                    Icons.folder,
-                                    size: 20,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                ),
-                              ),
-                            ))),
-                    div.CustomDivider(
+                  ),
+                ),
+                Padding(
+                    child: div.CustomDivider(
                       size: 20,
                     ),
-                    SizedBox(
-                      height: 17,
-                    ),
-                    Expanded(child: SizedBox.expand()),
-                    Align(
-                      alignment: Alignment(-0.7, 0.2),
-                      child: Text(
-                        'Import Modpacks:',
-                        style: Theme.of(context).typography.black.bodySmall,
+                    padding: EdgeInsets.only(top: 20, bottom: 20)),
+                ItemDrawer(
+                    offset: 0,
+                    onChange: (index) {
+                      index = index + 1;
+                      onDrawerChange(index);
+                    },
+                    title: 'Providers',
+                    children: <ItemDrawerItem>[
+                      ItemDrawerItem(
+                        icon: Icon(
+                          Icons.sms,
+                          size: 14,
+                        ),
+                        title: 'Modrinth',
                       ),
-                    ),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, bottom: 20, top: 8),
-                        child: ImportField())
-                  ],
+                      ItemDrawerItem(
+                        icon: Icon(
+                          Icons.sms,
+                          size: 14,
+                        ),
+                        title: 'Pixie',
+                      ),
+                      ItemDrawerItem(
+                        icon: Icon(
+                          Icons.sms,
+                          size: 14,
+                        ),
+                        title: 'Curseforge',
+                      ),
+                      ItemDrawerItem(
+                        icon: Icon(
+                          Icons.sms,
+                          size: 14,
+                        ),
+                        title: 'FTB',
+                      ),
+                    ]),
+                Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 17),
+                    child: Container(
+                        height: 50,
+                        decoration:
+                            BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.all(Radius.elliptical(18, 18))),
+                        width: double.infinity,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 15,
+                              right: 15,
+                            ),
+                            child: MenuItem(
+                              width: 140,
+                              onClick: () async {
+                                int index = 0;
+                                print('change: ' + index.toString());
+                                widget.oldPageIndex = widget.pageIndex;
+
+                                if (Navigator.canPop(innercontext)) {
+                                  Navigator.popUntil(innercontext, (route) {
+                                    return route.settings.name == "/";
+                                  });
+
+                                  await Future.delayed(Duration(milliseconds: 450));
+                                }
+                                if (index != widget.oldPageIndex) {
+                                  setState(() {
+                                    widget.pageIndex = index;
+                                  });
+                                }
+                              },
+                              title: 'My Modpacks',
+                              icon: Icon(
+                                Icons.folder,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ))),
+                div.CustomDivider(
+                  size: 20,
                 ),
-              ),
-              Expanded(
-                  child: Padding(
-                      padding: edgeInsets, child: _getNavigator(context))),
-
-              SidePanel(
-                controller: StaticSidePanelController.controller,
-              )
-
-              // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
-            ],
+                SizedBox(
+                  height: 17,
+                ),
+                Expanded(child: SizedBox.expand()),
+                Align(
+                  alignment: Alignment(-0.7, 0.2),
+                  child: Text(
+                    'Import Modpacks:',
+                    style: Theme.of(context).typography.black.bodySmall,
+                  ),
+                ),
+                Padding(padding: EdgeInsets.only(left: 15, right: 15, bottom: 20, top: 8), child: ImportField())
+              ],
+            ),
           ),
-        ])
+          Expanded(child: Padding(padding: edgeInsets, child: _getNavigator(context))),
+
+          SidePanel(
+            controller: StaticSidePanelController.controller,
+          )
+
+          // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
+        ],
+      ),
+    ])
 
         // shouldSplashedDisplayed
         //     ? AnimatedOpacity(

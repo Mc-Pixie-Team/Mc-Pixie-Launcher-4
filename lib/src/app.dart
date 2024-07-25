@@ -39,6 +39,8 @@ import 'package:animations/animations.dart';
 import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
@@ -87,7 +89,9 @@ class _McLauncherState extends State<McLauncher> {
 
   @override
   void initState() {
+    print(AppLocalizations.supportedLocales);
     mainWidget = buildMainWidget();
+
     super.initState();
   }
 
@@ -99,6 +103,13 @@ class _McLauncherState extends State<McLauncher> {
         routes: {
           "/test": (context) => Material(child: Debugpage()),
         },
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
         theme: ThemeData(
             useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes), scrollbarTheme: ScrollbarThemeData()),
         darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
@@ -238,7 +249,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-/*         floatingActionButton: FloatingActionButton(onPressed: () async {
+        floatingActionButton: FloatingActionButton(onPressed: () async {
           // print(await SecureStorage().readSecureData("accounts"));
 
           //  await SecureStorage.storage.delete(key: "test");
@@ -317,170 +328,170 @@ class _MainPageState extends State<MainPage> {
           //   MaterialPageRoute(builder: (context) => const pixieLoginScreen()),
           // );
 
-          Uint8List? buffer =
-              await murmur2.get_jar_contents("C:/Users/joshi/Documents/PixieLauncherInstances/test/resourcepacks/ComplementaryReimagined_r5.1.1.zip");
-          int result = await murmur2.compute_hash(buffer);
-          buffer = null;
+          // Uint8List? buffer =
+          //     await murmur2.get_jar_contents("C:/Users/joshi/Documents/PixieLauncherInstances/test/resourcepacks/ComplementaryReimagined_r5.1.1.zip");
+          // int result = await murmur2.compute_hash(buffer);
+          // buffer = null;
 
-          print(result);
-        }), */
+          // print(result);
+        }),
         body: Stack(children: [
-      Row(
-        children: [
-          //   NavigationDrawer(children: children)
+          Row(
+            children: [
+              //   NavigationDrawer(children: children)
 
-          Container(
-            height: double.infinity,
-            width: 200,
-            decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Container(
-                  height: Platform.isMacOS ? 40 : 28,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 30),
-                  child: Align(
-                    child: MenuItem(
-                      onClick: () => onDrawerChange(6),
-                      title: 'Profile',
-                      icon: Icon(
-                        Icons.person,
-                        size: 20,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+              Container(
+                height: double.infinity,
+                width: 200,
+                decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Container(
+                      height: Platform.isMacOS ? 40 : 28,
                     ),
-                  ),
-                ),
-                Container(
-                  height: 15,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 30),
-                  child: MenuItem(
-                    onClick: () => onDrawerChange(5),
-                    title: 'Settings',
-                    icon: Icon(
-                      Icons.settings,
-                      size: 20,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-                Padding(
-                    child: div.CustomDivider(
-                      size: 20,
-                    ),
-                    padding: EdgeInsets.only(top: 20, bottom: 20)),
-                ItemDrawer(
-                    offset: 0,
-                    onChange: (index) {
-                      index = index + 1;
-                      onDrawerChange(index);
-                    },
-                    title: 'Providers',
-                    children: <ItemDrawerItem>[
-                      ItemDrawerItem(
-                        icon: Icon(
-                          Icons.sms,
-                          size: 14,
-                        ),
-                        title: 'Modrinth',
-                      ),
-                      ItemDrawerItem(
-                        icon: Icon(
-                          Icons.sms,
-                          size: 14,
-                        ),
-                        title: 'Pixie',
-                      ),
-                      ItemDrawerItem(
-                        icon: Icon(
-                          Icons.sms,
-                          size: 14,
-                        ),
-                        title: 'Curseforge',
-                      ),
-                      ItemDrawerItem(
-                        icon: Icon(
-                          Icons.sms,
-                          size: 14,
-                        ),
-                        title: 'FTB',
-                      ),
-                    ]),
-                Padding(
-                    padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 17),
-                    child: Container(
-                        height: 50,
-                        decoration:
-                            BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.all(Radius.elliptical(18, 18))),
-                        width: double.infinity,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              left: 15,
-                              right: 15,
-                            ),
-                            child: MenuItem(
-                              width: 140,
-                              onClick: () async {
-                                int index = 0;
-                                print('change: ' + index.toString());
-                                widget.oldPageIndex = widget.pageIndex;
-
-                                if (Navigator.canPop(innercontext)) {
-                                  Navigator.popUntil(innercontext, (route) {
-                                    return route.settings.name == "/";
-                                  });
-
-                                  await Future.delayed(Duration(milliseconds: 450));
-                                }
-                                if (index != widget.oldPageIndex) {
-                                  setState(() {
-                                    widget.pageIndex = index;
-                                  });
-                                }
-                              },
-                              title: 'My Modpacks',
-                              icon: Icon(
-                                Icons.folder,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 30),
+                      child: Align(
+                        child: MenuItem(
+                          onClick: () => onDrawerChange(6),
+                          title: AppLocalizations.of(context)!.profileButton,
+                          icon: Icon(
+                            Icons.person,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
-                        ))),
-                div.CustomDivider(
-                  size: 20,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 30),
+                      child: MenuItem(
+                        onClick: () => onDrawerChange(5),
+                        title: AppLocalizations.of(context)!.settingsButton,
+                        icon: Icon(
+                          Icons.settings,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                        child: div.CustomDivider(
+                          size: 20,
+                        ),
+                        padding: EdgeInsets.only(top: 20, bottom: 20)),
+                    ItemDrawer(
+                        offset: 0,
+                        onChange: (index) {
+                          index = index + 1;
+                          onDrawerChange(index);
+                        },
+                        title: AppLocalizations.of(context)!.providers,
+                        children: <ItemDrawerItem>[
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'Modrinth',
+                          ),
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'Pixie',
+                          ),
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'Curseforge',
+                          ),
+                          ItemDrawerItem(
+                            icon: Icon(
+                              Icons.sms,
+                              size: 14,
+                            ),
+                            title: 'FTB',
+                          ),
+                        ]),
+                    Padding(
+                        padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 17),
+                        child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.all(Radius.elliptical(18, 18))),
+                            width: double.infinity,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: 15,
+                                  right: 15,
+                                ),
+                                child: MenuItem(
+                                  width: 140,
+                                  onClick: () async {
+                                    int index = 0;
+                                    print('change: ' + index.toString());
+                                    widget.oldPageIndex = widget.pageIndex;
+
+                                    if (Navigator.canPop(innercontext)) {
+                                      Navigator.popUntil(innercontext, (route) {
+                                        return route.settings.name == "/";
+                                      });
+
+                                      await Future.delayed(Duration(milliseconds: 450));
+                                    }
+                                    if (index != widget.oldPageIndex) {
+                                      setState(() {
+                                        widget.pageIndex = index;
+                                      });
+                                    }
+                                  },
+                                  title: AppLocalizations.of(context)!.myModpacks,
+                                  icon: Icon(
+                                    Icons.folder,
+                                    size: 20,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                            ))),
+                    div.CustomDivider(
+                      size: 20,
+                    ),
+                    SizedBox(
+                      height: 17,
+                    ),
+                    Expanded(child: SizedBox.expand()),
+                    Align(
+                      alignment: Alignment(-0.7, 0.2),
+                      child: Text(
+                        AppLocalizations.of(context)!.importModpacks + ":",
+                        style: Theme.of(context).typography.black.bodySmall,
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(left: 15, right: 15, bottom: 20, top: 8), child: ImportField())
+                  ],
                 ),
-                SizedBox(
-                  height: 17,
-                ),
-                Expanded(child: SizedBox.expand()),
-                Align(
-                  alignment: Alignment(-0.7, 0.2),
-                  child: Text(
-                    'Import Modpacks:',
-                    style: Theme.of(context).typography.black.bodySmall,
-                  ),
-                ),
-                Padding(padding: EdgeInsets.only(left: 15, right: 15, bottom: 20, top: 8), child: ImportField())
-              ],
-            ),
+              ),
+              Expanded(child: Padding(padding: edgeInsets, child: _getNavigator(context))),
+
+              SidePanel(
+                controller: StaticSidePanelController.controller,
+              )
+
+              // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
+            ],
           ),
-          Expanded(child: Padding(padding: edgeInsets, child: _getNavigator(context))),
-
-          SidePanel(
-            controller: StaticSidePanelController.controller,
-          )
-
-          // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
-        ],
-      ),
-    ])
+        ])
 
         // shouldSplashedDisplayed
         //     ? AnimatedOpacity(

@@ -11,7 +11,7 @@ import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 
 import 'package:uuid/v4.dart';
 import 'package:uuid/v5.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class MSPage extends StatefulWidget {
   const MSPage({Key? key}) : super(key: key);
 
@@ -45,7 +45,7 @@ class _MSPageState extends State<MSPage> {
                 height: 40,
               ),
               Text(
-                "Profiles",
+                AppLocalizations.of(context)!.profilesHeadline,
                 style: Theme.of(context).typography.black.displaySmall,
               ),
               SizedBox(
@@ -193,7 +193,7 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                                     width: 15,
                                   ),
                                   Text(
-                                    "Add Minecraft Account",
+                                    AppLocalizations.of(context)!.addMinecraftAccount,
                                     style: Theme.of(context).typography.black.bodyMedium,
                                   )
                                 ],

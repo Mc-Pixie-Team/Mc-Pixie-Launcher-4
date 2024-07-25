@@ -12,6 +12,7 @@ import 'package:mclauncher4/src/widgets/carousel/carousel.dart';
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as divider;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -58,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                                               Padding(
                                                 padding: EdgeInsets.only(left: 75, top: 5),
                                                 child: Text(
-                                                  'Installed:',
+                                                  AppLocalizations.of(context)!.installed+":",
                                                   style: Theme.of(context).typography.black.headlineSmall,
                                                 ),
                                               ),
@@ -119,23 +120,11 @@ class _HomePageState extends State<HomePage> {
                                Padding(
                                   padding: EdgeInsets.only(left: 14, bottom: 3),
                                   child: Text(
-                                    'HomePage',
+                                    AppLocalizations.of(context)!.homepage,
                                      style: Theme.of(context).typography.black.titleMedium
                                   )),
                               Expanded(child: Container()),
-                              Container(
-                                  clipBehavior: Clip.antiAlias,
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle, color: Theme.of(context).colorScheme.surface),
-                                  child: GestureDetector(
-                                    onTap: () => Microsoft().authenticate(),
-                                    child: FadeInImage.memoryNetwork(
-                                        placeholder: kTransparentImage,
-                                        image:
-                                            'https://lh3.googleusercontent.com/a/ACg8ocLlOn3NroVB-AMQehydBqWLd8IaWRozFcPEm2_lcw3fkw=s288-c-no'),
-                                  )),
+
                               SizedBox(
                                 width: 15,
                               )

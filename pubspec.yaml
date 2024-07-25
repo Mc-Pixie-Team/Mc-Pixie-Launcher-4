@@ -87,6 +87,9 @@ dependencies:
   numeral: ^3.0.0
   dotted_border: ^2.1.0
   dropdown_button2: ^2.3.9
+  intl: any
+  flutter_localizations:
+    sdk: flutter
       
 
 
@@ -106,7 +109,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  generate: true
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -227,8 +230,6 @@ flutter:
        - asset: assets/fonts/Inter/Inter-Thin.ttf
          weight: 100
 
-         
-             
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

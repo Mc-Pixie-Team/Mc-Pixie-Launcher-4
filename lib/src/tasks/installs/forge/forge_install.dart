@@ -18,10 +18,20 @@ import 'package:uuid/v4.dart';
 class ForgeInstall {
 
 //MARK: RUN
-  static Future<Process> run(String version, String path, String processId, InstallModel installModel) async {
+  static Future<Process> run(String version, String minecraftVersion,  String path, String processId, InstallModel installModel) async {
+ 
+    //Check if minecraft is installed
+    if (!File(p.join(
+            path, "versions", "$minecraftVersion", "$minecraftVersion.json"))
+        .existsSync()) {
+      print("need to install Minecraft version: $minecraftVersion");
+      await MinecraftInstall.install(Version.parse(minecraftVersion), path, installModel);
+    }
+
+    //Check if Forge is installed
     if (!File(p.join(path, "versions", version, "$version.json"))
         .existsSync()) {
-      await install(version, path, installModel);
+      await install(version,minecraftVersion, path, installModel);
     }
    installModel.setInstallState(InstallState.fetching);
    installModel.setState("Fetching");
@@ -83,7 +93,17 @@ class ForgeInstall {
 
 //MARK: INSTALL
 
-  static Future install(String version, String path,InstallModel installModel ) async {
+  static Future install(String version, String minecraftVersion,  String path,InstallModel installModel ) async {
+
+    //Check if minecraft is installed
+    if (!File(p.join(
+            path, "versions", "$minecraftVersion", "$minecraftVersion.json"))
+        .existsSync()) {
+      print("need to install Minecraft version: $minecraftVersion");
+      await MinecraftInstall.install(Version.parse(minecraftVersion), path, installModel);
+      installModel.setState("Installing Forge");
+    }
+
    // print("Installing Forge...");
    if(File(p.join(getworkpath(), "versions", "$version", "$version.json")).existsSync()) return;
    installModel.setInstallState(InstallState.installing);
@@ -105,18 +125,9 @@ class ForgeInstall {
     var forgeVersionId = versiondata["version"] != null
         ? versiondata["version"]
         : versiondata["versionInfo"]["id"];
-    var minecraft_version = _getMinecraftVersion(versiondata);
 
-    if(Version.parse(minecraft_version) < Version(1, 7, 10)){
+    if(Version.parse(minecraftVersion) < Version(1, 7, 10)){
       throw "Sorry Minecraft Version not supported for Forge installation";
-    }
-
-    if (!File(p.join(
-            path, "versions", "$minecraft_version", "$minecraft_version.json"))
-        .existsSync()) {
-      print("need to install Minecraft version: $minecraft_version");
-      await MinecraftInstall.install(Version.parse(minecraft_version), path, installModel);
-      installModel.setState("Installing Forge");
     }
 
     String nativesPath = p.join(path, "bin", UuidV4().generate());

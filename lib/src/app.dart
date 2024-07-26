@@ -97,7 +97,7 @@ class _McLauncherState extends State<McLauncher> {
 
   Widget buildMainWidget() {
     return MaterialApp(
-      
+     // locale: Locale.fromSubtags(languageCode: "de"),
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,

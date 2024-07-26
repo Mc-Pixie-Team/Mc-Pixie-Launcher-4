@@ -31,7 +31,7 @@ class InstallController {
   BuildContext? context;
   InstallState? installState;
   bool isVersion;
-  ValueNotifierList _stdout = ValueNotifierList([]);
+  List<VoidCallback> _beforedeletelisteners = [];
   InstallController(
       {required this.handler,
       required this.modpackData,
@@ -47,15 +47,20 @@ class InstallController {
   }
 
   String get processId => processid!;
-  ValueNotifierList get stdout => _stdout;
+  //ValueNotifierList get stdout => _stdout;
   Isolate? _isolate;
   Process? _result;
 
   static int instances = 0;
 
   onHandleStdout(Iterable<int> out) {
-    _stdout.add(String.fromCharCodes(out));
+  //  _stdout.add(String.fromCharCodes(out));
   }
+
+  void addBeforeDeleteListener(VoidCallback callback) {
+      _beforedeletelisteners.add(callback);
+  }
+
 
   void start() async {
     installModel.setInstallState(InstallState.fetching);
@@ -97,6 +102,9 @@ class InstallController {
   }
 
   void delete() async {
+    for (var callback in _beforedeletelisteners) {
+      callback.call();
+    }
     File manifestfile = File(path.join(getInstancePath(), "manifest.json"));
     List manifest = jsonDecode(await manifestfile.readAsString());
     final dir = Directory(path.join(getInstancePath(), processid));
@@ -107,6 +115,9 @@ class InstallController {
     });
     await manifestfile.writeAsString(jsonEncode(manifest));
 
+    removeFromInstallList();
+    installModel.setInstallState(InstallState.notInstalled);
+
     if (dir.existsSync()) {
       try {
         dir.delete(recursive: true);
@@ -114,10 +125,7 @@ class InstallController {
         setErrorDialog(context, e.toString());
       }
     }
-
-    removeFromInstallList();
     print('deleted');
-    installModel.setInstallState(InstallState.notInstalled);
   }
 
   void install({String? version}) async {

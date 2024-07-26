@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
@@ -24,6 +26,11 @@ class CurseforgeFiles {
   return result;
   }
 
+  onError(e) {
+  print("error");
+   print(e);
+  }
+
   Future<UMF> getFileData(String filepath) async {
    int fingerprint = await _getFingerprint(filepath);
    var body = jsonEncode( {
@@ -31,8 +38,9 @@ class CurseforgeFiles {
        fingerprint
      ] 
     });
-   var res = await http.post(Uri.parse('$baseUrl/v1/fingerprints/'),
-        headers: userHeader, body: body).timeout(const Duration(seconds: 2));
+    var client = http.Client();
+   var res = await (client.post(Uri.parse('$baseUrl/v1/fingerprints/'),
+        headers: userHeader, body: body).timeout(const Duration(seconds: 2))).timeout(Duration(seconds: 1));
 
     if(res.statusCode != 200)  throw "Nothing Found!";
     final file = jsonDecode(utf8.decode(res.bodyBytes))["data"]["exactMatches"] as List;

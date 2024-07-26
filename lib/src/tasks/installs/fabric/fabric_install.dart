@@ -18,6 +18,14 @@ class FabricInstall {
 //MARK: INSTALL
 
   static Future install(String version, String minecraftVersion, String path, InstallModel installModel) async{
+
+    //Check if minecraft is installed
+    if (!File(p.join(path, "versions", "$minecraftVersion", "$minecraftVersion.json")).existsSync()) {
+      print("need to install Minecraft version: $minecraftVersion");
+      await MinecraftInstall.install(Version.parse(minecraftVersion), path, installModel);
+      installModel.setState("Installing Fabric");
+    }
+
     if(File(getVersionJsonPath(path, version, minecraftVersion)).existsSync()) return;
   	installModel.setInstallState(InstallState.installing);
     installModel.setState("Installing Fabric");
@@ -28,14 +36,6 @@ class FabricInstall {
 
        if(Version.parse(minecraftVersion) < Version(1, 14)){
       throw "Sorry Minecraft Version not supported for Fabric installation";
-    }
-
-    if (!File(p.join(
-            path, "versions", "$minecraftVersion", "$minecraftVersion.json"))
-        .existsSync()) {
-      print("need to install Minecraft version: $minecraftVersion");
-      await MinecraftInstall.install(Version.parse(minecraftVersion), path, installModel);
-      installModel.setState("Installing Fabric");
     }
 
     var libraries = InstallUtils.convertLibraries(versiondata["libraries"]);
@@ -53,6 +53,13 @@ class FabricInstall {
 
   static Future<Process> run(String version, String minecraftVersion, String path, String processId, InstallModel installModel) async{
 
+    //Check if minecraft is installed
+    if (!File(p.join(path, "versions", "$minecraftVersion", "$minecraftVersion.json")).existsSync()) {
+      print("need to install Minecraft version: $minecraftVersion");
+      await MinecraftInstall.install(Version.parse(minecraftVersion), path, installModel);
+    }
+
+    //Check if Fabric is installed
     if(!File(getVersionJsonPath(path, version, minecraftVersion)).existsSync()) {
       print("need to install Fabric first!");
      await install(version, minecraftVersion, path, installModel);

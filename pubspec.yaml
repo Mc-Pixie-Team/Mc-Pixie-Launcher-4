@@ -33,7 +33,7 @@ msix_config:
   display_name: Mc-Pixie Launcher
   publisher_display_name: Mc-Pixie 
   identity_name: Mc-Pixie.Mc-PixieLauncher
-  msix_version: 0.0.1.0
+  msix_version: 0.0.1.1
   logo_path: C:\Users\joshi\Documents\GitHub\Mc-Pixie-Launcher-4\logo.png
   capabilities: internetClient, 
   publisher: CN=F7827B47-6515-4947-BED4-845A6E36960B

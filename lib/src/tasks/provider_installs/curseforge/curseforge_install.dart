@@ -177,7 +177,7 @@ class CurseforgeInstaller  implements ProviderInstaller {
       case "forge":
         umfData.modloader = "forge";
         umfData.MLVersion = "${loaderversion.split("-")[1]}";
-        await ForgeInstall.install("$version-${loaderversion.split("-")[1]}", getlibarypath(), installModel);
+        await ForgeInstall.install("$version-${loaderversion.split("-")[1]}",version, getlibarypath(), installModel);
       case "fabric":
         umfData.modloader = "fabric";
         umfData.MLVersion = "${loaderversion.split("-")[1]}";
@@ -213,7 +213,7 @@ class CurseforgeInstaller  implements ProviderInstaller {
 
     switch (umfData.modloader) {
       case "forge":
-        return await ForgeInstall.run("$version-${loaderversion}", getlibarypath(),processId, installModel);
+        return await ForgeInstall.run("$version-${loaderversion}",version, getlibarypath(),processId, installModel);
       case "fabric":
         return await FabricInstall.run(loaderversion, version,  getlibarypath(),processId, installModel);
       default:

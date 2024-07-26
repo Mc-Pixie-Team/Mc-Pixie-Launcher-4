@@ -28,6 +28,7 @@ class ModPicture extends StatelessWidget {
                 borderRadius: BorderRadius.circular(18),
                 color:color),
             child: FadeInImage.memoryNetwork(
+              filterQuality: FilterQuality.none,
               fit: BoxFit.cover,
               fadeOutDuration: const Duration(milliseconds: 1),
               fadeInDuration: const Duration(milliseconds: 300),

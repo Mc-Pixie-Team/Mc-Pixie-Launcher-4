@@ -14,13 +14,14 @@ FileHelper({required this.directoryPath}){
 }
 
 save(List<UMF> files) {
+  print("saving");
   if(timer != null) timer!.cancel();
    timer = Timer(Duration(seconds: 2), () { 
-    _write(files);
+    write(files);
   });
 }
 
-_write(List<UMF> files) {
+write(List<UMF> files) {
   print("write");
   List convertedumf = [];
 

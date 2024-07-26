@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mclauncher4/src/pages/installed_mod/installed_mods_page.dart';
 import 'package:mclauncher4/src/tasks/apis/files/curseforge.files.dart';
 import 'package:mclauncher4/src/tasks/apis/files/files_helper.dart';
@@ -22,9 +25,30 @@ class FilesHandler with ChangeNotifier {
 
   late FileHelper _helper;
 
-  void initialize() {
-
+  void initialize() async{
     _helper = FileHelper(directoryPath: directoryPath);
+
+
+  var token = RootIsolateToken.instance!;
+   var files32 =  await Isolate.run(() => initializeContainingFiles( this.directoryPath, this.types,  token ));
+   _files.addAll(files32);
+   notifyListeners();
+
+  for (var type in types) {
+      var subDir = ObjectTypeTools.todir(type);
+      var dir = Directory(p.join(directoryPath, subDir));
+     var csub = dir.watch().listen((event) => listener(event, type));
+     sub.add(csub);
+  }
+    
+  }
+
+  static Future<List<UMF>> initializeContainingFiles(String directoryPath, List<ObjectType> types, RootIsolateToken token) async {
+     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+
+    List<UMF> _files = [];
+    var _helper = FileHelper(directoryPath: directoryPath);
+
     var instanceFile = File(p.join(directoryPath, "instance.json"));
 
     if (!instanceFile.existsSync()) {
@@ -35,15 +59,16 @@ class FilesHandler with ChangeNotifier {
     var instance = jsonDecode(instanceFile.readAsStringSync());
 
     List instanceFiles = instance["files"];
-    types.forEach((type) {
+    for (var type in types) {
+
       var subDir = ObjectTypeTools.todir(type);
-        print(subDir);
       var dir = Directory(p.join(directoryPath, subDir));
       var items = dir.listSync();
-      
+
       //Check if all items in directory are in instance
-      items.forEach((entity) async {
-        print(entity.path);
+      for (var entity in items)  {
+        
+
         Map mapfile = instanceFiles.singleWhere(
           (element) {
             return element["original"]["filepath"] == entity.path;
@@ -52,36 +77,33 @@ class FilesHandler with ChangeNotifier {
         );
 
         if (mapfile.isEmpty) {
-          print("addto");
-          await _addto(entity.path);
+          _files.add((await _addto(entity.path)).copyWith(type: type));
         } else {
-          print("add");
           _files.add(UMF.parse(mapfile).copyWith(type: type));
         }
-      });
-      _helper.save(_files);
-
-      //Add listener to dir
-      var csub = dir.watch().listen((event) async {
-        await listener(event);
-        notifyListeners();
-      });
-      sub.add(csub);
-    });
+      }
+      _files.sort((a, b) => (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
+      _helper.write(_files);
+    }
+    return _files;
   }
 
-  listener(FileSystemEvent event) async {
+  listener(FileSystemEvent event, ObjectType type) async {
     if (event is FileSystemCreateEvent) {
-      if (event.isDirectory) return;
-      await _addto(event.path);
+    if (event.isDirectory) return;
+     _files.add((await _addto(event.path)).copyWith(type: type));
     } else if (event is FileSystemDeleteEvent) {
       if (event.isDirectory) return;
       _remove(event.path);
     } else if (event is FileSystemMoveEvent) {
       if (event.isDirectory) return;
-      await _addto(event.path);
+      _files.add( (await _addto(event.path)).copyWith(type: type));
       _remove(event.destination!);
     }
+    _files.sort((a, b) => (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
+    print("added");
+     _helper.save(files);
+    notifyListeners();
   }
 
   void dispose() {
@@ -95,26 +117,27 @@ class FilesHandler with ChangeNotifier {
     _files.removeWhere((element) {
       return p.equals(element.original["filepath"], filepath);
     });
-    _helper.save(_files);
   }
 
-  _addto(String filepath) async {
+  static Future<UMF> _addto(String filepath) async {
     UMF file;
     try {
       file = await getFileData(filepath);
+      
     } catch (e) {
+
       file = UMF(
         original: {"filepath": filepath},
         name: p.basename(filepath),
         author: "unknown",
       );
     }
-
-    _files.add(file);
-    _helper.save(_files);
+    print("t");
+    return file;
+   // helper.save(_files);
   }
 
-  Future<UMF> getFileData(String filepath) async {
-    return await CurseforgeFiles().getFileData(filepath);
+  static Future<UMF> getFileData(String filepath) async {
+    return CurseforgeFiles().getFileData(filepath);
   }
 }

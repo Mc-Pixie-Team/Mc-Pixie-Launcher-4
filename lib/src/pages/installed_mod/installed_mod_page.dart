@@ -3,6 +3,7 @@ import 'package:animations/animations.dart';
 import 'package:mclauncher4/src/pages/installed_mod/installed_home_page.dart';
 import 'package:mclauncher4/src/pages/installed_mod/installed_mods_page.dart';
 import 'package:mclauncher4/src/tasks/apis/files/files_handler.dart';
+import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
@@ -40,33 +41,44 @@ class _InstalledModPageState extends State<InstalledModPage> {
   late FilesHandler _handler;
 
   @override
+  void dispose() {
+    print("dispose");
+    
+    super.dispose();
+  }
+
+  @override
   void initState() {
-    _handler = FilesHandler(directoryPath: path.join(getInstancePath(), widget.controllerInstance.processId), types: [ObjectType.mod]);
+    _handler = FilesHandler(
+      directoryPath: path.join(getInstancePath(), widget.controllerInstance.processId), types: [ObjectType.mod, ObjectType.resource]);
 
     _handler.initialize();
 
+    widget.controllerInstance.addBeforeDeleteListener(() { 
+      _handler.dispose();
+    });
+
     _pages = {
-      "Home": InstalledHomePage(
-        processId: widget.controllerInstance.processId,
-      ),
-      "Console": Container(),
-      "Mods": AnimatedBuilder(
-          animation: _handler,
-          builder: (context, child) {
-            List<UMF> sortedfiles = []..addAll(_handler.files);
-            sortedfiles.sort((a, b) => (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
-            return ModsPage(files: sortedfiles);
-          }),
-      "ResourcePacks": Container(),
-      "Shaders": Container()
-    };
+    "Home": InstalledHomePage(processId: widget.controllerInstance.processId,),
+    "Console": Container(),
+    "Mods": AnimatedBuilder(key: Key("ted"),animation: _handler, builder: (context, child) {
+      List<UMF> sortedfiles = []..addAll(_handler.files);
+         sortedfiles.removeWhere((element) => element.type != ObjectType.mod);
+       return ModsPage(files: sortedfiles);}),
+    "ResourcePacks": AnimatedBuilder(key: Key("te"), animation: _handler, builder: (context, child) {
+      List<UMF> sortedfiles = []..addAll(_handler.files);
+         sortedfiles.removeWhere((element) => element.type != ObjectType.resource);
+       return ModsPage(files: sortedfiles);}),
+    "Shaders": Container()
+  };
 
     _pageKey = _pages.keys.first;
-    widget.controllerInstance.stdout.addListener(() {
-      if (scrollController.hasClients) {
-        scrollController.animateTo(scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 200), curve: Curves.easeOut);
-      }
-    });
+    // widget.controllerInstance.stdout.addListener(() {
+    //   if (scrollController.hasClients) {
+    //     scrollController.animateTo(scrollController.position.maxScrollExtent,
+    //         duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+    //   }
+    // });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (scrollController.hasClients) {
         scrollController.jumpTo(scrollController.position.maxScrollExtent);
@@ -76,6 +88,7 @@ class _InstalledModPageState extends State<InstalledModPage> {
     super.initState();
   }
 
+
   onOpenFolder() {
     FileExplorer.openFileExplorer(path.join(getInstancePath(), widget.controllerInstance.processId));
   }
@@ -83,6 +96,17 @@ class _InstalledModPageState extends State<InstalledModPage> {
   onDelete(BuildContext _context) {
     Navigator.pop(_context);
     widget.controllerInstance.delete();
+  }
+
+  onPlay() {
+    switch (widget.controllerInstance.installModel.installState) {
+      case InstallState.installed:
+        widget.controllerInstance.start();
+      case InstallState.running:
+        widget.controllerInstance.cancel();
+      default:
+        return;
+    }
   }
 
   double TextWidth(String text, TextStyle style) {
@@ -96,39 +120,41 @@ class _InstalledModPageState extends State<InstalledModPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-        borderRadius: BorderRadius.circular(18),
-        child: SizedBox.expand(
-            child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
+    return ClipRRect(borderRadius: BorderRadius.circular(18), child: SizedBox.expand(
+        child: Container(
+      
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+         ),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 40,
           ),
-          child: Column(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              SizedBox(
-                height: 40,
+              ModpackTitleIconWidget(
+                modloader:
+                    widget.controllerInstance.modpackData.modloader ?? "",
+                downloads: widget.controllerInstance.modpackData.downloads,
+                iconUrl: widget.controllerInstance.modpackData.icon,
+                mcVersion: widget.controllerInstance.modpackData.MCVersion,
+                mlVersion:
+                    widget.controllerInstance.modpackData.MLVersion ?? "fd",
+                name: widget.controllerInstance.modpackData.name,
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  ModpackTitleIconWidget(
-                    modloader: widget.controllerInstance.modpackData.modloader ?? "",
-                    downloads: widget.controllerInstance.modpackData.downloads,
-                    iconUrl: widget.controllerInstance.modpackData.icon,
-                    mcVersion: widget.controllerInstance.modpackData.MCVersion,
-                    mlVersion: widget.controllerInstance.modpackData.MLVersion ?? "fd",
-                    name: widget.controllerInstance.modpackData.name,
-                  ),
-                  Expanded(
-                      child: SizedBox(
-                    height: 0,
-                    width: double.infinity,
-                  )),
-                  AnimatedBuilder(
-                      animation: widget.controllerInstance.installModel,
-                      builder: (BuildContext context, Widget? child) => ModpackActionsMenu(
-                          onDelete: () => onDelete(context),
-                          onPlay: widget.controllerInstance.start,
+              Expanded(
+                  child: SizedBox(
+                height: 0,
+                width: double.infinity,
+              )),
+              AnimatedBuilder(
+                  animation: widget.controllerInstance.installModel,
+                  builder: (BuildContext context, Widget? child) =>
+                      ModpackActionsMenu(
+                          onDelete: ()  => onDelete(context),
+                          onPlay: onPlay,
                           onSecondMenuItem: onOpenFolder,
                           state: widget.controllerInstance.installModel.installState,
                           progress: widget.controllerInstance.installModel.progress))

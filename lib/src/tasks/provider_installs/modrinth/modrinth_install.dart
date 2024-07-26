@@ -41,7 +41,7 @@ class ModrinthInstaller implements ProviderInstaller {
     if (umfData.modloader == "fabric") {
       return await FabricInstall.run(loaderversion, version, getlibarypath(),processId, installModel);
     } else if (umfData.modloader == "forge") {
-       return await ForgeInstall.run("$version-$loaderversion", getlibarypath(),processId, installModel);     
+       return await ForgeInstall.run("$version-$loaderversion",version, getlibarypath(),processId, installModel);     
     } else {
       return await MinecraftInstall.run(Version.parse(version),processId, installModel);
     }
@@ -100,11 +100,12 @@ class ModrinthInstaller implements ProviderInstaller {
     } else if (depend["dependencies"]["forge"] != null) {
        umfData.modloader = "forge";
        umfData.MLVersion = "${depend["dependencies"]["forge"]}";
-        await ForgeInstall.install("${depend["dependencies"]["minecraft"]}-${depend["dependencies"]["forge"]}", getlibarypath(), installModel);     
+        await ForgeInstall.install("${depend["dependencies"]["minecraft"]}-${depend["dependencies"]["forge"]}",depend["dependencies"]["minecraft"], getlibarypath(), installModel);     
     } else {
        umfData.modloader = "none";
        await MinecraftInstall.install(Version.parse(depend["dependencies"]["minecraft"]),getlibarypath(), installModel);
     }
+    print( umfData.modloader);
   }
 
   _downloadMrPack(Map file, String instanceName, InstallModel installModel) async {

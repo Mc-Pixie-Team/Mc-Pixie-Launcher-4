@@ -88,6 +88,10 @@ static Future<void> installAssets(Map data, String path, InstallModel installMod
   final res = await http.get(Uri.parse(data["assetIndex"]["url"]));
 
   final file = File(p.join(assetsPath, 'indexes', '${data["assets"]}.json'));
+
+  //Check if asset file is already there
+  if(file.existsSync()) return;
+
   file.createSync(recursive: true);
   file.writeAsBytesSync(res.bodyBytes);
   final assetsData = jsonDecode(utf8.decode(res.bodyBytes));
@@ -107,20 +111,24 @@ static Future<void> installAssets(Map data, String path, InstallModel installMod
     var downloadurl = 'https://resources.download.minecraft.net/${value["hash"].substring(0, 2)}/${value["hash"]}';
     var savePath =  p.join(
                 assetsPath, 'objects', value["hash"].substring(0, 2), value["hash"]);
-  try {
+
+    if(File(savePath).existsSync()) return;
+ 
+    
+    try {
         await Downloader(
             downloadurl,
             savePath).startDownload();
-  }catch (e) {
-    print("Couldnt download assets: " + downloadurl);
-      try {
+    }catch (e) {
+      print("Couldnt download assets: " + downloadurl);
+        try {
            await Downloader(
             downloadurl,
             savePath).startDownload();
-     }catch (e) {
+      }catch (e) {
         print("giving up on library " + downloadurl);
-     }
-  }
+      }
+    }
 
         
   });

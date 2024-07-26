@@ -8,6 +8,7 @@ import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
 import 'package:mclauncher4/src/widgets/settings_page/ram_select_card.dart';
 import 'package:mclauncher4/src/widgets/settings_page/settings_switch_trans.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as divider;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
@@ -48,7 +49,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       height: 40,
                     ),
                     Text(
-                      "Settings",
+                      AppLocalizations.of(context)!.settings,
                       style: Theme.of(context).typography.black.displaySmall,
                     ),
                     SizedBox(
@@ -69,7 +70,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Column(
                         children: [
                           SizedBox(height: 13),
-                          SettingsSwitchTrans(text: "Start project on install",  value: settingsBox.get(SettingsKeys.startAfterInstall), onpressed:(value) {
+                          SettingsSwitchTrans(text: AppLocalizations.of(context)!.settingStartProjectOnInstall,  value: settingsBox.get(SettingsKeys.startAfterInstall), onpressed:(value) {
                            settingsBox.put(SettingsKeys.startAfterInstall, value);
                           },),
                           SizedBox(height: 13),

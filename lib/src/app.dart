@@ -97,6 +97,7 @@ class _McLauncherState extends State<McLauncher> {
 
   Widget buildMainWidget() {
     return MaterialApp(
+      
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,

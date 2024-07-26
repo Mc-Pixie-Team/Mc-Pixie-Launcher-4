@@ -19,7 +19,9 @@
   "profilesHeadline": "Profiles",
   "providers": "providers",
   "resourcepacks": "ResourcePacks",
+  "settings": "Settings",
   "settingsButton": "Settings",
+  "settingStartProjectOnInstall": "Start project on install",
   "shaders": "Shaders",
   "title": "Hello World!",
   "versions": "Versions"

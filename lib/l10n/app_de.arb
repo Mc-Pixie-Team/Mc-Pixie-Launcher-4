@@ -19,7 +19,9 @@
   "profilesHeadline": "Profile",
   "providers": "Anbieter",
   "resourcepacks": "Resourcen Pakete",
+  "settings": "Einstellungen",
   "settingsButton": "Einstellungen",
+  "settingStartProjectOnInstall": "Starte Projekt nach der Installation",
   "shaders": "Shaders",
   "title": "MC - Pixie Launcher",
   "versions": "Versionen"

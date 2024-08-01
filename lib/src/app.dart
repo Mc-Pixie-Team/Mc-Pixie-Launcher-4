@@ -2,6 +2,7 @@ import 'dart:io' show Directory, File, Platform, exit;
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/home_page/home_page.dart';
 import 'package:mclauncher4/src/pages/debug_page.dart';
@@ -26,6 +27,7 @@ import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/installs/install_tools.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:mclauncher4/src/widgets/import_field.dart';
+import 'package:mclauncher4/src/widgets/internet_connection_checker.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'theme/colorSchemes.dart';
@@ -97,7 +99,7 @@ class _McLauncherState extends State<McLauncher> {
 
   Widget buildMainWidget() {
     return MaterialApp(
-     // locale: Locale.fromSubtags(languageCode: "de"),
+        // locale: Locale.fromSubtags(languageCode: "de"),
         scrollBehavior: MyCustomScrollBehavior(),
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
@@ -531,7 +533,8 @@ final closebuttonColors = WindowButtonColors(
     iconMouseOver: const Color.fromARGB(255, 255, 255, 255),
     iconMouseDown: Color.fromARGB(255, 153, 153, 153));
 
-class WindowButtons extends StatelessWidget {
+/* class WindowButtons extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -551,6 +554,96 @@ class WindowButtons extends StatelessWidget {
               exit(0);
             }),
       ],
+    );
+  }
+} */
+class WindowButtons extends StatefulWidget {
+  const WindowButtons({Key? key}) : super(key: key);
+
+  @override
+  _WindowButtonsState createState() => _WindowButtonsState();
+}
+
+class _WindowButtonsState extends State<WindowButtons> {
+  late var listener;
+  bool isConnected = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    isConnected = InternetConnectionCheckerHelper().hasConnection;
+    listener = InternetConnectionChecker().onStatusChange.listen((status) {
+      switch (status) {
+        case InternetConnectionStatus.connected:
+          print('Data connection is available.');
+          setState(() {
+            isConnected = true;
+          });
+          break;
+        case InternetConnectionStatus.disconnected:
+          print('You are disconnected from the internet.');
+          setState(() {
+            isConnected = false;
+          });
+          break;
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    
+    return SizedBox(
+      width: 290,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          //Code by Mc-PIXIE
+          !isConnected
+              ? Padding(
+                  padding: const EdgeInsets.only(
+                    top: 13,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.error,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: Theme.of(context).colorScheme.error, width: 3)),
+                    width: 90,
+                    height: 25,
+                    child: Center(
+                      child: (Text(
+                        "OFFLINE",
+                        style: Theme.of(context)
+                            .typography
+                            .black
+                            .labelMedium!
+                            .copyWith(decoration: TextDecoration.none, fontWeight: FontWeight.w600, letterSpacing: 2),
+                      )),
+                    ),
+                  ),
+                )
+              : SizedBox(),
+
+          Row(
+            children: [
+              MinimizeWindowButton(
+                colors: buttonColors,
+              ),
+              MaximizeWindowButton(
+                colors: buttonColors,
+              ),
+              CloseWindowButton(
+                  colors: closebuttonColors,
+                  onPressed: () {
+                    print('close');
+                    exit(0);
+                  }),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

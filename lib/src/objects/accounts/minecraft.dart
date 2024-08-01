@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/tasks/storage/secure_storage.dart';
+import 'package:mclauncher4/src/widgets/internet_connection_checker.dart';
 
 class MinecraftAccount {
   String name;
@@ -16,8 +17,7 @@ class MinecraftAccount {
   }
 
   static parse(Map map) {
-    return MinecraftAccount(
-        name: map["name"], refreshToken: map["refreshToken"], username: map["username"], uuid: map["uuid"]);
+    return MinecraftAccount(name: map["name"], refreshToken: map["refreshToken"], username: map["username"], uuid: map["uuid"]);
   }
 }
 
@@ -43,14 +43,13 @@ class MinecraftAccountUtils {
     return uuid;
   }
 
-
   Future<void> saveAccounts(List<MinecraftAccount> accounts) async {
     List saveData = [];
     for (var element in accounts) {
       Map elemNew = element.toMap();
       saveData.add(elemNew);
     }
-   await SecureStorage.writeSecureData("account", jsonEncode(saveData));
+    await SecureStorage.writeSecureData("account", jsonEncode(saveData));
   }
 
   Future<List<MinecraftAccount>> getAccounts() async {
@@ -77,7 +76,6 @@ class MinecraftAccountUtils {
       accList.add(account);
       await saveAccounts(accList);
       await setStandard(account);
-  
     } else {
       print("account already exists! Doing nothing.");
     }
@@ -105,6 +103,10 @@ class MinecraftAccountUtils {
   }
 
   Future<Map> reAuthenticateAndUpdateAccount(MinecraftAccount account) async {
+    if (InternetConnectionCheckerHelper().hasConnection == false) {
+      print("starting Minecraft in OFFLINE mode (NO AUTH-TOKEN)");
+      return {"authToken": null, "account": account};
+    }
     try {
       Map loginData = await Microsoft().reAuthenticate(account);
       return {"authToken": loginData["authToken"], "account": account};
@@ -138,10 +140,10 @@ class MinecraftAccountUtils {
   }
 
   Future<void> initOnFirstStart() async {
-    if (!(await SecureStorage.isKeyRegistered("account"))){
+    if (!(await SecureStorage.isKeyRegistered("account"))) {
       print("need to register new");
       await MinecraftAccountUtils().saveAccounts([]);
-    } 
+    }
   }
 }
 

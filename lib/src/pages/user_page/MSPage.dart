@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/user_page/side_panel_widget.dart';
 import 'package:mclauncher4/src/pages/user_page/text_field_with_enter.dart';
@@ -12,6 +13,7 @@ import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'package:uuid/v4.dart';
 import 'package:uuid/v5.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class MSPage extends StatefulWidget {
   const MSPage({Key? key}) : super(key: key);
 
@@ -69,6 +71,10 @@ class MinecraftAccounts extends StatefulWidget {
   _MinecraftAccountsState createState() => _MinecraftAccountsState();
 }
 
+Future<Map> getMCAccData() async {
+  return {"accounts": await MinecraftAccountUtils().getAccounts(), "fav": await MinecraftAccountUtils().getStandard()};
+}
+
 class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTickerProviderStateMixin {
   @override
   void initState() {
@@ -88,12 +94,20 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, bottom: 8),
         child: FutureBuilder(
-          future: MinecraftAccountUtils().getAccounts(),
+          future: getMCAccData(),
           builder: (context, snapshot) {
-            print('error: ' + snapshot.error.toString());
+            String? error = snapshot.error.toString();
+            if (error != "null") {
+              print('error: ' + error);
+            }
 
             if (snapshot.hasData) {
-              List<MinecraftAccount> accounts = snapshot.data ?? [];
+              List<MinecraftAccount> accounts = snapshot.data?["accounts"] ?? [];
+              String favUUID = "";
+              if (snapshot.data?["fav"] != null) {
+                favUUID = snapshot.data?["fav"].uuid;
+              }
+
               return ListView.separated(
                 scrollDirection: Axis.vertical,
                 separatorBuilder: (context, index) => Padding(
@@ -123,7 +137,7 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                         }
                       } else {
                         print("Setting account with UUID as standard: " + accounts[index].uuid);
-                        //MinecraftAccountUtils().deleteAccount(accounts[index]);
+
                         setState(() {
                           MinecraftAccountUtils().setStandard(accounts[index]);
                         });
@@ -139,8 +153,16 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                                   SizedBox(
                                     width: 15,
                                   ),
-                                  MinecraftHead(
-                                    user: accounts[index],
+                                  Container(
+                                    height: 50,
+                                    decoration: (favUUID == accounts[index].uuid)
+                                        ? BoxDecoration(
+                                            border: Border.all(color: Theme.of(context).colorScheme.primary, width: 3),
+                                            borderRadius: BorderRadius.circular(8))
+                                        : BoxDecoration(),
+                                    child: MinecraftHead(
+                                      user: accounts[index],
+                                    ),
                                   ),
                                   SizedBox(
                                     width: 15,
@@ -151,22 +173,16 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                                       style: Theme.of(context).typography.black.bodyMedium,
                                     ),
                                   ),
-                                  FutureBuilder(
-                                      future: MinecraftAccountUtils().getStandard(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return (snapshot.data!.uuid == accounts[index].uuid)
-                                              ? Padding(
-                                                  padding: EdgeInsets.only(right: 15),
-                                                  child: Icon(
-                                                    Icons.star,
-                                                    color: Theme.of(context).typography.black.bodyMedium?.color,
-                                                  ),
-                                                )
-                                              : Padding(padding: EdgeInsets.only(right: 15), child: SizedBox());
-                                        }
-                                        return CircularProgressIndicator();
-                                      })
+                                  IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          MinecraftAccountUtils().deleteAccount(accounts[index]);
+                                        });
+                                      },
+                                      icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.primary,)),
+                                  SizedBox(
+                                    width: 20,
+                                  )
                                 ],
                               )
                             : Row(

@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:animations/animations.dart';
 import 'package:flutter/widgets.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
@@ -13,6 +14,8 @@ import 'package:mclauncher4/src/widgets/buttons/circular_button.dart';
 import 'package:mclauncher4/src/widgets/cards/java_install_card.dart';
 import 'package:mclauncher4/src/widgets/cards/browse_card.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
+import 'package:mclauncher4/src/widgets/internet_connection_checker.dart';
+import 'package:mclauncher4/src/widgets/offlineIcon.dart';
 import 'package:mclauncher4/src/widgets/providers_widget/dropdown_menu.dart';
 import 'package:mclauncher4/src/widgets/searchbar.dart' as Searchbar;
 import 'package:flutter/material.dart';
@@ -137,7 +140,12 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return StreamBuilder(
+      stream: InternetConnectionChecker().onStatusChange,
+      builder: (context, snapshot) {
+        bool hasConnection = InternetConnectionCheckerHelper().hasConnection;
+        
+          return Container(
         clipBehavior: Clip.antiAlias,
         height: double.infinity,
         width: double.infinity,
@@ -145,7 +153,7 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
           borderRadius: BorderRadius.circular(18),
           color: Theme.of(context).colorScheme.surfaceVariant,
         ),
-        child: Stack(children: [
+        child: hasConnection ? Stack(children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,6 +334,10 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
                   ],
                 ),
               )),
-        ]));
+        ]) : Center(child: OfflineIcon(size: 150,)));
+        
+        
+      },
+    );
   }
 }

@@ -72,9 +72,10 @@ class Microsoft {
     Uri uri = Uri.parse('https://login.live.com/oauth20_token.srf');
     print(uri);
     Secret keys = await SecretLoader(secretPath: "secrets.json").load();
+
     String clientId = keys.azureClientId;
     String clientSecret = keys.azureClientSecret;
-
+    print(clientSecret);
     if (!isReauth) {
       http.Response firstAuthResponse = await http.post(
         uri,
@@ -82,7 +83,10 @@ class Microsoft {
         body: "client_id=$clientId&client_secret=$clientSecret&code=$token&grant_type=authorization_code&redirect_uri=http://localhost:25458",
       );
       Map rsp = jsonDecode(firstAuthResponse.body);
-
+      
+      if (rsp["error"] != null) {
+        print(rsp);
+      }
       return {"access_token": rsp["access_token"], "refreshToken": rsp["refresh_token"]};
     } else if (isReauth) {
       http.Response firstAuthResponse = await http.post(
@@ -101,7 +105,7 @@ class Microsoft {
   Future<Map> xboxSignIn(authTokenMicrosoft) async {
     Uri uri = Uri.parse('https://user.auth.xboxlive.com/user/authenticate');
     print(uri);
-
+    print(authTokenMicrosoft);
     Map data = {
       "Properties": {
         "AuthMethod": "RPS",

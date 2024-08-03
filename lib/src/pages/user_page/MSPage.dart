@@ -209,8 +209,8 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                                         clipBehavior: Clip.antiAlias,
                                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
                                         child: Container(
-                                          height: 40,
-                                          width: 40,
+                                          height: 45,
+                                          width: 45,
                                           decoration: BoxDecoration(color: ui.Color.fromARGB(72, 97, 97, 97)),
                                           child: SizedBox(
                                             child: Icon(
@@ -218,6 +218,7 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                                               color: Theme.of(context).typography.black.bodyMedium?.color,
                                             ),
                                           ),
+                                          
                                         )),
                                     SizedBox(
                                       width: 15,

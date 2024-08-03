@@ -8,12 +8,14 @@ class ModPicture extends StatelessWidget {
     required this.height,
     required this.url,
     required this.color,
+    this.borderRadius = null,
   });
 
   final String url;
   final double height;
   final double width;
   final Color color;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class ModPicture extends StatelessWidget {
         child: Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18), color: color),
+                borderRadius: borderRadius ?? BorderRadius.circular(18), color: color),
             child: FadeInImage.memoryNetwork(
               filterQuality: FilterQuality.none,
               fit: BoxFit.cover,

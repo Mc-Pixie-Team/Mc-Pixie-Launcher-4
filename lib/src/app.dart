@@ -15,6 +15,7 @@ import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
 import 'package:mclauncher4/src/widgets/internet_connection_checker.dart';
+import 'package:mclauncher4/src/widgets/recently_played_list.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
@@ -480,6 +481,8 @@ class _MainPageState extends State<MainPage> {
                     div.CustomDivider(
                       size: 20,
                     ),
+                    SizedBox(height: 20,),
+                    RecentlyPlayedList(width: 200-30,height: 360,),
                     Expanded(child: Container()),
                     //Text("OS: ${Platform.operatingSystemVersion}, Lang: ${Platform.localeName}", textAlign: TextAlign.center, style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Color.fromARGB(69, 189, 189, 189)),),
                     SizedBox(height:15,)
@@ -489,7 +492,7 @@ class _MainPageState extends State<MainPage> {
               Expanded(
                   child: Padding(
                       padding: edgeInsets, child: _getNavigator(context))),
-
+              
               SidePanel(
                 controller: StaticSidePanelController.controller,
               )
@@ -596,14 +599,13 @@ class _WindowButtonsState extends State<WindowButtons> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 290,
-      child: Row(
+    return 
+      Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           //Code by Mc-PIXIE
           !isConnected
-              ? Padding(
+              ? IgnorePointer(child: Padding(
                   padding: const EdgeInsets.only(
                     top: 13,
                   ),
@@ -630,8 +632,8 @@ class _WindowButtonsState extends State<WindowButtons> {
                       )),
                     ),
                   ),
-                )
-              : SizedBox(),
+                ))
+              : SizedBox.shrink(),
 
           Row(
             children: [
@@ -650,7 +652,7 @@ class _WindowButtonsState extends State<WindowButtons> {
             ],
           )
         ],
-      ),
+      
     );
   }
 }

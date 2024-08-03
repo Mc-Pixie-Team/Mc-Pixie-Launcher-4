@@ -19,6 +19,7 @@ void main() async {
   await Hive.openBox("settings");
   await Hive.openBox("MinecraftPlayerHeads");
   await Hive.openBox("MinecraftPlayerCapes");
+  await Hive.openBox("RecentlyPlayed");
   runApp(McLauncher());
   if (Platform.isMacOS) {
     final win = appWindow;

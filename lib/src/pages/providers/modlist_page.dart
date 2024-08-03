@@ -1,21 +1,16 @@
 // ignore_for_file: sort_child_properties_last
 
-import 'dart:async';
-import 'dart:ui';
 
-import 'package:animations/animations.dart';
-import 'package:flutter/cupertino.dart';
+
+
 import 'package:flutter/widgets.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
-import 'package:mclauncher4/src/pages/providers/mod_page.dart';
+
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/models/trigger_model.dart';
 import 'package:mclauncher4/src/widgets/buttons/circular_button.dart';
-import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
-import 'package:mclauncher4/src/widgets/cards/java_install_card.dart';
 import 'package:mclauncher4/src/widgets/cards/browse_card.dart';
 import 'package:mclauncher4/src/widgets/components/fade_in_animation.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
@@ -25,13 +20,13 @@ import 'package:mclauncher4/src/widgets/offlineIcon.dart';
 import 'package:mclauncher4/src/widgets/providers_widget/dropdown_menu.dart';
 import 'package:mclauncher4/src/widgets/searchbar.dart' as Searchbar;
 import 'package:flutter/material.dart';
-import 'package:smooth_list_view/smooth_list_view.dart';
 import 'package:mclauncher4/src/widgets/divider.dart' as Divider;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
+
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+// ignore: must_be_immutable
 class ModListPage extends StatefulWidget {
   Api handler;
   String? rootinstanceName;

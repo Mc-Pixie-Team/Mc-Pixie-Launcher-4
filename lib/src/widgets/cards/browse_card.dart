@@ -2,22 +2,19 @@
 
 import 'dart:ui';
 
-import 'package:animations/animations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
-import 'package:mclauncher4/src/tasks/apis/api.dart';
 
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
-import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/theme/custom_page_transition.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
 import 'package:mclauncher4/src/widgets/mod_picture.dart';
-import 'package:transparent_image/transparent_image.dart';
+
 import 'package:numeral/numeral.dart';
 
 // ignore: must_be_immutable

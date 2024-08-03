@@ -1,4 +1,5 @@
-
+import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
@@ -8,10 +9,15 @@ abstract class Api {
   /// pls pay attention to the functionality and inheritance of the ModListPage and the InstallController
   /// (debug mode is highly recommended)
 
+
   /// for any further investigation, you can look in the already existing implementations of some providers
 
   String? version = "";
   String query = "";
+  ObjectType type = ObjectType.modpack;
+
+  //
+  void setObjectType(ObjectType type);
 
   //Is the title name of the Provider (ex: Modrinth, Curseforge)
   String getTitlename();
@@ -25,7 +31,9 @@ abstract class Api {
   void removeCategory(String name);
 
   //This method should add a category to the Search query of the provider
-  void addCategory(String name, String oldtext);
+  void addCategory(String name);
+
+
 
   //This method should change the API query to search for a specific minecraft version.
   void searchMV(String version);

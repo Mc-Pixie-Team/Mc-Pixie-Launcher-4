@@ -1,8 +1,10 @@
 // ignore_for_file: sort_child_properties_last
 
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:animations/animations.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
@@ -10,10 +12,14 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
+import 'package:mclauncher4/src/tasks/models/trigger_model.dart';
 import 'package:mclauncher4/src/widgets/buttons/circular_button.dart';
+import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/cards/java_install_card.dart';
 import 'package:mclauncher4/src/widgets/cards/browse_card.dart';
+import 'package:mclauncher4/src/widgets/components/fade_in_animation.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
+import 'package:mclauncher4/src/widgets/filter_list.dart';
 import 'package:mclauncher4/src/widgets/internet_connection_checker.dart';
 import 'package:mclauncher4/src/widgets/offlineIcon.dart';
 import 'package:mclauncher4/src/widgets/providers_widget/dropdown_menu.dart';
@@ -27,8 +33,15 @@ import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ModListPage extends StatefulWidget {
-  String providerString;
-  ModListPage({Key? key, required this.providerString}) : super(key: key);
+  Api handler;
+  String? rootinstanceName;
+  bool isReturnable;
+  ModListPage(
+      {Key? key,
+      required this.handler,
+      this.rootinstanceName,
+      this.isReturnable = false})
+      : super(key: key);
 
   @override
   _ModListPageState createState() => _ModListPageState();
@@ -37,30 +50,35 @@ class ModListPage extends StatefulWidget {
 class _ModListPageState extends State<ModListPage>
     with SingleTickerProviderStateMixin {
   ScrollController _scrollController = ScrollController();
-  ScrollController _secondController = ScrollController();
   late Widget addButton;
   GlobalKey key = new GlobalKey();
   List installContollers = [];
-  List modpacklist = [];
-  late Api _handler;
 
-  Future<dynamic> get mv async {
-    return await _handler.getAllMV();
-  }
+  List<Widget> filters = [];
 
-  Future<List> get modpacklistfuture async {
-    print("get modrinth future");
-    var returntype = await _handler.getModpackList();
-    Future.delayed(Duration(milliseconds: 200)).then((value) {
-      _scrollController.addListener(() async {
-        if (_scrollController.position.pixels ==
-            (_scrollController.position.maxScrollExtent)) {
-          print('new');
-          await getMoreData();
-        }
-      });
-    });
-    return returntype;
+  List<String> categories = [];
+
+  List<String> mcVersions = [];
+
+  Trigger _trigger = Trigger();
+
+  List? objects;
+
+  bool hasError = false;
+
+  bool get hasConnection => InternetConnectionCheckerHelper().hasConnection && !hasError ;
+
+  Future<void> modpackInit() async {
+    try {
+    categories = await widget.handler.getCategories();
+    mcVersions = await widget.handler.getAllMV();
+    objects = await widget.handler.getModpackList();
+    } catch (e) {
+      print(e);
+      hasError = true;
+    }
+    
+    setState(() {});
   }
 
   bool iscalled = false;
@@ -70,13 +88,14 @@ class _ModListPageState extends State<ModListPage>
     if (iscalled) return;
     iscalled = true;
     print('getmore data');
-    List rawModpacks = await _handler.getMoreModpacks();
-    modpacklist.addAll(rawModpacks);
+    List rawModpacks = await widget.handler.getMoreModpacks();
+    objects!.addAll(rawModpacks);
     installContollers.addAll(List.generate(
         rawModpacks.length,
         (index) => InstallController(
-            handler: _handler,
-            modpackData: _handler.convertToLiteUMF(rawModpacks[index]))));
+            handler: widget.handler,
+            modpackData: widget.handler.convertToLiteUMF(rawModpacks[index]),
+            processid: widget.rootinstanceName)));
     setState(() {});
     iscalled = false;
   }
@@ -92,299 +111,243 @@ class _ModListPageState extends State<ModListPage>
 
   @override
   void initState() {
-    _handler = ApiHandler().getApi(widget.providerString);
-    addButton = CircularButton(
-      child: Icon(
-        Icons.add,
-        color: Colors.grey,
-      ),
-      height: 40,
-      width: 40,
-      onClick: () {
-        int index = filters.length - 1;
-
-        setState(() {
-          filters.insert(
-            index,
-            Padding(
-                padding: EdgeInsets.only(left: 5, right: 10),
-                child: Dropdownmenu(
-                  isRemovalIcon: true,
-                  child: SvgPicture.asset(
-                    'assets/svg/cancel-icon.svg',
-                    color: Theme.of(context).textTheme.bodySmall!.color,
-                  ),
-                  onremove: (text) {
-                    key = new GlobalKey();
-                    modpacklist = [];
-                    _handler.removeCategory(text);
-                    removeAtIndex(index);
-                  },
-                  useOverlay: false,
-                  registry: filterStrings,
-                  onchange: (text, oldtext) {
-                    key = new GlobalKey();
-
-                    _handler.addCategory(text, oldtext);
-                    setState(() {
-                      modpacklist = [];
-                    });
-                  },
-                )),
-          );
-        });
-      },
-    );
-
-    filters.insert(0, addButton);
-
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => postFrameCallback(context));
     super.initState();
   }
 
-  List<Widget> filters = [];
+  void postFrameCallback(context) {
+    _scrollController.addListener(() async {
+      if (_scrollController.position.pixels ==
+          (_scrollController.position.maxScrollExtent)) {
+        print('new');
+        await getMoreData();
+      }
+    });
+
+    modpackInit();
+  }
+  
+   void reload() async{
+
+    objects = null;
+     _trigger.trigger();
+    await modpackInit();
+    _trigger.trigger();
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: InternetConnectionChecker().onStatusChange,
       builder: (context, snapshot) {
-        bool hasConnection = InternetConnectionCheckerHelper().hasConnection;
-
-        return Container(
-            clipBehavior: Clip.antiAlias,
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              color: Theme.of(context).colorScheme.surfaceVariant,
-            ),
-            child: hasConnection
-                ? Stack(children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding:
-                              EdgeInsets.only(top: 70, left: 30, bottom: 9),
-                          child: SlideInAnimation(
-                              duration: Duration(milliseconds: 1000),
-                              child: Text(
-                                AppLocalizations.of(context)!.modpacksProvided +
-                                    ":",
-                                style: Theme.of(context)
-                                    .typography
-                                    .black
-                                    .bodySmall,
-                              )),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 30, bottom: 28),
-                          child: SlideInAnimation(
-                              child: Text(
-                            _handler.getTitlename(),
-                            style:
-                                Theme.of(context).typography.black.displaySmall,
-                          )),
-                        ),
-                        Divider.CustomDivider(
-                          size: 14,
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Expanded(
-                            child: FutureBuilder(
-                          key: key,
-                          future: modpacklistfuture,
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return Center(
-                                child: SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child:
-                                      LoadingAnimationWidget.staggeredDotsWave(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          size: 30),
-                                ),
-                              );
-                            }
-
-                            if (snapshot.hasData) {
-                              print(_handler.getTitlename());
-                              print('rebuld in ModList');
-                              if (modpacklist.length < 1) {
-                                modpacklist = snapshot.data ?? [];
-                                installContollers = List.generate(
-                                    modpacklist.length,
-                                    (index) => InstallController(
-                                        isVersion: false,
-                                        handler: _handler,
-                                        modpackData: _handler.convertToLiteUMF(
-                                            modpacklist[index])));
-                              }
-                              return ShaderMask(
-                                  shaderCallback: (Rect rect) {
-                                    return const LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Color.fromARGB(255, 177, 70, 21),
-                                        Colors.transparent,
-                                        Colors.transparent,
-                                        Color.fromARGB(0, 155, 39, 176)
-                                      ],
-                                      stops: [
-                                        0.0,
-                                        0.08,
-                                        0.6,
-                                        1.0
-                                      ], // 10% purple, 80% transparent, 10% purple
-                                    ).createShader(rect);
-                                  },
-                                  blendMode: BlendMode.dstOut,
-                                  child: ListView.builder(
-                                      controller: _scrollController,
-                                      itemCount: modpacklist.length + 1,
-                                      itemBuilder: ((context, index) {
-                                        if (index == modpacklist.length) {
-                                          print("returned");
-                                          return SizedBox(
-                                              height: 100,
-                                              child: Center(
-                                                  child: LoadingAnimationWidget
-                                                      .staggeredDotsWave(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary,
-                                                          size: 30)));
-                                        }
-
-                                        InstallController installcontroller =
-                                            installContollers[index];
-
-                                        return BrowseCard(
-                                          key: Key(installcontroller.processId),
-                                          installModel:
-                                              installcontroller.installModel,
-                                          handlerString: widget.providerString,
-                                          processId:
-                                              installcontroller.processId,
-                                          modpackData:
-                                              installcontroller.modpackData,
-                                          onCancel: () {
-                                            installcontroller.cancel();
-                                          },
-                                          onDownload: () async {
-                                            installcontroller.install(
-                                                version: _handler.version);
-                                          },
-                                          onOpen: () async {
-                                            installcontroller.start();
-                                          },
-                                        );
-                                      })));
-                            }
-                            ;
-
-                            return Container();
-                          },
-                        ))
-                      ],
+        
+        
+          return Container(
+        clipBehavior: Clip.antiAlias,
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Theme.of(context).colorScheme.surfaceVariant,
+        ),
+        child: Stack(children: [
+            Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 70, left: 30, bottom: 9),
+                child: SlideInAnimation(
+                    duration: Duration(milliseconds: 1000),
+                    child: Text(
+                      AppLocalizations.of(context)!.modpacksProvided + ":",
+                      style: Theme.of(context).typography.black.bodySmall,
+                    )),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 30, bottom: 28),
+                child: SlideInAnimation(
+                    child: Text(
+                  widget.handler.getTitlename(),
+                  style: Theme.of(context).typography.black.displaySmall,
+                )),
+              ),
+              Divider.CustomDivider(
+                size: 14,
+              ),
+              SizedBox(
+                height: 8,
+              ),
+           AnimatedBuilder(animation: _trigger, builder: (context, child) =>  objects == null  
+                  ? Container()
+                  :  Expanded(child:   FadeInAnimation(child: buildModpackList(context))))
+            ],
+          ), 
+         objects != null && hasConnection  ?   Positioned.fill(
+              top: 12,
+              right: 12,
+              child: FadeInAnimation(child:  SlideInAnimation(curve: Curves.easeOutExpo, child: Container(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(
+                      width: 10,
                     ),
-                    Positioned.fill(
-                        top: 12,
-                        right: 12,
-                        child: Container(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                  child: Align(
-                                      alignment: Alignment.topRight,
-                                      child: FutureBuilder(
-                                          future: _handler.getCategories(),
-                                          builder: ((context, snapshot) {
-                                            if (snapshot.hasData) {
-                                              filterStrings = snapshot.data!;
-                                              return SingleChildScrollView(
-                                                  controller: _secondController,
-                                                  reverse: true,
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: filters,
-                                                  ));
-                                            } else {
-                                              return Container(
-                                                width: double.infinity,
-                                              );
-                                            }
-                                          })))),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              FutureBuilder(
-                                  future: mv,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      return SizedBox(
-                                          width: 220,
-                                          child: Dropdownmenu(
-                                            useOverlay: false,
-                                            registry: snapshot.data,
-                                            onchange: (text, oldtext) {
-                                              key = new GlobalKey();
+                    Expanded(
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: FilterList(
+                              categories: categories,
+                              addCategory: (category) {
+                                widget.handler.addCategory(category);
+                              },
+                              removeCategory: (category) {  
+                                print("remove");
+                                widget.handler.removeCategory(category);
+                                reload();
+                              },
+                            ))),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Dropdownmenu(
+                      registry: mcVersions,
+                      onchange: (text, oldtext) {
+                        key = new GlobalKey();
 
-                                              _handler.searchMV(text);
-                                              setState(() {
-                                                modpacklist = [];
-                                              });
-                                            },
-                                          ));
-                                    }
-                                    return SizedBox(
-                                      width: 215,
-                                    );
-                                  }),
+                        widget.handler.searchMV(text);
+                        reload();
+                      },
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Searchbar.Searchbar(
+                      onchange: (text) {
+                        querytext = text;
+                      },
+                      onsubmit: () {
+                        key = new GlobalKey();
+                        print('querytext: $querytext');
+                        widget.handler.query = querytext;
+                        reload();
+                      },
+                    ),
+                  ],
+                ),
+              )))) : Container(),
+          widget.isReturnable
+              ? Positioned(
+                  top: 0,
+                  left: 20,
+                  child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          width: 200,
+                          height: 50,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Transform.rotate(
+                                  angle: 1.6,
+                                  child: SvgPicture.asset(
+                                    'assets/svg/dropdown-icon.svg',
+                                    height: 8,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  )),
+                              Padding(
+                                  padding: EdgeInsets.only(left: 14, bottom: 1),
+                                  child: Text(
+                                      AppLocalizations.of(context)!.homepage,
+                                      style: Theme.of(context)
+                                          .typography
+                                          .black
+                                          .titleSmall)),
+                              Expanded(child: Container()),
                               SizedBox(
-                                width: 10,
-                              ),
-                              Searchbar.Searchbar(
-                                onchange: (text) {
-                                  querytext = text;
-                                },
-                                onsubmit: () {
-                                  key = new GlobalKey();
-                                  print('querytext: $querytext');
-                                  setState(() {
-                                    _handler.query = querytext;
-                                    modpacklist = [];
-                                  });
-                                },
-                              ),
+                                width: 15,
+                              )
                             ],
                           ),
-                        )),
-                  ])
-                : Center(
-                    child: OfflineIcon(
-                    size: 150,
-                  )));
-      },
-    );
+                        ),
+                      )))
+              : Container(),
+       objects == null ?   Center(
+                      child:  hasConnection ? SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: LoadingAnimationWidget.staggeredDotsWave(
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 30),
+                      ):  OfflineIcon(size: 50, text: hasConnection ? "Your are currently offline!" : "We couldn't establish a connection to ${widget.handler.getTitlename()}!",))
+                     : Container()
+        ])
+        );});
+  }
+
+  Widget buildModpackList(BuildContext context) {
+    print(widget.handler.getTitlename());
+    return Center(child: ShaderMask(
+        shaderCallback: (Rect rect) {
+          return const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 177, 70, 21),
+              Colors.transparent,
+              Colors.transparent,
+              Color.fromARGB(0, 155, 39, 176)
+            ],
+            stops: [
+              0.0,
+              0.08,
+              0.6,
+              1.0
+            ], // 10% purple, 80% transparent, 10% purple
+          ).createShader(rect);
+        },
+        blendMode: BlendMode.dstOut,
+        child: ListView.builder(
+            controller: _scrollController,
+            itemCount: objects!.length + 1,
+            itemBuilder: ((context, index) {
+              if (index == objects!.length) {
+                return SizedBox(
+                    height: 100,
+                    child: Center(
+                        child: LoadingAnimationWidget.staggeredDotsWave(
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 30)));
+              }
+              print("generating new InstallController...");
+              InstallController installcontroller = InstallController(
+              isVersion: false,
+              handler: widget.handler,
+              modpackData: widget.handler.convertToLiteUMF(objects![index]),
+              processid: widget.rootinstanceName);
+
+              return BrowseCard(
+                key: Key(installcontroller.processId),
+                installModel: installcontroller.installModel,
+                handlerString: widget.handler.getidname,
+                processId: installcontroller.processId,
+                modpackData: installcontroller.modpackData,
+                onCancel: () {
+                  installcontroller.cancel();
+                },
+                onDownload: () async {
+                  installcontroller.install(version: widget.handler.version);
+                },
+                onOpen: () async {
+                  installcontroller.start();
+                },
+              );
+            }))));
   }
 }

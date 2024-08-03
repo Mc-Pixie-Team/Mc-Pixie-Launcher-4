@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbols.dart';
+import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/modrinth/modrinth_install.dart';
@@ -16,7 +18,7 @@ import 'package:mclauncher4/src/tasks/utils/path.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart' as p;
 
 class CurseforgeInstaller implements ProviderInstaller {
   Map<String, String> userHeader = {
@@ -27,6 +29,67 @@ class CurseforgeInstaller implements ProviderInstaller {
   };
 
   final baseUrl = "https://api.curseforge.com";
+
+  @override
+  Future installFile(
+      {required UMF umfData,
+      required String instanceName,
+      required InstallModel installModel}) async {
+    installModel.setInstallState(InstallState.installing, notify: false);
+    installModel.setState('Installing ${umfData.name ?? "Mod"} ');
+
+    var modpackData = umfData.original;
+    var fullModpackData;
+
+    // If classid is not available we need to get the whole project
+    final res2 = await http.get(
+        Uri.parse('$baseUrl/v1/mods/${modpackData["modId"]}'),
+        headers: userHeader);
+    if (res2.statusCode != 200) {
+      throw res2.statusCode;
+    }
+    fullModpackData = await jsonDecode(utf8.decode(res2.bodyBytes))["data"];
+
+
+    final resClassCatergories = await http.get(Uri.parse('$baseUrl/v1/categories?gameId=432&classesOnly=true'), headers: userHeader);
+
+    List<dynamic> classCatergories = await jsonDecode(utf8.decode(resClassCatergories.bodyBytes))["data"];
+
+    var id = classCatergories.singleWhere((element) => element["id"] == fullModpackData["classId"])["id"];
+
+    ObjectType? type;
+
+    switch (id) {
+      case 6:
+        type = ObjectType.mod;
+      case 6552:
+        type = ObjectType.shader;
+      case 12:
+        type = ObjectType.resource;
+      case 17:
+        type = ObjectType.world;
+      default:
+        throw "Couldn't find type";
+    }
+
+    var path = p.join(getInstancePath(), instanceName,
+        ObjectTypeTools.todir(type), modpackData["fileName"]);
+    var url;
+
+    if (modpackData["downloadUrl"] == "" ||
+        modpackData["downloadUrl"] == null) {
+      url =
+          'https://www.curseforge.com/api/v1/mods/${fullModpackData["id"]}/files/${modpackData["id"]}/download';
+    } else {
+      url = modpackData["downloadUrl"];
+    }
+
+    print(url);
+
+    await Downloader(url, path).startDownload(onProgress: (p0) {
+      installModel.setProgress(p0);
+    });
+  }
 
   @override
   Future install(
@@ -68,7 +131,7 @@ class CurseforgeInstaller implements ProviderInstaller {
 
     Downloader _downloader = Downloader(
         modpackData["downloadUrl"],
-        path.join(
+        p.join(
             getTempCommandPath(), instanceName, "modpack-$instanceName.zip"));
 
     installModel.setState("Downloading Project");
@@ -86,19 +149,19 @@ class CurseforgeInstaller implements ProviderInstaller {
         });
 
     Map manifest = jsonDecode(
-        File(path.join(getTempCommandPath(), instanceName, "manifest.json"))
+        File(p.join(getTempCommandPath(), instanceName, "manifest.json"))
             .readAsStringSync());
 
     Utils.copyDirectory(
-        source: Directory(path.join(
-            getTempCommandPath(), instanceName, manifest["overrides"])),
-        destination: Directory(path.join(getInstancePath(), instanceName)));
+        source: Directory(
+            p.join(getTempCommandPath(), instanceName, manifest["overrides"])),
+        destination: Directory(p.join(getInstancePath(), instanceName)));
 
-    await File(path.join(
-            getInstancePath(), instanceName, "curseforge.manifest.json"))
+    await File(
+            p.join(getInstancePath(), instanceName, "curseforge.manifest.json"))
         .writeAsString(jsonEncode(manifest));
 
-    await Directory(path.join(getTempCommandPath(), instanceName))
+    await Directory(p.join(getTempCommandPath(), instanceName))
         .delete(recursive: true);
 
     final downloads_at_same_time = 10;
@@ -151,7 +214,7 @@ class CurseforgeInstaller implements ProviderInstaller {
 
         if (url == null) throw "Cannot find any download url";
         print("using url: " + url + " with: " + filename.toString());
-        var filepath = path.join(
+        var filepath = p.join(
             getInstancePath(), instanceName, innerDownloadPath, filename);
         Downloader _downloader = Downloader(url, filepath);
 
@@ -192,8 +255,7 @@ class CurseforgeInstaller implements ProviderInstaller {
     // String destination =
     //     path.join(getInstancePath(), processId, "curseforge.manifest.json");
     List manifest = (jsonDecode(
-        await File(path.join(getInstancePath(), "manifest.json"))
-            .readAsString()));
+        await File(p.join(getInstancePath(), "manifest.json")).readAsString()));
     UMF? umfData;
     for (var modpack in manifest) {
       if (modpack["processId"] == processId) {

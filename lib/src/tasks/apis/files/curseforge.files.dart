@@ -53,15 +53,8 @@ class CurseforgeFiles {
 
     final mod = jsonDecode(utf8.decode(res2.bodyBytes))["data"];
     mod["filepath"] = filepath;
-    print(
-        "filepath: $filepath, fingerprint:$fingerprint, name: ${mod["name"]}");
-    return UMF(
-      name: mod["name"],
-      author: mod["authors"][0]["name"],
-      icon: mod["logo"]["url"],
-      downloads: mod["downloadCount"],
-      type: ObjectType.mod,
-      original: mod,
-    );
+    mod["fileId"] = file[0]["file"]["id"];
+    print("filepath: $filepath, fingerprint:$fingerprint, name: ${mod["name"]}");
+    return UMF(name: mod["name"], author: mod["authors"][0]["name"],icon: mod["logo"]["url"],downloads: mod["downloadCount"], type: ObjectType.mod,  original: mod, );
   }
 }

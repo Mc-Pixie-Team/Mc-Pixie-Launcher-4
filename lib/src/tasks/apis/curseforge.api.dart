@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/curseforge/curseforge_install.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
@@ -15,6 +16,9 @@ class CurseforgeApi implements Api {
   @override
   String? version = "";
 
+  @override
+  ObjectType type = ObjectType.modpack;
+
   Map<String, String> userHeader = {
     "Content-type": "application/json",
     "Accept": "application/json",
@@ -27,10 +31,34 @@ class CurseforgeApi implements Api {
   int index = 0;
   int pageSize = 50;
   List categoriesSearch = [];
+  
+  String getClassid() {
+        var classid;
+    switch(this.type) {
+      case ObjectType.mod:
+        classid = 6;
+      case ObjectType.shader:
+        classid =  6552;
+      case ObjectType.resource:
+        classid = 12;
+      case ObjectType.world:
+        classid = 17;
+      default:
+        classid = 4471;
+    }
+    return classid.toString();
+  } 
+
+  
+
 
   @override
-  void addCategory(String name, String oldtext) {
-    categoriesSearch.remove(oldtext);
+  void setObjectType(ObjectType type) {
+    this.type = type;
+  }
+
+  @override
+  void addCategory(String name) {
     categoriesSearch.add(name);
   }
 
@@ -47,8 +75,8 @@ class CurseforgeApi implements Api {
         icon: modpackData["logo"]["thumbnailUrl"],
         author: modpackData["authors"][0]["name"],
         categories: categories,
-        MLVersion: null,
-        MCVersion: modpackData["latestFiles"][0]["gameVersions"][0]);
+        MCVersion: modpackData["latestFiles"][0]["gameVersions"][0],
+        type: this.type);
   }
 
   @override
@@ -64,8 +92,9 @@ class CurseforgeApi implements Api {
   }
 
   Future<List> _requestCategories() async {
+
     final res = await http.get(
-        Uri.parse('$baseUrl/v1/categories?gameId=432&classId=4471'),
+        Uri.parse('$baseUrl/v1/categories?gameId=432&classId=${getClassid()}'),
         headers: userHeader);
     final hits = await jsonDecode(utf8.decode(res.bodyBytes))["data"];
     return hits;
@@ -113,6 +142,7 @@ class CurseforgeApi implements Api {
         icon: modpackData["logo"]["thumbnailUrl"],
         author: modpackData["authors"][0]["name"],
         MCVersion: mcVersion,
+        type: this.type
       ));
     }
 
@@ -152,17 +182,18 @@ class CurseforgeApi implements Api {
             : modpackVersion["sortableGameVersions"][0]["gameVersionName"];
 
     return UMF(
-      original: modpackVersion,
-      categories: umf.categories,
-      description: umf.description,
-      name: umf.original["name"],
-      versionName: modpackVersion["displayName"],
-      downloads: modpackVersion["downloadCount"],
-      icon: umf.original["logo"]["thumbnailUrl"],
-      author: umf.original["authors"][0]["name"],
-      body: body,
-      MCVersion: mcVersion,
-    );
+        original: modpackVersion,
+        categories: umf.categories,
+        description: umf.description,
+        name: umf.original["name"],
+        versionName: modpackVersion["displayName"],
+        downloads: modpackVersion["downloadCount"],
+        icon: umf.original["logo"]["thumbnailUrl"],
+        author: umf.original["authors"][0]["name"],
+        body: body,
+        MCVersion: mcVersion,
+        type: this.type
+      );
   }
 
   @override
@@ -191,9 +222,10 @@ class CurseforgeApi implements Api {
     }
 
     String url =
-        '$baseUrl/v1/mods/search?index=0&pageSize=50&gameId=432&sortField=1&sortOrder=desc&classId=4471&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categories';
+        '$baseUrl/v1/mods/search?index=0&pageSize=50&gameId=432&sortField=1&sortOrder=desc&classId=${getClassid()}&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categories';
     print(url);
     final res = await http.get(Uri.parse(url), headers: userHeader);
+    print(res.statusCode);
     final hits = jsonDecode(utf8.decode(res.bodyBytes))["data"];
     return hits;
   }
@@ -217,7 +249,7 @@ class CurseforgeApi implements Api {
     }
 
     String url =
-        '$baseUrl/v1/mods/search?index=$index&pageSize=$pageSize&gameId=432&sortField=1&sortOrder=desc&classId=4471&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categoriesSearch';
+        '$baseUrl/v1/mods/search?index=$index&pageSize=$pageSize&gameId=432&sortField=1&sortOrder=desc&classId=${getClassid()}&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categoriesSearch';
     print(url);
     final res = await http.get(Uri.parse(url), headers: userHeader);
     final hits = jsonDecode(utf8.decode(res.bodyBytes))["data"];

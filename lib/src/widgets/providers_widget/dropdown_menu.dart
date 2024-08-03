@@ -15,7 +15,7 @@ class Dropdownmenu extends StatefulWidget {
       this.child,
       this.onremove,
       this.isRemovalIcon = false,
-      this.useOverlay = true,
+      this.useOverlay = false,
       this.onchange,
       this.registry})
       : super(key: key);
@@ -227,99 +227,82 @@ class _DropdownmenuState extends State<Dropdownmenu>
                   builder: (context, child) {
                     globalRadius = _animation.value < 1 ? 0 : 20;
 
-                    return Container(
-                      key: key,
-                      width: 235,
-                      height: 41,
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.elliptical(20, 20),
-                              topRight: Radius.elliptical(20, 20),
-                              bottomLeft:
-                                  Radius.elliptical(globalRadius, globalRadius),
-                              bottomRight: Radius.elliptical(
-                                  globalRadius, globalRadius))),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Transform.rotate(
-                            angle: (-1.59 * _animation.value),
-                            child: SvgPicture.asset(
-                              'assets/svg/dropdown-icon.svg',
-                              color: Color.fromARGB(255, 148, 148, 148),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Padding(
-                              padding: EdgeInsets.only(bottom: 0),
-                              child: SizedBox(
-                                  height: 25,
-                                  width: 135,
-                                  child: EditableText(
-                                    readOnly: true,
-                                    selectionColor: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.3),
-                                    cursorHeight: 20,
-                                    cursorOffset: Offset(0, 2),
-                                    controller: _textController,
-                                    backgroundCursorColor:
-                                        Color.fromARGB(0, 168, 14, 14),
-                                    focusNode: _focusNode,
-                                    cursorColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    style: TextStyle(
-                                        fontSize: 17,
-                                        color: Theme.of(context)
-                                            .typography
-                                            .black
-                                            .labelMedium!
-                                            .color!
-                                            .withOpacity(0.86)),
-                                  ))),
-                          Expanded(
-                            child: Container(),
-                          ),
-                          widget.isRemovalIcon
-                              ? GestureDetector(
-                                  onTap: () => removeElement(),
-                                  child: widget.child ??
-                                      SvgPicture.asset(
-                                        'assets/svg/filter-icon.svg',
-                                        color: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall!
-                                            .color,
-                                      ))
-                              : widget.child ??
+                return Container(
+                  key: key,
+                  width: 205,
+                  height: 41,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.elliptical(20, 20),
+                          topRight: Radius.elliptical(20, 20),
+                          bottomLeft: Radius.elliptical(globalRadius, globalRadius),
+                          bottomRight: Radius.elliptical(globalRadius, globalRadius))),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 16,
+                      ),
+                      Transform.rotate(
+                        angle: (-1.59 * _animation.value),
+                        child: SvgPicture.asset(
+                          'assets/svg/dropdown-icon.svg',
+                          color: Color.fromARGB(255, 148, 148, 148),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 16,
+                      ),
+                     
+                      Padding(
+                          padding: EdgeInsets.only(bottom: 0),
+                          child: SizedBox(
+                              height: 25,
+                              width: 105,
+                              child: EditableText(
+                                readOnly: true,
+                                selectionColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                                cursorHeight: 20,
+                                cursorOffset: Offset(0, 2),
+                                controller: _textController,
+                                backgroundCursorColor: Color.fromARGB(0, 168, 14, 14),
+                                focusNode: _focusNode,
+                                cursorColor: Theme.of(context).colorScheme.primary,
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    color: Theme.of(context).typography.black.labelMedium!.color!.withOpacity(0.86)),
+                              ))),
+                      Expanded(
+                        child: Container(),
+                      ),
+                      widget.isRemovalIcon
+                          ? GestureDetector(
+                              onTap: () => removeElement(),
+                              child: widget.child ??
                                   SvgPicture.asset(
                                     'assets/svg/filter-icon.svg',
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .color,
-                                  ),
-                          SizedBox(
-                            width: 16,
-                          ),
-                        ],
+                                    color: Theme.of(context).textTheme.bodySmall!.color,
+                                  ))
+                          : widget.child ??
+                              SvgPicture.asset(
+                                'assets/svg/filter-icon.svg',
+                                color: Theme.of(context).textTheme.bodySmall!.color,
+                              ),
+                      SizedBox(
+                        width: 16,
                       ),
-                    );
-                  })),
-          secmenu
-              ? Transform.translate(
-                  offset: Offset(0, -2),
-                  child: _getDropDownWidget(),
-                )
-              : Container()
-        ]);
+                    ],
+                  ),
+                );
+              })),
+      secmenu
+          ? Transform.translate(
+              offset: Offset(0, -2),
+              child: _getDropDownWidget(),
+            )
+          : Container()
+    ]);
   }
 }

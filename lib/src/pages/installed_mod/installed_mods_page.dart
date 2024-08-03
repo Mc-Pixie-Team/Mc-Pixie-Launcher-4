@@ -8,9 +8,11 @@ import 'package:http/http.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
 import 'package:mclauncher4/src/tasks/apis/files/files_handler.dart';
+import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
 import 'package:mclauncher4/src/tasks/murmur_hash.dart';
+import 'package:mclauncher4/src/theme/custom_page_transition.dart';
 import 'package:mclauncher4/src/widgets/animated_text.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:path/path.dart' as p;
@@ -22,15 +24,21 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ModsPage extends StatefulWidget {
   List<UMF> files;
-  ModsPage({Key? key, required this.files}) : super(key: key);
+  String instanceName;
+  ObjectType type;
+  ModsPage({Key? key, required this.files, required this.instanceName, required this.type}) : super(key: key);
 
   @override
   _ModsPageState createState() => _ModsPageState();
 }
 
 class _ModsPageState extends State<ModsPage> {
+
+        
+
   @override
   Widget build(BuildContext context) {
+    widget.files.removeWhere((element) => element.type != widget.type);
     print("build");
     return Column(children: [
       SizedBox(
@@ -53,17 +61,7 @@ class _ModsPageState extends State<ModsPage> {
           padding: EdgeInsets.all(9.0),
           child: Row(
             children: [
-              Text(
-                widget.files.length.toString(),
-                style: Theme.of(context)
-                    .typography
-                    .black
-                    .bodySmall!
-                    .copyWith(color: Theme.of(context).colorScheme.outline),
-              ),
-              SizedBox(
-                width: 60,
-              ),
+              
               Text(
                 AppLocalizations.of(context)!.name,
                 style: Theme.of(context)
@@ -73,33 +71,28 @@ class _ModsPageState extends State<ModsPage> {
                     .copyWith(color: Theme.of(context).colorScheme.outline),
               ),
               SizedBox(
-                width: 310,
+                width: 340,
               ),
-              Text(" " + AppLocalizations.of(context)!.author,
-                  style: Theme.of(context)
-                      .typography
-                      .black
-                      .bodySmall!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
+              Text(AppLocalizations.of(context)!.author,
+                  style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline)),
               SizedBox(
-                width: 163,
+                width: 210,
               ),
               Text(AppLocalizations.of(context)!.download,
-                  style: Theme.of(context)
-                      .typography
-                      .black
-                      .bodySmall!
-                      .copyWith(color: Theme.of(context).colorScheme.outline))
+                  style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline)),
+              Expanded(child: SizedBox.expand()),
+             Text(
+                widget.files.length.toString(),
+                style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline),
+              ),
             ],
           ),
         )),
         GestureDetector(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ModListPage(providerString: "curseforge")));
+              var curseforgeapi = CurseforgeApi();
+              curseforgeapi.setObjectType(widget.type);
+              Navigator.push(context, SlowCupertinoPageRoute(allowSnapshotting: false, builder: (context) => ModListPage(handler: curseforgeapi, rootinstanceName: widget.instanceName, isReturnable: true,)));
             },
             child: Container(
               height: 38,
@@ -139,86 +132,77 @@ class _ModsPageState extends State<ModsPage> {
               animationCurve: Curves.easeOutExpo,
               scrollSpeed: 0.5,
               durationMS: 400,
-              builder: (context, _scrollController, physics) =>
-                  ListView.builder(
-                      physics: physics,
-                      controller: _scrollController,
-                      itemCount: widget.files.length,
-                      itemBuilder: (context, index) {
-                        var current = widget.files[index];
-                        return Container(
-                          margin: EdgeInsets.only(
-                            left: 38,
-                            right: 49,
+              builder: (context, _scrollController, physics) => ListView.builder(
+                  physics: physics,
+                  controller: _scrollController,
+                  itemCount: widget.files.length,
+                  itemBuilder: (context, index) {
+                    var current = widget.files[index];
+                    return Container(
+                      margin: EdgeInsets.only(
+                        left: 38,
+                        right: 49,
+                      ),
+                      padding: EdgeInsets.only(
+                        left: 5,
+                      ),
+                      decoration: ShapeDecoration(
+                        color: index.isEven ? null : Theme.of(context).colorScheme.surface,
+                        shape: SmoothRectangleBorder(
+                          borderRadius: SmoothBorderRadius(
+                            cornerRadius: 7,
+                            cornerSmoothing: 1,
                           ),
-                          padding: EdgeInsets.only(
-                            left: 20,
-                          ),
-                          decoration: ShapeDecoration(
-                            color: index.isOdd
-                                ? null
-                                : Theme.of(context).colorScheme.surface,
-                            shape: SmoothRectangleBorder(
-                              borderRadius: SmoothBorderRadius(
-                                cornerRadius: 7,
-                                cornerSmoothing: 1,
-                              ),
-                            ),
-                          ),
-                          child: ModItem(
-                            name: current.name ?? "",
-                            downloads: current.downloads,
-                            author: current.author,
-                          ),
-                        );
-                      })))
+                        ),
+                      ),
+                      child: ModItem(
+                        imageuri: current.icon,
+                        name: current.name ?? "",
+                        downloads: current.downloads,
+                        author: current.author,
+                      ),
+                    );
+                  })))
     ]);
   }
 }
 
 class ModItem extends StatelessWidget {
   String name;
+  String? imageuri;
   String? author;
   int? downloads;
-  ModItem(
-      {Key? key,
-      required this.name,
-      required this.author,
-      required this.downloads})
-      : super(key: key);
+  ModItem({Key? key, required this.name, required this.author, required this.downloads, this.imageuri}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        height: 50,
+        height: 58,
         width: double.infinity,
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                  width: 300,
+        child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
+         Container(margin: EdgeInsets.only(top: 7, left: 7, bottom: 7, right: 22), clipBehavior: Clip.antiAlias, decoration: BoxDecoration(borderRadius: BorderRadius.circular(9),), child: imageuri == null ? SizedBox.shrink() : Image.network(imageuri!)),
+          SizedBox(
+              width: 300,
+              child: Text(
+                this.name,
+              )),
+          SizedBox(
+            width: 12,
+          ),
+          SizedBox(
+              width: 250,
+              child: Align(
+                  alignment: Alignment.centerLeft,
                   child: Text(
-                    this.name,
-                  )),
-              SizedBox(
-                width: 60,
-              ),
-              SizedBox(
-                  width: 300,
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        this.author ??
-                            AppLocalizations.of(context)!.notAvailable,
-                        style: Theme.of(context).typography.black.bodyMedium,
-                      ))),
-              this.downloads == null
-                  ? Container()
-                  : Text(
-                      this.downloads!.numeral(),
-                      style: Theme.of(context).typography.black.bodyMedium,
-                    )
-            ]));
+                    this.author ?? AppLocalizations.of(context)!.notAvailable,
+                    style: Theme.of(context).typography.black.bodyMedium,
+                  ))),
+          this.downloads == null
+              ? Container()
+              : Text(
+                  this.downloads!.numeral(),
+                  style: Theme.of(context).typography.black.bodyMedium,
+                )
+        ]));
   }
 }

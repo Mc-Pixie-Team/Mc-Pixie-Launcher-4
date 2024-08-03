@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/modrinth/modrinth_install.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
@@ -30,11 +31,19 @@ class ModrinthApi implements Api {
   String? version;
 
   @override
-  get getidname => "modrinth";
+  ObjectType type = ObjectType.modpack;
 
   @override
-  void addCategory(String name, String oldname) {
-    removeCategory(oldname);
+  get getidname => "modrinth";
+
+
+  @override
+  void setObjectType(ObjectType type) {
+    this.type = type;
+  }
+
+  @override
+  void addCategory(String name) {
     _facet.add(["categories:$name"]);
   }
 
@@ -150,6 +159,7 @@ class ModrinthApi implements Api {
         body: modpackData["body"],
         modloader: "Fabric",
         MCVersion: modpackData["latest_version"],
+        type: this.type,
         original: modpackData);
   }
 
@@ -182,6 +192,7 @@ class ModrinthApi implements Api {
           versionName: version["name"].toString(),
           description: modpackData["description"].toString(),
           downloads: version["downloads"],
+          type: this.type,
           original: version));
     }
     versions.sort(
@@ -219,17 +230,18 @@ class ModrinthApi implements Api {
         .firstWhere((element) => element["version_type"] == "release",
             orElse: () => null); // gets the newest version
 
-    return UMF(
-        categories: umf.categories,
-        icon: modpackproject["icon_url"],
-        MCVersion: modpackVersion["game_versions"].last,
-        modloader: modpackVersion["loaders"][0],
-        name: modpackproject["title"].toString(),
-        versionName: modpackVersion["name"].toString(),
-        description: modpackproject["description"].toString(),
-        downloads: modpackVersion["downloads"],
-        body: modpackproject["body"],
-        original: modpackVersion);
+     return UMF(
+      categories: umf.categories,
+          icon: modpackproject["icon_url"],
+          MCVersion: modpackVersion["game_versions"].last,
+          modloader: modpackVersion["loaders"][0],
+          name: modpackproject["title"].toString(),
+          versionName:  modpackVersion["name"].toString(),
+          description: modpackproject["description"].toString(),
+          downloads: modpackVersion["downloads"],
+          type: this.type,
+          body: modpackproject["body"],
+          original: modpackVersion);
   }
 
   @override

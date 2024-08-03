@@ -11,6 +11,7 @@ import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
 import 'package:mclauncher4/src/tasks/Models/start_message.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
+import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
 
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
@@ -215,29 +216,40 @@ class InstallController {
 
     var installer = startMessage.getHandler.getDownloaderObject();
     //Call the main installer
-    await installer.install(
-        umfData: startMessage.modpackData,
-        instanceName: startMessage.processId,
-        installModel: installModel);
+    if(startMessage.getModpackData.type == ObjectType.modpack) {
+        await installer.install(
+          umfData: startMessage.modpackData,
+          instanceName: startMessage.processId,
+          installModel: installModel);
+    }else {
+        await installer.installFile(
+          umfData: startMessage.modpackData,
+          instanceName: startMessage.processId,
+          installModel: installModel);
 
-    List manifest = [];
-    try {
-      manifest = jsonDecode(File(path.join(getInstancePath(), "manifest.json"))
-          .readAsStringSync());
-    } catch (e) {
-      print("couldnt accses manifest");
     }
 
-    Map manifestaddon = {
-      "processId": startMessage.processId,
-      "provider": startMessage.handler.getidname
-    };
-    manifestaddon.addAll(UMF.toJson(startMessage.modpackData));
+    if(startMessage.getModpackData.type == ObjectType.modpack) {
+          List manifest = [];
+       try {
+        manifest = jsonDecode(File(path.join(getInstancePath(), "manifest.json"))
+           .readAsStringSync());
+      } catch (e) {
+        print("couldnt accses manifest");
+     }
 
-    manifest.add(manifestaddon);
+      Map manifestaddon = {
+       "processId": startMessage.processId,
+       "provider": startMessage.handler.getidname
+     };
+      manifestaddon.addAll(UMF.toJson(startMessage.modpackData));
 
-    await File(path.join(getInstancePath(), "manifest.json"))
-        .writeAsString(jsonEncode(manifest));
+      manifest.add(manifestaddon);
+  
+      await File(path.join(getInstancePath(), "manifest.json"))
+          .writeAsString(jsonEncode(manifest));
+    }
+
 
     //Prining finish
     (args.first as SendPort).send(InstallerMessage(
@@ -268,8 +280,7 @@ class InstallController {
   }
 
   setUIChanges() {
-    print(' ab lengt ' +
-        InstalledModpacksUIHandler.installCardChildren.value.length.toString());
+if(modpackData.type == ObjectType.modpack) {
     if (InstalledModpacksUIHandler.installCardChildren.value
         .where((Widget element) => element.key == Key(processId))
         .isEmpty) {
@@ -282,8 +293,9 @@ class InstallController {
         ),
       ]);
     }
-    print('lengt ' +
-        InstalledModpacksUIHandler.installCardChildren.value.length.toString());
+}
+
+
 
     // Calls SidePanel instance
     StaticSidePanelController.controller.addToTaskWidget(

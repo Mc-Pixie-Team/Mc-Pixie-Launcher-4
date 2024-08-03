@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mclauncher4/src/tasks/apis/files/curseforge.files.dart';
 import 'package:mclauncher4/src/tasks/apis/files/files_helper.dart';
+import 'package:mclauncher4/src/tasks/models/disposable_stream.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:path/path.dart' as p;
 
-class FilesHandler with ChangeNotifier {
+class FilesHandler extends DisposableWidget with ChangeNotifier  {
   FilesHandler({required this.directoryPath, required this.types});
   List<String> subDirs = [];
   List<ObjectType> types;
@@ -20,30 +21,41 @@ class FilesHandler with ChangeNotifier {
   List<UMF> _files = [];
 
   List<UMF> get files => _files;
-  List<StreamSubscription<FileSystemEvent>> sub = [];
+
+  bool get isdisposed => _isdisposed;
+  bool _isdisposed = false;
+
+  Isolate? _isolate;
 
   late FileHelper _helper;
 
   void initialize() async {
     _helper = FileHelper(directoryPath: directoryPath);
+    _isdisposed = false;
 
-    var token = RootIsolateToken.instance!;
-    var files32 = await Isolate.run(
-        () => initializeContainingFiles(this.directoryPath, this.types, token));
-    _files.addAll(files32);
-    notifyListeners();
+   var token = RootIsolateToken.instance!;
+
+   final resultPort = ReceivePort();
+   _isolate = await Isolate.spawn(initializeContainingFiles, [ this.directoryPath, this.types,  token, resultPort.sendPort ]);
+   _files.addAll((await resultPort.first));
+   notifyListeners();
 
     for (var type in types) {
       var subDir = ObjectTypeTools.todir(type);
       var dir = Directory(p.join(directoryPath, subDir));
-      var csub = dir.watch().listen((event) => listener(event, type));
-      sub.add(csub);
-    }
+      if(!dir.existsSync()) dir.createSync(recursive: true);
+    dir.watch().listen((event) => listener(event, type)).canceledBy(this);
+  }
+    
   }
 
-  static Future<List<UMF>> initializeContainingFiles(String directoryPath,
-      List<ObjectType> types, RootIsolateToken token) async {
-    BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+  static Future<List<UMF>> initializeContainingFiles(List args) async {
+     String directoryPath = args[0];
+     List<ObjectType> types = args[1];
+     RootIsolateToken token = args[2];
+     SendPort responsePort = args[3];
+
+     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
 
     List<UMF> _files = [];
     var _helper = FileHelper(directoryPath: directoryPath);
@@ -61,6 +73,7 @@ class FilesHandler with ChangeNotifier {
     for (var type in types) {
       var subDir = ObjectTypeTools.todir(type);
       var dir = Directory(p.join(directoryPath, subDir));
+      if(!dir.existsSync()) dir.createSync(recursive: true);
       var items = dir.listSync();
 
       //Check if all items in directory are in instance
@@ -82,7 +95,7 @@ class FilesHandler with ChangeNotifier {
           (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
       _helper.write(_files);
     }
-    return _files;
+    Isolate.exit(responsePort, _files);
   }
 
   listener(FileSystemEvent event, ObjectType type) async {
@@ -103,11 +116,14 @@ class FilesHandler with ChangeNotifier {
     _helper.save(files);
     notifyListeners();
   }
-
+  @override
   void dispose() {
-    sub.forEach((csub) {
-      csub.cancel();
-    });
+    if(_isolate != null) {
+      _isolate!.kill();
+    }
+    
+    cancelSubscriptions();
+    _isdisposed = true;
     super.dispose();
   }
 

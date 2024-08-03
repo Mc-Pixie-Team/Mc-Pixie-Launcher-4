@@ -42,51 +42,44 @@ class _InstalledModPageState extends State<InstalledModPage> {
 
   @override
   void dispose() {
-    print("dispose");
-
+    if(!_handler.isdisposed) {
+       _handler.dispose();
+    }
     super.dispose();
   }
 
   @override
   void initState() {
+    super.initState();
+
+    List<ObjectType> types = [
+      ObjectType.mod,
+      ObjectType.resource,
+      ObjectType.shader,
+    ];
+
     _handler = FilesHandler(
-        directoryPath:
-            path.join(getInstancePath(), widget.controllerInstance.processId),
-        types: [ObjectType.mod, ObjectType.resource]);
+      directoryPath: path.join(getInstancePath(), widget.controllerInstance.processId), types: types);
 
     _handler.initialize();
 
-    widget.controllerInstance.addBeforeDeleteListener(() {
-      _handler.dispose();
+    widget.controllerInstance.addBeforeDeleteListener(() { 
+      if(!_handler.isdisposed) {
+       _handler.dispose();
+     }
     });
 
-    _pages = {
-      "Home": InstalledHomePage(
-        processId: widget.controllerInstance.processId,
-      ),
-      "Console": Container(),
-      "Mods": AnimatedBuilder(
-          key: Key("ted"),
-          animation: _handler,
-          builder: (context, child) {
-            List<UMF> sortedfiles = []..addAll(_handler.files);
-            sortedfiles
-                .removeWhere((element) => element.type != ObjectType.mod);
-            return ModsPage(files: sortedfiles);
-          }),
-      "ResourcePacks": AnimatedBuilder(
-          key: Key("te"),
-          animation: _handler,
-          builder: (context, child) {
-            List<UMF> sortedfiles = []..addAll(_handler.files);
-            sortedfiles
-                .removeWhere((element) => element.type != ObjectType.resource);
-            return ModsPage(files: sortedfiles);
-          }),
-      "Shaders": Container()
-    };
+    Map pagesTypes =  Map.fromIterable(types, key: (type) => ObjectTypeTools.toName(type), value: (type) => AnimatedBuilder(key: Key(type.toString()),animation: _handler, builder: (context, child) {
 
-    _pageKey = _pages.keys.first;
+       return ModsPage(files: _handler.files.toList(), type: type, instanceName: widget.controllerInstance.processId);}), );
+
+    _pages = {
+    "Home": InstalledHomePage(processId: widget.controllerInstance.processId,),
+    "Console": Container(),
+    ...pagesTypes
+  };
+
+    _pageKey = _pages.keys.toList()[3];
     // widget.controllerInstance.stdout.addListener(() {
     //   if (scrollController.hasClients) {
     //     scrollController.animateTo(scrollController.position.maxScrollExtent,
@@ -99,7 +92,7 @@ class _InstalledModPageState extends State<InstalledModPage> {
       }
     });
 
-    super.initState();
+    
   }
 
   onOpenFolder() {

@@ -157,4 +157,10 @@ class ModrinthInstaller implements ProviderInstaller {
 
     await _downloader.startDownload();
   }
+  
+  @override
+  Future installFile({required UMF umfData, required String instanceName, required InstallModel installModel}) {
+    // TODO: implement installFile
+    throw UnimplementedError();
+  }
 }

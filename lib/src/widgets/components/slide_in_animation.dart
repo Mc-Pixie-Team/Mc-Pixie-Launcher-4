@@ -7,7 +7,7 @@ class SlideInAnimation extends StatefulWidget {
   const SlideInAnimation({
     required this.child,
     this.curve = Curves.easeOutExpo,
-    this.duration = const Duration(milliseconds: 1500),
+    this.duration = const Duration(milliseconds: 1300),
   });
 
   final Duration duration;

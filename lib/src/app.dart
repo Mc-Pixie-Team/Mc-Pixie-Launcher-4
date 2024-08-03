@@ -9,6 +9,10 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/MSPage.dart';
+import 'package:mclauncher4/src/pages/user_page/user_page.dart';
+import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
+import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
 import 'package:mclauncher4/src/widgets/internet_connection_checker.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
@@ -22,7 +26,6 @@ import 'widgets/divider.dart' as div;
 import 'package:animations/animations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
@@ -149,7 +152,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     HomePage(),
     ModListPage(
-      providerString: "modrinth",
+     handler: ModrinthApi(),
       key: Key("modrinth"),
     ),
     Container(
@@ -158,7 +161,7 @@ class _MainPageState extends State<MainPage> {
     ),
     /* const Debugpage(), */
     ModListPage(
-      providerString: "curseforge",
+      handler: CurseforgeApi(),
       key: Key("curseforge"),
     ),
     Container(
@@ -173,7 +176,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     print("Main app init Called");
     // TODO: implement initState
-    MinecraftAccountUtils().initOnFirstStart();
+    MinecraftAccountUtils().saveAccounts([]);
     InstalledModpacksHandler.getPacksformManifest().then((value) {
       InstalledModpacksUIHandler.installCardChildren.value
           .removeWhere((element) {
@@ -245,12 +248,16 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  String test() {
+    return "hi";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
           // print(await SecureStorage().readSecureData("accounts"));
-
+   
           //  await SecureStorage.storage.delete(key: "test");
           //  await SecureStorage.storage.write(key: "test", value: "[${math.Random.secure().nextInt(25)}]", mOptions: MacOsOptions(accessibility: KeychainAccessibility.first_unlock_this_device));
           // await MinecraftAccountUtils().saveAccounts([]);
@@ -473,7 +480,9 @@ class _MainPageState extends State<MainPage> {
                     div.CustomDivider(
                       size: 20,
                     ),
-
+                    Expanded(child: Container()),
+                    //Text("OS: ${Platform.operatingSystemVersion}, Lang: ${Platform.localeName}", textAlign: TextAlign.center, style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Color.fromARGB(69, 189, 189, 189)),),
+                    SizedBox(height:15,)
                   ],
                 ),
               ),

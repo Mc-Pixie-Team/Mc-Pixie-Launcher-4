@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
+
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/murmur_hash.dart';
-import 'package:path/path.dart' as p;
+
 import 'package:http/http.dart' as http;
 
 class CurseforgeFiles {

@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:localstorage/localstorage.dart';
+
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/objects/minecraftUserDetails.dart';
-import 'package:mclauncher4/src/tasks/apis/api.dart';
-import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
+
 import 'package:mclauncher4/src/tasks/utils/keys.dart';
 
 class Microsoft {
@@ -43,6 +42,7 @@ class Microsoft {
   }
 
   Future<String> launchMSA() async {
+    // ignore: unused_local_variable
     var result;
     Secret keys = await SecretLoader(secretPath: "secrets.json").load();
     if (Platform.isWindows) {
@@ -55,7 +55,7 @@ class Microsoft {
         'https://login.live.com/oauth20_authorize.srf?client_id=${keys.azureClientId}&response_type=code&redirect_uri=http://localhost:25458&scope=XboxLive.signin%20offline_access&state=NOT_NEEDED&prompt=select_account'
       ]);
     }
-
+    
     String token = "";
     var server = await HttpServer.bind(InternetAddress.anyIPv6, 25458, shared: true);
     server.idleTimeout = Duration(seconds: 20);

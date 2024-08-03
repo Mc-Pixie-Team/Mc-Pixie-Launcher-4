@@ -6,7 +6,6 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mclauncher4/src/pages/installed_mod/installed_mods_page.dart';
 import 'package:mclauncher4/src/tasks/apis/files/curseforge.files.dart';
 import 'package:mclauncher4/src/tasks/apis/files/files_helper.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';

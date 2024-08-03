@@ -5,7 +5,6 @@ import 'package:mclauncher4/src/widgets/providers_widget/dropdown_menu.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
-import 'package:dotted_border/dotted_border.dart';
 
 class Debugpage extends StatefulWidget {
   const Debugpage({Key? key}) : super(key: key);

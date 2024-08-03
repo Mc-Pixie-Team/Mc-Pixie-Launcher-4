@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:async';
-import 'dart:ffi';
+
 import 'dart:io';
 import 'dart:convert';
 
@@ -20,12 +20,15 @@ class DiscordRP {
     if (csharpProcess != null) {
       throw DiscordRPException("The process is already initialized!", 403);
     }
+    // ignore: unused_local_variable
     var serviceExecutable =
         'C:/Program Files/dotnet/dotnet.exe'; // literally the .NET CLI
+    // ignore: unused_local_variable
     var serviceArgs = ['run', appID]; // or .EXE if on Windows...
     // csharpProcess = await Process.start(serviceExecutable, serviceArgs, workingDirectory: "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp");
     // print(csharpProcess);
 // Parse messages incoming from C# -> Dart
+    // ignore: unused_element
     dynamic onDataReceived(event) {
       try {
         var strMessage = utf8.decode(event);
@@ -83,6 +86,7 @@ class DiscordRP {
     };
     var jsonEncodedBody = jsonEncode(message);
     var contentLengthHeader = 'Content-Length: ${jsonEncodedBody.length}';
+    // ignore: unused_local_variable
     var messagePayload = contentLengthHeader + '\r\n\r\n${jsonEncodedBody}';
     //  (csharpProcess!).stdin.write(messagePayload);
 // TODO: track the message ID if replies are important
@@ -104,6 +108,7 @@ class DiscordRP {
     };
     var jsonEncodedBody = jsonEncode(message);
     var contentLengthHeader = 'Content-Length: ${jsonEncodedBody.length}';
+    // ignore: unused_local_variable
     var messagePayload = contentLengthHeader + '\r\n\r\n${jsonEncodedBody}';
     // (csharpProcess!).stdin.write(messagePayload);
     return true;

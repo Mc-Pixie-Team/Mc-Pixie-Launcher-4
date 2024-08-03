@@ -1,18 +1,11 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
-import 'package:mclauncher4/src/pages/user_page/side_panel_widget.dart';
-import 'package:mclauncher4/src/pages/user_page/text_field_with_enter.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 
-import 'package:uuid/v4.dart';
-import 'package:uuid/v5.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MSPage extends StatefulWidget {

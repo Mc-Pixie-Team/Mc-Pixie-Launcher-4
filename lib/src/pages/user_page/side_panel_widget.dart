@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/components/blured_container.dart';
 
+// ignore: must_be_immutable
 class SidePanelWidget extends StatefulWidget {
   SidePanelWidget(
       {Key? key, required this.title, required this.child, this.onpressed})

@@ -2,13 +2,11 @@ import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/user_page/side_panel_widget.dart';
 import 'package:mclauncher4/src/pages/user_page/text_field_with_enter.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
+
 import 'dart:ui' as ui;
-import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
+
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 
 class UserAndMSPage extends StatefulWidget {

@@ -8,7 +8,7 @@ import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 import 'dart:io' show Platform;
-import 'package:internet_connection_checker/internet_connection_checker.dart';
+
 
 void main() async {
   supabaseHelpers().init();

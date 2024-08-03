@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -76,6 +78,7 @@ class ModrinthApi implements Api {
   getModpackList() async {
     // print(
     //     'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit');
+    // ignore: unused_local_variable
     List<Map> modpacksproc = [];
     final res = await http.get(Uri.parse(
         'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit'));

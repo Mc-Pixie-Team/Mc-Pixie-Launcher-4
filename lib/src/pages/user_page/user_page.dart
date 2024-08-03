@@ -1,14 +1,15 @@
-import 'dart:math';
-import 'dart:ui';
+
+
+// ignore_for_file: unused_field
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mclauncher4/src/pages/user_page/side_panel_widget.dart';
+
 import 'package:mclauncher4/src/pages/user_page/subPages/userAndMSPage.dart';
-import 'package:mclauncher4/src/pages/user_page/text_field_with_enter.dart';
+
 import 'package:mclauncher4/src/tasks/auth/supabase.dart';
-import 'package:mclauncher4/src/tasks/discord/discordRP.dart';
+
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
 import 'package:mclauncher4/src/widgets/bar_graph.dart';
 import 'package:mclauncher4/src/widgets/components/blured_container.dart';

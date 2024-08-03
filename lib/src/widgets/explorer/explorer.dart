@@ -30,7 +30,8 @@ class _ExplorerState extends State<Explorer> {
     super.initState();
   }
 
-  List<Widget> getDirectoryItems(Directory directory, ValueNotifier<bool> isEnabled) {
+  List<Widget> getDirectoryItems(
+      Directory directory, ValueNotifier<bool> isEnabled) {
     List<Widget> result = [];
 
     List<FileSystemEntity> entities = directory.listSync();
@@ -71,7 +72,8 @@ class _ExplorerState extends State<Explorer> {
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
-              children: List.generate(entityWidgets.length, (index) => entityWidgets[index])),
+              children: List.generate(
+                  entityWidgets.length, (index) => entityWidgets[index])),
         ));
   }
 }

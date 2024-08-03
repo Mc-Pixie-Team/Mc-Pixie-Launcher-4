@@ -16,25 +16,25 @@ import 'package:path/path.dart' as p;
 import 'package:uuid/v4.dart';
 
 class ForgeInstall {
-
 //MARK: RUN
-  static Future<Process> run(String version, String minecraftVersion,  String path, String processId, InstallModel installModel) async {
- 
+  static Future<Process> run(String version, String minecraftVersion,
+      String path, String processId, InstallModel installModel) async {
     //Check if minecraft is installed
     if (!File(p.join(
             path, "versions", "$minecraftVersion", "$minecraftVersion.json"))
         .existsSync()) {
       print("need to install Minecraft version: $minecraftVersion");
-      await MinecraftInstall.install(Version.parse(minecraftVersion), path, installModel);
+      await MinecraftInstall.install(
+          Version.parse(minecraftVersion), path, installModel);
     }
 
     //Check if Forge is installed
     if (!File(p.join(path, "versions", version, "$version.json"))
         .existsSync()) {
-      await install(version,minecraftVersion, path, installModel);
+      await install(version, minecraftVersion, path, installModel);
     }
-   installModel.setInstallState(InstallState.fetching);
-   installModel.setState("Fetching");
+    installModel.setInstallState(InstallState.fetching);
+    installModel.setState("Fetching");
 
     Map versionDataForge = jsonDecode(
         await File(p.join(path, "versions", version, "$version.json"))
@@ -44,7 +44,7 @@ class ForgeInstall {
         ? versionDataForge["inheritsFrom"]
         : versionDataForge["minecraft"];
 
-    if(minecraft == null) {
+    if (minecraft == null) {
       print("need to use assets version");
 
       minecraft = versionDataForge["assets"];
@@ -82,10 +82,11 @@ class ForgeInstall {
     print(launchcommand);
     var result = await Process.start(
         Runtime.getExecutablePath(
-            versionData["javaVersion"]["component"], path) ??
-        "java",
-        launchcommand, workingDirectory: p.join( getInstancePath(), processId));
-    
+                versionData["javaVersion"]["component"], path) ??
+            "java",
+        launchcommand,
+        workingDirectory: p.join(getInstancePath(), processId));
+
     installModel.setInstallState(InstallState.running);
     installModel.setState("Running");
     return result;
@@ -93,21 +94,23 @@ class ForgeInstall {
 
 //MARK: INSTALL
 
-  static Future install(String version, String minecraftVersion,  String path,InstallModel installModel ) async {
-
+  static Future install(String version, String minecraftVersion, String path,
+      InstallModel installModel) async {
     //Check if minecraft is installed
     if (!File(p.join(
             path, "versions", "$minecraftVersion", "$minecraftVersion.json"))
         .existsSync()) {
       print("need to install Minecraft version: $minecraftVersion");
-      await MinecraftInstall.install(Version.parse(minecraftVersion), path, installModel);
+      await MinecraftInstall.install(
+          Version.parse(minecraftVersion), path, installModel);
       installModel.setState("Installing Forge");
     }
 
-   // print("Installing Forge...");
-   if(File(p.join(getworkpath(), "versions", "$version", "$version.json")).existsSync()) return;
-   installModel.setInstallState(InstallState.installing);
-   installModel.setState("Installing Forge");
+    // print("Installing Forge...");
+    if (File(p.join(getworkpath(), "versions", "$version", "$version.json"))
+        .existsSync()) return;
+    installModel.setInstallState(InstallState.installing);
+    installModel.setState("Installing Forge");
     var FORGE_DOWNLOAD_URL =
         "https://maven.minecraftforge.net/net/minecraftforge/forge/${version}/forge-${version}-installer.jar";
 
@@ -126,7 +129,7 @@ class ForgeInstall {
         ? versiondata["version"]
         : versiondata["versionInfo"]["id"];
 
-    if(Version.parse(minecraftVersion) < Version(1, 7, 10)){
+    if (Version.parse(minecraftVersion) < Version(1, 7, 10)) {
       throw "Sorry Minecraft Version not supported for Forge installation";
     }
 
@@ -134,13 +137,13 @@ class ForgeInstall {
     List? libraries = versiondata["libraries"];
 
     if (libraries == null) {
-    //  print("need to convert libraries");
-      libraries =
-          InstallUtils.convertLibraries(versiondata["versionInfo"]["libraries"]);
+      //  print("need to convert libraries");
+      libraries = InstallUtils.convertLibraries(
+          versiondata["versionInfo"]["libraries"]);
 
       // Setting converted variables as new standard for later use
       versiondata["versionInfo"]["libraries"] = libraries;
-   //   print(libraries);
+      //   print(libraries);
     }
 
     if (versiondata["json"] != null) {
@@ -148,8 +151,8 @@ class ForgeInstall {
           File(p.join(tempForgePath, "version.json")).readAsStringSync());
       libraries!.addAll(versionJson["libraries"]);
     }
-    await Installs.installLibraries(libraries!, path, nativesPath, installModel);
-
+    await Installs.installLibraries(
+        libraries!, path, nativesPath, installModel);
 
     installModel.setState("Install Forge Clients");
     // Copy Forge clients
@@ -159,7 +162,7 @@ class ForgeInstall {
     var forgeClient =
         File(p.join(tempForgePath, "forge-$version-universal.jar"));
     if (forgeClient.existsSync()) {
-    await  Utils.copyFile(
+      await Utils.copyFile(
           source: forgeClient,
           destination: File(p.join(forge_lib_path, "forge-$version.jar")));
     }
@@ -167,7 +170,7 @@ class ForgeInstall {
     var forgeUniversal = File(p.join(tempForgePath, "maven", "net",
         "minecraftforge", "forge", version, "forge-$version-universal.jar"));
     if (forgeUniversal.existsSync()) {
-     await Utils.copyFile(
+      await Utils.copyFile(
           source: forgeUniversal,
           destination:
               File(p.join(forge_lib_path, "forge-$version-universal.jar")));
@@ -176,7 +179,7 @@ class ForgeInstall {
     var secondForgeClient = File(p.join(tempForgePath, "maven", "net",
         "minecraftforge", "forge", version, "forge-$version.jar"));
     if (secondForgeClient.existsSync()) {
-     await Utils.copyFile(
+      await Utils.copyFile(
           source: secondForgeClient,
           destination: File(p.join(forge_lib_path, "forge-$version.jar")));
     }
@@ -187,7 +190,8 @@ class ForgeInstall {
           path,
           tempForgePath,
           p.join(tempForgePath, "data", "client.lzma"),
-          "Java", installModel);
+          "Java",
+          installModel);
       //Todo: Implement a methode to runtime to get latest java runtime
     }
 

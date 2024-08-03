@@ -17,14 +17,19 @@ class Version {
       return this.various!;
     }
 
-    return release.toString() + '.' + major.toString() + '${minor == null ? "" : "." + minor.toString()}';
+    return release.toString() +
+        '.' +
+        major.toString() +
+        '${minor == null ? "" : "." + minor.toString()}';
   }
 
   static parse(String version) {
     try {
       List aftersplit = version.split('.');
-      if (aftersplit.length < 3) return Version(int.parse(aftersplit[0]), int.parse(aftersplit[1]));
-      return Version(int.parse(aftersplit[0]), int.parse(aftersplit[1]), int.parse(aftersplit[2]));
+      if (aftersplit.length < 3)
+        return Version(int.parse(aftersplit[0]), int.parse(aftersplit[1]));
+      return Version(int.parse(aftersplit[0]), int.parse(aftersplit[1]),
+          int.parse(aftersplit[2]));
     } catch (e) {
       return Version(0, 0, 0, version);
     }
@@ -47,13 +52,13 @@ class Version {
       }
       return isSnapshotNewer(various!, other.various!);
     }
-  
 
     if (release != other.release) return release.compareTo(other.release);
     if (major != other.major) return major.compareTo(other.major);
     minor ??= 0;
     other.minor ??= 0;
-    if (minor != other.minor) return (minor as int).compareTo(other.minor as num);
+    if (minor != other.minor)
+      return (minor as int).compareTo(other.minor as num);
     return 0;
   }
 
@@ -66,12 +71,15 @@ class Version {
   }
 
   int compareSnapANDRelease(String snapshotVersion, String releaseVersion) {
-    final snapshotParts = snapshotVersion.split(RegExp(r'[a-zA-Z]')); // Split by letters
+    final snapshotParts =
+        snapshotVersion.split(RegExp(r'[a-zA-Z]')); // Split by letters
     final releaseParts = releaseVersion.split('.');
 
     // Convert parts to integers for numerical comparison
-    final snapshotNumbers = snapshotParts.map((part) => int.tryParse(part) ?? 0).toList();
-    final releaseNumbers = releaseParts.map((part) => int.tryParse(part) ?? 0).toList();
+    final snapshotNumbers =
+        snapshotParts.map((part) => int.tryParse(part) ?? 0).toList();
+    final releaseNumbers =
+        releaseParts.map((part) => int.tryParse(part) ?? 0).toList();
 
     // Compare each part of the version numbers
     for (int i = 0; i < snapshotNumbers.length; i++) {

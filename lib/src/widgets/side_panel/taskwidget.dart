@@ -26,8 +26,9 @@ class _TaskpageState extends State<TaskWidget> {
     _key = widget.items.keys.toList();
     return Container(
       clipBehavior: Clip.antiAlias,
-      decoration:
-          BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(18)),
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.circular(18)),
       child: ListView.builder(
           itemCount: _key.length,
           itemBuilder: (context, index) {
@@ -46,14 +47,14 @@ class TaskwidgetItem extends StatefulWidget {
 
   VoidCallback cancel;
 
-  TaskwidgetItem({
-    Key? key,
-    required this.name,
-    required this.cancel,
-    required this.state,
-    required this.progress,
-    required this.installState
-  }) : super(key: key);
+  TaskwidgetItem(
+      {Key? key,
+      required this.name,
+      required this.cancel,
+      required this.state,
+      required this.progress,
+      required this.installState})
+      : super(key: key);
 
   @override
   _TaskwidgetItemState createState() => _TaskwidgetItemState();
@@ -61,19 +62,15 @@ class TaskwidgetItem extends StatefulWidget {
 
 class _TaskwidgetItemState extends State<TaskwidgetItem> {
   String get getName {
-
     return widget.name;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    return  Column(mainAxisSize: MainAxisSize.min, children: [
+    return Column(mainAxisSize: MainAxisSize.min, children: [
       Padding(
         padding: EdgeInsets.all(10.0),
         child: Container(
-          
           width: double.infinity,
           decoration: ShapeDecoration(
             color: Color(0xFF262626),
@@ -98,7 +95,12 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                         width: 8,
                         height: 5,
                         child: SvgButton.asset('assets/svg/dropdown-icon.svg',
-                            color: Theme.of(context).typography.black.displayLarge!.color, onpressed: () {}),
+                            color: Theme.of(context)
+                                .typography
+                                .black
+                                .displayLarge!
+                                .color,
+                            onpressed: () {}),
                       )),
                   Text(
                     'Progress',
@@ -120,45 +122,54 @@ class _TaskwidgetItemState extends State<TaskwidgetItem> {
                           fontSize: 16,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.w700,
-                         
                         ),
                       ),
-                      widget.installState == InstallState.running ? TextSpan() :
-                      TextSpan(
-                        text: ' ${min(widget.progress.ceil(), 100) }%',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w400,
-                         
-                        ),
-                      ),
+                      widget.installState == InstallState.running
+                          ? TextSpan()
+                          : TextSpan(
+                              text: ' ${min(widget.progress.ceil(), 100)}%',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
                     ],
                   ),
-              
                 ),
               ),
               Padding(
                   padding: EdgeInsets.only(left: 27, right: 24, top: 5),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Expanded(
-                        child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0, end: widget.progress / 100),
-        duration: const Duration(milliseconds: 200),
-        builder: (context, progress, child) => LinearProgressIndicator(
-                      value: progress,
-                      borderRadius: BorderRadius.circular(18),
-                    ))),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: DownloadButton(state: widget.installState, onCancel: widget.cancel, onDownload: () {}, onOpen: () {}, mainprogress: widget.progress,))
-                  ])),
-                  SizedBox(
+                  child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: TweenAnimationBuilder<double>(
+                                tween:
+                                    Tween(begin: 0, end: widget.progress / 100),
+                                duration: const Duration(milliseconds: 200),
+                                builder: (context, progress, child) =>
+                                    LinearProgressIndicator(
+                                      value: progress,
+                                      borderRadius: BorderRadius.circular(18),
+                                    ))),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: DownloadButton(
+                              state: widget.installState,
+                              onCancel: widget.cancel,
+                              onDownload: () {},
+                              onOpen: () {},
+                              mainprogress: widget.progress,
+                            ))
+                      ])),
+              SizedBox(
                 height: 10,
               ),
             ],

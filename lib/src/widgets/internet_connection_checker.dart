@@ -6,7 +6,8 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 class InternetConnectionCheckerHelper {
   bool hasConnection = true;
   StreamSubscription<InternetConnectionStatus>? listener;
-  static final InternetConnectionCheckerHelper _checkerHelper = InternetConnectionCheckerHelper.internal();
+  static final InternetConnectionCheckerHelper _checkerHelper =
+      InternetConnectionCheckerHelper.internal();
   factory InternetConnectionCheckerHelper() {
     return _checkerHelper;
   }

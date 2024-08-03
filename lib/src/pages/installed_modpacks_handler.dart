@@ -16,16 +16,18 @@ import 'package:path/path.dart' as path;
 
 class InstalledModpacksHandler {
   static generateManifest() async {
-    File manifest = File("${ getInstancePath()}/manifest.json");
+    File manifest = File("${getInstancePath()}/manifest.json");
     if (manifest.existsSync()) return;
     manifest.createSync(recursive: true);
     manifest.writeAsStringSync("[]");
   }
 
-  static ValueNotifierList<Widget> globalinstallContollers = ValueNotifierList([]);
+  static ValueNotifierList<Widget> globalinstallContollers =
+      ValueNotifierList([]);
   static Future<List<Widget>> getPacksformManifest() async {
-    
-    List manifest =  jsonDecode(await File(path.join(getInstancePath(), "manifest.json")).readAsString());
+    List manifest = jsonDecode(
+        await File(path.join(getInstancePath(), "manifest.json"))
+            .readAsString());
 
     return List.generate(manifest.length, (index) {
       Api _handler = ApiHandler().getApi(manifest[index]["provider"]);
@@ -34,23 +36,18 @@ class InstalledModpacksHandler {
           installState: InstallState.installed,
           processid: manifest[index]["processId"],
           handler: _handler,
-          modpackData: UMF.parse(manifest[index])); 
+          modpackData: UMF.parse(manifest[index]));
 
-      return 
-       InstalledCard(
-          key: Key(installcontroller.processId),
-          controllerInstance: installcontroller,
-        
+      return InstalledCard(
+        key: Key(installcontroller.processId),
+        controllerInstance: installcontroller,
       );
     });
   }
 }
 
-
 class InstalledModpacksUIHandler {
   //test
 
   static ValueNotifierList<Widget> installCardChildren = ValueNotifierList([]);
-
 }
-

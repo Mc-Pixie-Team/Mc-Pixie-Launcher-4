@@ -6,10 +6,12 @@ class ExampleCupertinoDownloadButton extends StatefulWidget {
   const ExampleCupertinoDownloadButton({super.key});
 
   @override
-  State<ExampleCupertinoDownloadButton> createState() => _ExampleCupertinoDownloadButtonState();
+  State<ExampleCupertinoDownloadButton> createState() =>
+      _ExampleCupertinoDownloadButtonState();
 }
 
-class _ExampleCupertinoDownloadButtonState extends State<ExampleCupertinoDownloadButton> {
+class _ExampleCupertinoDownloadButtonState
+    extends State<ExampleCupertinoDownloadButton> {
   late final List<DownloadController> _downloadControllers;
 
   @override
@@ -127,7 +129,8 @@ abstract class DownloadController implements ChangeNotifier {
   void openDownload();
 }
 
-class SimulatedDownloadController extends DownloadController with ChangeNotifier {
+class SimulatedDownloadController extends DownloadController
+    with ChangeNotifier {
   SimulatedDownloadController({
     DownloadStatus downloadStatus = DownloadStatus.notDownloaded,
     double progress = 0.0,
@@ -378,9 +381,12 @@ class ProgressIndicatorWidget extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         builder: (context, progress, child) {
           return CircularProgressIndicator(
-            backgroundColor: isDownloading ? CupertinoColors.lightBackgroundGray : Colors.white.withOpacity(0),
-            valueColor:
-                AlwaysStoppedAnimation(isFetching ? CupertinoColors.lightBackgroundGray : CupertinoColors.activeBlue),
+            backgroundColor: isDownloading
+                ? CupertinoColors.lightBackgroundGray
+                : Colors.white.withOpacity(0),
+            valueColor: AlwaysStoppedAnimation(isFetching
+                ? CupertinoColors.lightBackgroundGray
+                : CupertinoColors.activeBlue),
             strokeWidth: 2,
             value: isFetching ? null : progress,
           );

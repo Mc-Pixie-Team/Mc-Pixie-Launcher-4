@@ -3,7 +3,9 @@ import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/components/blured_container.dart';
 
 class SidePanelWidget extends StatefulWidget {
-  SidePanelWidget({Key? key, required this.title, required this.child, this.onpressed}) : super(key: key);
+  SidePanelWidget(
+      {Key? key, required this.title, required this.child, this.onpressed})
+      : super(key: key);
   VoidCallback? onpressed;
   String title;
   Widget child;
@@ -15,8 +17,9 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(18), color: Theme.of(context).colorScheme.surfaceVariant),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          color: Theme.of(context).colorScheme.surfaceVariant),
       child: Stack(
         children: [
           SingleChildScrollView(
@@ -31,13 +34,19 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
               Container(
                 height: 50,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(18), topRight: Radius.circular(18))),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(18),
+                        topRight: Radius.circular(18))),
                 clipBehavior: Clip.antiAlias,
                 child: BlurredContainer(
                   overlayColor: Color.fromARGB(4, 255, 255, 255),
                   child: Center(
                       child: Text(
-                          style: Theme.of(context).typography.black.bodyMedium!.merge(TextStyle(color: Colors.white)),
+                          style: Theme.of(context)
+                              .typography
+                              .black
+                              .bodyMedium!
+                              .merge(TextStyle(color: Colors.white)),
                           widget.title)),
                 ),
               ),

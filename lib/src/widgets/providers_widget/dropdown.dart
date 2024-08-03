@@ -35,7 +35,9 @@ class _DropDown extends State<DropDown> {
       child: Container(
         height: 60,
         width: 80,
-        decoration: BoxDecoration(color: widget.color, borderRadius: BorderRadius.all(Radius.circular(8))),
+        decoration: BoxDecoration(
+            color: widget.color,
+            borderRadius: BorderRadius.all(Radius.circular(8))),
       ),
     );
   }
@@ -45,13 +47,15 @@ class DropDownMenu extends StatefulWidget {
   double height;
   double width;
 
-  DropDownMenu({Key? key, this.height = 500, this.width = 60}) : super(key: key);
+  DropDownMenu({Key? key, this.height = 500, this.width = 60})
+      : super(key: key);
 
   @override
   _DropDownMenu createState() => _DropDownMenu();
 }
 
-class _DropDownMenu extends State<DropDownMenu> with SingleTickerProviderStateMixin {
+class _DropDownMenu extends State<DropDownMenu>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation _animation;
 
@@ -115,6 +119,9 @@ class DropDownItem extends StatefulWidget {
 class _DropDownItemState extends State<DropDownItem> {
   @override
   Widget build(BuildContext context) {
-    return Container(height: 35, decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(16))));
+    return Container(
+        height: 35,
+        decoration:
+            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(16))));
   }
 }

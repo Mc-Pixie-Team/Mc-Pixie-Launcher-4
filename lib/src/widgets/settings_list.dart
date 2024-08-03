@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SettingsList extends StatefulWidget {
-  SettingsList({required this.names, required this.functions, Key? key}) : super(key: key);
+  SettingsList({required this.names, required this.functions, Key? key})
+      : super(key: key);
   late final List<VoidCallback> functions;
   late final List names;
   @override
@@ -19,11 +20,13 @@ class _SettingsListState extends State<SettingsList> {
           maxHeight: double.infinity, // Maximum height
         ),
         //height: widget.height,
-        decoration:
-            BoxDecoration(borderRadius: BorderRadius.circular(10), color: Theme.of(context).colorScheme.surface),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Theme.of(context).colorScheme.surface),
         width: 500,
         child: Padding(
-          padding: const EdgeInsets.all(15.0).subtract(EdgeInsets.only(top: 11.5, bottom: 11.5)),
+          padding: const EdgeInsets.all(15.0)
+              .subtract(EdgeInsets.only(top: 11.5, bottom: 11.5)),
           child: ListView.builder(
               shrinkWrap: true,
               itemCount: widget.names.length,
@@ -37,15 +40,17 @@ class _SettingsListState extends State<SettingsList> {
                             width: 30,
                             child: Icon(
                               Icons.arrow_forward_ios,
-                              color: Theme.of(context).typography.black.bodySmall!.color,
+                              color: Theme.of(context)
+                                  .typography
+                                  .black
+                                  .bodySmall!
+                                  .color,
                               size: 14,
                             ),
                           )),
-                      title: Text(
-                        widget.names[index],
-                        style: Theme.of(context).typography.black.labelLarge
-                        
-                      )),
+                      title: Text(widget.names[index],
+                          style:
+                              Theme.of(context).typography.black.labelLarge)),
                   (index != widget.names.length - 1)
                       ? Padding(
                           padding: EdgeInsets.only(left: 5, right: 5),

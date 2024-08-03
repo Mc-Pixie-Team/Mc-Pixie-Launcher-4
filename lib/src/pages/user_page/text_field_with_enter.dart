@@ -73,7 +73,8 @@ class _TextFieldWithEnterState extends State<TextFieldWithEnter> {
     return Container(
         width: 200,
         child: EditableText(
-          selectionColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          selectionColor:
+              Theme.of(context).colorScheme.primary.withOpacity(0.3),
           cursorHeight: 15,
           cursorOffset: Offset(0, 2),
           controller: _textController,

@@ -12,10 +12,13 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 void main() async {
   supabaseHelpers().init();
+  
   DiscordRP().initCS("1144740158374158366");
   await InternetConnectionCheckerHelper().initListener();
   await Path.init();
   await Hive.openBox("settings");
+  await Hive.openBox("MinecraftPlayerHeads");
+  await Hive.openBox("MinecraftPlayerCapes");
   runApp(McLauncher());
   if (Platform.isMacOS) {
     final win = appWindow;

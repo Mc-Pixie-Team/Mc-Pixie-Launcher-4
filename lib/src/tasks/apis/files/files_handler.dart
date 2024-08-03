@@ -25,26 +25,26 @@ class FilesHandler with ChangeNotifier {
 
   late FileHelper _helper;
 
-  void initialize() async{
+  void initialize() async {
     _helper = FileHelper(directoryPath: directoryPath);
 
+    var token = RootIsolateToken.instance!;
+    var files32 = await Isolate.run(
+        () => initializeContainingFiles(this.directoryPath, this.types, token));
+    _files.addAll(files32);
+    notifyListeners();
 
-  var token = RootIsolateToken.instance!;
-   var files32 =  await Isolate.run(() => initializeContainingFiles( this.directoryPath, this.types,  token ));
-   _files.addAll(files32);
-   notifyListeners();
-
-  for (var type in types) {
+    for (var type in types) {
       var subDir = ObjectTypeTools.todir(type);
       var dir = Directory(p.join(directoryPath, subDir));
-     var csub = dir.watch().listen((event) => listener(event, type));
-     sub.add(csub);
-  }
-    
+      var csub = dir.watch().listen((event) => listener(event, type));
+      sub.add(csub);
+    }
   }
 
-  static Future<List<UMF>> initializeContainingFiles(String directoryPath, List<ObjectType> types, RootIsolateToken token) async {
-     BackgroundIsolateBinaryMessenger.ensureInitialized(token);
+  static Future<List<UMF>> initializeContainingFiles(String directoryPath,
+      List<ObjectType> types, RootIsolateToken token) async {
+    BackgroundIsolateBinaryMessenger.ensureInitialized(token);
 
     List<UMF> _files = [];
     var _helper = FileHelper(directoryPath: directoryPath);
@@ -60,15 +60,12 @@ class FilesHandler with ChangeNotifier {
 
     List instanceFiles = instance["files"];
     for (var type in types) {
-
       var subDir = ObjectTypeTools.todir(type);
       var dir = Directory(p.join(directoryPath, subDir));
       var items = dir.listSync();
 
       //Check if all items in directory are in instance
-      for (var entity in items)  {
-        
-
+      for (var entity in items) {
         Map mapfile = instanceFiles.singleWhere(
           (element) {
             return element["original"]["filepath"] == entity.path;
@@ -82,7 +79,8 @@ class FilesHandler with ChangeNotifier {
           _files.add(UMF.parse(mapfile).copyWith(type: type));
         }
       }
-      _files.sort((a, b) => (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
+      _files.sort((a, b) =>
+          (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
       _helper.write(_files);
     }
     return _files;
@@ -90,19 +88,20 @@ class FilesHandler with ChangeNotifier {
 
   listener(FileSystemEvent event, ObjectType type) async {
     if (event is FileSystemCreateEvent) {
-    if (event.isDirectory) return;
-     _files.add((await _addto(event.path)).copyWith(type: type));
+      if (event.isDirectory) return;
+      _files.add((await _addto(event.path)).copyWith(type: type));
     } else if (event is FileSystemDeleteEvent) {
       if (event.isDirectory) return;
       _remove(event.path);
     } else if (event is FileSystemMoveEvent) {
       if (event.isDirectory) return;
-      _files.add( (await _addto(event.path)).copyWith(type: type));
+      _files.add((await _addto(event.path)).copyWith(type: type));
       _remove(event.destination!);
     }
-    _files.sort((a, b) => (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
+    _files.sort((a, b) =>
+        (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
     print("added");
-     _helper.save(files);
+    _helper.save(files);
     notifyListeners();
   }
 
@@ -123,9 +122,7 @@ class FilesHandler with ChangeNotifier {
     UMF file;
     try {
       file = await getFileData(filepath);
-      
     } catch (e) {
-
       file = UMF(
         original: {"filepath": filepath},
         name: p.basename(filepath),
@@ -134,7 +131,7 @@ class FilesHandler with ChangeNotifier {
     }
     print("t");
     return file;
-   // helper.save(_files);
+    // helper.save(_files);
   }
 
   static Future<UMF> getFileData(String filepath) async {

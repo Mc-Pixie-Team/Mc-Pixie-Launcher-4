@@ -5,7 +5,8 @@ import "package:mclauncher4/src/widgets/components/size_transition_custom.dart";
 class PlayButton extends StatefulWidget {
   InstallState state;
   VoidCallback onPressed;
-  PlayButton({Key? key, required this.state, required this.onPressed}) : super(key: key);
+  PlayButton({Key? key, required this.state, required this.onPressed})
+      : super(key: key);
 
   @override
   _PlayButtonState createState() => _PlayButtonState();
@@ -25,14 +26,13 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
   }
 
   bool get isRunning => widget.state == InstallState.running;
-  bool get isInstalling =>
-      widget.state == InstallState.installing;
+  bool get isInstalling => widget.state == InstallState.installing;
   bool get isFetching => widget.state == InstallState.fetching;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap:  widget.onPressed,
+        onTap: widget.onPressed,
         onTapDown: (details) => _controllerScale.forward(),
         onTapUp: (details) => _controllerScale.reverse(),
         child: MouseRegion(
@@ -59,7 +59,11 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
                       ),
                       child: Center(
                         child: Text(
-                          isFetching ? "Wait" : isRunning? "Cancel" : "Play",
+                          isFetching
+                              ? "Wait"
+                              : isRunning
+                                  ? "Cancel"
+                                  : "Play",
                           style: Theme.of(context)
                               .typography
                               .black

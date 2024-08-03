@@ -20,8 +20,11 @@ class _InstalledHomePageState extends State<InstalledHomePage> {
   }
 
   Future<String> getBody() async {
-    List manifest = jsonDecode(await File(path.join(getInstancePath(), "manifest.json")).readAsString());
-    var body = manifest.singleWhere((element) => element["processId"] == widget.processId)["body"];
+    List manifest = jsonDecode(
+        await File(path.join(getInstancePath(), "manifest.json"))
+            .readAsString());
+    var body = manifest.singleWhere(
+        (element) => element["processId"] == widget.processId)["body"];
     if (body == null) throw "NOT FOUND";
     return body;
   }
@@ -33,7 +36,9 @@ class _InstalledHomePageState extends State<InstalledHomePage> {
       builder: (context, snapshot) => snapshot.hasData
           ? WebviewWidget(
               cachHTMLFile: File(path.join(getHTMLcachePath(), "index.html")),
-              body: snapshot.data! == "" ? "<div> NOTING HERE </div>" : snapshot.data!,
+              body: snapshot.data! == ""
+                  ? "<div> NOTING HERE </div>"
+                  : snapshot.data!,
             )
           : Container(),
     );

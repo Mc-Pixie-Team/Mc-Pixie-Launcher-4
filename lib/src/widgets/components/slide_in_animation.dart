@@ -20,14 +20,14 @@ class SlideInAnimation extends StatefulWidget {
   _SlideInAnimationState createState() => _SlideInAnimationState();
 }
 
-class _SlideInAnimationState extends State<SlideInAnimation> with SingleTickerProviderStateMixin {
+class _SlideInAnimationState extends State<SlideInAnimation>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> animation =
-      Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
+  late Animation<double> animation = Tween(begin: 1.0, end: 0.0)
+      .animate(CurvedAnimation(parent: _controller, curve: widget.curve));
 
   @override
   void initState() {
-    
     super.initState();
     _controller = AnimationController(
       vsync: this,
@@ -37,7 +37,6 @@ class _SlideInAnimationState extends State<SlideInAnimation> with SingleTickerPr
       setState(() {});
     });
     _controller.forward();
-
   }
 
   @override

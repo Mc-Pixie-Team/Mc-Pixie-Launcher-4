@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/user_page/side_panel_widget.dart';
@@ -107,116 +108,137 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
               if (snapshot.data?["fav"] != null) {
                 favUUID = snapshot.data?["fav"].uuid;
               }
-
-              return ListView.separated(
-                scrollDirection: Axis.vertical,
-                separatorBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 3, top: 3),
-                  child: Divider(
-                    color: Color.fromARGB(44, 255, 255, 255),
+              
+              return Column(children: [
+                ListView.separated(
+                  scrollDirection: Axis.vertical,
+                  separatorBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 8, bottom: 3, top: 3),
+                    child: Divider(
+                      color: Color.fromARGB(44, 255, 255, 255),
+                    ),
                   ),
-                ),
-                itemCount: accounts.length + 1,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () async {
-                      if (index == accounts.length) {
-                        print("add Account!");
-                        Map dataNewAcc = await Microsoft().authenticate();
-                        if (dataNewAcc["access_token"] != "") {
-                          print("isnt null");
+                  itemCount: accounts.length + 1,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () async {
+                        if (index == accounts.length) {
+                          print("add Account!");
+                          Map dataNewAcc = await Microsoft().authenticate();
+                          if (dataNewAcc["access_token"] != "") {
+                            print("access_token isnt null");
 
-                          MinecraftAccountUtils()
-                              .addAccount(MinecraftAccount(
-                                  name: dataNewAcc["xbox_username"]!,
-                                  refreshToken: dataNewAcc["refreshToken"]!,
-                                  username: dataNewAcc["username"]!,
-                                  uuid: dataNewAcc["uuid"]!))
-                              .then((value) => {setState(() => {})});
+                            MinecraftAccountUtils()
+                                .addAccount(MinecraftAccount(
+                                    name: dataNewAcc["xbox_username"]!,
+                                    refreshToken: dataNewAcc["refreshToken"]!,
+                                    username: dataNewAcc["username"]!,
+                                    uuid: dataNewAcc["uuid"]!,
+                                    userDetails: dataNewAcc["userDetails"]))
+                                .then((value) => {setState(() => {})});
+                          }
+                        } else {
+                          print("Setting account with UUID as standard: " + accounts[index].uuid);
+
+                          setState(() {
+                            MinecraftAccountUtils().setStandard(accounts[index]);
+                          });
                         }
-                      } else {
-                        print("Setting account with UUID as standard: " + accounts[index].uuid);
-
-                        setState(() {
-                          MinecraftAccountUtils().setStandard(accounts[index]);
-                        });
-                      }
-                    },
-                    child: Container(
-                        margin: EdgeInsets.only(top: 5, bottom: 5),
-                        height: 40,
-                        child: (index < accounts.length)
-                            ? Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Container(
-                                    height: 50,
-                                    decoration: (favUUID == accounts[index].uuid)
-                                        ? BoxDecoration(
-                                            border: Border.all(color: Theme.of(context).colorScheme.primary, width: 3),
-                                            borderRadius: BorderRadius.circular(8))
-                                        : BoxDecoration(),
-                                    child: MinecraftHead(
-                                      user: accounts[index],
+                      },
+                      child: Container(
+                          margin: EdgeInsets.only(top: 5, bottom: 5),
+                          height: 45,
+                          child: (index < accounts.length)
+                              ? Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      accounts[index].username,
-                                      style: Theme.of(context).typography.black.bodyMedium,
-                                    ),
-                                  ),
-                                  IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          MinecraftAccountUtils().deleteAccount(accounts[index]);
-                                        });
-                                      },
-                                      icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.primary,)),
-                                  SizedBox(
-                                    width: 20,
-                                  )
-                                ],
-                              )
-                            : Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Container(
-                                      clipBehavior: Clip.antiAlias,
-                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                                      child: Container(
-                                        height: 40,
-                                        width: 40,
-                                        decoration: BoxDecoration(color: ui.Color.fromARGB(72, 97, 97, 97)),
-                                        child: SizedBox(
-                                          child: Icon(
-                                            Icons.person_add_alt_1_rounded,
-                                            color: Theme.of(context).typography.black.bodyMedium?.color,
+                                    Container(
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: (favUUID == accounts[index].uuid)
+                                            ? BoxDecoration(
+                                                border: Border.all(color: Theme.of(context).colorScheme.primary, width: 3),
+                                                borderRadius: BorderRadius.circular(8))
+                                            : BoxDecoration(
+                                                border: Border.all(color: Colors.transparent, width: 3), borderRadius: BorderRadius.circular(8)),
+                                        child: Stack(children: [
+                                          MinecraftHead(
+                                            user: accounts[index],
+                                            widht: 39,
+                                            height: 100,
                                           ),
-                                        ),
-                                      )),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    AppLocalizations.of(context)!.addMinecraftAccount,
-                                    style: Theme.of(context).typography.black.bodyMedium,
-                                  )
-                                ],
-                              )),
-                  );
-                },
-              );
+                                        /*   SizedBox(
+                                            width: 39,
+                                            child: Align(
+                                              alignment: Alignment.bottomRight,
+                                              child: MinecraftCape(
+                                                user: accounts[index],
+                                                widht: 19,
+                                                height: 20,
+                                              ),
+                                            ),
+                                          ), */
+                                        ])),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        accounts[index].username,
+                                        style: Theme.of(context).typography.black.bodyMedium,
+                                      ),
+                                    ),
+                                    IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            MinecraftAccountUtils().deleteAccount(accounts[index]);
+                                          });
+                                        },
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Theme.of(context).colorScheme.primary,
+                                        )),
+                                    SizedBox(
+                                      width: 20,
+                                    )
+                                  ],
+                                )
+                              : Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Container(
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                                        child: Container(
+                                          height: 40,
+                                          width: 40,
+                                          decoration: BoxDecoration(color: ui.Color.fromARGB(72, 97, 97, 97)),
+                                          child: SizedBox(
+                                            child: Icon(
+                                              Icons.person_add_alt_1_rounded,
+                                              color: Theme.of(context).typography.black.bodyMedium?.color,
+                                            ),
+                                          ),
+                                        )),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      AppLocalizations.of(context)!.addMinecraftAccount,
+                                      style: Theme.of(context).typography.black.bodyMedium,
+                                    )
+                                  ],
+                                )),
+                    );
+                  },
+                )
+              ]);
             } else {
               return Container(
                   clipBehavior: Clip.antiAlias,

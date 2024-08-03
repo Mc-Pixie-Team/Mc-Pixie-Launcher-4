@@ -19,13 +19,12 @@ class PixieScrollSimulation extends Simulation {
     //(begin as dynamic) + ((end as dynamic) - (begin as dynamic)) * t
     print(initPosition);
     print(afterPosition);
-    return  initPosition + afterPosition- initPosition * time;
+    return initPosition + afterPosition - initPosition * time;
   }
 
   @override
   double dx(double time) {
     return velocity;
-    
   }
 
   @override
@@ -43,7 +42,8 @@ class PixieScrollPhysics extends ScrollPhysics {
   }
 
   @override
-  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+  Simulation? createBallisticSimulation(
+      ScrollMetrics position, double velocity) {
     var oldPixelTemp = oldPixel;
 
     if (position.pixels.round() == oldPixel.round()) {

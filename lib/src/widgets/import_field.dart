@@ -24,8 +24,8 @@ class _ImportFieldState extends State<ImportField> {
   int alpha = 255;
 
   ondownload(DropDoneDetails details) async {
-    if (!(details.files.first.path.split(".").last == "zip") && !(details.files.first.path.split(".").last == "mcmp"))
-      return;
+    if (!(details.files.first.path.split(".").last == "zip") &&
+        !(details.files.first.path.split(".").last == "mcmp")) return;
 
     print("start IMPORT");
     ImportExportController().import(details.files.first.path);
@@ -47,7 +47,8 @@ class _ImportFieldState extends State<ImportField> {
         onDragDone: ondownload,
         child: Container(
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface.withAlpha(alpha), borderRadius: BorderRadius.circular(18)),
+              color: Theme.of(context).colorScheme.surface.withAlpha(alpha),
+              borderRadius: BorderRadius.circular(18)),
           height: 240,
           width: double.infinity,
           child: Center(

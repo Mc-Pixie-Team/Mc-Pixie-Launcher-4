@@ -7,11 +7,16 @@ import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:numeral/numeral.dart';
+
 class FileTableItem extends StatefulWidget {
   int index;
   UMF umf;
   String providerString;
-  FileTableItem({Key? key, required this.index, required this.umf, required this.providerString})
+  FileTableItem(
+      {Key? key,
+      required this.index,
+      required this.umf,
+      required this.providerString})
       : super(key: key);
 
   @override
@@ -30,10 +35,10 @@ class _FileTableItemState extends State<FileTableItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-
       height: 52,
       width: double.infinity,
-      margin: EdgeInsets.only(left: 28, right: 28, top: widget.index == 0? 20 : 0),
+      margin:
+          EdgeInsets.only(left: 28, right: 28, top: widget.index == 0 ? 20 : 0),
       decoration: ShapeDecoration(
         color:
             widget.index.isOdd ? null : Theme.of(context).colorScheme.surface,
@@ -55,25 +60,38 @@ class _FileTableItemState extends State<FileTableItem> {
               child: Container(
                 width: 33,
                 height: 33,
-                
                 decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(4)),
-                child: Center(child: SizedBox(height: 16, width: 16, child: SvgPicture.asset('assets/svg/download-icon.svg', color: Colors.white,),),),
+                child: Center(
+                  child: SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: SvgPicture.asset(
+                      'assets/svg/download-icon.svg',
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               )),
-        const  SizedBox(
+          const SizedBox(
             width: 10,
           ),
-          SizedBox(width: 230, child: 
-          Text(widget.umf.versionName!)),
-       const SizedBox(
+          SizedBox(width: 230, child: Text(widget.umf.versionName!)),
+          const SizedBox(
             width: 10,
           ),
-         SizedBox(width: 120, child:  Text(widget.umf.MCVersion!, style: Theme.of(context).typography.black.bodyMedium,)),
-        const SizedBox(
+          SizedBox(
+              width: 120,
+              child: Text(
+                widget.umf.MCVersion!,
+                style: Theme.of(context).typography.black.bodyMedium,
+              )),
+          const SizedBox(
             width: 10,
           ),
-         Text(widget.umf.downloads!.numeral(), style: Theme.of(context).typography.black.bodyMedium),
+          Text(widget.umf.downloads!.numeral(),
+              style: Theme.of(context).typography.black.bodyMedium),
         ],
       ),
     );

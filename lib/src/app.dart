@@ -47,7 +47,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
-  Set<PointerDeviceKind> get dragDevices => {PointerDeviceKind.touch, PointerDeviceKind.trackpad};
+  Set<PointerDeviceKind> get dragDevices =>
+      {PointerDeviceKind.touch, PointerDeviceKind.trackpad};
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) {
@@ -71,7 +72,8 @@ class McLauncher extends StatefulWidget {
   State<StatefulWidget> createState() => _McLauncherState();
   // TODO: implement createState
 
-  static _McLauncherState of(BuildContext context) => context.findAncestorStateOfType<_McLauncherState>()!;
+  static _McLauncherState of(BuildContext context) =>
+      context.findAncestorStateOfType<_McLauncherState>()!;
 }
 
 class _McLauncherState extends State<McLauncher> {
@@ -114,8 +116,14 @@ class _McLauncherState extends State<McLauncher> {
         ],
         supportedLocales: AppLocalizations.supportedLocales,
         theme: ThemeData(
-            useMaterial3: true, colorScheme: lightColorScheme, typography: Typography(black: blackTextSchemes), scrollbarTheme: ScrollbarThemeData()),
-        darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme, typography: Typography(black: blackTextSchemes)),
+            useMaterial3: true,
+            colorScheme: lightColorScheme,
+            typography: Typography(black: blackTextSchemes),
+            scrollbarTheme: ScrollbarThemeData()),
+        darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: darkColorScheme,
+            typography: Typography(black: blackTextSchemes)),
         themeMode: _themeMode,
         home: MainPage(),
         builder: (context, child) => Stack(children: [
@@ -125,7 +133,10 @@ class _McLauncherState extends State<McLauncher> {
                 child: Align(
                     alignment: Alignment.topLeft,
                     child: Row(
-                      children: [Expanded(child: MoveWindow()), WindowButtons()],
+                      children: [
+                        Expanded(child: MoveWindow()),
+                        WindowButtons()
+                      ],
                     )),
               ),
             ]));
@@ -153,7 +164,8 @@ class _MainPageState extends State<MainPage> {
   bool shouldSplashedDisplayed = true;
   bool isSplashed = true;
 
-  EdgeInsets edgeInsets = EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
+  EdgeInsets edgeInsets =
+      EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
 
   final List<Widget> _pages = [
     HomePage(),
@@ -183,9 +195,9 @@ class _MainPageState extends State<MainPage> {
     print("Main app init Called");
     // TODO: implement initState
     MinecraftAccountUtils().initOnFirstStart();
-
     InstalledModpacksHandler.getPacksformManifest().then((value) {
-      InstalledModpacksUIHandler.installCardChildren.value.removeWhere((element) {
+      InstalledModpacksUIHandler.installCardChildren.value
+          .removeWhere((element) {
         for (var i in value) {
           if (element.key == i.key) return true;
         }
@@ -215,8 +227,13 @@ class _MainPageState extends State<MainPage> {
               return PageTransitionSwitcher(
                 duration: const Duration(milliseconds: 400),
                 reverse: widget.pageIndex < widget.oldPageIndex,
-                child: ClipRRect(borderRadius: BorderRadius.circular(18), key: UniqueKey(), child: _pages[widget.pageIndex]),
-                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18),
+                    key: UniqueKey(),
+                    child: _pages[widget.pageIndex]),
+                transitionBuilder:
+                    (child, primaryAnimation, secondaryAnimation) =>
+                        SharedAxisTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   transitionType: SharedAxisTransitionType.vertical,
@@ -346,7 +363,8 @@ class _MainPageState extends State<MainPage> {
               Container(
                 height: double.infinity,
                 width: 200,
-                decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceVariant),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -425,11 +443,14 @@ class _MainPageState extends State<MainPage> {
                           ),
                         ]),
                     Padding(
-                        padding: EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 17),
+                        padding: EdgeInsets.only(
+                            left: 15, right: 15, top: 10, bottom: 17),
                         child: Container(
                             height: 50,
                             decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.all(Radius.elliptical(18, 18))),
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.all(
+                                    Radius.elliptical(18, 18))),
                             width: double.infinity,
                             child: Align(
                               alignment: Alignment.centerLeft,
@@ -450,7 +471,8 @@ class _MainPageState extends State<MainPage> {
                                         return route.settings.name == "/";
                                       });
 
-                                      await Future.delayed(Duration(milliseconds: 450));
+                                      await Future.delayed(
+                                          Duration(milliseconds: 450));
                                     }
                                     if (index != widget.oldPageIndex) {
                                       setState(() {
@@ -458,11 +480,13 @@ class _MainPageState extends State<MainPage> {
                                       });
                                     }
                                   },
-                                  title: AppLocalizations.of(context)!.myModpacks,
+                                  title:
+                                      AppLocalizations.of(context)!.myModpacks,
                                   icon: Icon(
                                     Icons.folder,
                                     size: 20,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                 ),
                               ),
@@ -470,22 +494,13 @@ class _MainPageState extends State<MainPage> {
                     div.CustomDivider(
                       size: 20,
                     ),
-                    SizedBox(
-                      height: 17,
-                    ),
-                    Expanded(child: SizedBox.expand()),
-                    Align(
-                      alignment: Alignment(-0.7, 0.2),
-                      child: Text(
-                        AppLocalizations.of(context)!.importModpacks + ":",
-                        style: Theme.of(context).typography.black.bodySmall,
-                      ),
-                    ),
-                    Padding(padding: EdgeInsets.only(left: 15, right: 15, bottom: 20, top: 8), child: ImportField())
+
                   ],
                 ),
               ),
-              Expanded(child: Padding(padding: edgeInsets, child: _getNavigator(context))),
+              Expanded(
+                  child: Padding(
+                      padding: edgeInsets, child: _getNavigator(context))),
 
               SidePanel(
                 controller: StaticSidePanelController.controller,
@@ -593,7 +608,6 @@ class _WindowButtonsState extends State<WindowButtons> {
 
   @override
   Widget build(BuildContext context) {
-    
     return SizedBox(
       width: 290,
       child: Row(
@@ -609,7 +623,9 @@ class _WindowButtonsState extends State<WindowButtons> {
                     decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.error,
                         borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: Theme.of(context).colorScheme.error, width: 3)),
+                        border: Border.all(
+                            color: Theme.of(context).colorScheme.error,
+                            width: 3)),
                     width: 90,
                     height: 25,
                     child: Center(
@@ -619,7 +635,10 @@ class _WindowButtonsState extends State<WindowButtons> {
                             .typography
                             .black
                             .labelMedium!
-                            .copyWith(decoration: TextDecoration.none, fontWeight: FontWeight.w600, letterSpacing: 2),
+                            .copyWith(
+                                decoration: TextDecoration.none,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 2),
                       )),
                     ),
                   ),

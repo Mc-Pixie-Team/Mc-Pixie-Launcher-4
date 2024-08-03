@@ -41,8 +41,9 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
     return Container(
       height: 500,
       width: 350,
-      decoration:
-          BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(18)),
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.circular(18)),
       child: Padding(
         padding: const EdgeInsets.only(left: 40.0, top: 30, right: 40.0),
         child: Column(
@@ -82,7 +83,10 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
                       child: EditableText(
-                        selectionColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                        selectionColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.3),
                         cursorHeight: 24,
                         cursorOffset: Offset(0, 2),
                         controller: _textControllerEmail,
@@ -91,14 +95,20 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                         cursorColor: Theme.of(context).colorScheme.primary,
                         style: TextStyle(
                             fontSize: 20,
-                            color: Theme.of(context).typography.black.labelMedium!.color!.withOpacity(0.86)),
+                            color: Theme.of(context)
+                                .typography
+                                .black
+                                .labelMedium!
+                                .color!
+                                .withOpacity(0.86)),
                       ),
                     ),
                   ),
                   width: double.infinity,
                   height: 55,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(18)),
                 ),
               ),
             ),
@@ -122,23 +132,35 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                         child: Row(children: [
                           Expanded(
                             child: EditableText(
-                              selectionColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                              selectionColor: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.3),
                               cursorHeight: 24,
                               cursorOffset: Offset(0, 2),
                               controller: _textControllerPassword,
-                              backgroundCursorColor: Color.fromARGB(0, 168, 14, 14),
+                              backgroundCursorColor:
+                                  Color.fromARGB(0, 168, 14, 14),
                               focusNode: _focusNodePassword,
-                              cursorColor: Theme.of(context).colorScheme.primary,
+                              cursorColor:
+                                  Theme.of(context).colorScheme.primary,
                               obscureText: isObsured,
                               style: TextStyle(
                                   fontSize: 20,
-                                  color: Theme.of(context).typography.black.labelMedium!.color!.withOpacity(0.86)),
+                                  color: Theme.of(context)
+                                      .typography
+                                      .black
+                                      .labelMedium!
+                                      .color!
+                                      .withOpacity(0.86)),
                             ),
                           ),
                           InkWell(
                             mouseCursor: MouseCursor.defer,
                             child: Icon(
-                              isObsured ? Icons.visibility_off : Icons.visibility,
+                              isObsured
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                               size: 20,
                             ),
                             onTap: () {
@@ -152,7 +174,8 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                   width: double.infinity,
                   height: 55,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(18)),
                 ),
               ),
             ),
@@ -162,11 +185,17 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
             InkWell(
               child: Text(
                 "You dont have a account? Click here!",
-                style: Theme.of(context).typography.black.bodySmall!.apply(decoration: TextDecoration.underline),
+                style: Theme.of(context)
+                    .typography
+                    .black
+                    .bodySmall!
+                    .apply(decoration: TextDecoration.underline),
               ),
               onTap: () async {
-                var result =
-                    await Process.run("rundll32", ['url.dll,FileProtocolHandler', 'https://mc-pixie.com/newlogin']);
+                var result = await Process.run("rundll32", [
+                  'url.dll,FileProtocolHandler',
+                  'https://mc-pixie.com/newlogin'
+                ]);
               },
             ),
             SizedBox(
@@ -184,7 +213,8 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                   ),
                   onClick: () async {
                     supabase.auth.signInWithOAuth(Provider.google,
-                        redirectTo: "http://localhost:2695/redirect", authScreenLaunchMode: LaunchMode.inAppWebView);
+                        redirectTo: "http://localhost:2695/redirect",
+                        authScreenLaunchMode: LaunchMode.inAppWebView);
                     bool sucess = await oauthReturnServer(context, supabase);
                     if (sucess) widget.onLogin.call();
                   },
@@ -214,7 +244,8 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                   ),
                   onClick: () async {
                     supabase.auth.signInWithOAuth(Provider.discord,
-                        redirectTo: "http://localhost:2695/redirect", authScreenLaunchMode: LaunchMode.inAppWebView);
+                        redirectTo: "http://localhost:2695/redirect",
+                        authScreenLaunchMode: LaunchMode.inAppWebView);
                     bool sucess = await oauthReturnServer(context, supabase);
                     if (sucess) widget.onLogin.call();
                   },
@@ -230,11 +261,10 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
               InkWell(
                   child: Text(
                     "Skip",
-                    style: Theme.of(context)
-                        .typography
-                        .black
-                        .bodyLarge!
-                        .merge(TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w700)),
+                    style: Theme.of(context).typography.black.bodyLarge!.merge(
+                        TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w700)),
                   ),
                   onTap: () {
                     Navigator.canPop(context);
@@ -247,11 +277,10 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
               InkWell(
                 child: Text(
                   "Login",
-                  style: Theme.of(context)
-                      .typography
-                      .black
-                      .bodyLarge!
-                      .merge(TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w700)),
+                  style: Theme.of(context).typography.black.bodyLarge!.merge(
+                      TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w700)),
                 ),
                 onTap: () async {
                   bool hasError = false;
@@ -260,11 +289,12 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                   print(_textControllerPassword.text);
 
                   try {
-                    await supabase.auth
-                        .signInWithPassword(password: _textControllerPassword.text, email: _textControllerEmail.text);
+                    await supabase.auth.signInWithPassword(
+                        password: _textControllerPassword.text,
+                        email: _textControllerEmail.text);
                     Navigator.push(
                       context,
-                      CupertinoPageRoute(builder: (context) =>  MainPage()),
+                      CupertinoPageRoute(builder: (context) => MainPage()),
                     );
                   } catch (e) {
                     print(e);
@@ -275,7 +305,8 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                             .typography
                             .black
                             .bodyLarge!
-                            .merge(TextStyle(color: Theme.of(context).colorScheme.onError)),
+                            .merge(TextStyle(
+                                color: Theme.of(context).colorScheme.onError)),
                       ),
                       backgroundColor: Theme.of(context).colorScheme.error,
                       action: SnackBarAction(
@@ -310,7 +341,8 @@ Future<String> getFileData(String path) async {
 
 Future<bool> oauthReturnServer(context, supabase) async {
   bool hasError = false;
-  var server = await HttpServer.bind(InternetAddress.anyIPv6, 2695, shared: true);
+  var server =
+      await HttpServer.bind(InternetAddress.anyIPv6, 2695, shared: true);
 
   server.idleTimeout = Duration(seconds: 20);
   await server.forEach((HttpRequest request) async {

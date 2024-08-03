@@ -14,21 +14,28 @@ class CarouselItem extends StatefulWidget {
   bool isopened;
 
   CarouselItem(
-      {Key? key, required this.onPressed, required this.name, required this.descripton, required this.isopened})
+      {Key? key,
+      required this.onPressed,
+      required this.name,
+      required this.descripton,
+      required this.isopened})
       : super(key: key);
 
   @override
   _CarouselItemState createState() => _CarouselItemState();
 }
 
-class _CarouselItemState extends State<CarouselItem> with SingleTickerProviderStateMixin {
+class _CarouselItemState extends State<CarouselItem>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation ani;
 
   @override
   void initState() {
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 700));
-    ani = Tween(begin: 0.12, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 700));
+    ani = Tween(begin: 0.12, end: 1.0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
 
     super.initState();
   }
@@ -69,26 +76,31 @@ class _CarouselItemState extends State<CarouselItem> with SingleTickerProviderSt
                     Positioned(
                       child: Opacity(
                         opacity: _controller.value,
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(
-                            widget.name,
-                            style: Theme.of(context)
-                                .typography
-                                .black
-                                .headlineMedium!
-                                .copyWith(fontWeight: FontWeight.w600),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          SizedBox(
-                              width: 300,
-                              child: Text(
-                                widget.descripton,
-                                style:
-                                    Theme.of(context).typography.black.bodySmall!.copyWith(fontWeight: FontWeight.w600),
-                              ))
-                        ]),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.name,
+                                style: Theme.of(context)
+                                    .typography
+                                    .black
+                                    .headlineMedium!
+                                    .copyWith(fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              SizedBox(
+                                  width: 300,
+                                  child: Text(
+                                    widget.descripton,
+                                    style: Theme.of(context)
+                                        .typography
+                                        .black
+                                        .bodySmall!
+                                        .copyWith(fontWeight: FontWeight.w600),
+                                  ))
+                            ]),
                       ),
                       bottom: 40,
                       left: 20,

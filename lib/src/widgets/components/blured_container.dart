@@ -19,14 +19,17 @@ class BlurredContainer extends StatelessWidget {
         children: [
           Positioned.fill(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: blurIntensity, sigmaY: blurIntensity),
+              filter: ImageFilter.blur(
+                  sigmaX: blurIntensity, sigmaY: blurIntensity),
               child: Container(
                 color: Colors.transparent,
               ),
             ),
           ),
           Container(
-            color: overlayColor ?? Colors.transparent, // Use overlayColor if provided, otherwise transparent
+            color: overlayColor ??
+                Colors
+                    .transparent, // Use overlayColor if provided, otherwise transparent
             child: child,
           ),
         ],

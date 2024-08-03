@@ -10,8 +10,8 @@ class ApiHandler {
 
   Api getApi(String handler) {
     if (_handlers[handler] == null)
-      throw Exception("Handler not found in list pls try: "
-       + _handlers.keys.toList().toString());
+      throw Exception("Handler not found in list pls try: " +
+          _handlers.keys.toList().toString());
     return _handlers[handler] as Api;
   }
 }

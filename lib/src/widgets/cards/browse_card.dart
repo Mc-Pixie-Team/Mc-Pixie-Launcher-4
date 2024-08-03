@@ -10,7 +10,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 
-
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/installs/install_model.dart';
@@ -20,6 +19,7 @@ import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
 import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:numeral/numeral.dart';
+
 // ignore: must_be_immutable
 class BrowseCard extends StatefulWidget {
   UMF modpackData;
@@ -80,7 +80,7 @@ class _BrowseCardState extends State<BrowseCard>
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
         padding: EdgeInsets.only(
           top: 30,
           left: 32,
@@ -91,19 +91,19 @@ class _BrowseCardState extends State<BrowseCard>
             onExit: (PointerExitEvent event) => _controller.reverse(),
             child: GestureDetector(
                 onTapDown: (details) => _controller.forward(),
-                onTapUp: (details)  {
-         
-                  
-                 // _controller.reverse();
-                Navigator.push(
-    context,
-   SlowCupertinoPageRoute( allowSnapshotting: false, builder: (context) =>  ModPage(handlerString: widget.handlerString, modpackData: widget.modpackData),
-  ));
-                 
-
+                onTapUp: (details) {
+                  // _controller.reverse();
+                  Navigator.push(
+                      context,
+                      SlowCupertinoPageRoute(
+                        allowSnapshotting: false,
+                        builder: (context) => ModPage(
+                            handlerString: widget.handlerString,
+                            modpackData: widget.modpackData),
+                      ));
                 },
                 child: ScaleTransition(
-                  filterQuality: FilterQuality.high,
+                    filterQuality: FilterQuality.high,
                     scale: _animation,
                     child: Container(
                         clipBehavior: Clip.antiAlias,
@@ -118,7 +118,14 @@ class _BrowseCardState extends State<BrowseCard>
                           children: [
                             Padding(
                               padding: EdgeInsets.all(17),
-                              child: ModPicture(width: 127, height: 127, url: widget.modpackData.icon!, color:  Theme.of(context).colorScheme.surfaceVariant,),
+                              child: ModPicture(
+                                width: 127,
+                                height: 127,
+                                url: widget.modpackData.icon!,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceVariant,
+                              ),
                             ),
                             Expanded(
                                 child: Column(
@@ -156,29 +163,33 @@ class _BrowseCardState extends State<BrowseCard>
                                 ),
                                 Row(
                                   children: [
-                                widget.modpackData.likes != null ?  Row(children: [
-                                   SvgPicture.asset(
-                                      'assets/svg/heart-icon.svg',
-                                      width: 12,
-                                    ) ,
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      widget.modpackData.likes!.numeral(),
-                                         
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontFamily: 'Roboto',
-                                        fontWeight: FontWeight.w400,
-                                        height: 0,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                 ],): SizedBox.shrink(), 
+                                    widget.modpackData.likes != null
+                                        ? Row(
+                                            children: [
+                                              SvgPicture.asset(
+                                                'assets/svg/heart-icon.svg',
+                                                width: 12,
+                                              ),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                widget.modpackData.likes!
+                                                    .numeral(),
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15,
+                                                  fontFamily: 'Roboto',
+                                                  fontWeight: FontWeight.w400,
+                                                  height: 0,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                            ],
+                                          )
+                                        : SizedBox.shrink(),
                                     SvgPicture.asset(
                                       'assets/svg/download-full-icon.svg',
                                       width: 14,
@@ -186,9 +197,8 @@ class _BrowseCardState extends State<BrowseCard>
                                     SizedBox(
                                       width: 5,
                                     ),
-                                    Text(
-                                      (widget.modpackData.downloads ?? 1).numeral()
-                                    ),
+                                    Text((widget.modpackData.downloads ?? 1)
+                                        .numeral()),
                                     SizedBox(width: 15),
                                     Expanded(
                                         child: SizedBox(
@@ -196,7 +206,7 @@ class _BrowseCardState extends State<BrowseCard>
                                             child: ListView.separated(
                                                 scrollDirection:
                                                     Axis.horizontal,
-                                               itemBuilder: (context, index) {
+                                                itemBuilder: (context, index) {
                                                   return Padding(
                                                       padding: EdgeInsets.only(
                                                           left: 5, right: 5),
@@ -212,7 +222,6 @@ class _BrowseCardState extends State<BrowseCard>
                                                               226,
                                                               226),
                                                           fontSize: 13,
-                                                       
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           height: 0,
@@ -257,13 +266,19 @@ class _BrowseCardState extends State<BrowseCard>
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          AnimatedBuilder(animation: widget.installModel, builder: (context, child) => DownloadButton(
-                                              state: widget.installModel.installState,
-                                              mainprogress: widget.installModel.progress,
-                                              onOpen: widget.onOpen,
-                                              onCancel: widget.onCancel,
-                                              onDownload: widget.onDownload)),
-                                          
+                                          AnimatedBuilder(
+                                              animation: widget.installModel,
+                                              builder: (context, child) =>
+                                                  DownloadButton(
+                                                      state: widget.installModel
+                                                          .installState,
+                                                      mainprogress: widget
+                                                          .installModel
+                                                          .progress,
+                                                      onOpen: widget.onOpen,
+                                                      onCancel: widget.onCancel,
+                                                      onDownload:
+                                                          widget.onDownload)),
                                           SvgButton.asset(
                                               'assets/svg/network-icon.svg',
                                               onpressed: () {})

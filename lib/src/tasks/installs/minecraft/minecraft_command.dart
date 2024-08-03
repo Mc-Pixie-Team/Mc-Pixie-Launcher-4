@@ -8,13 +8,13 @@ import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:path/path.dart' as p;
 
 class MinecraftCommand {
-
-  static Future<List<String>> getlaunchCommand( Map versiondata, String path, String processId) async {
+  static Future<List<String>> getlaunchCommand(
+      Map versiondata, String path, String processId) async {
     List command = [];
 
     if (versiondata["arguments"] != null) {
       Map arguments = versiondata["arguments"];
-      
+
       // Adding all Java Runtime Arguments + Classpath
       if (arguments["jvm"] != null) {
         command.addAll(_addRules(arguments["jvm"]));
@@ -27,8 +27,8 @@ class MinecraftCommand {
         command.addAll(_addRules(arguments["game"]));
       }
     } else if (versiondata["minecraftArguments"] != null) {
-
-      List<String> game = (versiondata["minecraftArguments"] as String).split(" ");
+      List<String> game =
+          (versiondata["minecraftArguments"] as String).split(" ");
       command.addAll([
         "-Djava.library.path=\${natives_directory}",
         "-cp",
@@ -38,7 +38,8 @@ class MinecraftCommand {
       ]);
     }
 
-    List<String> returncommand = await overrideArguments(command, versiondata, path, processId);
+    List<String> returncommand =
+        await overrideArguments(command, versiondata, path, processId);
     return returncommand;
   }
 
@@ -62,11 +63,13 @@ class MinecraftCommand {
 
 //MARK: Arguments Override
 
-  static Future<List<String>> overrideArguments(
-      List<dynamic> command, Map versionData, String path, String processId) async {
+  static Future<List<String>> overrideArguments(List<dynamic> command,
+      Map versionData, String path, String processId) async {
     print("Getting Minecraft credentials...");
-    MinecraftAccount? minecraftAccount = await MinecraftAccountUtils().getStandard();
-    Map minecraftToken = await MinecraftAccountUtils().reAuthenticateAndUpdateAccount(minecraftAccount!);
+    MinecraftAccount? minecraftAccount =
+        await MinecraftAccountUtils().getStandard();
+    Map minecraftToken = await MinecraftAccountUtils()
+        .reAuthenticateAndUpdateAccount(minecraftAccount!);
     print("Done!");
     print(versionData["nativesPath"]);
 
@@ -144,11 +147,13 @@ class MinecraftCommand {
       }
 
       if (libary["natives"] != null && libary["natives"][os] != null) {
-        stack += "$libpath/${libary["downloads"]["classifiers"][libary["natives"][os].replaceAll("\${arch}", "64")]["path"]}${Platform.isWindows ? ";" : ":"}";
+        stack +=
+            "$libpath/${libary["downloads"]["classifiers"][libary["natives"][os].replaceAll("\${arch}", "64")]["path"]}${Platform.isWindows ? ";" : ":"}";
       }
 
       if (libary["downloads"]["artifact"] == null) continue;
-      stack += "$libpath/${libary["downloads"]["artifact"]["path"]}${Platform.isWindows ? ";" : ":"}";
+      stack +=
+          "$libpath/${libary["downloads"]["artifact"]["path"]}${Platform.isWindows ? ";" : ":"}";
     }
     return stack;
   }

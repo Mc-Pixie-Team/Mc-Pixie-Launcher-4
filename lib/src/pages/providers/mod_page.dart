@@ -23,7 +23,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ModPage extends StatefulWidget {
   UMF modpackData;
   String handlerString;
-  ModPage({Key? key, required this.modpackData, required this.handlerString}) : super(key: key);
+  ModPage({Key? key, required this.modpackData, required this.handlerString})
+      : super(key: key);
 
   @override
   _ModPageState createState() => _ModPageState();
@@ -44,7 +45,11 @@ class _ModPageState extends State<ModPage> {
   createIsolate() async {
     final resultPort = ReceivePort();
 
-    isolate = await Isolate.spawn(inIsolate, [widget.modpackData.original, resultPort.sendPort, widget.handlerString]);
+    isolate = await Isolate.spawn(inIsolate, [
+      widget.modpackData.original,
+      resultPort.sendPort,
+      widget.handlerString
+    ]);
 
     resultPort.listen((message) {
       setState(() {
@@ -72,7 +77,9 @@ class _ModPageState extends State<ModPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(18)),
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.circular(18)),
       child: Stack(
         children: [
           Positioned(
@@ -112,7 +119,8 @@ class _ModPageState extends State<ModPage> {
                       child: Column(children: [
                         Text(
                           AppLocalizations.of(context)!.home,
-                          style: Theme.of(context).typography.black.headlineSmall,
+                          style:
+                              Theme.of(context).typography.black.headlineSmall,
                         ),
                         SizedBox(
                             width: 80,
@@ -134,7 +142,11 @@ class _ModPageState extends State<ModPage> {
                             isVersions = true;
                           }),
                       child: Column(children: [
-                        Text(AppLocalizations.of(context)!.versions, style: Theme.of(context).typography.black.headlineSmall),
+                        Text(AppLocalizations.of(context)!.versions,
+                            style: Theme.of(context)
+                                .typography
+                                .black
+                                .headlineSmall),
                         SizedBox(
                             width: 100,
                             child: Center(
@@ -159,12 +171,18 @@ class _ModPageState extends State<ModPage> {
                         details: details,
                       )
                     : details?.body == null
-                        ? Text(AppLocalizations.of(context)!.errorNoBodyFoundOrDetailsCouldNotBeLoaded)
+                        ? Text(AppLocalizations.of(context)!
+                            .errorNoBodyFoundOrDetailsCouldNotBeLoaded)
                         : WebviewWidget(
-                            cachHTMLFile: File(path.join(getHTMLcachePath(), "index.html")),
-                            body: details!.body == "" ? "<div> NOTING HERE </div>" : details!.body,
+                            cachHTMLFile: File(
+                                path.join(getHTMLcachePath(), "index.html")),
+                            body: details!.body == ""
+                                ? "<div> NOTING HERE </div>"
+                                : details!.body,
                           ),
-                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
+                transitionBuilder:
+                    (child, primaryAnimation, secondaryAnimation) =>
+                        SharedAxisTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   transitionType: SharedAxisTransitionType.horizontal,

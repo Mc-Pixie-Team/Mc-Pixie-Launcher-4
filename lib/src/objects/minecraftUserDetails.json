@@ -1,0 +1,74 @@
+{
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "skins": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "state": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "textureKey": {
+                        "type": "string"
+                    },
+                    "variant": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "state",
+                    "url",
+                    "textureKey",
+                    "variant"
+                ]
+            }
+        },
+        "capes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "state": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "alias": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "state",
+                    "url",
+                    "alias"
+                ]
+            }
+        }
+    },
+    "required": [
+        "id",
+        "name",
+        "skins",
+        "capes"
+    ],
+    "title": "minecraftUserDetails"
+}

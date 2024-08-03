@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/components/bar_graph_component.dart';
 
 class BarGraph extends StatefulWidget {
-  BarGraph({required this.values, required this.labels, this.barHeight = 200, Key? key}) : super(key: key);
+  BarGraph(
+      {required this.values,
+      required this.labels,
+      this.barHeight = 200,
+      Key? key})
+      : super(key: key);
   late final List<String> labels;
   late final List values;
   late final double barHeight;
@@ -19,8 +24,9 @@ class _BarGraphState extends State<BarGraph> {
     return Container(
         height: 330,
         width: 500,
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(18)),
         child: Stack(children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -40,10 +46,12 @@ class _BarGraphState extends State<BarGraph> {
                     SizedBox(
                       height: 20,
                     ),
-                    BarGraphComponent(barHeight: widget.barHeight, value: widget.values[0]),
+                    BarGraphComponent(
+                        barHeight: widget.barHeight, value: widget.values[0]),
                   ]),
               Padding(
-                padding: EdgeInsets.all(space).add(EdgeInsets.only(bottom: 100, top: 20)),
+                padding: EdgeInsets.all(space)
+                    .add(EdgeInsets.only(bottom: 100, top: 20)),
                 child: VerticalDivider(
                   thickness: 0.5,
                   color: _getDividerColor(context),
@@ -64,10 +72,12 @@ class _BarGraphState extends State<BarGraph> {
                     SizedBox(
                       height: 20,
                     ),
-                    BarGraphComponent(barHeight: widget.barHeight, value: widget.values[1]),
+                    BarGraphComponent(
+                        barHeight: widget.barHeight, value: widget.values[1]),
                   ]),
               Padding(
-                padding: EdgeInsets.all(space).add(EdgeInsets.only(bottom: 100, top: 20)),
+                padding: EdgeInsets.all(space)
+                    .add(EdgeInsets.only(bottom: 100, top: 20)),
                 child: VerticalDivider(
                   thickness: 0.5,
                   color: _getDividerColor(context),
@@ -88,10 +98,12 @@ class _BarGraphState extends State<BarGraph> {
                     SizedBox(
                       height: 20,
                     ),
-                    BarGraphComponent(barHeight: widget.barHeight, value: widget.values[2]),
+                    BarGraphComponent(
+                        barHeight: widget.barHeight, value: widget.values[2]),
                   ]),
               Padding(
-                padding: EdgeInsets.all(space).add(EdgeInsets.only(bottom: 100, top: 20)),
+                padding: EdgeInsets.all(space)
+                    .add(EdgeInsets.only(bottom: 100, top: 20)),
                 child: VerticalDivider(
                   thickness: 0.5,
                   color: _getDividerColor(context),
@@ -112,10 +124,12 @@ class _BarGraphState extends State<BarGraph> {
                     SizedBox(
                       height: 20,
                     ),
-                    BarGraphComponent(barHeight: widget.barHeight, value: widget.values[3]),
+                    BarGraphComponent(
+                        barHeight: widget.barHeight, value: widget.values[3]),
                   ]),
               Padding(
-                padding: EdgeInsets.all(space).add(EdgeInsets.only(bottom: 100, top: 20)),
+                padding: EdgeInsets.all(space)
+                    .add(EdgeInsets.only(bottom: 100, top: 20)),
                 child: VerticalDivider(
                   thickness: 0.5,
                   color: _getDividerColor(context),
@@ -136,10 +150,12 @@ class _BarGraphState extends State<BarGraph> {
                     SizedBox(
                       height: 20,
                     ),
-                    BarGraphComponent(barHeight: widget.barHeight, value: widget.values[4]),
+                    BarGraphComponent(
+                        barHeight: widget.barHeight, value: widget.values[4]),
                   ]),
               Padding(
-                padding: EdgeInsets.all(space).add(EdgeInsets.only(bottom: 100, top: 20)),
+                padding: EdgeInsets.all(space)
+                    .add(EdgeInsets.only(bottom: 100, top: 20)),
                 child: VerticalDivider(
                   thickness: 0.5,
                   color: _getDividerColor(context),
@@ -160,10 +176,12 @@ class _BarGraphState extends State<BarGraph> {
                     SizedBox(
                       height: 20,
                     ),
-                    BarGraphComponent(barHeight: widget.barHeight, value: widget.values[5]),
+                    BarGraphComponent(
+                        barHeight: widget.barHeight, value: widget.values[5]),
                   ]),
               Padding(
-                padding: EdgeInsets.all(space).add(EdgeInsets.only(bottom: 100, top: 20)),
+                padding: EdgeInsets.all(space)
+                    .add(EdgeInsets.only(bottom: 100, top: 20)),
                 child: VerticalDivider(
                   thickness: 0.5,
                   color: _getDividerColor(context),
@@ -184,7 +202,8 @@ class _BarGraphState extends State<BarGraph> {
                     SizedBox(
                       height: 20,
                     ),
-                    BarGraphComponent(barHeight: widget.barHeight, value: widget.values[6]),
+                    BarGraphComponent(
+                        barHeight: widget.barHeight, value: widget.values[6]),
                   ]),
             ],
           ),
@@ -202,7 +221,8 @@ class _BarGraphState extends State<BarGraph> {
                         .typography
                         .black
                         .labelMedium!
-                        .merge(TextStyle(color: Color.fromARGB(223, 118, 118, 118))),
+                        .merge(TextStyle(
+                            color: Color.fromARGB(223, 118, 118, 118))),
                   ),
                   Text(
                     "12h",
@@ -210,7 +230,8 @@ class _BarGraphState extends State<BarGraph> {
                         .typography
                         .black
                         .labelMedium!
-                        .merge(TextStyle(color: Color.fromARGB(223, 118, 118, 118))),
+                        .merge(TextStyle(
+                            color: Color.fromARGB(223, 118, 118, 118))),
                   ),
                   Text(
                     "0h",
@@ -218,7 +239,8 @@ class _BarGraphState extends State<BarGraph> {
                         .typography
                         .black
                         .labelMedium!
-                        .merge(TextStyle(color: Color.fromARGB(223, 118, 118, 118))),
+                        .merge(TextStyle(
+                            color: Color.fromARGB(223, 118, 118, 118))),
                   ),
                 ],
               ),

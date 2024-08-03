@@ -16,14 +16,14 @@ class NonCacheNetworkImage extends StatelessWidget {
     return FutureBuilder<Uint8List>(
       future: getImageBytes(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) return Image.memory(
-          
-           fit: BoxFit.cover,
+        if (snapshot.hasData)
+          return Image.memory(
+              fit: BoxFit.cover,
               // fadeOutDuration: const Duration(milliseconds: 1),
               // fadeInDuration: const Duration(milliseconds: 300),
               // fadeInCurve: Curves.easeOutQuad,
               // placeholder: kTransparentImage,
-          snapshot.data!);
+              snapshot.data!);
         return SizedBox(
           width: 100,
           height: 100,

@@ -25,19 +25,19 @@ class DownloadButton extends StatefulWidget {
 
 class _DownloadButtonState extends State<DownloadButton> {
   bool get _isInstalled => widget.state == InstallState.installed;
-  bool get _isRunning => widget.state  == InstallState.running;
-  bool get _isNotInstalled => widget.state  == InstallState.notInstalled;
-  bool get _isDownloading => widget.state  == InstallState.installing;
- 
-  bool get _isFetching => widget.state  == InstallState.fetching;
+  bool get _isRunning => widget.state == InstallState.running;
+  bool get _isNotInstalled => widget.state == InstallState.notInstalled;
+  bool get _isDownloading => widget.state == InstallState.installing;
+
+  bool get _isFetching => widget.state == InstallState.fetching;
   double get downloadProgress => widget.mainprogress;
 
   void _onPressed() {
     if (_isDownloading) widget.onCancel();
     if (_isFetching) return;
     if (widget.state == InstallState.running) widget.onCancel();
-    if (widget.state ==  InstallState.installed) widget.onOpen();
-    if (widget.state ==  InstallState.notInstalled) widget.onDownload();
+    if (widget.state == InstallState.installed) widget.onOpen();
+    if (widget.state == InstallState.notInstalled) widget.onDownload();
   }
 
   @override
@@ -52,21 +52,24 @@ class _DownloadButtonState extends State<DownloadButton> {
                 duration: Duration(milliseconds: 200),
                 curve: Curves.easeOut,
                 opacity: _isInstalled ? 1.0 : 0.0,
-                child: SvgButton.asset('assets/svg/play-icon.svg', onpressed: _onPressed)),
+                child: SvgButton.asset('assets/svg/play-icon.svg',
+                    onpressed: _onPressed)),
           ),
           Center(
             child: AnimatedOpacity(
                 duration: Duration(milliseconds: 200),
                 curve: Curves.easeOut,
                 opacity: _isRunning ? 1.0 : 0.0,
-                child: SvgButton.asset('assets/svg/cancel-icon.svg', onpressed: _onPressed)),
+                child: SvgButton.asset('assets/svg/cancel-icon.svg',
+                    onpressed: _onPressed)),
           ),
           Center(
             child: AnimatedOpacity(
                 duration: Duration(milliseconds: 200),
                 curve: Curves.easeOut,
                 opacity: _isNotInstalled ? 1.0 : 0.0,
-                child: SvgButton.asset('assets/svg/download-icon.svg', onpressed: _onPressed)),
+                child: SvgButton.asset('assets/svg/download-icon.svg',
+                    onpressed: _onPressed)),
           ),
           Positioned.fill(
             child: AnimatedOpacity(

@@ -11,7 +11,7 @@ class ModpackTitleIconWidget extends StatefulWidget {
   String? mlVersion;
   String? mcVersion;
   String modloader;
-  
+
   ModpackTitleIconWidget(
       {Key? key,
       required this.modloader,
@@ -27,10 +27,8 @@ class ModpackTitleIconWidget extends StatefulWidget {
 }
 
 class _ModpackTitleIconWidgetState extends State<ModpackTitleIconWidget> {
-
   @override
   Widget build(BuildContext context) {
-
     return Row(
       children: [
         Padding(
@@ -58,7 +56,9 @@ class _ModpackTitleIconWidgetState extends State<ModpackTitleIconWidget> {
                       .typography
                       .black
                       .labelLarge!
-                      .copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w400),
+                      .copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w400),
                 ),
                 Text(
                   widget.name!,
@@ -72,15 +72,12 @@ class _ModpackTitleIconWidgetState extends State<ModpackTitleIconWidget> {
                 Row(
                   children: [
                     StackedItem(
-                      type1: "Downloads",
-                      type2: widget.downloads!.numeral()
-                    ),
+                        type1: "Downloads", type2: widget.downloads!.numeral()),
                     StackedItem(
                         type1: widget.modloader,
                         type2: widget.mlVersion ?? "N/A"),
                     StackedItem(
-                        type1: "Minecraft",
-                        type2: widget.mcVersion ?? "N/A")
+                        type1: "Minecraft", type2: widget.mcVersion ?? "N/A")
                   ],
                 )
               ],

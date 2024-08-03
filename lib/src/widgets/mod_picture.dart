@@ -23,10 +23,9 @@ class ModPicture extends StatelessWidget {
       child: Hero(
         tag: url,
         child: Container(
-          clipBehavior: Clip.antiAlias,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                color:color),
+                borderRadius: BorderRadius.circular(18), color: color),
             child: FadeInImage.memoryNetwork(
               filterQuality: FilterQuality.none,
               fit: BoxFit.cover,

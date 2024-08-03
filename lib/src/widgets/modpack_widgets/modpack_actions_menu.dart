@@ -46,13 +46,15 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: 49, ),
+      margin: EdgeInsets.only(
+        right: 49,
+      ),
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(14)),
-      padding: EdgeInsets.all(9),      child: Row(
+      padding: EdgeInsets.all(9),
+      child: Row(
         children: [
-        
           PlayButton(
             onPressed: widget.onPlay ?? () {},
             state: widget.state,
@@ -104,7 +106,8 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
                   height: 34,
                   width: 34,
                   child: SvgButton.asset("assets/svg/switch-icon.svg",
-                      padding: EdgeInsets.all(7.0), onpressed: widget.onFirstItem ?? () {}))),
+                      padding: EdgeInsets.all(7.0),
+                      onpressed: widget.onFirstItem ?? () {}))),
           SizedBox(
             width: 20,
           ),
@@ -127,7 +130,8 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
                   height: 34,
                   width: 34,
                   child: SvgButton.asset("assets/svg/upload-icon.svg",
-                      padding: EdgeInsets.all(7.0), onpressed: widget.onSecondItem ?? () {}))),
+                      padding: EdgeInsets.all(7.0),
+                      onpressed: widget.onSecondItem ?? () {}))),
           SizedBox(
             width: 20,
           ),
@@ -140,18 +144,15 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
               child: DropdownButtonHideUnderline(
                   child: DropdownButton2(
                       onChanged: (t) => {
-                            if (t == dropDownMenuItems.keys.toList()[0] && widget.onFirstMenuItem != null)
-                              {
-                                widget.onFirstMenuItem!()
-                              }
-                            else if (t == dropDownMenuItems.keys.toList()[1] && widget.onSecondMenuItem != null)
-                              {
-                                widget.onSecondMenuItem!()
-                              }
-                            else if (t == dropDownMenuItems.keys.toList()[2] && widget.onThirdMenuItem != null)
-                              {
-                                widget.onThirdMenuItem!()
-                              }
+                            if (t == dropDownMenuItems.keys.toList()[0] &&
+                                widget.onFirstMenuItem != null)
+                              {widget.onFirstMenuItem!()}
+                            else if (t == dropDownMenuItems.keys.toList()[1] &&
+                                widget.onSecondMenuItem != null)
+                              {widget.onSecondMenuItem!()}
+                            else if (t == dropDownMenuItems.keys.toList()[2] &&
+                                widget.onThirdMenuItem != null)
+                              {widget.onThirdMenuItem!()}
                           },
                       menuItemStyleData: MenuItemStyleData(
                         padding: EdgeInsets.only(left: 12),

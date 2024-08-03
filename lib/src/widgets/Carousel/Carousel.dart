@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/carousel/carousel_item.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-
-
 class Carousel extends StatefulWidget {
   List<Map> items;
   Carousel({Key? key, required this.items}) : super(key: key);
@@ -28,7 +26,7 @@ class _CarouselState extends State<Carousel> {
   void initState() {
     super.initState();
     isdisposed = false;
-   timer = Timer.periodic(Duration(seconds: 6), (timer) {
+    timer = Timer.periodic(Duration(seconds: 6), (timer) {
       if (currentindex >= widget.items.length - 1) {
         currentindex = 0;
       } else {
@@ -37,8 +35,6 @@ class _CarouselState extends State<Carousel> {
       if (isdisposed) return;
       setState(() {});
     });
-
-    
   }
 
   void changeindex(int index) {
@@ -65,35 +61,29 @@ class _CarouselState extends State<Carousel> {
                         child: GestureDetector(
                             onTap: () => changeindex(index),
                             child: AnimatedContainer(
-                               clipBehavior: Clip.antiAlias,
-              decoration: ShapeDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
+                              clipBehavior: Clip.antiAlias,
+                              decoration: ShapeDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                              ),
                               curve: Curves.easeOutExpo,
                               duration: Duration(milliseconds: 800),
-                           
-                              height:  double.infinity,
+                              height: double.infinity,
                               width: currentindex == index ? 600 : 63,
-                              child: Stack(
-                                
-                                children: [
-                            
-                                      SizedBox(
-                                              width: double.infinity,
-                                              height: double.infinity,
-                                              child:     FadeInImage.memoryNetwork(
-                                          
-                                    fit: BoxFit.cover,
-                                    placeholder: kTransparentImage,
-                                    image:
-                                        widget.items[index]['pictureId'])),
+                              child: Stack(children: [
+                                SizedBox(
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    child: FadeInImage.memoryNetwork(
+                                        fit: BoxFit.cover,
+                                        placeholder: kTransparentImage,
+                                        image: widget.items[index]
+                                            ['pictureId'])),
                                 Positioned(
                                   child: AnimatedOpacity(
                                     duration: Duration(milliseconds: 250),
-                                  
                                     opacity: currentindex == index ? 1 : 0,
                                     child: Column(
                                         crossAxisAlignment:
@@ -149,7 +139,10 @@ class _CarouselState extends State<Carousel> {
                       shape: BoxShape.circle,
                       color: currentindex == index
                           ? Theme.of(context).colorScheme.secondary
-                          : Theme.of(context).colorScheme.secondary.withOpacity(0.3)),
+                          : Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.3)),
                 )),
       )
     ]));

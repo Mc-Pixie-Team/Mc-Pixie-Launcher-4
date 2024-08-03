@@ -17,10 +17,12 @@ class SelectableAnimatedBuilder extends StatefulWidget {
   final Widget Function(BuildContext, Animation<double>) builder;
 
   @override
-  SelectableAnimatedBuilderState createState() => SelectableAnimatedBuilderState();
+  SelectableAnimatedBuilderState createState() =>
+      SelectableAnimatedBuilderState();
 }
 
-class SelectableAnimatedBuilderState extends State<SelectableAnimatedBuilder> with SingleTickerProviderStateMixin {
+class SelectableAnimatedBuilderState extends State<SelectableAnimatedBuilder>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> animation = CurvedAnimation(
     parent: _controller,

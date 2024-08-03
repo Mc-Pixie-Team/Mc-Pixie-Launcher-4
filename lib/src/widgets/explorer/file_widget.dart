@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
 import 'package:mclauncher4/src/widgets/explorer/file_listcontroller.dart';
 import 'package:path/path.dart' as path;
+
 // ignore: must_be_immutable
 class FileWidget extends StatefulWidget {
   FileSystemEntity get getEntity => fileEntity;
 
   FileSystemEntity fileEntity;
   ValueNotifier<bool> isEnabled;
-  FileWidget({Key? key, required this.fileEntity, required this.isEnabled}) : super(key: key);
+  FileWidget({Key? key, required this.fileEntity, required this.isEnabled})
+      : super(key: key);
 
   @override
   _FileWidgetState createState() => _FileWidgetState();
@@ -68,18 +70,21 @@ class _FileWidgetState extends State<FileWidget> {
                 children: [
                   ValueListenableBuilder(
                       valueListenable: widget.isEnabled,
-                      builder: (context, bool isEnabled, child) => GestureDetector(
-                          onTap: () => onPressed(),
-                          child: AnimatedContainer(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.easeOutExpo,
-                              margin: EdgeInsets.only(top: 2, right: 9),
-                              width: 25,
-                              height: 25,
-                              decoration: ShapeDecoration(
-                                color: this.isEnabled ? Color(0xFF9C79FF) : Color.fromARGB(255, 71, 71, 71),
-                                shape: OvalBorder(),
-                              )))),
+                      builder: (context, bool isEnabled, child) =>
+                          GestureDetector(
+                              onTap: () => onPressed(),
+                              child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeOutExpo,
+                                  margin: EdgeInsets.only(top: 2, right: 9),
+                                  width: 25,
+                                  height: 25,
+                                  decoration: ShapeDecoration(
+                                    color: this.isEnabled
+                                        ? Color(0xFF9C79FF)
+                                        : Color.fromARGB(255, 71, 71, 71),
+                                    shape: OvalBorder(),
+                                  )))),
                   Text(
                     widget.fileEntity.path.split(path.separator).last,
                     style: Theme.of(context).typography.black.bodyLarge,

@@ -129,36 +129,40 @@ class CurseforgeApi implements Api {
 
   @override
   Future<UMF> getLatestModpackVersionFromLiteUMF(UMF umf) async {
-    if(umf.original["modId"] != null) return umf; //if there are dependencies its not the lite version from the start anymore
-    Map? modpackVersion = (umf.original["latestFiles"] as List).firstWhere((element) { print(element["releaseType"]); return element["releaseType"] == 1;}, orElse: () => null); // gets the newest version of the modpack
+    if (umf.original["modId"] != null)
+      return umf; //if there are dependencies its not the lite version from the start anymore
+    Map? modpackVersion =
+        (umf.original["latestFiles"] as List).firstWhere((element) {
+      print(element["releaseType"]);
+      return element["releaseType"] == 1;
+    }, orElse: () => null); // gets the newest version of the modpack
 
-      if(modpackVersion == null) {
-       modpackVersion = umf.original["latestFiles"][0];
-      }
-
+    if (modpackVersion == null) {
+      modpackVersion = umf.original["latestFiles"][0];
+    }
 
     final res2 = await http.get(
         Uri.parse('$baseUrl/v1/mods/${modpackVersion!["modId"]}/description'),
         headers: userHeader);
     final body = await jsonDecode(utf8.decode(res2.bodyBytes))["data"];
 
-          String mcVersion =
-          modpackVersion!["sortableGameVersions"][0]["gameVersionPadded"] == "0"
-              ? modpackVersion["sortableGameVersions"][1]["gameVersionName"]
-              : modpackVersion["sortableGameVersions"][0]["gameVersionName"];
+    String mcVersion =
+        modpackVersion!["sortableGameVersions"][0]["gameVersionPadded"] == "0"
+            ? modpackVersion["sortableGameVersions"][1]["gameVersionName"]
+            : modpackVersion["sortableGameVersions"][0]["gameVersionName"];
 
     return UMF(
-        original: modpackVersion,
-        categories: umf.categories,
-        description: umf.description,
-        name: umf.original["name"],
-        versionName: modpackVersion["displayName"],
-        downloads: modpackVersion["downloadCount"],
-        icon: umf.original["logo"]["thumbnailUrl"],
-        author: umf.original["authors"][0]["name"],
-        body: body,
-        MCVersion: mcVersion,
-      );
+      original: modpackVersion,
+      categories: umf.categories,
+      description: umf.description,
+      name: umf.original["name"],
+      versionName: modpackVersion["displayName"],
+      downloads: modpackVersion["downloadCount"],
+      icon: umf.original["logo"]["thumbnailUrl"],
+      author: umf.original["authors"][0]["name"],
+      body: body,
+      MCVersion: mcVersion,
+    );
   }
 
   @override

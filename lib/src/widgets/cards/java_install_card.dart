@@ -29,22 +29,21 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
     //     .downloadSingeFileAsBytes("https://cdn.azul.com/zulu/bin/zulu8.72.0.17-ca-jdk8.0.382-win_x64.zip");
 
     List<String> links = [
-       "https://cdn.azul.com/zulu/bin/zulu8.72.0.17-ca-jdk8.0.382-win_x64.zip",
+      "https://cdn.azul.com/zulu/bin/zulu8.72.0.17-ca-jdk8.0.382-win_x64.zip",
       "https://cdn.azul.com/zulu/bin/zulu17.44.53-ca-jdk17.0.8.1-win_x64.zip"
     ];
 
     print("start download");
     for (String link in links) {
       String filename = Uuid().v1() + ".zip";
-      final downloader =
-          Downloader(link, path.join(  getinstances(), filename));
+      final downloader = Downloader(link, path.join(getinstances(), filename));
 
       await downloader.startDownload(
           onProgress: (percentage) => setState(() {
                 downloadprecentage = percentage / 100;
               }));
-    await  downloader.unzip(deleteOld: true);
-    installStep++;
+      await downloader.unzip(deleteOld: true);
+      installStep++;
     }
 
     print("end download");

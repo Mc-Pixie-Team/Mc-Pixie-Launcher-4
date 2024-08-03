@@ -51,8 +51,9 @@ class _ItemDrawerState extends State<ItemDrawer> with TickerProviderStateMixin {
     return Container(
         clipBehavior: Clip.hardEdge,
         width: widget.width,
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(18)),
         child: Column(children: [
           Padding(
             padding: EdgeInsets.only(left: 10, top: 8),
@@ -84,7 +85,8 @@ class _ItemDrawerState extends State<ItemDrawer> with TickerProviderStateMixin {
                   child: Padding(
                       padding: EdgeInsets.only(top: 0, bottom: 10),
                       child: SelectableAnimatedBuilder(
-                        builder: (BuildContext context, Animation<double> animation) {
+                        builder: (BuildContext context,
+                            Animation<double> animation) {
                           return AnimatedBuilder(
                             animation: animation as Animation<double>,
                             builder: (context, child) {
@@ -140,7 +142,9 @@ class _ItemDrawerItemState extends State<ItemDrawerItem> {
       height: widget.height,
       width: widget.width,
       decoration: BoxDecoration(
-          color: ColorTween(begin: Colors.transparent, end: Color.fromARGB(8, 255, 255, 255))
+          color: ColorTween(
+                  begin: Colors.transparent,
+                  end: Color.fromARGB(8, 255, 255, 255))
               .animate(widget.animation as Animation<double>)
               .value),
       child: Align(

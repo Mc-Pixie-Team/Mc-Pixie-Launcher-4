@@ -6,13 +6,12 @@ class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
   ValueNotifierList(List<Widget> value) : super(value);
 
   void add(Widget valueToAdd) {
-    
     value = [...value, valueToAdd];
     notifyListeners();
     print("added something");
   }
 
-  void insert(int index, Widget element ) {
+  void insert(int index, Widget element) {
     value.insert(index, element);
     notifyListeners();
   }
@@ -20,7 +19,7 @@ class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
   void addAll(List<Widget> valuetoAddall) {
     value.addAll(valuetoAddall);
     notifyListeners();
-     print("added something to all");
+    print("added something to all");
   }
 
   void removeLast() {
@@ -38,15 +37,13 @@ class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
   void removeKeyFromAnimatedBuilder(String key) {
     value = value.where((value) {
       if (value is InstalledCard) {
-        
-
         return value.key != Key(key);
-      }else if (value is ModItem) {
+      } else if (value is ModItem) {
         return value.key != Key(key);
       }
       return false;
     }).toList();
     notifyListeners();
-     print("remove from animated builder");
+    print("remove from animated builder");
   }
 }

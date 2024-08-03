@@ -55,31 +55,51 @@ class _ModsPageState extends State<ModsPage> {
             children: [
               Text(
                 widget.files.length.toString(),
-                style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline),
+                style: Theme.of(context)
+                    .typography
+                    .black
+                    .bodySmall!
+                    .copyWith(color: Theme.of(context).colorScheme.outline),
               ),
               SizedBox(
                 width: 60,
               ),
               Text(
                 AppLocalizations.of(context)!.name,
-                style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline),
+                style: Theme.of(context)
+                    .typography
+                    .black
+                    .bodySmall!
+                    .copyWith(color: Theme.of(context).colorScheme.outline),
               ),
               SizedBox(
                 width: 310,
               ),
               Text(" " + AppLocalizations.of(context)!.author,
-                  style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline)),
+                  style: Theme.of(context)
+                      .typography
+                      .black
+                      .bodySmall!
+                      .copyWith(color: Theme.of(context).colorScheme.outline)),
               SizedBox(
                 width: 163,
               ),
               Text(AppLocalizations.of(context)!.download,
-                  style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline))
+                  style: Theme.of(context)
+                      .typography
+                      .black
+                      .bodySmall!
+                      .copyWith(color: Theme.of(context).colorScheme.outline))
             ],
           ),
         )),
         GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ModListPage(providerString: "curseforge")));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ModListPage(providerString: "curseforge")));
             },
             child: Container(
               height: 38,
@@ -99,7 +119,10 @@ class _ModsPageState extends State<ModsPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SvgPicture.asset("assets/svg/add-icon.svg", height: 15, width: 15, color: Theme.of(context).colorScheme.primary),
+                  SvgPicture.asset("assets/svg/add-icon.svg",
+                      height: 15,
+                      width: 15,
+                      color: Theme.of(context).colorScheme.primary),
                   Text(
                     AppLocalizations.of(context)!.addMods,
                     textAlign: TextAlign.center,
@@ -116,36 +139,39 @@ class _ModsPageState extends State<ModsPage> {
               animationCurve: Curves.easeOutExpo,
               scrollSpeed: 0.5,
               durationMS: 400,
-              builder: (context, _scrollController, physics) => ListView.builder(
-                  physics: physics,
-                  controller: _scrollController,
-                  itemCount: widget.files.length,
-                  itemBuilder: (context, index) {
-                    var current = widget.files[index];
-                    return Container(
-                      margin: EdgeInsets.only(
-                        left: 38,
-                        right: 49,
-                      ),
-                      padding: EdgeInsets.only(
-                        left: 20,
-                      ),
-                      decoration: ShapeDecoration(
-                        color: index.isOdd ? null : Theme.of(context).colorScheme.surface,
-                        shape: SmoothRectangleBorder(
-                          borderRadius: SmoothBorderRadius(
-                            cornerRadius: 7,
-                            cornerSmoothing: 1,
+              builder: (context, _scrollController, physics) =>
+                  ListView.builder(
+                      physics: physics,
+                      controller: _scrollController,
+                      itemCount: widget.files.length,
+                      itemBuilder: (context, index) {
+                        var current = widget.files[index];
+                        return Container(
+                          margin: EdgeInsets.only(
+                            left: 38,
+                            right: 49,
                           ),
-                        ),
-                      ),
-                      child: ModItem(
-                        name: current.name ?? "",
-                        downloads: current.downloads,
-                        author: current.author,
-                      ),
-                    );
-                  })))
+                          padding: EdgeInsets.only(
+                            left: 20,
+                          ),
+                          decoration: ShapeDecoration(
+                            color: index.isOdd
+                                ? null
+                                : Theme.of(context).colorScheme.surface,
+                            shape: SmoothRectangleBorder(
+                              borderRadius: SmoothBorderRadius(
+                                cornerRadius: 7,
+                                cornerSmoothing: 1,
+                              ),
+                            ),
+                          ),
+                          child: ModItem(
+                            name: current.name ?? "",
+                            downloads: current.downloads,
+                            author: current.author,
+                          ),
+                        );
+                      })))
     ]);
   }
 }
@@ -154,36 +180,45 @@ class ModItem extends StatelessWidget {
   String name;
   String? author;
   int? downloads;
-  ModItem({Key? key, required this.name, required this.author, required this.downloads}) : super(key: key);
+  ModItem(
+      {Key? key,
+      required this.name,
+      required this.author,
+      required this.downloads})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
         height: 50,
         width: double.infinity,
-        child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          SizedBox(
-              width: 300,
-              child: Text(
-                this.name,
-              )),
-          SizedBox(
-            width: 60,
-          ),
-          SizedBox(
-              width: 300,
-              child: Align(
-                  alignment: Alignment.centerLeft,
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                  width: 300,
                   child: Text(
-                    this.author ?? AppLocalizations.of(context)!.notAvailable,
-                    style: Theme.of(context).typography.black.bodyMedium,
-                  ))),
-          this.downloads == null
-              ? Container()
-              : Text(
-                  this.downloads!.numeral(),
-                  style: Theme.of(context).typography.black.bodyMedium,
-                )
-        ]));
+                    this.name,
+                  )),
+              SizedBox(
+                width: 60,
+              ),
+              SizedBox(
+                  width: 300,
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        this.author ??
+                            AppLocalizations.of(context)!.notAvailable,
+                        style: Theme.of(context).typography.black.bodyMedium,
+                      ))),
+              this.downloads == null
+                  ? Container()
+                  : Text(
+                      this.downloads!.numeral(),
+                      style: Theme.of(context).typography.black.bodyMedium,
+                    )
+            ]));
   }
 }

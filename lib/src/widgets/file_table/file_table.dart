@@ -35,22 +35,38 @@ class _FileTableState extends State<FileTable> {
           ),
           Text(
             "Names",
-            style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline),
+            style: Theme.of(context)
+                .typography
+                .black
+                .bodySmall!
+                .copyWith(color: Theme.of(context).colorScheme.outline),
           ),
           SizedBox(
             width: 235,
           ),
           Text(" Authors",
-              style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline)),
+              style: Theme.of(context)
+                  .typography
+                  .black
+                  .bodySmall!
+                  .copyWith(color: Theme.of(context).colorScheme.outline)),
           SizedBox(
             width: 80,
           ),
           Text(" Downloads",
-              style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Theme.of(context).colorScheme.outline))
+              style: Theme.of(context)
+                  .typography
+                  .black
+                  .bodySmall!
+                  .copyWith(color: Theme.of(context).colorScheme.outline))
         ],
       ),
-      SizedBox(height: 8,),
-       divider.CustomDivider(size: 30,),
+      SizedBox(
+        height: 8,
+      ),
+      divider.CustomDivider(
+        size: 30,
+      ),
       Expanded(
           child: Stack(children: [
         AnimatedOpacity(
@@ -72,9 +88,7 @@ class _FileTableState extends State<FileTable> {
                 durationMS: 500,
                 builder: (context, _scrollController, physics) =>
                     versions != null
-                        ? 
-                        
-                       ListView.builder(
+                        ? ListView.builder(
                             controller: _scrollController,
                             physics: physics,
                             itemCount: versions!.length,

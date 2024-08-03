@@ -43,34 +43,48 @@ class _InstalledModPageState extends State<InstalledModPage> {
   @override
   void dispose() {
     print("dispose");
-    
+
     super.dispose();
   }
 
   @override
   void initState() {
     _handler = FilesHandler(
-      directoryPath: path.join(getInstancePath(), widget.controllerInstance.processId), types: [ObjectType.mod, ObjectType.resource]);
+        directoryPath:
+            path.join(getInstancePath(), widget.controllerInstance.processId),
+        types: [ObjectType.mod, ObjectType.resource]);
 
     _handler.initialize();
 
-    widget.controllerInstance.addBeforeDeleteListener(() { 
+    widget.controllerInstance.addBeforeDeleteListener(() {
       _handler.dispose();
     });
 
     _pages = {
-    "Home": InstalledHomePage(processId: widget.controllerInstance.processId,),
-    "Console": Container(),
-    "Mods": AnimatedBuilder(key: Key("ted"),animation: _handler, builder: (context, child) {
-      List<UMF> sortedfiles = []..addAll(_handler.files);
-         sortedfiles.removeWhere((element) => element.type != ObjectType.mod);
-       return ModsPage(files: sortedfiles);}),
-    "ResourcePacks": AnimatedBuilder(key: Key("te"), animation: _handler, builder: (context, child) {
-      List<UMF> sortedfiles = []..addAll(_handler.files);
-         sortedfiles.removeWhere((element) => element.type != ObjectType.resource);
-       return ModsPage(files: sortedfiles);}),
-    "Shaders": Container()
-  };
+      "Home": InstalledHomePage(
+        processId: widget.controllerInstance.processId,
+      ),
+      "Console": Container(),
+      "Mods": AnimatedBuilder(
+          key: Key("ted"),
+          animation: _handler,
+          builder: (context, child) {
+            List<UMF> sortedfiles = []..addAll(_handler.files);
+            sortedfiles
+                .removeWhere((element) => element.type != ObjectType.mod);
+            return ModsPage(files: sortedfiles);
+          }),
+      "ResourcePacks": AnimatedBuilder(
+          key: Key("te"),
+          animation: _handler,
+          builder: (context, child) {
+            List<UMF> sortedfiles = []..addAll(_handler.files);
+            sortedfiles
+                .removeWhere((element) => element.type != ObjectType.resource);
+            return ModsPage(files: sortedfiles);
+          }),
+      "Shaders": Container()
+    };
 
     _pageKey = _pages.keys.first;
     // widget.controllerInstance.stdout.addListener(() {
@@ -88,9 +102,9 @@ class _InstalledModPageState extends State<InstalledModPage> {
     super.initState();
   }
 
-
   onOpenFolder() {
-    FileExplorer.openFileExplorer(path.join(getInstancePath(), widget.controllerInstance.processId));
+    FileExplorer.openFileExplorer(
+        path.join(getInstancePath(), widget.controllerInstance.processId));
   }
 
   onDelete(BuildContext _context) {
@@ -120,44 +134,47 @@ class _InstalledModPageState extends State<InstalledModPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(borderRadius: BorderRadius.circular(18), child: SizedBox.expand(
-        child: Container(
-      
-      decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-         ),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 40,
+    return ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: SizedBox.expand(
+            child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceVariant,
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          child: Column(
             children: [
-              ModpackTitleIconWidget(
-                modloader:
-                    widget.controllerInstance.modpackData.modloader ?? "",
-                downloads: widget.controllerInstance.modpackData.downloads,
-                iconUrl: widget.controllerInstance.modpackData.icon,
-                mcVersion: widget.controllerInstance.modpackData.MCVersion,
-                mlVersion:
-                    widget.controllerInstance.modpackData.MLVersion ?? "fd",
-                name: widget.controllerInstance.modpackData.name,
+              SizedBox(
+                height: 40,
               ),
-              Expanded(
-                  child: SizedBox(
-                height: 0,
-                width: double.infinity,
-              )),
-              AnimatedBuilder(
-                  animation: widget.controllerInstance.installModel,
-                  builder: (BuildContext context, Widget? child) =>
-                      ModpackActionsMenu(
-                          onDelete: ()  => onDelete(context),
-                          onPlay: onPlay,
-                          onSecondMenuItem: onOpenFolder,
-                          state: widget.controllerInstance.installModel.installState,
-                          progress: widget.controllerInstance.installModel.progress))
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  ModpackTitleIconWidget(
+                    modloader:
+                        widget.controllerInstance.modpackData.modloader ?? "",
+                    downloads: widget.controllerInstance.modpackData.downloads,
+                    iconUrl: widget.controllerInstance.modpackData.icon,
+                    mcVersion: widget.controllerInstance.modpackData.MCVersion,
+                    mlVersion:
+                        widget.controllerInstance.modpackData.MLVersion ?? "fd",
+                    name: widget.controllerInstance.modpackData.name,
+                  ),
+                  Expanded(
+                      child: SizedBox(
+                    height: 0,
+                    width: double.infinity,
+                  )),
+                  AnimatedBuilder(
+                      animation: widget.controllerInstance.installModel,
+                      builder: (BuildContext context, Widget? child) =>
+                          ModpackActionsMenu(
+                              onDelete: () => onDelete(context),
+                              onPlay: onPlay,
+                              onSecondMenuItem: onOpenFolder,
+                              state: widget
+                                  .controllerInstance.installModel.installState,
+                              progress: widget
+                                  .controllerInstance.installModel.progress))
                 ],
               ),
               const SizedBox(
@@ -179,18 +196,39 @@ class _InstalledModPageState extends State<InstalledModPage> {
                             Text(
                               key,
                               style: _pageKey == key
-                                  ? Theme.of(context).typography.black.bodyLarge!.copyWith(color: Color.fromARGB(255, 255, 255, 255))
-                                  : Theme.of(context).typography.black.bodyLarge,
+                                  ? Theme.of(context)
+                                      .typography
+                                      .black
+                                      .bodyLarge!
+                                      .copyWith(
+                                          color: Color.fromARGB(
+                                              255, 255, 255, 255))
+                                  : Theme.of(context)
+                                      .typography
+                                      .black
+                                      .bodyLarge,
                             ),
                             SizedBox(
-                              width: TextWidth(key, Theme.of(context).typography.black.headlineSmall!),
+                              width: TextWidth(
+                                  key,
+                                  Theme.of(context)
+                                      .typography
+                                      .black
+                                      .headlineSmall!),
                               child: Center(
                                 child: AnimatedContainer(
                                   margin: EdgeInsets.only(top: 5),
                                   duration: Duration(milliseconds: 200),
                                   height: 2,
                                   curve: Curves.easeInOutCubic,
-                                  width: _pageKey == key ? TextWidth(key, Theme.of(context).typography.black.headlineSmall!) : 0,
+                                  width: _pageKey == key
+                                      ? TextWidth(
+                                          key,
+                                          Theme.of(context)
+                                              .typography
+                                              .black
+                                              .headlineSmall!)
+                                      : 0,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
@@ -209,7 +247,9 @@ class _InstalledModPageState extends State<InstalledModPage> {
                   child: PageTransitionSwitcher(
                 duration: const Duration(milliseconds: 400),
                 child: _pages[_pageKey],
-                transitionBuilder: (child, primaryAnimation, secondaryAnimation) => SharedAxisTransition(
+                transitionBuilder:
+                    (child, primaryAnimation, secondaryAnimation) =>
+                        SharedAxisTransition(
                   animation: primaryAnimation,
                   secondaryAnimation: secondaryAnimation,
                   transitionType: SharedAxisTransitionType.horizontal,

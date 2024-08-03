@@ -9,7 +9,12 @@ class RoundedTextButton extends StatefulWidget {
   double width;
   VoidCallback onTap;
   String text;
-  RoundedTextButton({Key? key, required this.text, required this.onTap, this.height = 55, this.width = 155})
+  RoundedTextButton(
+      {Key? key,
+      required this.text,
+      required this.onTap,
+      this.height = 55,
+      this.width = 155})
       : super(key: key);
 
   @override
@@ -60,15 +65,21 @@ class _RoundedTextButtonState extends State<RoundedTextButton> {
                   child: AnimatedContainer(
                       duration: Duration(milliseconds: 200),
                       curve: Curves.easeOutQuart,
-                      height: ispressed ? max(widget.height - 10, 10) : widget.height,
-                      width: ispressed ? max(widget.width - 20, 10) : widget.width,
+                      height: ispressed
+                          ? max(widget.height - 10, 10)
+                          : widget.height,
+                      width:
+                          ispressed ? max(widget.width - 20, 10) : widget.width,
                       decoration: BoxDecoration(
-                          color: ishovered ? Color.fromARGB(255, 48, 48, 48) : Theme.of(context).colorScheme.surface,
+                          color: ishovered
+                              ? Color.fromARGB(255, 48, 48, 48)
+                              : Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(8)),
                       child: Center(
                         child: Text(
                           widget.text,
-                          style: Theme.of(context).typography.black.headlineSmall,
+                          style:
+                              Theme.of(context).typography.black.headlineSmall,
                         ),
                       )),
                 ))));

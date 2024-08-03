@@ -16,5 +16,10 @@ class StartMessage {
   String get getProcessId => processId;
   Version? get getversion => version;
   RootIsolateToken get getToken => token;
-  StartMessage({required this.handler, required this.modpackData, required this.processId, required this.token, this.version});
+  StartMessage(
+      {required this.handler,
+      required this.modpackData,
+      required this.processId,
+      required this.token,
+      this.version});
 }

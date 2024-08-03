@@ -14,16 +14,28 @@ class ModloaderVersion {
 
   @override
   String toString() {
-    if (patch == null) return release.toString() + '.' + major.toString() + '.' + minor.toString();
-    return release.toString() + '.' + major.toString() + '.' + minor.toString() + '.' + patch.toString();
+    if (patch == null)
+      return release.toString() +
+          '.' +
+          major.toString() +
+          '.' +
+          minor.toString();
+    return release.toString() +
+        '.' +
+        major.toString() +
+        '.' +
+        minor.toString() +
+        '.' +
+        patch.toString();
   }
 
   static parse(String version) {
     List aftersplit = version.split('.');
     if (aftersplit.length < 4)
-      return ModloaderVersion(int.parse(aftersplit[0]), int.parse(aftersplit[1]), int.parse(aftersplit[2]));
-    return ModloaderVersion(
-        int.parse(aftersplit[0]), int.parse(aftersplit[1]), int.parse(aftersplit[2]), int.parse(aftersplit[3]));
+      return ModloaderVersion(int.parse(aftersplit[0]),
+          int.parse(aftersplit[1]), int.parse(aftersplit[2]));
+    return ModloaderVersion(int.parse(aftersplit[0]), int.parse(aftersplit[1]),
+        int.parse(aftersplit[2]), int.parse(aftersplit[3]));
   }
 
   //operator list

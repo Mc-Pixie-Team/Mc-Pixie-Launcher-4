@@ -26,7 +26,7 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
 
   onReturn() {
     print('return');
-   StaticSidePanelController.controller.push(
+    StaticSidePanelController.controller.push(
         Container(
             height: double.infinity,
             width: double.infinity,
@@ -35,7 +35,9 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
               'assets/images/backgound_blue.jpg',
               fit: BoxFit.cover,
             ),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: Color.fromARGB(0, 27, 124, 204))),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                color: Color.fromARGB(0, 27, 124, 204))),
         280.0);
   }
 
@@ -66,8 +68,9 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
         padding: const EdgeInsets.only(left: 70.0, right: 70.0),
         child: Container(
           height: 40,
-          decoration:
-              BoxDecoration(borderRadius: BorderRadius.circular(10), color: Theme.of(context).colorScheme.surface),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).colorScheme.surface),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -75,7 +78,11 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
                 width: 10,
               ),
               Text("Username",
-                  style: Theme.of(context).typography.black.bodyMedium!.merge(TextStyle(color: Colors.white))),
+                  style: Theme.of(context)
+                      .typography
+                      .black
+                      .bodyMedium!
+                      .merge(TextStyle(color: Colors.white))),
               TextFieldWithEnter(
                 presetValue: "has to be implemented",
                 maxLenght: 20,
@@ -88,7 +95,8 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
                           .typography
                           .black
                           .bodyMedium!
-                          .merge(TextStyle(color: Theme.of(context).colorScheme.onError)),
+                          .merge(TextStyle(
+                              color: Theme.of(context).colorScheme.onError)),
                     ),
                     backgroundColor: Theme.of(context).colorScheme.error,
                     action: SnackBarAction(
@@ -111,7 +119,8 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
                           .typography
                           .black
                           .bodyMedium!
-                          .merge(TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+                          .merge(TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary)),
                     ),
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     action: SnackBarAction(
@@ -164,7 +173,8 @@ class MinecraftAccounts extends StatefulWidget {
   _MinecraftAccountsState createState() => _MinecraftAccountsState();
 }
 
-class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTickerProviderStateMixin {
+class _MinecraftAccountsState extends State<MinecraftAccounts>
+    with SingleTickerProviderStateMixin {
   @override
   void initState() {
     // TODO: implement initState
@@ -180,16 +190,17 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
       child: AnimatedContainer(
         curve: Curves.decelerate,
         duration: Duration(milliseconds: 300),
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(18)),
         margin: EdgeInsets.only(top: 5, bottom: 5),
         child: Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8),
           child: FutureBuilder(
             future: MinecraftAccountUtils().getAccounts(),
             builder: (context, snapshot) {
-              print('error: ' +  snapshot.error.toString());
-              
+              print('error: ' + snapshot.error.toString());
+
               if (snapshot.hasData) {
                 List<MinecraftAccount> accounts = snapshot.data ?? [];
                 return ListView.separated(
@@ -210,22 +221,23 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                           Map dataNewAcc = await Microsoft().authenticate();
                           if (dataNewAcc["access_token"] != "") {
                             print("isnt null");
-                            
-                              MinecraftAccountUtils().addAccount(MinecraftAccount(
-                                  name: dataNewAcc["xbox_username"]!,
-                                  refreshToken: dataNewAcc["refreshToken"]!,
-                                  username: dataNewAcc["username"]!,
-                                  uuid: dataNewAcc["uuid"]!)).then((value) => {
 
-                                      setState(() => {})
-                                  });
-                         
+                            MinecraftAccountUtils()
+                                .addAccount(MinecraftAccount(
+                                    name: dataNewAcc["xbox_username"]!,
+                                    refreshToken: dataNewAcc["refreshToken"]!,
+                                    username: dataNewAcc["username"]!,
+                                    uuid: dataNewAcc["uuid"]!,
+                                    userDetails: dataNewAcc["userDetails"]!))
+                                .then((value) => {setState(() => {})});
                           }
                         } else {
-                          print("Setting account with UUID as standard: " + accounts[index].uuid);
+                          print("Setting account with UUID as standard: " +
+                              accounts[index].uuid);
                           //MinecraftAccountUtils().deleteAccount(accounts[index]);
                           setState(() {
-                            MinecraftAccountUtils().setStandard(accounts[index]);
+                            MinecraftAccountUtils()
+                                .setStandard(accounts[index]);
                           });
                         }
                       },
@@ -247,22 +259,35 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                                   Expanded(
                                     child: Text(
                                       accounts[index].username,
-                                      style: Theme.of(context).typography.black.bodyMedium,
+                                      style: Theme.of(context)
+                                          .typography
+                                          .black
+                                          .bodyMedium,
                                     ),
                                   ),
                                   FutureBuilder(
-                                      future: MinecraftAccountUtils().getStandard(),
+                                      future:
+                                          MinecraftAccountUtils().getStandard(),
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
-                                          return (snapshot.data!.uuid == accounts[index].uuid)
+                                          return (snapshot.data!.uuid ==
+                                                  accounts[index].uuid)
                                               ? Padding(
-                                                  padding: EdgeInsets.only(right: 15),
+                                                  padding: EdgeInsets.only(
+                                                      right: 15),
                                                   child: Icon(
                                                     Icons.star,
-                                                    color: Theme.of(context).typography.black.bodyMedium?.color,
+                                                    color: Theme.of(context)
+                                                        .typography
+                                                        .black
+                                                        .bodyMedium
+                                                        ?.color,
                                                   ),
                                                 )
-                                              : Padding(padding: EdgeInsets.only(right: 15), child: SizedBox());
+                                              : Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 15),
+                                                  child: SizedBox());
                                         }
                                         return CircularProgressIndicator();
                                       })
@@ -276,15 +301,23 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                                   ),
                                   Container(
                                       clipBehavior: Clip.antiAlias,
-                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
                                       child: Container(
                                         height: 40,
                                         width: 40,
-                                        decoration: BoxDecoration(color: ui.Color.fromARGB(72, 97, 97, 97)),
+                                        decoration: BoxDecoration(
+                                            color: ui.Color.fromARGB(
+                                                72, 97, 97, 97)),
                                         child: SizedBox(
                                           child: Icon(
                                             Icons.person_add_alt_1_rounded,
-                                            color: Theme.of(context).typography.black.bodyMedium?.color,
+                                            color: Theme.of(context)
+                                                .typography
+                                                .black
+                                                .bodyMedium
+                                                ?.color,
                                           ),
                                         ),
                                       )),
@@ -293,7 +326,10 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                                   ),
                                   Text(
                                     "Add Minecraft Account",
-                                    style: Theme.of(context).typography.black.bodyMedium,
+                                    style: Theme.of(context)
+                                        .typography
+                                        .black
+                                        .bodyMedium,
                                   )
                                 ],
                               ),
@@ -302,9 +338,13 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                   },
                 );
               } else {
-                return 
-                  Container(clipBehavior: Clip.antiAlias, decoration: BoxDecoration(borderRadius: BorderRadius.circular(40)), margin: EdgeInsets.only(left: 40, right: 40, top: 30, bottom: 30), child: LinearProgressIndicator());
-                
+                return Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(40)),
+                    margin: EdgeInsets.only(
+                        left: 40, right: 40, top: 30, bottom: 30),
+                    child: LinearProgressIndicator());
               }
             },
           ),

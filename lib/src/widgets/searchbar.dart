@@ -4,13 +4,15 @@ class Searchbar extends StatefulWidget {
   final Function(String text)? onchange;
   final Function? onsubmit;
   final String label;
-  Searchbar({Key? key, this.onchange, this.onsubmit, this.label = ""}) : super(key: key);
+  Searchbar({Key? key, this.onchange, this.onsubmit, this.label = ""})
+      : super(key: key);
 
   @override
   _SearchbarState createState() => _SearchbarState();
 }
 
-class _SearchbarState extends State<Searchbar> with SingleTickerProviderStateMixin {
+class _SearchbarState extends State<Searchbar>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> animation;
   late FocusNode _focusNode;
@@ -36,7 +38,9 @@ class _SearchbarState extends State<Searchbar> with SingleTickerProviderStateMix
       setState(() {});
     });
 
-    animation = _controller.drive(CurveTween(curve: Curves.easeInOutQuart)).drive(Tween(begin: 40, end: 200));
+    animation = _controller
+        .drive(CurveTween(curve: Curves.easeInOutQuart))
+        .drive(Tween(begin: 40, end: 200));
 
     _textController = TextEditingController();
     if (widget.onchange != null) {
@@ -51,7 +55,6 @@ class _SearchbarState extends State<Searchbar> with SingleTickerProviderStateMix
         if (_focusNode.hasFocus) {
           setSelectedState();
           widget.onsubmit!.call();
-        
         }
       }
       return KeyEventResult.ignored;
@@ -78,8 +81,9 @@ class _SearchbarState extends State<Searchbar> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration:
-            BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(45)),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(45)),
         height: 39,
         width: animation.value,
         child: Row(
@@ -93,7 +97,10 @@ class _SearchbarState extends State<Searchbar> with SingleTickerProviderStateMix
                         height: 25,
                         width: 135,
                         child: EditableText(
-                          selectionColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                          selectionColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.3),
                           cursorHeight: 20,
                           cursorOffset: Offset(0, 2),
                           controller: _textController,
@@ -102,21 +109,23 @@ class _SearchbarState extends State<Searchbar> with SingleTickerProviderStateMix
                           cursorColor: Theme.of(context).colorScheme.primary,
                           style: TextStyle(
                               fontSize: 17,
-                              color: Theme.of(context).typography.black.labelMedium!.color!.withOpacity(0.86)),
+                              color: Theme.of(context)
+                                  .typography
+                                  .black
+                                  .labelMedium!
+                                  .color!
+                                  .withOpacity(0.86)),
                         )))
                 : Container(),
             GestureDetector(
-            
               onTapUp: (details) {
-              
                 print(_controller.isAnimating);
-                
-                if(_controller.isAnimating){
+
+                if (_controller.isAnimating) {
                   widget.onsubmit!.call();
-                
-                } 
+                }
                 setSelectedState();
-              } ,
+              },
               child: Padding(
                 padding: EdgeInsets.all(10),
                 child: Icon(

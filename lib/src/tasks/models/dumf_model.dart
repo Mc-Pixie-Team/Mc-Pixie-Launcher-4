@@ -2,14 +2,14 @@ import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 
 class DUMF {
   DUMF({
-   required this.name,
-   required this.author,
-   required this.description,
+    required this.name,
+    required this.author,
+    required this.description,
     this.downloads,
     this.likes,
     this.categories,
-   required this.icon,
-   required this.body,
+    required this.icon,
+    required this.body,
     required this.versions,
     required this.original,
   });
@@ -41,22 +41,20 @@ class DUMF {
   }
 
   static parse(Map json) {
-
-    List<String> modloaderlist = List.generate((json["modloader"] as List).length, (index) => (json["modloader"] as List)[index].toString());
+    List<String> modloaderlist = List.generate(
+        (json["modloader"] as List).length,
+        (index) => (json["modloader"] as List)[index].toString());
 
     return DUMF(
-      
-    name: json["name"],
-    author: json["author"],
-    description:  json["description"],
-    downloads: json["downloads"],
-    likes: json["likes"],
-    categories: json["categories"],
-    icon: json["icon"],
-   original: json["original"],
-   versions: json["verions"],
-   body: json["body"]
-  
-    );
+        name: json["name"],
+        author: json["author"],
+        description: json["description"],
+        downloads: json["downloads"],
+        likes: json["likes"],
+        categories: json["categories"],
+        icon: json["icon"],
+        original: json["original"],
+        versions: json["verions"],
+        body: json["body"]);
   }
 }

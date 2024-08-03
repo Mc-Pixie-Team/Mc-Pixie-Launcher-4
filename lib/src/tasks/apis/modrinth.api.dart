@@ -72,7 +72,6 @@ class ModrinthApi implements Api {
     }
   }
 
-
   @override
   getModpackList() async {
     // print(
@@ -82,7 +81,6 @@ class ModrinthApi implements Api {
         'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit'));
     final hits = jsonDecode(utf8.decode(res.bodyBytes))["hits"];
 
- 
     return hits;
   }
 
@@ -98,7 +96,6 @@ class ModrinthApi implements Api {
     offset += limit;
     return jsonDecode(utf8.decode(res.bodyBytes))["hits"];
   }
-
 
   @override
   Future<List<String>> getCategories() async {
@@ -154,46 +151,47 @@ class ModrinthApi implements Api {
   }
 
   Future<List> _getMultipleVersion(List<dynamic> verisons) async {
-    var res = await http
-        .get(Uri.parse('https://api.modrinth.com/v2/versions?ids=${jsonEncode(verisons)}'));
+    var res = await http.get(Uri.parse(
+        'https://api.modrinth.com/v2/versions?ids=${jsonEncode(verisons)}'));
     // TODO: implement getModpack
     return jsonDecode(utf8.decode(res.bodyBytes));
   }
 
   Future<Map<String, dynamic>> _getModpack(String id) async {
-    var res = await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
+    var res =
+        await http.get(Uri.parse('https://api.modrinth.com/v2/project/$id'));
     return jsonDecode(utf8.decode(res.bodyBytes));
   }
-
-
 
   @override
   Future<DUMF> getDUMF(Map modpackData) async {
     List<UMF> versions = [];
 
-    modpackData =await _getModpack(modpackData["project_id"]);
+    modpackData = await _getModpack(modpackData["project_id"]);
     List rawVersion = await _getMultipleVersion(modpackData["versions"]);
 
-
-    for (Map version in rawVersion){
-     
-  versions.add(UMF(
+    for (Map version in rawVersion) {
+      versions.add(UMF(
           icon: modpackData["icon_url"],
           MCVersion: version["game_versions"].last,
           modloader: version["loaders"][0],
           name: modpackData["title"].toString(),
-          versionName:  version["name"].toString(),
+          versionName: version["name"].toString(),
           description: modpackData["description"].toString(),
           downloads: version["downloads"],
           original: version));
     }
-   versions.sort((a, b) {
-    if(Version.parse(a.MCVersion!) > Version.parse(b.MCVersion!) ) return -1;
-    if(Version.parse(a.MCVersion!) < Version.parse(b.MCVersion!) ) return 1;
-    if(Version.parse(a.MCVersion!) == Version.parse(b.MCVersion!) ) return 0;
-    throw "cannot parse Version";
-   },);
-  
+    versions.sort(
+      (a, b) {
+        if (Version.parse(a.MCVersion!) > Version.parse(b.MCVersion!))
+          return -1;
+        if (Version.parse(a.MCVersion!) < Version.parse(b.MCVersion!)) return 1;
+        if (Version.parse(a.MCVersion!) == Version.parse(b.MCVersion!))
+          return 0;
+        throw "cannot parse Version";
+      },
+    );
+
     return DUMF(
       name: modpackData["title"].toString(),
       author: modpackData["author"].toString(),
@@ -208,26 +206,28 @@ class ModrinthApi implements Api {
     );
   }
 
-    @override
-    Future<UMF> getLatestModpackVersionFromLiteUMF(UMF umf) async{
-      if(umf.original["dependencies"] != null) return umf; //if there are dependencies its not the lite version from the start anymore
-           Map modpackproject = await _getModpack(umf.original["project_id"]); // Gets the full Protect
-     var modpackVersion =
-          (await _getMultipleVersion(modpackproject["versions"] )).firstWhere((element) => element["version_type"] == "release", orElse: () => null); // gets the newest version
+  @override
+  Future<UMF> getLatestModpackVersionFromLiteUMF(UMF umf) async {
+    if (umf.original["dependencies"] != null)
+      return umf; //if there are dependencies its not the lite version from the start anymore
+    Map modpackproject =
+        await _getModpack(umf.original["project_id"]); // Gets the full Protect
+    var modpackVersion = (await _getMultipleVersion(modpackproject["versions"]))
+        .firstWhere((element) => element["version_type"] == "release",
+            orElse: () => null); // gets the newest version
 
-     return UMF(
-      categories: umf.categories,
-          icon: modpackproject["icon_url"],
-          MCVersion: modpackVersion["game_versions"].last,
-          modloader: modpackVersion["loaders"][0],
-          name: modpackproject["title"].toString(),
-          versionName:  modpackVersion["name"].toString(),
-          description: modpackproject["description"].toString(),
-          downloads: modpackVersion["downloads"],
-          body: modpackproject["body"],
-          original: modpackVersion);
+    return UMF(
+        categories: umf.categories,
+        icon: modpackproject["icon_url"],
+        MCVersion: modpackVersion["game_versions"].last,
+        modloader: modpackVersion["loaders"][0],
+        name: modpackproject["title"].toString(),
+        versionName: modpackVersion["name"].toString(),
+        description: modpackproject["description"].toString(),
+        downloads: modpackVersion["downloads"],
+        body: modpackproject["body"],
+        original: modpackVersion);
   }
-
 
   @override
   getTitlename() {

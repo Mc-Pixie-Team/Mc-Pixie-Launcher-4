@@ -20,8 +20,9 @@ class _DebugpageState extends State<Debugpage> {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      decoration:
-          BoxDecoration(color: Theme.of(context).colorScheme.surfaceVariant, borderRadius: BorderRadius.circular(18)),
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.circular(18)),
       child: Column(
         children: [
           DropDown(),
@@ -30,14 +31,14 @@ class _DebugpageState extends State<Debugpage> {
           ),
           Dropdownmenu(),
           Dropdownmenu(),
-
-    
-             
-     
-          FloatingActionButton(onPressed: ()  {
-     
-     
-           StaticSidePanelController.controller.push(Container(height: double.infinity, width: 100.0, color: Colors.green,), 100.0);
+          FloatingActionButton(onPressed: () {
+            StaticSidePanelController.controller.push(
+                Container(
+                  height: double.infinity,
+                  width: 100.0,
+                  color: Colors.green,
+                ),
+                100.0);
           })
         ],
       ),

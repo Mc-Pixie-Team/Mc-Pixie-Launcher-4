@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -114,7 +113,8 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
             child: GestureDetector(
               onTap: () => toggelexpand(),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start, //Center Row contents horizontally,
+                mainAxisAlignment:
+                    MainAxisAlignment.start, //Center Row contents horizontally,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
@@ -133,26 +133,34 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
                                   duration: Duration(milliseconds: 400),
                                   curve: Curves.easeOutExpo,
                                   child: SizedBox(
-                                      width: 10, height: 10, child: SvgPicture.asset("assets/svg/dropdown-icon.svg")))),
+                                      width: 10,
+                                      height: 10,
+                                      child: SvgPicture.asset(
+                                          "assets/svg/dropdown-icon.svg")))),
                           ValueListenableBuilder(
                               valueListenable: widget.upperNotifier,
-                              builder: (context, isEnabled, child) => GestureDetector(
-                                  onTap: () => onPressed(),
-                                  child: AnimatedContainer(
-                                    duration: Duration(milliseconds: 300),
-                                    curve: Curves.easeOutExpo,
-                                    margin: EdgeInsets.only(top: 2, right: 9),
-                                    width: 25,
-                                    height: 25,
-                                    decoration: ShapeDecoration(
-                                      color: (this.isEnabled as bool)
-                                          ? Color(0xFF9C79FF)
-                                          : Color.fromARGB(255, 71, 71, 71),
-                                      shape: OvalBorder(),
-                                    ),
-                                  ))),
+                              builder: (context, isEnabled, child) =>
+                                  GestureDetector(
+                                      onTap: () => onPressed(),
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 300),
+                                        curve: Curves.easeOutExpo,
+                                        margin:
+                                            EdgeInsets.only(top: 2, right: 9),
+                                        width: 25,
+                                        height: 25,
+                                        decoration: ShapeDecoration(
+                                          color: (this.isEnabled as bool)
+                                              ? Color(0xFF9C79FF)
+                                              : Color.fromARGB(255, 71, 71, 71),
+                                          shape: OvalBorder(),
+                                        ),
+                                      ))),
                           Text(
-                            "/" + widget.fileEntity.path.split(path.separator).last,
+                            "/" +
+                                widget.fileEntity.path
+                                    .split(path.separator)
+                                    .last,
                             style: Theme.of(context).typography.black.bodyLarge,
                           ),
                         ],

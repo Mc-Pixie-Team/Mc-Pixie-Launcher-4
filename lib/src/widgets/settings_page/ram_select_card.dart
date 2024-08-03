@@ -61,18 +61,22 @@ class _RamSelectCardState extends State<RamSelectCard> {
             SizedBox(
               height: 20,
             ),
-            Padding(padding: EdgeInsets.only(left: 33, right: 33),child:
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(
-                  5,
-                  (int index) =>  Text(index == 0
-                      ? "0"
-                      : ((index * 4)).toString(), style:Theme.of(context)
-                                                  .typography
-                                                  .black
-                                                  .labelLarge!.copyWith(color: Color.fromARGB(174, 255, 255, 255)),)),
-            )),
+            Padding(
+                padding: EdgeInsets.only(left: 33, right: 33),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(
+                      5,
+                      (int index) => Text(
+                            index == 0 ? "0" : ((index * 4)).toString(),
+                            style: Theme.of(context)
+                                .typography
+                                .black
+                                .labelLarge!
+                                .copyWith(
+                                    color: Color.fromARGB(174, 255, 255, 255)),
+                          )),
+                )),
             Padding(
                 padding: EdgeInsets.only(top: 13, left: 40),
                 child: Text(

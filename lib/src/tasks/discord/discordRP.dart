@@ -20,7 +20,8 @@ class DiscordRP {
     if (csharpProcess != null) {
       throw DiscordRPException("The process is already initialized!", 403);
     }
-    var serviceExecutable = 'C:/Program Files/dotnet/dotnet.exe'; // literally the .NET CLI
+    var serviceExecutable =
+        'C:/Program Files/dotnet/dotnet.exe'; // literally the .NET CLI
     var serviceArgs = ['run', appID]; // or .EXE if on Windows...
     // csharpProcess = await Process.start(serviceExecutable, serviceArgs, workingDirectory: "C:\\Users\\ancie\\Mc-Pixie-Launcher-4\\discordCSApp");
     // print(csharpProcess);
@@ -37,10 +38,12 @@ class DiscordRP {
         dynamic result = jsonDecode(strJson);
         print(result);
       } catch (e) {
-        print("\x1B[31m=== Error!!! Message does not conform to JSON RPC standarts!! ===\x1B[0m");
+        print(
+            "\x1B[31m=== Error!!! Message does not conform to JSON RPC standarts!! ===\x1B[0m");
         var strMessage = utf8.decode(event);
         print('\x1B[31m$strMessage\x1B[0m');
-        print("\x1B[31m=================================================================\x1B[0m");
+        print(
+            "\x1B[31m=================================================================\x1B[0m");
       }
       //TODO: to implement message replies, sync up the message ID here
       //TODO: handle the payload of the JSON RPC message "result"
@@ -58,10 +61,12 @@ class DiscordRP {
         dynamic result = jsonDecode(strJson);
         print(result);
       } catch (e) {
-        print("\x1B[31m=== Error!!! Message does not conform to JSON RPC standarts!! ===\x1B[0m");
+        print(
+            "\x1B[31m=== Error!!! Message does not conform to JSON RPC standarts!! ===\x1B[0m");
         var strMessage = utf8.decode(event);
         print('\x1B[31m$strMessage\x1B[0m');
-        print("\x1B[31m=================================================================\x1B[0m");
+        print(
+            "\x1B[31m=================================================================\x1B[0m");
       }
       //TODO: to implement message replies, sync up the message ID here
       //TODO: handle the payload of the JSON RPC message "result"
@@ -85,7 +90,8 @@ class DiscordRP {
 
   bool update(RitchPresence data) {
     if (csharpProcess == null) {
-      throw DiscordRPException("The csharpProcess is null! (not initialized)", 10);
+      throw DiscordRPException(
+          "The csharpProcess is null! (not initialized)", 10);
     }
 
     print(data.toMap());
@@ -105,7 +111,8 @@ class DiscordRP {
 
   bool clear() {
     if (csharpProcess == null) {
-      throw DiscordRPException("The csharpProcess is null! (not initialized)", 10);
+      throw DiscordRPException(
+          "The csharpProcess is null! (not initialized)", 10);
     }
     Map message = {
       "jsonrpc": "2.0",
@@ -122,7 +129,8 @@ class DiscordRP {
 
   bool terminate() {
     if (csharpProcess == null) {
-      throw DiscordRPException("The csharpProcess is null! (not initialized)", 10);
+      throw DiscordRPException(
+          "The csharpProcess is null! (not initialized)", 10);
     }
     csharpProcess!.kill();
     csharpProcess = null;
@@ -168,7 +176,11 @@ class RitchPresence {
   });
 
   Map toMap() {
-    Map returnValue = {'Details': details, 'State': state, 'Type': type.toInt()};
+    Map returnValue = {
+      'Details': details,
+      'State': state,
+      'Type': type.toInt()
+    };
     if (timestamps != null) {
       returnValue.addAll({"Timestamps": timestamps!.toMap()});
     }
@@ -206,7 +218,11 @@ class RitchPresenceAssets {
   String? SmallImage;
   String? SmallText;
 
-  RitchPresenceAssets({required this.LargeImage, required this.LargeText, this.SmallImage, this.SmallText});
+  RitchPresenceAssets(
+      {required this.LargeImage,
+      required this.LargeText,
+      this.SmallImage,
+      this.SmallText});
   Map toMap() {
     Map returnValue = {'LargeImage': LargeImage, 'LargeText': LargeText};
     if (SmallImage != null) {
@@ -246,7 +262,8 @@ class RitchPresenceSecrets {
   String Match;
   String Join;
   String? Spectate;
-  RitchPresenceSecrets({required this.Match, required this.Join, this.Spectate});
+  RitchPresenceSecrets(
+      {required this.Match, required this.Join, this.Spectate});
   Map toMap() {
     Map returnValue = {'Match': Match, 'Join': Join};
     if (Spectate != null) {

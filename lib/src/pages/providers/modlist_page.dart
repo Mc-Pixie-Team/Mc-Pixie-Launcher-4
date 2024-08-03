@@ -34,7 +34,8 @@ class ModListPage extends StatefulWidget {
   _ModListPageState createState() => _ModListPageState();
 }
 
-class _ModListPageState extends State<ModListPage> with SingleTickerProviderStateMixin {
+class _ModListPageState extends State<ModListPage>
+    with SingleTickerProviderStateMixin {
   ScrollController _scrollController = ScrollController();
   ScrollController _secondController = ScrollController();
   late Widget addButton;
@@ -52,7 +53,8 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
     var returntype = await _handler.getModpackList();
     Future.delayed(Duration(milliseconds: 200)).then((value) {
       _scrollController.addListener(() async {
-        if (_scrollController.position.pixels == (_scrollController.position.maxScrollExtent)) {
+        if (_scrollController.position.pixels ==
+            (_scrollController.position.maxScrollExtent)) {
           print('new');
           await getMoreData();
         }
@@ -71,7 +73,10 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
     List rawModpacks = await _handler.getMoreModpacks();
     modpacklist.addAll(rawModpacks);
     installContollers.addAll(List.generate(
-        rawModpacks.length, (index) => InstallController(handler: _handler, modpackData: _handler.convertToLiteUMF(rawModpacks[index]))));
+        rawModpacks.length,
+        (index) => InstallController(
+            handler: _handler,
+            modpackData: _handler.convertToLiteUMF(rawModpacks[index]))));
     setState(() {});
     iscalled = false;
   }
@@ -144,199 +149,241 @@ class _ModListPageState extends State<ModListPage> with SingleTickerProviderStat
       stream: InternetConnectionChecker().onStatusChange,
       builder: (context, snapshot) {
         bool hasConnection = InternetConnectionCheckerHelper().hasConnection;
-        
-          return Container(
-        clipBehavior: Clip.antiAlias,
-        height: double.infinity,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          color: Theme.of(context).colorScheme.surfaceVariant,
-        ),
-        child: hasConnection ? Stack(children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 70, left: 30, bottom: 9),
-                child: SlideInAnimation(
-                    duration: Duration(milliseconds: 1000),
-                    child: Text(
-                      AppLocalizations.of(context)!.modpacksProvided + ":",
-                      style: Theme.of(context).typography.black.bodySmall,
-                    )),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 30, bottom: 28),
-                child: SlideInAnimation(
-                    child: Text(
-                  _handler.getTitlename(),
-                  style: Theme.of(context).typography.black.displaySmall,
-                )),
-              ),
-              Divider.CustomDivider(
-                size: 14,
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Expanded(
-                  child: FutureBuilder(
-                key: key,
-                future: modpacklistfuture,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: LoadingAnimationWidget.staggeredDotsWave(color: Theme.of(context).colorScheme.primary, size: 30),
-                      ),
-                    );
-                  }
 
-                  if (snapshot.hasData) {
-                    print(_handler.getTitlename());
-                    print('rebuld in ModList');
-                    if (modpacklist.length < 1) {
-                      modpacklist = snapshot.data ?? [];
-                      installContollers = List.generate(
-                          modpacklist.length,
-                          (index) =>
-                              InstallController(isVersion: false, handler: _handler, modpackData: _handler.convertToLiteUMF(modpacklist[index])));
-                    }
-                    return ShaderMask(
-                        shaderCallback: (Rect rect) {
-                          return const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Color.fromARGB(255, 177, 70, 21), Colors.transparent, Colors.transparent, Color.fromARGB(0, 155, 39, 176)],
-                            stops: [0.0, 0.08, 0.6, 1.0], // 10% purple, 80% transparent, 10% purple
-                          ).createShader(rect);
-                        },
-                        blendMode: BlendMode.dstOut,
-                        child: ListView.builder(
-                            controller: _scrollController,
-                            itemCount: modpacklist.length + 1,
-                            itemBuilder: ((context, index) {
-                              if (index == modpacklist.length) {
-                                print("returned");
-                                return SizedBox(
-                                    height: 100,
-                                    child: Center(
-                                        child: LoadingAnimationWidget.staggeredDotsWave(color: Theme.of(context).colorScheme.primary, size: 30)));
-                              }
-
-                              InstallController installcontroller = installContollers[index];
-
-                              return BrowseCard(
-                                key: Key(installcontroller.processId),
-                                installModel: installcontroller.installModel,
-                                handlerString: widget.providerString,
-                                processId: installcontroller.processId,
-                                modpackData: installcontroller.modpackData,
-                                onCancel: () {
-                                  installcontroller.cancel();
-                                },
-                                onDownload: () async {
-                                  installcontroller.install(version: _handler.version);
-                                },
-                                onOpen: () async {
-                                  installcontroller.start();
-                                },
-                              );
-                            })));
-                  }
-                  ;
-
-                  return Container();
-                },
-              ))
-            ],
-          ),
-          Positioned.fill(
-              top: 12,
-              right: 12,
-              child: Container(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                        child: Align(
-                            alignment: Alignment.topRight,
+        return Container(
+            clipBehavior: Clip.antiAlias,
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: Theme.of(context).colorScheme.surfaceVariant,
+            ),
+            child: hasConnection
+                ? Stack(children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.only(top: 70, left: 30, bottom: 9),
+                          child: SlideInAnimation(
+                              duration: Duration(milliseconds: 1000),
+                              child: Text(
+                                AppLocalizations.of(context)!.modpacksProvided +
+                                    ":",
+                                style: Theme.of(context)
+                                    .typography
+                                    .black
+                                    .bodySmall,
+                              )),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 30, bottom: 28),
+                          child: SlideInAnimation(
+                              child: Text(
+                            _handler.getTitlename(),
+                            style:
+                                Theme.of(context).typography.black.displaySmall,
+                          )),
+                        ),
+                        Divider.CustomDivider(
+                          size: 14,
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Expanded(
                             child: FutureBuilder(
-                                future: _handler.getCategories(),
-                                builder: ((context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    filterStrings = snapshot.data!;
-                                    return SingleChildScrollView(
-                                        controller: _secondController,
-                                        reverse: true,
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: filters,
-                                        ));
-                                  } else {
-                                    return Container(
-                                      width: double.infinity,
-                                    );
-                                  }
-                                })))),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    FutureBuilder(
-                        future: mv,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return SizedBox(
-                                width: 220,
-                                child: Dropdownmenu(
-                                  useOverlay: false,
-                                  registry: snapshot.data,
-                                  onchange: (text, oldtext) {
-                                    key = new GlobalKey();
+                          key: key,
+                          future: modpacklistfuture,
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: SizedBox(
+                                  height: 50,
+                                  width: 50,
+                                  child:
+                                      LoadingAnimationWidget.staggeredDotsWave(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          size: 30),
+                                ),
+                              );
+                            }
 
-                                    _handler.searchMV(text);
-                                    setState(() {
-                                      modpacklist = [];
-                                    });
+                            if (snapshot.hasData) {
+                              print(_handler.getTitlename());
+                              print('rebuld in ModList');
+                              if (modpacklist.length < 1) {
+                                modpacklist = snapshot.data ?? [];
+                                installContollers = List.generate(
+                                    modpacklist.length,
+                                    (index) => InstallController(
+                                        isVersion: false,
+                                        handler: _handler,
+                                        modpackData: _handler.convertToLiteUMF(
+                                            modpacklist[index])));
+                              }
+                              return ShaderMask(
+                                  shaderCallback: (Rect rect) {
+                                    return const LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Color.fromARGB(255, 177, 70, 21),
+                                        Colors.transparent,
+                                        Colors.transparent,
+                                        Color.fromARGB(0, 155, 39, 176)
+                                      ],
+                                      stops: [
+                                        0.0,
+                                        0.08,
+                                        0.6,
+                                        1.0
+                                      ], // 10% purple, 80% transparent, 10% purple
+                                    ).createShader(rect);
                                   },
-                                ));
-                          }
-                          return SizedBox(
-                            width: 215,
-                          );
-                        }),
-                    SizedBox(
-                      width: 10,
+                                  blendMode: BlendMode.dstOut,
+                                  child: ListView.builder(
+                                      controller: _scrollController,
+                                      itemCount: modpacklist.length + 1,
+                                      itemBuilder: ((context, index) {
+                                        if (index == modpacklist.length) {
+                                          print("returned");
+                                          return SizedBox(
+                                              height: 100,
+                                              child: Center(
+                                                  child: LoadingAnimationWidget
+                                                      .staggeredDotsWave(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                          size: 30)));
+                                        }
+
+                                        InstallController installcontroller =
+                                            installContollers[index];
+
+                                        return BrowseCard(
+                                          key: Key(installcontroller.processId),
+                                          installModel:
+                                              installcontroller.installModel,
+                                          handlerString: widget.providerString,
+                                          processId:
+                                              installcontroller.processId,
+                                          modpackData:
+                                              installcontroller.modpackData,
+                                          onCancel: () {
+                                            installcontroller.cancel();
+                                          },
+                                          onDownload: () async {
+                                            installcontroller.install(
+                                                version: _handler.version);
+                                          },
+                                          onOpen: () async {
+                                            installcontroller.start();
+                                          },
+                                        );
+                                      })));
+                            }
+                            ;
+
+                            return Container();
+                          },
+                        ))
+                      ],
                     ),
-                    Searchbar.Searchbar(
-                      onchange: (text) {
-                        querytext = text;
-                      },
-                      onsubmit: () {
-                        key = new GlobalKey();
-                        print('querytext: $querytext');
-                        setState(() {
-                          _handler.query = querytext;
-                          modpacklist = [];
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              )),
-        ]) : Center(child: OfflineIcon(size: 150,)));
-        
-        
+                    Positioned.fill(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(
+                                  child: Align(
+                                      alignment: Alignment.topRight,
+                                      child: FutureBuilder(
+                                          future: _handler.getCategories(),
+                                          builder: ((context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              filterStrings = snapshot.data!;
+                                              return SingleChildScrollView(
+                                                  controller: _secondController,
+                                                  reverse: true,
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: filters,
+                                                  ));
+                                            } else {
+                                              return Container(
+                                                width: double.infinity,
+                                              );
+                                            }
+                                          })))),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              FutureBuilder(
+                                  future: mv,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return SizedBox(
+                                          width: 220,
+                                          child: Dropdownmenu(
+                                            useOverlay: false,
+                                            registry: snapshot.data,
+                                            onchange: (text, oldtext) {
+                                              key = new GlobalKey();
+
+                                              _handler.searchMV(text);
+                                              setState(() {
+                                                modpacklist = [];
+                                              });
+                                            },
+                                          ));
+                                    }
+                                    return SizedBox(
+                                      width: 215,
+                                    );
+                                  }),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Searchbar.Searchbar(
+                                onchange: (text) {
+                                  querytext = text;
+                                },
+                                onsubmit: () {
+                                  key = new GlobalKey();
+                                  print('querytext: $querytext');
+                                  setState(() {
+                                    _handler.query = querytext;
+                                    modpacklist = [];
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        )),
+                  ])
+                : Center(
+                    child: OfflineIcon(
+                    size: 150,
+                  )));
       },
     );
   }

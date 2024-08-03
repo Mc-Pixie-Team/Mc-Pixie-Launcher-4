@@ -12,7 +12,13 @@ class SvgButton extends StatefulWidget {
   Widget? text;
 
   SvgButton.asset(this.asset,
-      {Key? key, required this.onpressed, this.color, this.text, this.height, this.width, this.padding})
+      {Key? key,
+      required this.onpressed,
+      this.color,
+      this.text,
+      this.height,
+      this.width,
+      this.padding})
       : super(key: key);
 
   @override
@@ -46,7 +52,11 @@ class _SvgButtonState extends State<SvgButton>
         onTap: widget.onpressed,
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
-          child: Container(padding: widget.padding, height: widget.height, width: widget.width, child: SvgPicture.asset(widget.asset,
+          child: Container(
+              padding: widget.padding,
+              height: widget.height,
+              width: widget.width,
+              child: SvgPicture.asset(widget.asset,
                   color: (widget.color ?? Theme.of(context).colorScheme.primary)
                       .withOpacity(Tween(begin: 1, end: 0.5)
                           .animate(_controller)

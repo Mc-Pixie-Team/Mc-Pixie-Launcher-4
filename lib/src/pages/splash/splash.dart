@@ -48,7 +48,8 @@ class _SplashScreenState extends State<SplashScreen> {
                             Theme.of(context).colorScheme.primary,
                             Theme.of(context).colorScheme.tertiary,
                           ]),
-                      textStyle: Theme.of(context).typography.black.headlineLarge!,
+                      textStyle:
+                          Theme.of(context).typography.black.headlineLarge!,
                     )
                   ],
                 ),
@@ -61,7 +62,9 @@ class _SplashScreenState extends State<SplashScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Joshi", style: Theme.of(context).typography.black.bodyLarge),
+                        Text("Joshi",
+                            style:
+                                Theme.of(context).typography.black.bodyLarge),
                         Padding(
                             padding: EdgeInsets.only(left: 10, right: 10),
                             child: Container(
@@ -69,7 +72,9 @@ class _SplashScreenState extends State<SplashScreen> {
                               height: 20,
                               color: Theme.of(context).colorScheme.outline,
                             )),
-                        Text("MC-Pixie ©", style: Theme.of(context).typography.black.bodyLarge),
+                        Text("MC-Pixie ©",
+                            style:
+                                Theme.of(context).typography.black.bodyLarge),
                         Padding(
                             padding: EdgeInsets.only(left: 10, right: 10),
                             child: Container(
@@ -77,7 +82,9 @@ class _SplashScreenState extends State<SplashScreen> {
                               height: 20,
                               color: Theme.of(context).colorScheme.outline,
                             )),
-                        Text("Matze", style: Theme.of(context).typography.black.bodyLarge),
+                        Text("Matze",
+                            style:
+                                Theme.of(context).typography.black.bodyLarge),
                       ],
                     ),
                   ))

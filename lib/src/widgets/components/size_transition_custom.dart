@@ -33,8 +33,12 @@ class _SizetransitioncustomState extends State<Sizetransitioncustom> {
     return ClipRect(
       child: Align(
         alignment: alignment,
-        heightFactor: widget.axis == Axis.vertical ? math.max(widget.sizeFactor, 0.0) : null,
-        widthFactor: widget.axis == Axis.horizontal ? math.max(widget.sizeFactor, 0.0) : null,
+        heightFactor: widget.axis == Axis.vertical
+            ? math.max(widget.sizeFactor, 0.0)
+            : null,
+        widthFactor: widget.axis == Axis.horizontal
+            ? math.max(widget.sizeFactor, 0.0)
+            : null,
         child: widget.child,
       ),
     );

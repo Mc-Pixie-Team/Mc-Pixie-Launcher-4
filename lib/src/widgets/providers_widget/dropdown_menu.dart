@@ -24,7 +24,8 @@ class Dropdownmenu extends StatefulWidget {
   _DropdownmenuState createState() => _DropdownmenuState();
 }
 
-class _DropdownmenuState extends State<Dropdownmenu> with TickerProviderStateMixin {
+class _DropdownmenuState extends State<Dropdownmenu>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation _animation;
   late OverlayEntry? overlayEntry;
@@ -49,13 +50,13 @@ class _DropdownmenuState extends State<Dropdownmenu> with TickerProviderStateMix
     _focusNode = FocusNode();
     _textController = TextEditingController();
     _controller = AnimationController(
-        reverseDuration: Duration(milliseconds: 500), vsync: this, duration: Duration(milliseconds: 1300));
+        reverseDuration: Duration(milliseconds: 500),
+        vsync: this,
+        duration: Duration(milliseconds: 1300));
     _animation = CurvedAnimation(
         reverseCurve: Curves.easeInQuad,
         parent: Tween(begin: 1.0, end: 0.0).animate(_controller),
         curve: Curves.easeInExpo);
-
-   
 
     _controller.addStatusListener((state) {
       if (state == AnimationStatus.forward) {
@@ -135,7 +136,8 @@ class _DropdownmenuState extends State<Dropdownmenu> with TickerProviderStateMix
 
   Widget _getDropDownWidget() {
     if (this.box != null) {
-      Offset position = box!.localToGlobal(Offset.zero); //this is global position
+      Offset position =
+          box!.localToGlobal(Offset.zero); //this is global position
       gly = position.dy + box!.size.height - 2;
       glx = position.dx;
     }
@@ -143,7 +145,10 @@ class _DropdownmenuState extends State<Dropdownmenu> with TickerProviderStateMix
         animation: _animation,
         builder: (context, child) => Container(
               decoration: BoxDecoration(boxShadow: [
-                BoxShadow(color: const Color.fromARGB(78, 0, 0, 0), blurRadius: 20, offset: Offset(0, 20))
+                BoxShadow(
+                    color: const Color.fromARGB(78, 0, 0, 0),
+                    blurRadius: 20,
+                    offset: Offset(0, 20))
               ]),
               child: Sizetransitioncustom(
                   sizeFactor: (1.0 * (1 - _animation.value)),
@@ -154,17 +159,23 @@ class _DropdownmenuState extends State<Dropdownmenu> with TickerProviderStateMix
                       decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.elliptical(20, 20), bottomRight: Radius.elliptical(20, 20))),
+                              bottomLeft: Radius.elliptical(20, 20),
+                              bottomRight: Radius.elliptical(20, 20))),
                       child: ListView.builder(
                           itemCount: widget.registry!.length,
                           itemBuilder: (context, index) {
                             return InkWell(
-                                onTap: () => setElement(widget.registry![index]),
+                                onTap: () =>
+                                    setElement(widget.registry![index]),
                                 child: Padding(
-                                    padding: EdgeInsets.only(top: 14, left: 16, bottom: 5),
+                                    padding: EdgeInsets.only(
+                                        top: 14, left: 16, bottom: 5),
                                     child: Text(
                                       widget.registry![index],
-                                      style: Theme.of(context).typography.black.labelLarge,
+                                      style: Theme.of(context)
+                                          .typography
+                                          .black
+                                          .labelLarge,
                                     )));
                           }))),
             ));
@@ -198,96 +209,117 @@ class _DropdownmenuState extends State<Dropdownmenu> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     if (this.box != null) {
-      Offset position = box!.localToGlobal(Offset.zero); //this is global position
+      Offset position =
+          box!.localToGlobal(Offset.zero); //this is global position
       gly = position.dy + box!.size.height - 2;
       glx = position.dx;
       overlayEntry = _getoverlayEntry();
     }
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-      InkWell(
-          onTap: () {},
-          child: AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                globalRadius = _animation.value < 1 ? 0 : 20;
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+              onTap: () {},
+              child: AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, child) {
+                    globalRadius = _animation.value < 1 ? 0 : 20;
 
-                return Container(
-                  key: key,
-                  width: 235,
-                  height: 41,
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.elliptical(20, 20),
-                          topRight: Radius.elliptical(20, 20),
-                          bottomLeft: Radius.elliptical(globalRadius, globalRadius),
-                          bottomRight: Radius.elliptical(globalRadius, globalRadius))),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 16,
-                      ),
-                      Transform.rotate(
-                        angle: (-1.59 * _animation.value),
-                        child: SvgPicture.asset(
-                          'assets/svg/dropdown-icon.svg',
-                          color: Color.fromARGB(255, 148, 148, 148),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 16,
-                      ),
-                     
-                      Padding(
-                          padding: EdgeInsets.only(bottom: 0),
-                          child: SizedBox(
-                              height: 25,
-                              width: 135,
-                              child: EditableText(
-                                readOnly: true,
-                                selectionColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                                cursorHeight: 20,
-                                cursorOffset: Offset(0, 2),
-                                controller: _textController,
-                                backgroundCursorColor: Color.fromARGB(0, 168, 14, 14),
-                                focusNode: _focusNode,
-                                cursorColor: Theme.of(context).colorScheme.primary,
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    color: Theme.of(context).typography.black.labelMedium!.color!.withOpacity(0.86)),
-                              ))),
-                      Expanded(
-                        child: Container(),
-                      ),
-                      widget.isRemovalIcon
-                          ? GestureDetector(
-                              onTap: () => removeElement(),
-                              child: widget.child ??
+                    return Container(
+                      key: key,
+                      width: 235,
+                      height: 41,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.elliptical(20, 20),
+                              topRight: Radius.elliptical(20, 20),
+                              bottomLeft:
+                                  Radius.elliptical(globalRadius, globalRadius),
+                              bottomRight: Radius.elliptical(
+                                  globalRadius, globalRadius))),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 16,
+                          ),
+                          Transform.rotate(
+                            angle: (-1.59 * _animation.value),
+                            child: SvgPicture.asset(
+                              'assets/svg/dropdown-icon.svg',
+                              color: Color.fromARGB(255, 148, 148, 148),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                          Padding(
+                              padding: EdgeInsets.only(bottom: 0),
+                              child: SizedBox(
+                                  height: 25,
+                                  width: 135,
+                                  child: EditableText(
+                                    readOnly: true,
+                                    selectionColor: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.3),
+                                    cursorHeight: 20,
+                                    cursorOffset: Offset(0, 2),
+                                    controller: _textController,
+                                    backgroundCursorColor:
+                                        Color.fromARGB(0, 168, 14, 14),
+                                    focusNode: _focusNode,
+                                    cursorColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        color: Theme.of(context)
+                                            .typography
+                                            .black
+                                            .labelMedium!
+                                            .color!
+                                            .withOpacity(0.86)),
+                                  ))),
+                          Expanded(
+                            child: Container(),
+                          ),
+                          widget.isRemovalIcon
+                              ? GestureDetector(
+                                  onTap: () => removeElement(),
+                                  child: widget.child ??
+                                      SvgPicture.asset(
+                                        'assets/svg/filter-icon.svg',
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .color,
+                                      ))
+                              : widget.child ??
                                   SvgPicture.asset(
                                     'assets/svg/filter-icon.svg',
-                                    color: Theme.of(context).textTheme.bodySmall!.color,
-                                  ))
-                          : widget.child ??
-                              SvgPicture.asset(
-                                'assets/svg/filter-icon.svg',
-                                color: Theme.of(context).textTheme.bodySmall!.color,
-                              ),
-                      SizedBox(
-                        width: 16,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall!
+                                        .color,
+                                  ),
+                          SizedBox(
+                            width: 16,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              })),
-      secmenu
-          ? Transform.translate(
-              offset: Offset(0, -2),
-              child: _getDropDownWidget(),
-            )
-          : Container()
-    ]);
+                    );
+                  })),
+          secmenu
+              ? Transform.translate(
+                  offset: Offset(0, -2),
+                  child: _getDropDownWidget(),
+                )
+              : Container()
+        ]);
   }
 }

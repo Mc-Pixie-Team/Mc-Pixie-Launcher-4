@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class CircularButton extends StatefulWidget {
-  CircularButton({Key? key, required this.height, required this.width, required this.child, required this.onClick})
+  CircularButton(
+      {Key? key,
+      required this.height,
+      required this.width,
+      required this.child,
+      required this.onClick})
       : super(key: key);
   double height;
   double width;
@@ -16,8 +21,9 @@ class _CircularButtonState extends State<CircularButton> {
   Widget build(BuildContext context) {
     return InkWell(
       child: Container(
-          decoration:
-              BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(90)),
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(90)),
           height: widget.height,
           width: widget.width,
           child: Center(child: widget.child)),

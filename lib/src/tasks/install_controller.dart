@@ -32,13 +32,13 @@ class InstallController {
   InstallState? installState;
   bool isVersion;
   List<VoidCallback> _beforedeletelisteners = [];
-  InstallController(
-      {required this.handler,
-      required this.modpackData,
-      this.processid,
-      this.isVersion = true,
-      this.installState,
-     }) {
+  InstallController({
+    required this.handler,
+    required this.modpackData,
+    this.processid,
+    this.isVersion = true,
+    this.installState,
+  }) {
     installModel = InstallModel();
     processid = processid ?? const Uuid().v1();
     if (installState != null) {
@@ -54,13 +54,12 @@ class InstallController {
   static int instances = 0;
 
   onHandleStdout(Iterable<int> out) {
-  //  _stdout.add(String.fromCharCodes(out));
+    //  _stdout.add(String.fromCharCodes(out));
   }
 
   void addBeforeDeleteListener(VoidCallback callback) {
-      _beforedeletelisteners.add(callback);
+    _beforedeletelisteners.add(callback);
   }
-
 
   void start() async {
     installModel.setInstallState(InstallState.fetching);
@@ -134,8 +133,6 @@ class InstallController {
     installModel.setInstallState(InstallState.fetching);
     installModel.setState("Installing Project");
 
-
-
     if (!isVersion) {
       print("getting newest version from Modpack");
       modpackData =
@@ -158,9 +155,10 @@ class InstallController {
     ReceivePort errorPort = ReceivePort();
     receivePort.listen((message) {
       if (message is InstallerMessage) {
-        installModel.setAll(message.getInstallerState, message.getState, message.getprogress);
+        installModel.setAll(
+            message.getInstallerState, message.getState, message.getprogress);
 
-        if(message.isUMF) {
+        if (message.isUMF) {
           modpackData = message.umfData!;
         }
       }
@@ -170,7 +168,6 @@ class InstallController {
       removeUIChanges();
 
       InstallController.instances--;
-
     });
     errorPort.listen((message) {
       installModel.setInstallState(InstallState.notInstalled);
@@ -238,17 +235,17 @@ class InstallController {
     manifestaddon.addAll(UMF.toJson(startMessage.modpackData));
 
     manifest.add(manifestaddon);
-  
+
     await File(path.join(getInstancePath(), "manifest.json"))
         .writeAsString(jsonEncode(manifest));
 
     //Prining finish
-      (args.first as SendPort).send(InstallerMessage(
-        progress: 100,
-        state: "Done",
-        umfData: startMessage.modpackData,
-        installState: InstallState.installed,
-      ));
+    (args.first as SendPort).send(InstallerMessage(
+      progress: 100,
+      state: "Done",
+      umfData: startMessage.modpackData,
+      installState: InstallState.installed,
+    ));
 
     Isolate.exit();
   }

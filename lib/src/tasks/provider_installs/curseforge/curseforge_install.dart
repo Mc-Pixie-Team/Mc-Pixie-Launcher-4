@@ -18,10 +18,7 @@ import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:path/path.dart' as path;
 
-class CurseforgeInstaller  implements ProviderInstaller {
-
-
-
+class CurseforgeInstaller implements ProviderInstaller {
   Map<String, String> userHeader = {
     "Content-type": "application/json",
     "Accept": "application/json",
@@ -32,7 +29,10 @@ class CurseforgeInstaller  implements ProviderInstaller {
   final baseUrl = "https://api.curseforge.com";
 
   @override
-  Future install({required UMF umfData,required String instanceName, required InstallModel installModel}) async {
+  Future install(
+      {required UMF umfData,
+      required String instanceName,
+      required InstallModel installModel}) async {
     installModel.setInstallState(InstallState.installing);
     installModel.setState("installing Project");
 
@@ -101,12 +101,10 @@ class CurseforgeInstaller  implements ProviderInstaller {
     await Directory(path.join(getTempCommandPath(), instanceName))
         .delete(recursive: true);
 
-
-
     final downloads_at_same_time = 10;
     int _totalitems = (manifest["files"] as List).length;
 
-     installModel.setState("Downloading Mods");
+    installModel.setState("Downloading Mods");
 
     for (var i = 0; (manifest["files"] as List).length > i;) {
       Iterable<Future<dynamic>> downloads = Iterable.generate(
@@ -154,10 +152,8 @@ class CurseforgeInstaller  implements ProviderInstaller {
         if (url == null) throw "Cannot find any download url";
         print("using url: " + url + " with: " + filename.toString());
         var filepath = path.join(
-                getInstancePath(), instanceName, innerDownloadPath, filename);
-        Downloader _downloader = Downloader(
-            url,
-            filepath);
+            getInstancePath(), instanceName, innerDownloadPath, filename);
+        Downloader _downloader = Downloader(url, filepath);
 
         await _downloader.startDownload();
       });
@@ -166,9 +162,9 @@ class CurseforgeInstaller  implements ProviderInstaller {
 
       _totalitems -= downloads_at_same_time;
       i += downloads_at_same_time;
-      installModel.setProgress(((i / ((manifest["files"] as List).length)) * 100).roundToDouble());
+      installModel.setProgress(
+          ((i / ((manifest["files"] as List).length)) * 100).roundToDouble());
     }
-
 
     String version = manifest["minecraft"]["version"];
     String loaderversion = manifest["minecraft"]["modLoaders"][0]["id"];
@@ -177,34 +173,38 @@ class CurseforgeInstaller  implements ProviderInstaller {
       case "forge":
         umfData.modloader = "forge";
         umfData.MLVersion = "${loaderversion.split("-")[1]}";
-        await ForgeInstall.install("$version-${loaderversion.split("-")[1]}",version, getlibarypath(), installModel);
+        await ForgeInstall.install("$version-${loaderversion.split("-")[1]}",
+            version, getlibarypath(), installModel);
       case "fabric":
         umfData.modloader = "fabric";
         umfData.MLVersion = "${loaderversion.split("-")[1]}";
-        await FabricInstall.install(loaderversion.split("-")[1], version,  getlibarypath(), installModel);
+        await FabricInstall.install(loaderversion.split("-")[1], version,
+            getlibarypath(), installModel);
       default:
         umfData.modloader = "none";
-        await MinecraftInstall.install(Version.parse(version), getlibarypath(), installModel);
+        await MinecraftInstall.install(
+            Version.parse(version), getlibarypath(), installModel);
     }
-
   }
 
   @override
   Future<Process> start(String processId, InstallModel installModel) async {
     // String destination =
     //     path.join(getInstancePath(), processId, "curseforge.manifest.json");
-    List manifest = (jsonDecode(await File(path.join(getInstancePath(), "manifest.json")).readAsString()));
+    List manifest = (jsonDecode(
+        await File(path.join(getInstancePath(), "manifest.json"))
+            .readAsString()));
     UMF? umfData;
-    for(var modpack in manifest) {
-      if(modpack["processId"] == processId) {
-       umfData = UMF.parse(modpack);
+    for (var modpack in manifest) {
+      if (modpack["processId"] == processId) {
+        umfData = UMF.parse(modpack);
       }
     }
 
-    if(umfData == null) {
+    if (umfData == null) {
       throw "No Modpack with this process id ($processId) found!";
     }
-    if(umfData.MCVersion == null) {
+    if (umfData.MCVersion == null) {
       throw "Couldnt find Minecraft or Modloader Version for this instance ($processId)";
     }
 
@@ -213,11 +213,14 @@ class CurseforgeInstaller  implements ProviderInstaller {
 
     switch (umfData.modloader) {
       case "forge":
-        return await ForgeInstall.run("$version-${loaderversion}",version, getlibarypath(),processId, installModel);
+        return await ForgeInstall.run("$version-${loaderversion}", version,
+            getlibarypath(), processId, installModel);
       case "fabric":
-        return await FabricInstall.run(loaderversion, version,  getlibarypath(),processId, installModel);
+        return await FabricInstall.run(
+            loaderversion, version, getlibarypath(), processId, installModel);
       default:
-        return await MinecraftInstall.run(Version.parse(version),processId, installModel);
+        return await MinecraftInstall.run(
+            Version.parse(version), processId, installModel);
     }
-}
+  }
 }

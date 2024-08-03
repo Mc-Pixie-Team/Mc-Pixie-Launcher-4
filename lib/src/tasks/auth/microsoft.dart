@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:localstorage/localstorage.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
+import 'package:mclauncher4/src/objects/minecraftUserDetails.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/utils/keys.dart';
@@ -15,11 +16,12 @@ class Microsoft {
     Map authTokenXboxLive = await xboxSignIn(authResponseMicrosoft["access_token"]);
     String authXSTSToken = await XSTSToken(authTokenXboxLive);
     Map minecraftUserToken = await minecraftBearerToken(authXSTSToken, authTokenXboxLive["uhs"]);
-    Map userDetail = await minecraftUserDetails(minecraftUserToken["access_token"]);
+    MinecraftUserDetails userDetail = await minecraftUserDetails(minecraftUserToken["access_token"]);
     return {
       "refreshToken": authResponseMicrosoft["refreshToken"],
-      "uuid": userDetail["id"],
-      "username": userDetail["name"],
+      "uuid": userDetail.id,
+      "username": userDetail.name,
+      "userDetails": userDetail,
       "xbox_username": "",
     };
   }
@@ -29,12 +31,13 @@ class Microsoft {
     Map authTokenXboxLive = await xboxSignIn(authResponseMicrosoft["access_token"]);
     String authXSTSToken = await XSTSToken(authTokenXboxLive);
     Map minecraftUserToken = await minecraftBearerToken(authXSTSToken, authTokenXboxLive["uhs"]);
-    Map userDetail = await minecraftUserDetails(minecraftUserToken["access_token"]);
+    MinecraftUserDetails userDetail = await minecraftUserDetails(minecraftUserToken["access_token"]);
     return {
       "authToken": minecraftUserToken["access_token"],
       "refreshToken": authTokenXboxLive["refreshToken"],
-      "uuid": userDetail["id"],
-      "username": userDetail["name"],
+      "uuid": userDetail.id,
+      "username": userDetail.name,
+      "userDetails": userDetail,
       "xbox_username": ""
     };
   }
@@ -83,7 +86,7 @@ class Microsoft {
         body: "client_id=$clientId&client_secret=$clientSecret&code=$token&grant_type=authorization_code&redirect_uri=http://localhost:25458",
       );
       Map rsp = jsonDecode(firstAuthResponse.body);
-      
+
       if (rsp["error"] != null) {
         print(rsp);
       }
@@ -169,7 +172,7 @@ class Microsoft {
     return jsonDecode(firstAuthResponse.body);
   }
 
-  Future<Map> minecraftUserDetails(minecraftAuthToken) async {
+  Future<MinecraftUserDetails> minecraftUserDetails(minecraftAuthToken) async {
     Uri uri = Uri.parse('https://api.minecraftservices.com/minecraft/profile');
     print(uri);
     print('Bearer $minecraftAuthToken');
@@ -181,6 +184,6 @@ class Microsoft {
     print(firstAuthResponse.statusCode);
     //Map rsp = jsonDecode(firstAuthResponse.body);
 
-    return jsonDecode(firstAuthResponse.body);
+    return MinecraftUserDetails.fromJson(jsonDecode(firstAuthResponse.body));
   }
 }

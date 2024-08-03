@@ -12,7 +12,9 @@ class Secret {
 
   Secret({this.azureClientId = "", this.azureClientSecret = ""});
   factory Secret.fromJson(Map<String, dynamic> jsonMap) {
-    return new Secret(azureClientId: jsonMap["azureClientId"], azureClientSecret: jsonMap["azureClientSecret"]);
+    return new Secret(
+        azureClientId: jsonMap["azureClientId"],
+        azureClientSecret: jsonMap["azureClientSecret"]);
   }
 }
 
@@ -21,7 +23,8 @@ class SecretLoader {
 
   SecretLoader({required this.secretPath});
   Future<Secret> load() {
-    return rootBundle.loadStructuredData<Secret>(this.secretPath, (jsonStr) async {
+    return rootBundle.loadStructuredData<Secret>(this.secretPath,
+        (jsonStr) async {
       final secret = Secret.fromJson(json.decode(jsonStr));
       return secret;
     });

@@ -32,6 +32,11 @@ class InstallModel with ChangeNotifier {
     _progress = progress;
     notifyListeners();
   }
+
+  triggerAll() {
+    print("notifing ALL!");
+     notifyListeners();
+  }
 }
 
 enum InstallState {

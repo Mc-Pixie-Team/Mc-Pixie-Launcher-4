@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
+import 'package:mclauncher4/src/widgets/cards/recently_played_card.dart';
 import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:hive/hive.dart' as hive;
 
@@ -19,11 +21,9 @@ class RecentlyPlayedList extends StatefulWidget {
 class _RecentlyPlayedListState extends State<RecentlyPlayedList> {
   @override
   Widget build(BuildContext context) {
-    hive.Box boxRaw = hive.Hive.box("RecentlyPlayed");
-    return StreamBuilder<hive.BoxEvent>(
-        stream: boxRaw.watch(),
-        builder: (context, value) {
-          return Container(
+
+    return 
+         Container(
             height: widget.height,
             width: widget.width,
             clipBehavior: Clip.hardEdge,
@@ -52,46 +52,17 @@ class _RecentlyPlayedListState extends State<RecentlyPlayedList> {
                   ),
                   SizedBox(height: 20),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: 5,
+                    child: ValueListenableBuilder(valueListenable: InstalledModpacksHandler.globalInstallControllers, builder: (context, value, child) => ListView.builder(
+                      itemCount: value.length,
                       itemBuilder: (context, index) {
-                        return Padding(
-                            padding: !(index + 1 == 5) ? EdgeInsets.only(bottom: 10) : EdgeInsets.only(bottom: 10),
-                            child: Container(
-                              height: widget.elemHeight,
-                              clipBehavior: Clip.hardEdge,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surfaceVariant,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 9,
-                                  ),
-                                  ModPicture(
-                                    width: widget.elemHeight - 15,
-                                    height: widget.elemHeight - 15,
-                                    borderRadius: BorderRadius.circular(8),
-                                    url: "https://media.forgecdn.net/avatars/thumbnails/286/772/256/256/637305737753885398.png",
-                                    color: Theme.of(context).colorScheme.surfaceVariant,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text("Fabulously Optimized".split("").take(12).join("") + "...")
-                                ],
-                              ),
-                            ));
+                        return AnimatedBuilder(animation: value[index].installModel, builder:(context, child) =>  RecentlyPlayedCard(index: index, height: widget.elemHeight, controllerinstance: value[index]));
                       },
-                    ),
+                    )),
                   ),
                 ],
               ),
             ),
           );
-        });
+        
   }
 }

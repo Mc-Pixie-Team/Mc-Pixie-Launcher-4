@@ -7,6 +7,7 @@ import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/auth/microsoft.dart';
 import 'package:mclauncher4/src/widgets/buttons/svg_button.dart';
 import 'package:mclauncher4/src/widgets/cards/add_card.dart';
+import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 import 'package:mclauncher4/src/widgets/carousel/carousel.dart';
 
 import 'package:smooth_scroll_multiplatform/smooth_scroll_multiplatform.dart';
@@ -68,15 +69,12 @@ class _HomePageState extends State<HomePage> {
                 Carousel(items: items),
                 ValueListenableBuilder(
                     valueListenable:
-                        InstalledModpacksUIHandler.installCardChildren,
+                        InstalledModpacksHandler.globalInstallControllers,
                     builder: (context, value, child) {
-                      print("inner list lengt " +
-                          InstalledModpacksUIHandler
-                              .installCardChildren.value.length
-                              .toString());
 
-                      List<Widget> innergrid = [];
-                      innergrid.addAll(value);
+
+                      List<Widget> innergrid = List.generate(InstalledModpacksHandler.globalInstallControllers.value.length, (index) => InstalledCard(controllerInstance: InstalledModpacksHandler.globalInstallControllers.value[index]));
+                     
                       innergrid.add(AddCard());
                       return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,8 +113,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print("build inner list lengt " +
-        InstalledModpacksUIHandler.installCardChildren.value.length.toString());
     return Container(
         clipBehavior: Clip.antiAlias,
         height: double.infinity,

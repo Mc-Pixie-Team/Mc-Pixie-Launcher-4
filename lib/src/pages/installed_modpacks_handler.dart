@@ -11,6 +11,7 @@ import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
 import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
+import 'package:mclauncher4/src/widgets/cards/recently_played_card.dart';
 
 import 'package:path/path.dart' as path;
 
@@ -22,32 +23,32 @@ class InstalledModpacksHandler {
     manifest.writeAsStringSync("[]");
   }
 
-  static ValueNotifierList<Widget> globalinstallContollers =
-      ValueNotifierList([]);
-  static Future<List<Widget>> getPacksformManifest() async {
+  static ValueNotifierList<InstallController> globalInstallControllers = ValueNotifierList([]);
+
+  static void getPacksformManifest() async {
     List manifest = jsonDecode(
         await File(path.join(getInstancePath(), "manifest.json"))
             .readAsString());
 
-    return List.generate(manifest.length, (index) {
-      Api _handler = ApiHandler().getApi(manifest[index]["provider"]);
+    for(var object in manifest) {   
+      Api _handler = ApiHandler().getApi(object["provider"]);
 
       InstallController installcontroller = InstallController(
           installState: InstallState.installed,
-          processid: manifest[index]["processId"],
+          processid: object["processId"],
           handler: _handler,
-          modpackData: UMF.parse(manifest[index]));
+          modpackData: UMF.parse(object));
 
-      return InstalledCard(
-        key: Key(installcontroller.processId),
-        controllerInstance: installcontroller,
-      );
-    });
+      globalInstallControllers.value
+          .removeWhere((element) {  
+          if (element.processId == installcontroller.processId) return true;
+        return false;
+      });
+
+      globalInstallControllers.value.add(installcontroller);
+    }
+
   }
 }
 
-class InstalledModpacksUIHandler {
-  //test
 
-  static ValueNotifierList<Widget> installCardChildren = ValueNotifierList([]);
-}

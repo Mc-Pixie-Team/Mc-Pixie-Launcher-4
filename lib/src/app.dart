@@ -21,7 +21,7 @@ import 'theme/colorSchemes.dart';
 import 'theme/textSchemes.dart';
 import 'package:flutter/material.dart';
 import 'widgets/navigation_drawer/item_drawer.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:window_manager/window_manager.dart';
 import 'widgets/navigation_drawer/menu_item.dart';
 import 'widgets/divider.dart' as div;
 import 'package:animations/animations.dart';
@@ -48,7 +48,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   }
 }
 
-class McLauncher extends StatefulWidget {
+class McLauncher extends StatefulWidget  {
   const McLauncher({super.key});
 
   @override
@@ -59,7 +59,7 @@ class McLauncher extends StatefulWidget {
       context.findAncestorStateOfType<_McLauncherState>()!;
 }
 
-class _McLauncherState extends State<McLauncher> {
+class _McLauncherState extends State<McLauncher> with WindowListener{
   Future<String> get customWait async {
     await Future.delayed(Duration(seconds: 10));
     return "done!";
@@ -76,10 +76,25 @@ class _McLauncherState extends State<McLauncher> {
 
   @override
   void initState() {
+    super.initState();
+    windowManager.addListener(this);
     print(AppLocalizations.supportedLocales);
     mainWidget = buildMainWidget();
+   
+  }
 
-    super.initState();
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
+
+  @override
+  void onWindowFocus() {
+    print("fouces lol");
+    // Make sure to call once.
+    setState(() {});
+    // do something
   }
 
   Widget buildMainWidget() {
@@ -117,8 +132,7 @@ class _McLauncherState extends State<McLauncher> {
                     alignment: Alignment.topLeft,
                     child: Row(
                       children: [
-                        Expanded(child: MoveWindow()),
-                        WindowButtons()
+                     
                       ],
                     )),
               ),
@@ -127,6 +141,7 @@ class _McLauncherState extends State<McLauncher> {
 
   @override
   Widget build(BuildContext context) {
+    rootContext = context;
     return mainWidget;
   }
 }
@@ -177,17 +192,9 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     print("Main app init Called");
     // TODO: implement initState
-    MinecraftAccountUtils().saveAccounts([]);
-    InstalledModpacksHandler.getPacksformManifest().then((value) {
-      InstalledModpacksUIHandler.installCardChildren.value
-          .removeWhere((element) {
-        for (var i in value) {
-          if (element.key == i.key) return true;
-        }
-        return false;
-      });
-      InstalledModpacksUIHandler.installCardChildren.value.addAll(value);
-    });
+    MinecraftAccountUtils().initOnFirstStart();
+    InstalledModpacksHandler.getPacksformManifest();
+  
 
     super.initState();
   }
@@ -525,19 +532,6 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-final buttonColors = WindowButtonColors(
-    iconNormal: Color.fromARGB(255, 192, 192, 192),
-    mouseOver: Color.fromARGB(66, 172, 172, 172),
-    mouseDown: Color.fromARGB(0, 92, 92, 92), //Code by Mc-PIXWIE
-    iconMouseOver: const Color.fromARGB(255, 255, 255, 255),
-    iconMouseDown: Color.fromARGB(255, 153, 153, 153));
-
-final closebuttonColors = WindowButtonColors(
-    iconNormal: Color.fromARGB(255, 192, 192, 192),
-    mouseOver: Color.fromARGB(255, 189, 0, 0),
-    mouseDown: Color.fromARGB(0, 92, 92, 92), //Code by Mc-PIXWIE
-    iconMouseOver: const Color.fromARGB(255, 255, 255, 255),
-    iconMouseDown: Color.fromARGB(255, 153, 153, 153));
 
 /* class WindowButtons extends StatelessWidget {
   
@@ -635,22 +629,7 @@ class _WindowButtonsState extends State<WindowButtons> {
                 ))
               : SizedBox.shrink(),
 
-          Row(
-            children: [
-              MinimizeWindowButton(
-                colors: buttonColors,
-              ),
-              MaximizeWindowButton(
-                colors: buttonColors,
-              ),
-              CloseWindowButton(
-                  colors: closebuttonColors,
-                  onPressed: () {
-                    print('close');
-                    exit(0);
-                  }),
-            ],
-          )
+//HERE SE BUTTONS
         ],
       
     );

@@ -52,6 +52,12 @@ class _InstalledModPageState extends State<InstalledModPage> {
   void initState() {
     super.initState();
 
+    widget.controllerInstance.installModel.addListener(() {
+      setState(() {
+        
+      });
+    });
+
     List<ObjectType> types = [
       ObjectType.mod,
       ObjectType.resource,

@@ -58,6 +58,12 @@ class InstallController {
     //  _stdout.add(String.fromCharCodes(out));
   }
 
+
+  void changeModpackData(UMF umf) {
+    this.modpackData = umf;
+    installModel.triggerAll();
+  }
+
   void addBeforeDeleteListener(VoidCallback callback) {
     _beforedeletelisteners.add(callback);
   }
@@ -281,17 +287,12 @@ class InstallController {
 
   setUIChanges() {
 if(modpackData.type == ObjectType.modpack) {
-    if (InstalledModpacksUIHandler.installCardChildren.value
-        .where((Widget element) => element.key == Key(processId))
+    if (InstalledModpacksHandler.globalInstallControllers.value
+        .where((element) => element.processId == this.processId)
         .isEmpty) {
       print("add to");
 
-      InstalledModpacksUIHandler.installCardChildren.addAll([
-        InstalledCard(
-          key: Key(processId),
-          controllerInstance: this,
-        ),
-      ]);
+      InstalledModpacksHandler.globalInstallControllers.add(this);
     }
 }
 
@@ -312,8 +313,8 @@ if(modpackData.type == ObjectType.modpack) {
   }
 
   removeFromInstallList() {
-    InstalledModpacksUIHandler.installCardChildren
-        .removeKeyFromAnimatedBuilder(processId);
+    InstalledModpacksHandler.globalInstallControllers
+        .removeProcessIdFormList(processId);
   }
 
   removeUIChanges() {

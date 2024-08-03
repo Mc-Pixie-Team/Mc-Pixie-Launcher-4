@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/pages/installed_mod/installed_mods_page.dart';
+import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 
 class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
@@ -34,13 +35,11 @@ class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
     print("remove something");
   }
 
-  void removeKeyFromAnimatedBuilder(String key) {
+  void removeProcessIdFormList(String processId) {
     value = value.where((value) {
-      if (value is InstalledCard) {
-        return value.key != Key(key);
-      } else if (value is ModItem) {
-        return value.key != Key(key);
-      }
+      if (value is InstallController) {
+        return value.processId != processId;
+      } 
       return false;
     }).toList();
     notifyListeners();

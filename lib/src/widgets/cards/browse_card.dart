@@ -197,7 +197,8 @@ class _BrowseCardState extends State<BrowseCard>
                                     Text((widget.modpackData.downloads ?? 1)
                                         .numeral()),
                                     SizedBox(width: 15),
-                                    Expanded(
+                                   widget.modpackData
+                                                    .categories != null ? Expanded(
                                         child: SizedBox(
                                             height: 17,
                                             child: ListView.separated(
@@ -238,7 +239,7 @@ class _BrowseCardState extends State<BrowseCard>
                                                   );
                                                 },
                                                 itemCount: widget.modpackData
-                                                    .categories!.length)))
+                                                    .categories!.length))): Container()
                                   ],
                                 ),
                                 SizedBox(

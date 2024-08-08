@@ -6,21 +6,25 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
 import 'package:mclauncher4/src/tasks/apis/files/curseforge.files.dart';
 import 'package:mclauncher4/src/tasks/apis/files/files_helper.dart';
+import 'package:mclauncher4/src/tasks/install_controller.dart';
+import 'package:mclauncher4/src/tasks/installs/install_model.dart';
 import 'package:mclauncher4/src/tasks/models/disposable_stream.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:path/path.dart' as p;
 
 class FilesHandler extends DisposableWidget with ChangeNotifier  {
-  FilesHandler({required this.directoryPath, required this.types});
+  FilesHandler({required this.directoryPath, required this.types, required this.processId});
   List<String> subDirs = [];
   List<ObjectType> types;
+  String processId;
   String directoryPath;
-  List<UMF> _files = [];
+  List<InstallController> _files = [];
 
-  List<UMF> get files => _files;
+  List<InstallController> get files => _files;
 
   bool get isdisposed => _isdisposed;
   bool _isdisposed = false;
@@ -36,8 +40,11 @@ class FilesHandler extends DisposableWidget with ChangeNotifier  {
    var token = RootIsolateToken.instance!;
 
    final resultPort = ReceivePort();
-   _isolate = await Isolate.spawn(initializeContainingFiles, [ this.directoryPath, this.types,  token, resultPort.sendPort ]);
-   _files.addAll((await resultPort.first));
+   _isolate = await Isolate.spawn(initializeContainingFiles, [ this.directoryPath, this.types,  token, this.processId ,resultPort.sendPort ]);
+
+  _files.addAll(await resultPort.first);
+
+
    notifyListeners();
 
     for (var type in types) {
@@ -49,27 +56,32 @@ class FilesHandler extends DisposableWidget with ChangeNotifier  {
     
   }
 
+  static addInstallController(List<InstallController> list, UMF umf, String processId) {
+      list.add(  InstallController(handler: CurseforgeApi(), modpackData: umf, installState: InstallState.installed));
+  }
+
   static Future<List<UMF>> initializeContainingFiles(List args) async {
      String directoryPath = args[0];
      List<ObjectType> types = args[1];
      RootIsolateToken token = args[2];
-     SendPort responsePort = args[3];
+     String processId = args[3];
+     SendPort responsePort = args[4];
 
      BackgroundIsolateBinaryMessenger.ensureInitialized(token);
 
-    List<UMF> _files = [];
+    List<InstallController> _files = [];
     var _helper = FileHelper(directoryPath: directoryPath);
 
-    var instanceFile = File(p.join(directoryPath, "instance.json"));
+    var instanceFile = File(p.join(directoryPath, "manifest.json"));
 
     if (!instanceFile.existsSync()) {
       instanceFile.createSync();
-      instanceFile.writeAsStringSync('{"files": []}');
+      instanceFile.writeAsStringSync('[]');
     }
 
-    var instance = jsonDecode(instanceFile.readAsStringSync());
+    List instance = jsonDecode(instanceFile.readAsStringSync());
 
-    List instanceFiles = instance["files"];
+   
     for (var type in types) {
       var subDir = ObjectTypeTools.todir(type);
       var dir = Directory(p.join(directoryPath, subDir));
@@ -78,22 +90,25 @@ class FilesHandler extends DisposableWidget with ChangeNotifier  {
 
       //Check if all items in directory are in instance
       for (var entity in items) {
-        Map mapfile = instanceFiles.singleWhere(
+        print("in file");
+        Map mapfile = instance.singleWhere(
           (element) {
-            return element["original"]["filepath"] == entity.path;
+            var lol = p.equals(element["original"]["filepath"], entity.path);
+            if(lol) print("${entity.path}  | ${element["original"]["filepath"]}");
+            return lol;
           },
           orElse: () => {},
         );
 
         if (mapfile.isEmpty) {
-          _files.add((await _addto(entity.path)).copyWith(type: type));
+          addInstallController(_files, (await _addto(entity.path, type)).copyWith(type: type), processId );
         } else {
-          _files.add(UMF.parse(mapfile).copyWith(type: type));
+         addInstallController(_files, UMF.parse(mapfile).copyWith(type: type), processId );
         }
       }
       _files.sort((a, b) =>
-          (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
-      _helper.write(_files);
+          (a.modpackData.name ?? "").toLowerCase().compareTo((b.modpackData.name ?? "").toLowerCase()));
+      _helper.write(List.generate(_files.length, (index) => _files[index].modpackData));
     }
     Isolate.exit(responsePort, _files);
   }
@@ -101,19 +116,21 @@ class FilesHandler extends DisposableWidget with ChangeNotifier  {
   listener(FileSystemEvent event, ObjectType type) async {
     if (event is FileSystemCreateEvent) {
       if (event.isDirectory) return;
-      _files.add((await _addto(event.path)).copyWith(type: type));
+      addInstallController(_files, (await _addto(event.path, type)).copyWith(type: type), processId );
     } else if (event is FileSystemDeleteEvent) {
       if (event.isDirectory) return;
       _remove(event.path);
     } else if (event is FileSystemMoveEvent) {
       if (event.isDirectory) return;
-      _files.add((await _addto(event.path)).copyWith(type: type));
+      addInstallController(_files, (await _addto(event.path, type)).copyWith(type: type), processId );
       _remove(event.destination!);
     }
     _files.sort((a, b) =>
-        (a.name ?? "").toLowerCase().compareTo((b.name ?? "").toLowerCase()));
+        (a.modpackData.name ?? "").toLowerCase().compareTo((b.modpackData.name ?? "").toLowerCase()));
     print("added");
-    _helper.save(files);
+    
+
+    _helper.save(List.generate(files.length, (index) => files[index].modpackData));
     notifyListeners();
   }
   @override
@@ -129,11 +146,11 @@ class FilesHandler extends DisposableWidget with ChangeNotifier  {
 
   void _remove(String filepath) {
     _files.removeWhere((element) {
-      return p.equals(element.original["filepath"], filepath);
+      return p.equals(element.modpackData.original["filepath"], filepath);
     });
   }
 
-  static Future<UMF> _addto(String filepath) async {
+  static Future<UMF> _addto(String filepath, ObjectType type) async {
     UMF file;
     try {
       file = await getFileData(filepath);
@@ -142,6 +159,8 @@ class FilesHandler extends DisposableWidget with ChangeNotifier  {
         original: {"filepath": filepath},
         name: p.basename(filepath),
         author: "unknown",
+        slug: "N/A",
+        type: type,
       );
     }
     print("t");

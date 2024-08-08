@@ -45,7 +45,7 @@ class InstalledModpacksHandler {
         return false;
       });
 
-      globalInstallControllers.value.add(installcontroller);
+      globalInstallControllers.add(installcontroller);
     }
 
   }

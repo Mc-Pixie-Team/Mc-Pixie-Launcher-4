@@ -15,7 +15,8 @@ class UMF {
     this.modloader,
     this.MLVersion,
     this.MCVersion,
-    this.type,
+    required this.type,
+    required this.slug,
     required this.original,
   });
 
@@ -31,12 +32,14 @@ class UMF {
   String? modloader;
   String? MLVersion;
   String? MCVersion;
-  ObjectType? type;
+  ObjectType type;
+  String slug;
   Map original;
 
   static toJson(UMF umf) {
     return {
       "name": umf.name,
+      "slug": umf.slug,
       "versionName": umf.versionName,
       "author": umf.author,
       "description": umf.description,
@@ -68,23 +71,24 @@ class UMF {
         MLVersion: json["MLVersion"],
         MCVersion: json["MCVersion"],
         type: _parsetype(json["type"]),
+        slug: json["slug"],
         original: json["original"]);
   }
 
-  static ObjectType? _parsetype(String? type) {
-    if (type == null) return null;
+  static ObjectType _parsetype(String type) {
+
 
     switch (type) {
       case "ObjectType.mod":
         return ObjectType.mod;
-      case "ObjectType.modpack":
-        return ObjectType.modpack;
       case "ObjectType.resource":
         return ObjectType.resource;
       case "ObjectType.shader":
         return ObjectType.shader;
       case "ObjectType.world":
         return ObjectType.world;
+      default:
+        return ObjectType.modpack;
     }
   }
 
@@ -102,6 +106,7 @@ class UMF {
     String? MLVersion,
     String? MCVersion,
     ObjectType? type,
+    String? slug,
     Map? original,
   }) {
     return UMF(
@@ -118,6 +123,7 @@ class UMF {
         MLVersion: MLVersion ?? this.MLVersion,
         MCVersion: MCVersion ?? this.MCVersion,
         type: type ?? this.type,
+        slug: slug ?? this.slug,
         original: original ?? this.original);
   }
 }

@@ -1,16 +1,16 @@
 import 'dart:io' show  Platform, exit;
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/pages/home_page/home_page.dart';
 import 'package:mclauncher4/src/pages/debug_page.dart';
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/pages/installed_objects_handlers.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
 import 'package:mclauncher4/src/pages/user_page/MSPage.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
 import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
 import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
@@ -165,11 +165,12 @@ class _MainPageState extends State<MainPage> {
   EdgeInsets edgeInsets =
       EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
 
-  final List<Widget> _pages = [
+  List<Widget> _pages(context) => [
     HomePage(),
     ModListPage(
-     handler: ModrinthApi(),
-      key: Key("modrinth"),
+     localInstallController: InstalledModpacksHandler.globalInstallControllers.value,
+     handler: new ModrinthApi(),
+     key: Key("modrinth"),
     ),
     Container(
       key: Key('5'),
@@ -177,6 +178,7 @@ class _MainPageState extends State<MainPage> {
     ),
     /* const Debugpage(), */
     ModListPage(
+      localInstallController: InstalledModpacksHandler.globalInstallControllers.value,
       handler: CurseforgeApi(),
       key: Key("curseforge"),
     ),
@@ -220,7 +222,7 @@ class _MainPageState extends State<MainPage> {
                 child: ClipRRect(
                     borderRadius: BorderRadius.circular(18),
                     key: UniqueKey(),
-                    child: _pages[widget.pageIndex]),
+                    child: _pages(context)[widget.pageIndex]),
                 transitionBuilder:
                     (child, primaryAnimation, secondaryAnimation) =>
                         SharedAxisTransition(
@@ -264,6 +266,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         floatingActionButton: FloatingActionButton(onPressed: () async {
+          windowManager.setAsFrameless();
           // print(await SecureStorage().readSecureData("accounts"));
    
           //  await SecureStorage.storage.delete(key: "test");
@@ -488,9 +491,10 @@ class _MainPageState extends State<MainPage> {
                     div.CustomDivider(
                       size: 20,
                     ),
-                    SizedBox(height: 20,),
-                    RecentlyPlayedList(width: 200-30,height: 360,),
-                    Expanded(child: Container()),
+                   
+                    Expanded(child:Padding(padding: EdgeInsets.only(left: 15, right: 15, top: 23), child: 
+                     RecentlyPlayedList())),
+                  
                     //Text("OS: ${Platform.operatingSystemVersion}, Lang: ${Platform.localeName}", textAlign: TextAlign.center, style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Color.fromARGB(69, 189, 189, 189)),),
                     SizedBox(height:15,)
                   ],
@@ -507,6 +511,7 @@ class _MainPageState extends State<MainPage> {
               // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
             ],
           ),
+        SizedBox(height: 30, child: WindowCaption(brightness: Brightness.dark, backgroundColor: Colors.transparent,)) 
         ])
 
         // shouldSplashedDisplayed

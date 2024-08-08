@@ -27,10 +27,7 @@ class FileHelper {
       convertedumf.add(UMF.toJson(element));
     });
 
-    Map instance = jsonDecode(
-        File(p.join(directoryPath, "instance.json")).readAsStringSync());
-    instance["files"] = convertedumf;
-    File(p.join(directoryPath, "instance.json"))
-        .writeAsStringSync(jsonEncode(instance));
+    File(p.join(directoryPath, "manifest.json"))
+        .writeAsStringSync(jsonEncode(convertedumf));
   }
 }

@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/pages/installed_objects_handlers.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/widgets/cards/recently_played_card.dart';
 import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:hive/hive.dart' as hive;
 
 class RecentlyPlayedList extends StatefulWidget {
-  RecentlyPlayedList({Key? key, this.width = 200, this.height = 300, this.elemHeight = 50}) : super(key: key);
+  RecentlyPlayedList({Key? key, this.width = double.infinity, this.height = double.infinity, this.elemHeight = 50}) : super(key: key);
   final double width;
   final double height;
 

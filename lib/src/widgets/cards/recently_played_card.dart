@@ -19,16 +19,12 @@ class RecentlyPlayedCard extends StatefulWidget {
 
 class _RecentlyPlayedCardState extends State<RecentlyPlayedCard> {
 
-  onChange() {
-    var umf = widget.controllerinstance.modpackData;
-     umf = umf.copyWith(name: (math.Random().nextDouble() * 100 ).ceilToDouble().toString() );
-     widget.controllerinstance.changeModpackData(umf);
-  }
+
 
   @override
   Widget build(BuildContext context) {
    
-    return MouseRegion( cursor: SystemMouseCursors.click, child: GestureDetector(onTapUp: (_) =>  onChange(),
+    return MouseRegion( cursor: SystemMouseCursors.click, child: GestureDetector(onTapUp: (_) => widget.controllerinstance.installModel.installState == InstallState.installed ? widget.controllerinstance.start() : null,
     //widget.controllerinstance.installState == InstallState.installed ?  widget.controllerinstance.start() : null,
       child: Padding(
         padding: !(widget.index + 1 == 5)

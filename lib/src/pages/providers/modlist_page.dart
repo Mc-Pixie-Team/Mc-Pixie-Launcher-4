@@ -6,6 +6,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
+import 'package:mclauncher4/src/pages/installed_objects_handlers.dart';
 
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
@@ -30,10 +31,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ModListPage extends StatefulWidget {
   Api handler;
   String? rootinstanceName;
+  List<InstallController> localInstallController;
   bool isReturnable;
   ModListPage(
       {Key? key,
       required this.handler,
+      this.localInstallController = const [],
       this.rootinstanceName,
       this.isReturnable = false})
       : super(key: key);
@@ -47,7 +50,7 @@ class _ModListPageState extends State<ModListPage>
   ScrollController _scrollController = ScrollController();
   late Widget addButton;
   GlobalKey key = new GlobalKey();
-  List installContollers = [];
+  List<InstallController> installContollers = [];
 
   List<Widget> filters = [];
 
@@ -57,43 +60,57 @@ class _ModListPageState extends State<ModListPage>
 
   Trigger _trigger = Trigger();
 
-  List? objects;
+  List objects = [];
+
 
   bool hasError = false;
 
   bool get hasConnection => InternetConnectionCheckerHelper().hasConnection && !hasError ;
 
   Future<void> modpackInit() async {
+    var tempobj;
+
     try {
     categories = await widget.handler.getCategories();
     mcVersions = await widget.handler.getAllMV();
-    objects = await widget.handler.getModpackList();
+    tempobj = await widget.handler.getModpackList();
+    
+      print("old");
+      objects.addAll(tempobj);
+    
+
     } catch (e) {
       print(e);
       hasError = true;
-    }
-    
+      setState(() {});
+      return;
+    } 
+
+    objectloop:
+    for(var object in tempobj) {
+      var objUmf = widget.handler.convertToLiteUMF(object);
+
+       for(var installcontroller in widget.localInstallController) {
+         
+          if(objUmf.slug == installcontroller.modpackData.slug && installcontroller.handler.getidname == widget.handler.getidname) {
+            installContollers.add(installcontroller);
+            continue objectloop;
+          }
+       }
+
+        installContollers.add( InstallController(
+        isVersion: false,
+        handler: widget.handler,
+        modpackData: objUmf,
+        rootProcessId: widget.rootinstanceName));
+    }    
+
     setState(() {});
   }
 
   bool iscalled = false;
   String querytext = "";
   List filterStrings = [];
-  getMoreData() async {
-    if (iscalled) return;
-    iscalled = true;
-    print('getmore data');
-    List rawModpacks = await widget.handler.getMoreModpacks();
-    objects!.addAll(rawModpacks);
-    installContollers.addAll(List.generate(
-        rawModpacks.length,
-        (index) => InstallController(
-            handler: widget.handler,
-            modpackData: widget.handler.convertToLiteUMF(rawModpacks[index]),
-            processid: widget.rootinstanceName)));
-    setState(() {});
-    iscalled = false;
-  }
 
   void removeAtIndex(int index) {
     setState(() {
@@ -116,7 +133,7 @@ class _ModListPageState extends State<ModListPage>
       if (_scrollController.position.pixels ==
           (_scrollController.position.maxScrollExtent)) {
         print('new');
-        await getMoreData();
+        await modpackInit();
       }
     });
 
@@ -125,7 +142,7 @@ class _ModListPageState extends State<ModListPage>
   
    void reload() async{
 
-    objects = null;
+    objects.clear();
      _trigger.trigger();
     await modpackInit();
     _trigger.trigger();
@@ -174,12 +191,12 @@ class _ModListPageState extends State<ModListPage>
               SizedBox(
                 height: 8,
               ),
-           AnimatedBuilder(animation: _trigger, builder: (context, child) =>  objects == null  
+           AnimatedBuilder(animation: _trigger, builder: (context, child) =>  objects.isEmpty  
                   ? Container()
                   :  Expanded(child:   FadeInAnimation(child: buildModpackList(context))))
             ],
           ), 
-         objects != null && hasConnection  ?   Positioned.fill(
+         !objects.isEmpty && hasConnection  ?   Positioned.fill(
               top: 12,
               right: 12,
               child: FadeInAnimation(child:  SlideInAnimation(curve: Curves.easeOutExpo, child: Container(
@@ -273,7 +290,7 @@ class _ModListPageState extends State<ModListPage>
                         ),
                       )))
               : Container(),
-       objects == null ?   Center(
+       objects.isEmpty ?   Center(
                       child:  hasConnection ? SizedBox(
                         height: 50,
                         width: 50,
@@ -321,11 +338,8 @@ class _ModListPageState extends State<ModListPage>
                             size: 30)));
               }
               print("generating new InstallController...");
-              InstallController installcontroller = InstallController(
-              isVersion: false,
-              handler: widget.handler,
-              modpackData: widget.handler.convertToLiteUMF(objects![index]),
-              processid: widget.rootinstanceName);
+              InstallController installcontroller = installContollers[index];
+
 
               return BrowseCard(
                 key: Key(installcontroller.processId),

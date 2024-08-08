@@ -65,7 +65,7 @@ class _InstalledModPageState extends State<InstalledModPage> {
     ];
 
     _handler = FilesHandler(
-      directoryPath: path.join(getInstancePath(), widget.controllerInstance.processId), types: types);
+      directoryPath: path.join(getInstancePath(), widget.controllerInstance.processId), types: types, processId: widget.controllerInstance.processId);
 
     _handler.initialize();
 

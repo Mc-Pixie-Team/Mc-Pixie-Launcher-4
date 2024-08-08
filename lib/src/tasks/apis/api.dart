@@ -38,17 +38,14 @@ abstract class Api {
   //This method should change the API query to search for a specific minecraft version.
   void searchMV(String version);
 
-  //The method is called, when the ModList reached its limits, it should
-  //return List of a specific amount of modpacks, based on the limit and offset
-  //the user set
-  Future<List> getMoreModpacks();
+
 
   //The method should return all minecraft version, that the provider has to offer
   Future<List<String>> getAllMV();
 
   //its called in the init, it should return a List of a specific amount of modpacks,
   //based on the limit the user set
-  getModpackList();
+ getModpackList();
 
   //This methode should return a sperate download object you created to download modpacks, if
   //thats not the case just return your custom api class

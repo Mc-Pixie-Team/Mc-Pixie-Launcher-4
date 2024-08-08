@@ -70,6 +70,7 @@ class CurseforgeApi implements Api {
     return UMF(
         original: modpackData,
         name: modpackData["name"],
+        slug: modpackData["slug"],
         description: modpackData["summary"],
         downloads: modpackData["downloadCount"],
         icon: modpackData["logo"]["thumbnailUrl"],
@@ -137,6 +138,7 @@ class CurseforgeApi implements Api {
       versions.add(UMF(
         original: hit,
         name: modpackData["name"],
+        slug: modpackData["slug"],
         versionName: hit["displayName"],
         downloads: hit["downloadCount"],
         icon: modpackData["logo"]["thumbnailUrl"],
@@ -186,6 +188,7 @@ class CurseforgeApi implements Api {
         categories: umf.categories,
         description: umf.description,
         name: umf.original["name"],
+        slug: umf.slug,
         versionName: modpackVersion["displayName"],
         downloads: modpackVersion["downloadCount"],
         icon: umf.original["logo"]["thumbnailUrl"],
@@ -205,7 +208,7 @@ class CurseforgeApi implements Api {
   @override
   getModpackList() async {
     print("get list");
-
+    
     List categories = [];
 
     if (!categoriesSearch.isEmpty) {
@@ -221,41 +224,20 @@ class CurseforgeApi implements Api {
       }
     }
 
+    
+     print(index);
     String url =
-        '$baseUrl/v1/mods/search?index=0&pageSize=50&gameId=432&sortField=1&sortOrder=desc&classId=${getClassid()}&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categories';
+        '$baseUrl/v1/mods/search?index=$index&pageSize=$pageSize&gameId=432&sortField=1&sortOrder=desc&classId=${getClassid()}&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categories';
     print(url);
     final res = await http.get(Uri.parse(url), headers: userHeader);
+     index += pageSize;
     print(res.statusCode);
     final hits = jsonDecode(utf8.decode(res.bodyBytes))["data"];
-    return hits;
-  }
-
-  @override
-  Future<List> getMoreModpacks() async {
-    index += pageSize;
-
-    List categories = [];
-
-    if (categoriesSearch != []) {
-      List hits = await _requestCategories();
-
-      for (String cate in categoriesSearch) {
-        for (var hit in hits) {
-          if (hit["name"] == cate) {
-            categories.add(hit["id"]);
-          }
-        }
-      }
-    }
-
-    String url =
-        '$baseUrl/v1/mods/search?index=$index&pageSize=$pageSize&gameId=432&sortField=1&sortOrder=desc&classId=${getClassid()}&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categoriesSearch';
-    print(url);
-    final res = await http.get(Uri.parse(url), headers: userHeader);
-    final hits = jsonDecode(utf8.decode(res.bodyBytes))["data"];
+   
 
     return hits;
   }
+
 
   @override
   String getTitlename() {

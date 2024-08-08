@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
 import 'package:mclauncher4/src/tasks/apis/files/files_handler.dart';
+import 'package:mclauncher4/src/tasks/install_controller.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
@@ -23,7 +24,7 @@ import 'package:mclauncher4/src/widgets/divider.dart' as divider;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ModsPage extends StatefulWidget {
-  List<UMF> files;
+  List<InstallController> files;
   String instanceName;
   ObjectType type;
   ModsPage({Key? key, required this.files, required this.instanceName, required this.type}) : super(key: key);
@@ -38,7 +39,7 @@ class _ModsPageState extends State<ModsPage> {
 
   @override
   Widget build(BuildContext context) {
-    widget.files.removeWhere((element) => element.type != widget.type);
+    widget.files.removeWhere((element) => element.modpackData.type != widget.type);
     print("build");
     return Column(children: [
       SizedBox(
@@ -92,7 +93,7 @@ class _ModsPageState extends State<ModsPage> {
             onTap: () {
               var curseforgeapi = CurseforgeApi();
               curseforgeapi.setObjectType(widget.type);
-              Navigator.push(context, SlowCupertinoPageRoute(allowSnapshotting: false, builder: (context) => ModListPage(handler: curseforgeapi, rootinstanceName: widget.instanceName, isReturnable: true,)));
+              Navigator.push(context, SlowCupertinoPageRoute(allowSnapshotting: false, builder: (context) => ModListPage(localInstallController: widget.files, handler: curseforgeapi, rootinstanceName: widget.instanceName, isReturnable: true,)));
             },
             child: Container(
               height: 38,
@@ -156,10 +157,10 @@ class _ModsPageState extends State<ModsPage> {
                         ),
                       ),
                       child: ModItem(
-                        imageuri: current.icon,
-                        name: current.name ?? "",
-                        downloads: current.downloads,
-                        author: current.author,
+                        imageuri: current.modpackData.icon,
+                        name: current.modpackData.name ?? "",
+                        downloads: current.modpackData.downloads,
+                        author: current.modpackData.author,
                       ),
                     );
                   })))

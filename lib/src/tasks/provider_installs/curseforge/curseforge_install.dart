@@ -89,6 +89,7 @@ class CurseforgeInstaller implements ProviderInstaller {
     await Downloader(url, path).startDownload(onProgress: (p0) {
       installModel.setProgress(p0);
     });
+    umfData.original["filepath"] = path;
   }
 
   @override

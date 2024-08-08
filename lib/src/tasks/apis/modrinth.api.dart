@@ -17,7 +17,7 @@ import 'package:path/path.dart' as path;
 
 class ModrinthApi implements Api {
   int limit = 50;
-  int offset = 50;
+  int offset = 0;
   List _facet = [];
 
   ModrinthApi() {
@@ -90,9 +90,9 @@ class ModrinthApi implements Api {
     // ignore: unused_local_variable
     List<Map> modpacksproc = [];
     final res = await http.get(Uri.parse(
-        'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit'));
+        'https://api.modrinth.com/v2/search?query=$query&offset=$offset&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit'));
     final hits = jsonDecode(utf8.decode(res.bodyBytes))["hits"];
-
+    offset += limit;
     return hits;
   }
 
@@ -101,13 +101,6 @@ class ModrinthApi implements Api {
     return ModrinthInstaller();
   }
 
-  @override
-  getMoreModpacks() async {
-    var res = await http.get(Uri.parse(
-        'https://api.modrinth.com/v2/search?query=$query&offset=$offset&facets=[["project_type:modpack"], ["categories:forge", "categories:fabric"]]&index=relevance&limit=$limit'));
-    offset += limit;
-    return jsonDecode(utf8.decode(res.bodyBytes))["hits"];
-  }
 
   @override
   Future<List<String>> getCategories() async {
@@ -150,6 +143,7 @@ class ModrinthApi implements Api {
 
     return UMF(
         name: modpackData["name"],
+        slug: modpackData["slug"],
         author: modpackData["author"],
         description: modpackData["description"],
         downloads: modpackData["downloads"],
@@ -193,6 +187,7 @@ class ModrinthApi implements Api {
           description: modpackData["description"].toString(),
           downloads: version["downloads"],
           type: this.type,
+          slug: modpackData["slug"],
           original: version));
     }
     versions.sort(
@@ -240,6 +235,7 @@ class ModrinthApi implements Api {
           description: modpackproject["description"].toString(),
           downloads: modpackVersion["downloads"],
           type: this.type,
+          slug: modpackproject["slug"],
           body: modpackproject["body"],
           original: modpackVersion);
   }

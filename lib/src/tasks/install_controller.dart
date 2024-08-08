@@ -6,7 +6,7 @@ import 'dart:isolate';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:mclauncher4/src/app.dart';
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/pages/installed_objects_handlers.dart';
 import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
 import 'package:mclauncher4/src/tasks/Models/start_message.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
@@ -28,6 +28,7 @@ class InstallController {
   Api handler;
   UMF modpackData;
   String? processid;
+  String? rootProcessId;
   late InstallModel installModel;
   BuildContext? context;
   InstallState? installState;
@@ -37,6 +38,7 @@ class InstallController {
     required this.handler,
     required this.modpackData,
     this.processid,
+    this.rootProcessId,
     this.isVersion = true,
     this.installState,
   }) {
@@ -48,6 +50,7 @@ class InstallController {
   }
 
   String get processId => processid!;
+  String get rootprocessId => rootProcessId!;
   //ValueNotifierList get stdout => _stdout;
   Isolate? _isolate;
   Process? _result;
@@ -111,9 +114,9 @@ class InstallController {
     for (var callback in _beforedeletelisteners) {
       callback.call();
     }
-    File manifestfile = File(path.join(getInstancePath(), "manifest.json"));
+    File manifestfile = rootProcessId == null ? File(path.join(getInstancePath(), "manifest.json")) : File(path.join(getInstancePath(), rootProcessId ,"manifest.json"));
     List manifest = jsonDecode(await manifestfile.readAsString());
-    final dir = Directory(path.join(getInstancePath(), processid));
+    final dir = Directory(path.join(getInstancePath(), rootProcessId ?? processid));
 
     manifest.removeWhere((element) {
       print(element["processId"]);
@@ -136,6 +139,7 @@ class InstallController {
 
   void install({String? version}) async {
     print("Installing with:" + handler.getTitlename());
+    print("Starting ProcessID: $processid, with root $rootProcessId ");
     print('start download');
     installModel.setInstallState(InstallState.fetching);
     installModel.setState("Installing Project");
@@ -194,7 +198,7 @@ class InstallController {
             token: rootToken,
             handler: handler,
             modpackData: modpackData,
-            processId: processId,
+            processId: rootProcessId ?? processId,
             version: version == null ? null : Version.parse(version))
       ],
       onExit: exitPort.sendPort,
@@ -235,26 +239,25 @@ class InstallController {
 
     }
 
-    if(startMessage.getModpackData.type == ObjectType.modpack) {
-          List manifest = [];
+   
+      var manifestPath =  path.join( path.join(getInstancePath(), startMessage.getModpackData.type == ObjectType.modpack ? null : startMessage.getProcessId), "manifest.json"); 
+      List manifest = [];
        try {
-        manifest = jsonDecode(File(path.join(getInstancePath(), "manifest.json"))
+        manifest = jsonDecode(File(manifestPath)
            .readAsStringSync());
       } catch (e) {
-        print("couldnt accses manifest");
+        throw "couldnt accses manifest: $manifestPath";
      }
 
-      Map manifestaddon = {
+      manifest.add({
        "processId": startMessage.processId,
-       "provider": startMessage.handler.getidname
-     };
-      manifestaddon.addAll(UMF.toJson(startMessage.modpackData));
-
-      manifest.add(manifestaddon);
+       "provider": startMessage.handler.getidname,
+       ...UMF.toJson(startMessage.modpackData)
+      });
   
-      await File(path.join(getInstancePath(), "manifest.json"))
+      await File(manifestPath)
           .writeAsString(jsonEncode(manifest));
-    }
+    
 
 
     //Prining finish
@@ -288,7 +291,7 @@ class InstallController {
   setUIChanges() {
 if(modpackData.type == ObjectType.modpack) {
     if (InstalledModpacksHandler.globalInstallControllers.value
-        .where((element) => element.processId == this.processId)
+        .where((element) => element.processId ==  this.processId)
         .isEmpty) {
       print("add to");
 
@@ -309,7 +312,7 @@ if(modpackData.type == ObjectType.modpack) {
                   state: installModel.state,
                   progress: installModel.progress,
                 )),
-        processId);
+        rootProcessId ?? processId);
   }
 
   removeFromInstallList() {
@@ -318,7 +321,7 @@ if(modpackData.type == ObjectType.modpack) {
   }
 
   removeUIChanges() {
-    StaticSidePanelController.controller.removeFromTaskWidget(processId);
+    StaticSidePanelController.controller.removeFromTaskWidget(rootProcessId ?? processId);
   }
 
   setErrorDialog(BuildContext? context, String errorDialog) {

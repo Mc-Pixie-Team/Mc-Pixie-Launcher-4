@@ -18,7 +18,7 @@ import 'package:mclauncher4/src/widgets/buttons/download_button.dart';
 import 'package:mclauncher4/src/widgets/export_field.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:path/path.dart' as path;
-import 'package:mclauncher4/src/pages/installed_modpacks_handler.dart';
+import 'package:mclauncher4/src/pages/installed_objects_handlers.dart';
 
 class InstalledCard extends StatefulWidget {
   final InstallController controllerInstance;

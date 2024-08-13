@@ -156,6 +156,7 @@ class FilesHandler extends DisposableWidget with ChangeNotifier  {
       file = await getFileData(filepath);
     } catch (e) {
       file = UMF(
+        providerId: "NA",
         original: {"filepath": filepath},
         name: p.basename(filepath),
         author: "unknown",

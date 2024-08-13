@@ -17,6 +17,7 @@ class UMF {
     this.MCVersion,
     required this.type,
     required this.slug,
+    required this.providerId,
     required this.original,
   });
 
@@ -34,6 +35,7 @@ class UMF {
   String? MCVersion;
   ObjectType type;
   String slug;
+  String providerId;
   Map original;
 
   static toJson(UMF umf) {
@@ -52,6 +54,7 @@ class UMF {
       "MCVersion": umf.MCVersion,
       "type": umf.type.toString(),
       "body": umf.body,
+      "providerId": umf.providerId,
       "original": umf.original
     };
   }
@@ -72,6 +75,7 @@ class UMF {
         MCVersion: json["MCVersion"],
         type: _parsetype(json["type"]),
         slug: json["slug"],
+        providerId: json["providerId"],
         original: json["original"]);
   }
 
@@ -107,6 +111,7 @@ class UMF {
     String? MCVersion,
     ObjectType? type,
     String? slug,
+    String? providerId,
     Map? original,
   }) {
     return UMF(
@@ -124,6 +129,7 @@ class UMF {
         MCVersion: MCVersion ?? this.MCVersion,
         type: type ?? this.type,
         slug: slug ?? this.slug,
+        providerId: providerId ?? this.providerId,
         original: original ?? this.original);
   }
 }

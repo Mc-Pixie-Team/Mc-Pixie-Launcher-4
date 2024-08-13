@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/murmur_hash.dart';
@@ -55,6 +56,6 @@ class CurseforgeFiles {
     mod["filepath"] = filepath;
     mod["fileId"] = file[0]["file"]["id"];
     print("filepath: $filepath, fingerprint:$fingerprint, name: ${mod["name"]}");
-    return UMF(name: mod["name"],slug: mod["slug"],  author: mod["authors"][0]["name"],icon: mod["logo"]["url"],downloads: mod["downloadCount"], type: ObjectType.mod,  original: mod, );
+    return CurseforgeApi().convertToLiteUMF(mod);
   }
 }

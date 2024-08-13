@@ -77,6 +77,7 @@ class CurseforgeApi implements Api {
         author: modpackData["authors"][0]["name"],
         categories: categories,
         MCVersion: modpackData["latestFiles"][0]["gameVersions"][0],
+        providerId: getidname,
         type: this.type);
   }
 
@@ -136,6 +137,7 @@ class CurseforgeApi implements Api {
               : hit["sortableGameVersions"][0]["gameVersionName"];
 
       versions.add(UMF(
+        providerId: getidname,
         original: hit,
         name: modpackData["name"],
         slug: modpackData["slug"],
@@ -184,6 +186,7 @@ class CurseforgeApi implements Api {
             : modpackVersion["sortableGameVersions"][0]["gameVersionName"];
 
     return UMF(
+        providerId: getidname,
         original: modpackVersion,
         categories: umf.categories,
         description: umf.description,

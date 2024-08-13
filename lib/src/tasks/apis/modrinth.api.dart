@@ -142,6 +142,7 @@ class ModrinthApi implements Api {
     modpackData["name"] = modpackData["name"] ?? modpackData["title"];
 
     return UMF(
+        providerId: getidname,
         name: modpackData["name"],
         slug: modpackData["slug"],
         author: modpackData["author"],
@@ -179,6 +180,7 @@ class ModrinthApi implements Api {
 
     for (Map version in rawVersion) {
       versions.add(UMF(
+        providerId: getidname,
           icon: modpackData["icon_url"],
           MCVersion: version["game_versions"].last,
           modloader: version["loaders"][0],
@@ -226,7 +228,8 @@ class ModrinthApi implements Api {
             orElse: () => null); // gets the newest version
 
      return UMF(
-      categories: umf.categories,
+          providerId: getidname,
+          categories: umf.categories,
           icon: modpackproject["icon_url"],
           MCVersion: modpackVersion["game_versions"].last,
           modloader: modpackVersion["loaders"][0],

@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/get_api_handler.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
 import 'package:mclauncher4/src/tasks/install_controller.dart';
+import 'package:mclauncher4/src/tasks/install_object_handler.dart';
 
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:mclauncher4/src/tasks/utils/utils.dart';
@@ -38,11 +39,13 @@ class ImportExportController with ChangeNotifier {
 
     Api api = ApiHandler().getApi(pixieIndexJson["provider"]);
     print(pixieIndexJson["providerArgs"]);
-    InstallController installController = InstallController(
-        processid: process_id,
-        handler: api,
-        modpackData: pixieIndexJson["providerArgs"]);
-    installController.install();
+    throw "";
+    // InstallController installController = InstallController(
+  
+    //     processid: process_id,
+    //     handler: api,
+    //     modpackData: pixieIndexJson["providerArgs"]);
+    // installController.install();
   }
 
   Future export(

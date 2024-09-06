@@ -22,7 +22,7 @@ class _CircularButtonState extends State<CircularButton> {
     return InkWell(
       child: Container(
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(90)),
           height: widget.height,
           width: widget.width,

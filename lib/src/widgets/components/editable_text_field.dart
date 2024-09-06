@@ -6,13 +6,13 @@ class EditableTextField extends StatefulWidget {
   FocusNode? focusNode = FocusNode();
 
   double height;
-  double width;
+  double? width;
 
   EditableTextField(
       {Key? key,
       this.textController,
       this.focusNode,
-      this.width = 135,
+      this.width,
       this.height = 25})
       : super(key: key);
 
@@ -26,9 +26,9 @@ class _EditableTextFieldState extends State<EditableTextField> {
     return Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: Theme.of(context).colorScheme.surface),
+            color: Theme.of(context).colorScheme.surfaceContainerHigh),
         height: widget.height,
-        width: widget.width,
+   
         child: Padding(
             padding: EdgeInsets.only(left: 10),
             child: Center(

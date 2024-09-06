@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
+import 'package:mclauncher4/src/tasks/apis/api.dart';
 
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/installs/install_model.dart';
@@ -24,13 +25,13 @@ class BrowseCard extends StatefulWidget {
   VoidCallback onCancel;
   VoidCallback onOpen;
   String processId;
-  String handlerString;
+  Api handler;
 
   InstallModel installModel;
 
   BrowseCard({
     Key? key,
-    required this.handlerString,
+    required this.handler,
     required this.processId,
     required this.modpackData,
     required this.installModel,
@@ -95,7 +96,7 @@ class _BrowseCardState extends State<BrowseCard>
                       SlowCupertinoPageRoute(
                         allowSnapshotting: false,
                         builder: (context) => ModPage(
-                            handlerString: widget.handlerString,
+                            handler: widget.handler,
                             modpackData: widget.modpackData),
                       ));
                 },
@@ -108,7 +109,7 @@ class _BrowseCardState extends State<BrowseCard>
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(18),
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.surfaceContainerHigh,
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +122,7 @@ class _BrowseCardState extends State<BrowseCard>
                                 url: widget.modpackData.icon!,
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .surfaceVariant,
+                                    .surfaceContainer,
                               ),
                             ),
                             Expanded(
@@ -258,7 +259,7 @@ class _BrowseCardState extends State<BrowseCard>
                                       borderRadius: BorderRadius.circular(10),
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .surfaceVariant,
+                                          .surfaceContainer,
                                     ),
                                     child: Row(
                                         mainAxisAlignment:

@@ -52,7 +52,7 @@ class _RamSelectCardState extends State<RamSelectCard> {
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(18)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

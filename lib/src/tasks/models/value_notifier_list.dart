@@ -6,6 +6,15 @@ import 'package:mclauncher4/src/widgets/cards/installed_card.dart';
 class ValueNotifierList<Widget> extends ValueNotifier<List<Widget>> {
   ValueNotifierList(List<Widget> value) : super(value);
 
+  void trigger() {
+    notifyListeners();
+  }
+
+  void removeWhere(bool Function(Widget) test) {
+    value.removeWhere(test);
+    notifyListeners();
+  }
+
   void add(Widget valueToAdd) {
     value = [...value, valueToAdd];
     notifyListeners();

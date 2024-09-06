@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:mclauncher4/src/tasks/models/modloader_type.dart';
 import 'package:mclauncher4/src/widgets/modpack_widgets/modpack_title_icon_widget.dart';
 import 'package:path/path.dart' as path;
 import 'package:animations/animations.dart';
@@ -18,12 +19,11 @@ import 'package:mclauncher4/src/widgets/file_table/file_table.dart';
 import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:flutter/foundation.dart';
 import 'package:webview_windows/webview_windows.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ModPage extends StatefulWidget {
   UMF modpackData;
-  String handlerString;
-  ModPage({Key? key, required this.modpackData, required this.handlerString})
+  Api handler;
+  ModPage({Key? key, required this.modpackData, required this.handler})
       : super(key: key);
 
   @override
@@ -37,7 +37,7 @@ class _ModPageState extends State<ModPage> {
   bool isVersions = true;
 
   static inIsolate(List args) async {
-    Api handler = ApiHandler().getApi(args[2]);
+    Api handler = args[2];
     DUMF dumf = await handler.getDUMF(args[0]);
     Isolate.exit(args[1], dumf);
   }
@@ -48,7 +48,7 @@ class _ModPageState extends State<ModPage> {
     isolate = await Isolate.spawn(inIsolate, [
       widget.modpackData.original,
       resultPort.sendPort,
-      widget.handlerString
+      widget.handler
     ]);
 
     resultPort.listen((message) {
@@ -78,7 +78,7 @@ class _ModPageState extends State<ModPage> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(18)),
       child: Stack(
         children: [
@@ -90,15 +90,16 @@ class _ModPageState extends State<ModPage> {
                 onpressed: () => Navigator.of(context).pop(),
                 color: Theme.of(context).colorScheme.secondary,
                 text: Text(
-                  AppLocalizations.of(context)!.modpacks,
+                  "Modpacks",
                   style: Theme.of(context).typography.black.labelLarge,
                 ),
               )),
           Positioned.fill(
-            top: 50,
-            child: Column(children: [
+            top: 60,
+          
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               ModpackTitleIconWidget(
-                  modloader: widget.modpackData.modloader ?? "",
+                  modloader: widget.modpackData.modloader != null ? ModloaderTypeTools.toName( widget.modpackData.modloader!): "",
                   name: widget.modpackData.name,
                   downloads: widget.modpackData.downloads,
                   iconUrl: widget.modpackData.icon,
@@ -118,7 +119,7 @@ class _ModPageState extends State<ModPage> {
                           }),
                       child: Column(children: [
                         Text(
-                          AppLocalizations.of(context)!.home,
+                          "Home",
                           style:
                               Theme.of(context).typography.black.headlineSmall,
                         ),
@@ -142,7 +143,7 @@ class _ModPageState extends State<ModPage> {
                             isVersions = true;
                           }),
                       child: Column(children: [
-                        Text(AppLocalizations.of(context)!.versions,
+                        Text("Versions",
                             style: Theme.of(context)
                                 .typography
                                 .black
@@ -167,12 +168,11 @@ class _ModPageState extends State<ModPage> {
                 duration: const Duration(milliseconds: 400),
                 child: isVersions
                     ? FileTable(
-                        providerString: widget.handlerString,
+                        providerString: widget.handler.getidname,
                         details: details,
                       )
                     : details?.body == null
-                        ? Text(AppLocalizations.of(context)!
-                            .errorNoBodyFoundOrDetailsCouldNotBeLoaded)
+                        ? Text("no body found! or details could not be loaded")
                         : WebviewWidget(
                             cachHTMLFile: File(
                                 path.join(getHTMLcachePath(), "index.html")),

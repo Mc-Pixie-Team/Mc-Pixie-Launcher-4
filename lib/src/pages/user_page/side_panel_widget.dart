@@ -20,7 +20,7 @@ class _SidePanelWidgetState extends State<SidePanelWidget> {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          color: Theme.of(context).colorScheme.surfaceVariant),
+          color: Theme.of(context).colorScheme.surfaceContainer),
       child: Stack(
         children: [
           SingleChildScrollView(

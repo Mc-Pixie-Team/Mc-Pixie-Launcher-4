@@ -10,6 +10,11 @@ import 'package:mclauncher4/src/pages/installed_objects_handlers.dart';
 import 'package:mclauncher4/src/tasks/Models/isolate_message.dart';
 import 'package:mclauncher4/src/tasks/Models/start_message.dart';
 import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/install_object_handler.dart';
+import 'package:mclauncher4/src/tasks/installs/fabric/fabric_install.dart';
+import 'package:mclauncher4/src/tasks/installs/forge/forge_install.dart';
+import 'package:mclauncher4/src/tasks/installs/minecraft/minecraft_install.dart';
+import 'package:mclauncher4/src/tasks/models/modloader_type.dart';
 import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/value_notifier_list.dart';
@@ -25,17 +30,19 @@ import 'package:uuid/uuid.dart';
 import 'package:path/path.dart' as path;
 
 class InstallController {
-  Api handler;
+  Api? handler;
   UMF modpackData;
   String? processid;
   String? rootProcessId;
   late InstallModel installModel;
   BuildContext? context;
   InstallState? installState;
+  InstallObjectHandler installObjectHandler;
   bool isVersion;
   List<VoidCallback> _beforedeletelisteners = [];
   InstallController({
-    required this.handler,
+    required this.installObjectHandler,
+    this.handler,
     required this.modpackData,
     this.processid,
     this.rootProcessId,
@@ -61,7 +68,6 @@ class InstallController {
     //  _stdout.add(String.fromCharCodes(out));
   }
 
-
   void changeModpackData(UMF umf) {
     this.modpackData = umf;
     installModel.triggerAll();
@@ -76,8 +82,39 @@ class InstallController {
     installModel.setState("launching Minecraft");
     setUIChanges();
 
-    _result =
-        await handler.getDownloaderObject().start(processId, installModel);
+    List manifest = (jsonDecode(
+        await File(path.join(getInstancePath(), "manifest.json"))
+            .readAsString()));
+    UMF? umfData;
+    for (var modpack in manifest) {
+      if (modpack["processId"] == processId) {
+        umfData = UMF.parse(modpack);
+      }
+    }
+
+    if (umfData == null) {
+      throw "No Modpack with this process id ($processId) found!";
+    }
+    if (umfData.MCVersion == null) {
+      throw "Couldnt find Minecraft or Modloader Version for this instance ($processId)";
+    }
+
+    String version = umfData.MCVersion!;
+    String loaderversion = umfData.MLVersion ?? "";
+    print(loaderversion);
+    print(version);
+    print(umfData.modloader);
+    switch (umfData.modloader) {
+      case ModloaderType.forge:
+        _result = await ForgeInstall.run("$version-${loaderversion}", version,
+            getlibarypath(), processId, installModel);
+      case ModloaderType.fabric:
+        _result = await FabricInstall.run(
+            loaderversion, version, getlibarypath(), processId, installModel);
+      default:
+        _result = await MinecraftInstall.run(
+            Version.parse(version), processId, installModel);
+    }
 
     await Future.delayed(Duration(milliseconds: 300));
 
@@ -114,10 +151,13 @@ class InstallController {
     for (var callback in _beforedeletelisteners) {
       callback.call();
     }
-    File manifestfile = rootProcessId == null ? File(path.join(getInstancePath(), "manifest.json")) : File(path.join(getInstancePath(), rootProcessId ,"manifest.json"));
+    File manifestfile = rootProcessId == null
+        ? File(path.join(getInstancePath(), "manifest.json"))
+        : File(path.join(getInstancePath(), rootProcessId, "manifest.json"));
     List manifest = jsonDecode(await manifestfile.readAsString());
-    final dir = Directory(path.join(getInstancePath(), rootProcessId ?? processid));
-
+    final dir =
+       modpackData.type == ObjectType.modpack ? Directory(path.join(getInstancePath(),processid)): File(path.join(rootProcessId!, ObjectTypeTools.todir(modpackData.type), modpackData.objectPath!));
+    print(dir.path);
     manifest.removeWhere((element) {
       print(element["processId"]);
       return element["processId"] == processId;
@@ -137,8 +177,8 @@ class InstallController {
     print('deleted');
   }
 
-  void install({String? version}) async {
-    print("Installing with:" + handler.getTitlename());
+  void install({String? version, List<ModloaderType>? modloaderTypes}) async {
+    print("Installing with:" + (handler?.getTitlename() ?? "DEFAULT"));
     print("Starting ProcessID: $processid, with root $rootProcessId ");
     print('start download');
     installModel.setInstallState(InstallState.fetching);
@@ -146,13 +186,11 @@ class InstallController {
 
     if (!isVersion) {
       print("getting newest version from Modpack");
-      modpackData =
-          (await handler.getLatestModpackVersionFromLiteUMF(modpackData));
+      if (handler != null) {
+        modpackData =
+            (await handler!.getLatestModpackVersionFromLiteUMF(modpackData, version));
+      }
     }
-    setUIChanges();
-    print("NAME OF MODPACK:" + modpackData.name!);
-    print("NAME OF THE VERSION OF THE MODPACK:" + modpackData.versionName!);
-    print(modpackData.icon);
 
     ///To show the fetching animation
     // await Future.delayed(Duration(milliseconds: 300));
@@ -160,6 +198,12 @@ class InstallController {
     print(InstallController.instances);
     await waitWhile(() => InstallController.instances > 1);
     InstallController.instances++;
+    installModel.setInstallState(InstallState.installing);
+    setUIChanges();
+    print("NAME OF MODPACK:" + (modpackData.name ?? ""));
+    print("NAME OF THE VERSION OF THE MODPACK:" +
+        (modpackData.versionName ?? ""));
+    print(modpackData.icon);
 
     ReceivePort receivePort = ReceivePort();
     ReceivePort exitPort = ReceivePort();
@@ -224,41 +268,68 @@ class InstallController {
       ));
     });
 
-    var installer = startMessage.getHandler.getDownloaderObject();
-    //Call the main installer
-    if(startMessage.getModpackData.type == ObjectType.modpack) {
-        await installer.install(
-          umfData: startMessage.modpackData,
-          instanceName: startMessage.processId,
-          installModel: installModel);
-    }else {
-        await installer.installFile(
-          umfData: startMessage.modpackData,
-          instanceName: startMessage.processId,
-          installModel: installModel);
+   var workingDirectory = Directory(  path.join(
+            getInstancePath(),
+            startMessage.getModpackData.type == ObjectType.modpack
+                ? startMessage.getProcessId
+                : path.join(startMessage.getProcessId, "error")));
 
+    print(workingDirectory.path);
+    if(! (await workingDirectory.exists())) {
+      print("CREATING DIR");
+      await workingDirectory.create();
+    }
+    if (startMessage.getHandler != null) {
+      var installer = startMessage.getHandler!.getDownloaderObject();
+      //Call the main installer
+      if (startMessage.getModpackData.type == ObjectType.modpack) {
+        await installer.install(
+            umfData: startMessage.modpackData,
+            instanceName: startMessage.processId,
+            installModel: installModel);
+      } else {
+        await installer.installFile(
+            umfData: startMessage.modpackData,
+            instanceName: startMessage.processId,
+            installModel: installModel);
+      }
+    }
+    if (startMessage.getModpackData.type == ObjectType.modpack) {
+
+    
+    var version = startMessage.getModpackData.MCVersion!;
+    var loaderversion = startMessage.getModpackData.MLVersion!;
+    switch (startMessage.getModpackData.modloader) {
+      case ModloaderType.forge:
+        await ForgeInstall.install("$version-$loaderversion", version, getlibarypath(), installModel);
+      case ModloaderType.fabric:
+        await FabricInstall.install(loaderversion, version,
+            getlibarypath(), installModel);
+      default:
+        await MinecraftInstall.install(
+            Version.parse(version), getlibarypath(), installModel);
+    }
     }
 
-   
-      var manifestPath =  path.join( path.join(getInstancePath(), startMessage.getModpackData.type == ObjectType.modpack ? null : startMessage.getProcessId), "manifest.json"); 
-      List manifest = [];
-       try {
-        manifest = jsonDecode(File(manifestPath)
-           .readAsStringSync());
-      } catch (e) {
-        throw "couldnt accses manifest: $manifestPath";
-     }
+    var manifestPath = path.join(
+        path.join(
+            getInstancePath(),
+            startMessage.getModpackData.type == ObjectType.modpack
+                ? ""
+                : startMessage.getProcessId),
+        "manifest.json");
+    List manifest = [];
+    try {
+      manifest = jsonDecode(File(manifestPath).readAsStringSync());
+    } catch (e) {
+      throw "couldnt accses manifest: $manifestPath";
+    }
 
-      manifest.add({
-       "processId": startMessage.processId,
-       "provider": startMessage.handler.getidname,
-       ...UMF.toJson(startMessage.modpackData)
-      });
-  
-      await File(manifestPath)
-          .writeAsString(jsonEncode(manifest));
-    
+    manifest.add(UMF.toJson(startMessage.modpackData.copyWith(
+        processId: startMessage.processId,
+        providerId: startMessage.handler?.getidname ?? null)));
 
+    await File(manifestPath).writeAsString(jsonEncode(manifest));
 
     //Prining finish
     (args.first as SendPort).send(InstallerMessage(
@@ -289,17 +360,16 @@ class InstallController {
   }
 
   setUIChanges() {
-if(modpackData.type == ObjectType.modpack) {
-    if (InstalledModpacksHandler.globalInstallControllers.value
-        .where((element) => element.processId ==  this.processId)
+    if (this
+        .installObjectHandler
+        .installControllers
+        .value
+        .where((element) => element.processId == this.processId)
         .isEmpty) {
       print("add to");
 
-      InstalledModpacksHandler.globalInstallControllers.add(this);
+      this.installObjectHandler.installControllers.add(this);
     }
-}
-
-
 
     // Calls SidePanel instance
     StaticSidePanelController.controller.addToTaskWidget(
@@ -316,12 +386,15 @@ if(modpackData.type == ObjectType.modpack) {
   }
 
   removeFromInstallList() {
-    InstalledModpacksHandler.globalInstallControllers
+    this
+        .installObjectHandler
+        .installControllers
         .removeProcessIdFormList(processId);
   }
 
   removeUIChanges() {
-    StaticSidePanelController.controller.removeFromTaskWidget(rootProcessId ?? processId);
+    StaticSidePanelController.controller
+        .removeFromTaskWidget(rootProcessId ?? processId);
   }
 
   setErrorDialog(BuildContext? context, String errorDialog) {

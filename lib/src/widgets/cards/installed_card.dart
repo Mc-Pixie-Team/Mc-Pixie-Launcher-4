@@ -96,7 +96,7 @@ class _InstalledCardState extends State<InstalledCard> {
     Navigator.push(
         context,
         SlowCupertinoPageRoute(
-          maintainState: false,
+          maintainState: true,
           allowSnapshotting: false,
           builder: (context) => InstalledModPage(
             controllerInstance: widget.controllerInstance,
@@ -135,7 +135,7 @@ class _InstalledCardState extends State<InstalledCard> {
                               decoration: BoxDecoration(
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .surfaceVariant,
+                                      .surfaceContainer,
                                   borderRadius: BorderRadius.circular(10)),
                               child: iconhandler()))),
                   AnimatedBuilder(
@@ -213,7 +213,7 @@ class _InstalledCardState extends State<InstalledCard> {
                                                                         10),
                                                             color: Theme.of(context)
                                                                 .colorScheme
-                                                                .surfaceVariant),
+                                                                .surfaceContainer),
                                                         child: Center(
                                                             child:
                                                                 widget.controllerInstance.installModel

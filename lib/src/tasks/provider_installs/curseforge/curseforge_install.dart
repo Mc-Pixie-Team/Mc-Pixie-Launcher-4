@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbols.dart';
+import 'package:mclauncher4/src/tasks/models/modloader_type.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
@@ -89,7 +90,7 @@ class CurseforgeInstaller implements ProviderInstaller {
     await Downloader(url, path).startDownload(onProgress: (p0) {
       installModel.setProgress(p0);
     });
-    umfData.original["filepath"] = path;
+    umfData.objectPath = path;
   }
 
   @override
@@ -170,6 +171,8 @@ class CurseforgeInstaller implements ProviderInstaller {
 
     installModel.setState("Downloading Mods");
 
+    List<Map> installedDependencies = [];
+
     for (var i = 0; (manifest["files"] as List).length > i;) {
       Iterable<Future<dynamic>> downloads = Iterable.generate(
           downloads_at_same_time > _totalitems
@@ -188,18 +191,19 @@ class CurseforgeInstaller implements ProviderInstaller {
         Map hitmod = await jsonDecode(utf8.decode(res.bodyBytes))["data"];
         Map hitproj = await jsonDecode(utf8.decode(res2.bodyBytes))["data"];
 
-        late String innerDownloadPath;
+        late ObjectType objectType;
         String? url;
         String? filename = hitmod["fileName"];
 
         if (hitproj["classId"] == modClassifier) {
-          innerDownloadPath = "mods";
+          objectType =ObjectType.mod;
+     
         } else if (hitproj["classId"] == shaderClassifier) {
-          innerDownloadPath = "shaderpacks";
+          objectType =ObjectType.shader;
         } else if (hitproj["classId"] == resourcePackClassifier) {
-          innerDownloadPath = "resourcepacks";
+          objectType =ObjectType.resource;
         } else if (hitproj["classId"] == worldClassifier) {
-          innerDownloadPath = "saves";
+          objectType =ObjectType.world;
         } else {
           print("could find any classifier moving on");
           return;
@@ -216,13 +220,40 @@ class CurseforgeInstaller implements ProviderInstaller {
         if (url == null) throw "Cannot find any download url";
         print("using url: " + url + " with: " + filename.toString());
         var filepath = p.join(
-            getInstancePath(), instanceName, innerDownloadPath, filename);
+            getInstancePath(), instanceName, ObjectTypeTools.todir(objectType), filename);
         Downloader _downloader = Downloader(url, filepath);
 
         await _downloader.startDownload();
+
+
+        installedDependencies.add(UMF.toJson( UMF(
+          objectPath: filepath,
+        providerId: "curseforge",
+        original: hitproj,
+        description: hitproj["summary"],
+        name: hitproj["name"],
+        slug: hitproj["slug"],
+        versionName: hitproj["displayName"],
+        downloads: hitproj["downloadCount"],
+        icon: hitproj["logo"]["thumbnailUrl"],
+        author: hitproj["authors"][0]["name"],
+        type: objectType
+      )) );
       });
 
       await Future.wait(downloads);
+
+      var depManifest = File(p.join(getInstancePath(), instanceName, "manifest.json"));
+
+      if(!depManifest.existsSync()) {
+        await depManifest.create();
+        await depManifest.writeAsString("[]");
+      }
+
+      var dependencies =jsonDecode(await depManifest.readAsString());
+
+      dependencies.addAll(installedDependencies);
+      depManifest.writeAsString(jsonEncode(dependencies));
 
       _totalitems -= downloads_at_same_time;
       i += downloads_at_same_time;
@@ -230,60 +261,22 @@ class CurseforgeInstaller implements ProviderInstaller {
           ((i / ((manifest["files"] as List).length)) * 100).roundToDouble());
     }
 
-    String version = manifest["minecraft"]["version"];
-    String loaderversion = manifest["minecraft"]["modLoaders"][0]["id"];
 
+    String loaderversion = manifest["minecraft"]["modLoaders"][0]["id"];
+    umfData.MCVersion = manifest["minecraft"]["version"];
     switch (loaderversion.split("-").first) {
       case "forge":
-        umfData.modloader = "forge";
+        
+        umfData.modloader = ModloaderType.forge;
         umfData.MLVersion = "${loaderversion.split("-")[1]}";
-        await ForgeInstall.install("$version-${loaderversion.split("-")[1]}",
-            version, getlibarypath(), installModel);
       case "fabric":
-        umfData.modloader = "fabric";
+        umfData.modloader = ModloaderType.fabric;
         umfData.MLVersion = "${loaderversion.split("-")[1]}";
-        await FabricInstall.install(loaderversion.split("-")[1], version,
-            getlibarypath(), installModel);
+
       default:
-        umfData.modloader = "none";
-        await MinecraftInstall.install(
-            Version.parse(version), getlibarypath(), installModel);
+        umfData.modloader = ModloaderType.vanilla;
+
     }
   }
 
-  @override
-  Future<Process> start(String processId, InstallModel installModel) async {
-    // String destination =
-    //     path.join(getInstancePath(), processId, "curseforge.manifest.json");
-    List manifest = (jsonDecode(
-        await File(p.join(getInstancePath(), "manifest.json")).readAsString()));
-    UMF? umfData;
-    for (var modpack in manifest) {
-      if (modpack["processId"] == processId) {
-        umfData = UMF.parse(modpack);
-      }
-    }
-
-    if (umfData == null) {
-      throw "No Modpack with this process id ($processId) found!";
-    }
-    if (umfData.MCVersion == null) {
-      throw "Couldnt find Minecraft or Modloader Version for this instance ($processId)";
-    }
-
-    String version = umfData.MCVersion!;
-    String loaderversion = umfData.MLVersion ?? "";
-
-    switch (umfData.modloader) {
-      case "forge":
-        return await ForgeInstall.run("$version-${loaderversion}", version,
-            getlibarypath(), processId, installModel);
-      case "fabric":
-        return await FabricInstall.run(
-            loaderversion, version, getlibarypath(), processId, installModel);
-      default:
-        return await MinecraftInstall.run(
-            Version.parse(version), processId, installModel);
-    }
-  }
 }

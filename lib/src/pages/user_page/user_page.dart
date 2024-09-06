@@ -73,7 +73,7 @@ class _UserPageState extends State<UserPage> {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainer,
       ),
       child: Stack(
         children: [
@@ -306,7 +306,7 @@ class _UserPageState extends State<UserPage> {
                         foregroundColor: MaterialStateProperty.all(
                             Theme.of(context).colorScheme.primary),
                         backgroundColor: MaterialStateProperty.all(
-                            Theme.of(context).colorScheme.surface)),
+                            Theme.of(context).colorScheme.surfaceContainerHigh)),
                     onPressed: () {
                       setState(() {
                         supabaseHelpers().signoutUser();

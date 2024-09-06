@@ -22,7 +22,7 @@ class _SettingsListState extends State<SettingsList> {
         //height: widget.height,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Theme.of(context).colorScheme.surface),
+            color: Theme.of(context).colorScheme.surfaceContainerHigh),
         width: 500,
         child: Padding(
           padding: const EdgeInsets.all(15.0)

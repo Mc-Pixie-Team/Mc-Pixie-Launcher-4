@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mclauncher4/src/pages/providers/mod_page.dart';
 import 'package:mclauncher4/src/widgets/components/slide_in_animation.dart';
 import 'package:mclauncher4/src/widgets/mod_picture.dart';
 import 'package:numeral/numeral.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ModpackTitleIconWidget extends StatefulWidget {
   String? iconUrl;
@@ -10,11 +14,13 @@ class ModpackTitleIconWidget extends StatefulWidget {
   int? downloads;
   String? mlVersion;
   String? mcVersion;
+  String? alterIconPath;
   String modloader;
 
   ModpackTitleIconWidget(
       {Key? key,
       required this.modloader,
+      this.alterIconPath,
       this.downloads,
       this.iconUrl,
       this.mcVersion,
@@ -27,28 +33,52 @@ class ModpackTitleIconWidget extends StatefulWidget {
 }
 
 class _ModpackTitleIconWidgetState extends State<ModpackTitleIconWidget> {
+
+    Widget iconhandler() {
+    print("icon: ${widget.iconUrl}");
+    if (widget.alterIconPath != null && File(widget.alterIconPath!).existsSync()) {
+      print("USE Local");
+
+          return Image.memory(
+      File(widget.alterIconPath!)
+          .readAsBytesSync(),
+      gaplessPlayback: true,
+    );
+
+    }
+
+  if(widget.iconUrl != null) {
+          return FadeInImage.memoryNetwork(
+          fit: BoxFit.cover,
+          placeholder: kTransparentImage,
+          image: widget.iconUrl!);
+  }
+  throw "COULD NOT FIND IMAGE";
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return      LayoutBuilder(builder: (context, constraints) {
+   
+          return    Row(
+          
+      mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: EdgeInsets.only(left: 40),
-          child: ModPicture(
-            width: 140,
-            height: 140,
-            url: widget.iconUrl!,
-            color: Theme.of(context).colorScheme.surface,
-          ),
+          child: Container(clipBehavior: Clip.antiAlias, decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), color: Theme.of(context).colorScheme.surfaceContainerHigh), height: 140, width: 140, child: iconhandler(),)
         ),
         const SizedBox(
           width: 20,
         ),
-        SlideInAnimation(
+     SlideInAnimation(
             curve: Curves.easeOutQuad,
             duration: const Duration(milliseconds: 1000),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
+             
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   "Modpack",
@@ -60,12 +90,12 @@ class _ModpackTitleIconWidgetState extends State<ModpackTitleIconWidget> {
                           color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.w400),
                 ),
-                Text(
+           ConstrainedBox(constraints: BoxConstraints(maxWidth: constraints.maxWidth -  200.0),child: Text(
                   widget.name!,
                   style: Theme.of(context).typography.black.displaySmall,
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  overflow: TextOverflow.visible,
+                )),
                 const SizedBox(
                   height: 20,
                 ),
@@ -83,6 +113,6 @@ class _ModpackTitleIconWidgetState extends State<ModpackTitleIconWidget> {
               ],
             ))
       ],
-    );
+    );});
   }
 }

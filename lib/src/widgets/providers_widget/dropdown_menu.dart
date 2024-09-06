@@ -157,7 +157,7 @@ class _DropdownmenuState extends State<Dropdownmenu>
                       height: 300,
                       width: boxsize!.width,
                       decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.surfaceContainerHigh,
                           borderRadius: BorderRadius.only(
                               bottomLeft: Radius.elliptical(20, 20),
                               bottomRight: Radius.elliptical(20, 20))),
@@ -232,7 +232,7 @@ class _DropdownmenuState extends State<Dropdownmenu>
                   width: 205,
                   height: 41,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Theme.of(context).colorScheme.surfaceContainerHigh,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.elliptical(20, 20),
                           topRight: Radius.elliptical(20, 20),

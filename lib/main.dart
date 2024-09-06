@@ -1,4 +1,5 @@
 import 'package:mclauncher4/src/tasks/discord/discordRP.dart';
+import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
 import 'package:mclauncher4/src/widgets/internet_connection_checker.dart';
 import 'src/app.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,10 @@ import 'dart:io' show Platform;
 
 
 void main() async {
+
+
   supabaseHelpers().init();
-  
+
   DiscordRP().initCS("1144740158374158366");
   await InternetConnectionCheckerHelper().initListener();
   await Path.init();
@@ -21,8 +24,10 @@ void main() async {
   await Hive.openBox("MinecraftPlayerCapes");
   await Hive.openBox("RecentlyPlayed");
 
-    WidgetsFlutterBinding.ensureInitialized();
+  
+    
   // Must add this line.
+    WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
   WindowOptions windowOptions = WindowOptions(

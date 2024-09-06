@@ -1,5 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/widgets/export_field.dart';
+import 'package:mclauncher4/src/widgets/modpack_widgets/modpack_creation_field.dart';
 
 class AddCard extends StatefulWidget {
   const AddCard({Key? key}) : super(key: key);
@@ -9,7 +11,31 @@ class AddCard extends StatefulWidget {
 }
 
 class _AddCardState extends State<AddCard> {
-  onAddModpack() {}
+  onAddModpack(BuildContext context) {
+    showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: 'export menu',
+        barrierColor: Colors.black38,
+        transitionDuration: Duration(milliseconds: 400),
+        transitionBuilder: (context, animation, secondaryAnimation, child) {
+          Animation<double> curvedAni = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutExpo,
+              reverseCurve: Curves.easeInExpo);
+
+          return ScaleTransition(
+            scale: curvedAni,
+            child: FadeTransition(
+              opacity: curvedAni,
+              child: child,
+            ),
+          );
+        },
+        pageBuilder: (ctx, anim1, anim2) => Center(
+            child: DefaultTextStyle(
+                style: TextStyle(), child: ModpackCreationField())));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +45,7 @@ class _AddCardState extends State<AddCard> {
             cursor: SystemMouseCursors.click,
             hitTestBehavior: HitTestBehavior.deferToChild,
             child: GestureDetector(
-                onTap: onAddModpack,
+                onTap: () => onAddModpack(context),
                 child: DottedBorder(
                   dashPattern: [2, 2],
                   color: Theme.of(context).colorScheme.outlineVariant,

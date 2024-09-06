@@ -9,10 +9,14 @@ class RoundedTextButton extends StatefulWidget {
   double width;
   VoidCallback onTap;
   String text;
+  Color? color;
+  Color? overlayColor;
   RoundedTextButton(
       {Key? key,
       required this.text,
       required this.onTap,
+      this.overlayColor,
+      this.color,
       this.height = 55,
       this.width = 155})
       : super(key: key);
@@ -55,6 +59,7 @@ class _RoundedTextButtonState extends State<RoundedTextButton> {
     return MouseRegion(
         onEnter: onEnter,
         onExit: onExit,
+        cursor: SystemMouseCursors.click,
         child: GestureDetector(
             onTapDown: onDown,
             onTapUp: onUp,
@@ -72,14 +77,14 @@ class _RoundedTextButtonState extends State<RoundedTextButton> {
                           ispressed ? max(widget.width - 20, 10) : widget.width,
                       decoration: BoxDecoration(
                           color: ishovered
-                              ? Color.fromARGB(255, 48, 48, 48)
-                              : Theme.of(context).colorScheme.surface,
+                              ? widget.overlayColor ?? Color.fromARGB(255, 48, 48, 48)
+                              : widget.color ?? Theme.of(context).colorScheme.surfaceContainerHigh,
                           borderRadius: BorderRadius.circular(8)),
                       child: Center(
                         child: Text(
                           widget.text,
                           style:
-                              Theme.of(context).typography.black.headlineSmall,
+                              Theme.of(context).typography.black.titleMedium,
                         ),
                       )),
                 ))));

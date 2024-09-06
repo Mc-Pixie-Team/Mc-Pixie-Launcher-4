@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/models/modloader_type.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/modrinth/modrinth_install.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
@@ -35,7 +36,9 @@ class ModrinthApi implements Api {
 
   @override
   get getidname => "modrinth";
-
+  
+  @override
+  List<ModloaderType> modloaderTypes = [];
 
   @override
   void setObjectType(ObjectType type) {
@@ -58,6 +61,11 @@ class ModrinthApi implements Api {
     if (version != "") {
       _facet.insert(0, ["versions:$version"]);
     }
+  }
+
+@override
+  void searchML(ModloaderType type) {
+    // TODO: implement searchML
   }
 
   @override
@@ -84,11 +92,17 @@ class ModrinthApi implements Api {
   }
 
   @override
-  getModpackList() async {
+  void resetPageIndex() {
+    offset = 0;
+  }
+
+  @override
+  Future<List> getModpackList() async {
     // print(
     //     'https://api.modrinth.com/v2/search?query=$query&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit');
     // ignore: unused_local_variable
     List<Map> modpacksproc = [];
+
     final res = await http.get(Uri.parse(
         'https://api.modrinth.com/v2/search?query=$query&offset=$offset&facets=${jsonEncode(_facet)}&index=relevance&limit=$limit'));
     final hits = jsonDecode(utf8.decode(res.bodyBytes))["hits"];
@@ -152,7 +166,6 @@ class ModrinthApi implements Api {
         categories: modpackData["categories"],
         icon: modpackData["icon_url"],
         body: modpackData["body"],
-        modloader: "Fabric",
         MCVersion: modpackData["latest_version"],
         type: this.type,
         original: modpackData);
@@ -183,7 +196,7 @@ class ModrinthApi implements Api {
         providerId: getidname,
           icon: modpackData["icon_url"],
           MCVersion: version["game_versions"].last,
-          modloader: version["loaders"][0],
+          modloader: _toModloaderType(version["loaders"][0]),
           name: modpackData["title"].toString(),
           versionName: version["name"].toString(),
           description: modpackData["description"].toString(),
@@ -218,7 +231,7 @@ class ModrinthApi implements Api {
   }
 
   @override
-  Future<UMF> getLatestModpackVersionFromLiteUMF(UMF umf) async {
+  Future<UMF> getLatestModpackVersionFromLiteUMF(UMF umf, String? version) async {
     if (umf.original["dependencies"] != null)
       return umf; //if there are dependencies its not the lite version from the start anymore
     Map modpackproject =
@@ -232,7 +245,7 @@ class ModrinthApi implements Api {
           categories: umf.categories,
           icon: modpackproject["icon_url"],
           MCVersion: modpackVersion["game_versions"].last,
-          modloader: modpackVersion["loaders"][0],
+          modloader: _toModloaderType(modpackVersion["loaders"][0]),
           name: modpackproject["title"].toString(),
           versionName:  modpackVersion["name"].toString(),
           description: modpackproject["description"].toString(),
@@ -246,5 +259,16 @@ class ModrinthApi implements Api {
   @override
   getTitlename() {
     return "Modrinth";
+  }
+
+  ModloaderType _toModloaderType(String type) {
+    switch(type) {
+      case "forge":
+        return ModloaderType.forge;
+      case "fabric": 
+        return ModloaderType.fabric;
+      default:
+        return ModloaderType.vanilla;
+    }
   }
 }

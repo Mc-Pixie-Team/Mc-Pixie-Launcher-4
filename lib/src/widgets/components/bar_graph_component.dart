@@ -40,7 +40,7 @@ class _BarGraphComponentState extends State<BarGraphComponent>
         (_animation.value).toDouble()));
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(90)),
       height: widget.barHeight,
       width: 16,

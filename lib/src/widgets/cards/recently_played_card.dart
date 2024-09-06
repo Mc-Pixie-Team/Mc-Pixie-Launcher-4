@@ -34,7 +34,7 @@ class _RecentlyPlayedCardState extends State<RecentlyPlayedCard> {
           height: widget.height,
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
@@ -50,8 +50,8 @@ class _RecentlyPlayedCardState extends State<RecentlyPlayedCard> {
                 height: widget.height - 15,
                 borderRadius: BorderRadius.circular(8),
                 url:
-                    "https://media.forgecdn.net/avatars/thumbnails/286/772/256/256/637305737753885398.png",
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                    widget.controllerinstance.modpackData.icon ?? "https://media.forgecdn.net/avatars/thumbnails/286/772/256/256/637305737753885398.png",
+                color: Theme.of(context).colorScheme.surfaceContainer,
               ),
               SizedBox(
                 width: 10,

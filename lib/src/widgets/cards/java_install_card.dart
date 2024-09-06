@@ -58,7 +58,7 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
           boxShadow: [
             BoxShadow(color: Color.fromARGB(90, 0, 0, 0), blurRadius: 16)
           ],
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(18)),
       height: 200,
       width: 400,
@@ -110,7 +110,7 @@ class _JavaInstallCardState extends State<JavaInstallCard> {
                         width: 280,
                         child: LinearProgressIndicator(
                           backgroundColor:
-                              Theme.of(context).colorScheme.background,
+                              Theme.of(context).colorScheme.surfaceContainerHigh,
                           value: downloadprecentage,
                         )))
                 : TextButton(

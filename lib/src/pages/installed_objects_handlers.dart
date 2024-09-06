@@ -15,40 +15,41 @@ import 'package:mclauncher4/src/widgets/cards/recently_played_card.dart';
 
 import 'package:path/path.dart' as path;
 
-class InstalledModpacksHandler {
-  static generateManifest() async {
-    File manifest = File("${getInstancePath()}/manifest.json");
-    if (manifest.existsSync()) return;
-    manifest.createSync(recursive: true);
-    manifest.writeAsStringSync("[]");
-  }
+// class InstalledModpacksHandler {
+//   static generateManifest() async {
+//     File manifest = File("${getInstancePath()}/manifest.json");
+//     if (manifest.existsSync()) return;
+//     manifest.createSync(recursive: true);
+//     manifest.writeAsStringSync("[]");
+//   }
 
-  static ValueNotifierList<InstallController> globalInstallControllers = ValueNotifierList([]);
+//   static ValueNotifierList<InstallController> globalInstallControllers = ValueNotifierList([]);
 
-  static void getPacksformManifest() async {
-    List manifest = jsonDecode(
-        await File(path.join(getInstancePath(), "manifest.json"))
-            .readAsString());
+//   static void getPacksformManifest() async {
+//     List manifest = jsonDecode(
+//         await File(path.join(getInstancePath(), "manifest.json"))
+//             .readAsString());
 
-    for(var object in manifest) {   
-      Api _handler = ApiHandler().getApi(object["provider"]);
+//     for(var object in manifest) {   
+//       var umf = UMF.parse(object);
+//       Api _handler = ApiHandler().getApi(umf.providerId);
 
-      InstallController installcontroller = InstallController(
-          installState: InstallState.installed,
-          processid: object["processId"],
-          handler: _handler,
-          modpackData: UMF.parse(object));
+//       InstallController installcontroller = InstallController(
+//           installState: InstallState.installed,
+//           processid: umf.processId,
+//           handler: _handler,
+//           modpackData: umf);
 
-      globalInstallControllers.value
-          .removeWhere((element) {  
-          if (element.processId == installcontroller.processId) return true;
-        return false;
-      });
+//       globalInstallControllers.value
+//           .removeWhere((element) {  
+//           if (element.processId == installcontroller.processId) return true;
+//         return false;
+//       });
 
-      globalInstallControllers.add(installcontroller);
-    }
+//       globalInstallControllers.add(installcontroller);
+//     }
 
-  }
-}
+//   }
+//}
 
 

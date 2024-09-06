@@ -6,7 +6,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MSPage extends StatefulWidget {
   const MSPage({Key? key}) : super(key: key);
@@ -29,7 +28,7 @@ class _MSPageState extends State<MSPage> {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceContainer,
       ),
       child: Center(
         child: SizedBox(
@@ -41,7 +40,7 @@ class _MSPageState extends State<MSPage> {
                 height: 40,
               ),
               Text(
-                AppLocalizations.of(context)!.profilesHeadline,
+                "Profiles",
                 style: Theme.of(context).typography.black.displaySmall,
               ),
               SizedBox(
@@ -83,7 +82,7 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
     return AnimatedContainer(
       curve: Curves.decelerate,
       duration: Duration(milliseconds: 300),
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(18)),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHigh, borderRadius: BorderRadius.circular(18)),
       margin: EdgeInsets.only(top: 5, bottom: 5),
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0, bottom: 8),
@@ -224,7 +223,7 @@ class _MinecraftAccountsState extends State<MinecraftAccounts> with SingleTicker
                                       width: 15,
                                     ),
                                     Text(
-                                      AppLocalizations.of(context)!.addMinecraftAccount,
+                                      "Add Minecraft Account",
                                       style: Theme.of(context).typography.black.bodyMedium,
                                     )
                                   ],

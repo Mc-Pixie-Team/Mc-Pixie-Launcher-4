@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/tasks/models/modloader_type.dart';
+import 'package:mclauncher4/src/tasks/models/object_type.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:http/http.dart' as http;
@@ -17,39 +19,6 @@ import 'package:mclauncher4/src/tasks/utils/utils.dart';
 import 'package:path/path.dart' as path;
 
 class ModrinthInstaller implements ProviderInstaller {
-  @override
-  Future<Process> start(String processId, InstallModel installModel) async {
-    List manifest = (jsonDecode(
-        await File(path.join(getInstancePath(), "manifest.json"))
-            .readAsString()));
-    UMF? umfData;
-    for (var modpack in manifest) {
-      if (modpack["processId"] == processId) {
-        umfData = UMF.parse(modpack);
-      }
-    }
-
-    if (umfData == null) {
-      throw "No Modpack with this process id ($processId) found!";
-    }
-    if (umfData.MCVersion == null) {
-      throw "Couldnt find Minecraft or Modloader Version for this instance ($processId)";
-    }
-
-    String version = umfData.MCVersion!;
-    String loaderversion = umfData.MLVersion ?? "";
-    if (umfData.modloader == "fabric") {
-      return await FabricInstall.run(
-          loaderversion, version, getlibarypath(), processId, installModel);
-    } else if (umfData.modloader == "forge") {
-      return await ForgeInstall.run("$version-$loaderversion", version,
-          getlibarypath(), processId, installModel);
-    } else {
-      return await MinecraftInstall.run(
-          Version.parse(version), processId, installModel);
-    }
-  }
-
   @override
   Future install(
       {required UMF umfData,
@@ -75,6 +44,7 @@ class ModrinthInstaller implements ProviderInstaller {
     final downloads_at_same_time = 15;
     int _totalitems = depend["files"].length;
     print(_totalitems);
+    List<Map> installedDependencies = [];
     for (var i = 0; depend["files"].length > i;) {
       print(i);
       Iterable<Future<dynamic>> downloads = Iterable.generate(
@@ -84,8 +54,63 @@ class ModrinthInstaller implements ProviderInstaller {
         print("downloading:" + i.toString());
 
         // print(dependenceJson);
-        await _downloadFiles(depend["files"][i + index], instanceName);
+        var fileData = depend["files"][i + index];
+        String destination =
+            path.join(getInstancePath(), instanceName, fileData["path"]);
+
+        Downloader _downloader = Downloader(fileData["downloads"][0],
+            destination); //takes always the first download
+
+        await _downloader.startDownload();
+        print(fileData["path"]);
+        print(fileData["hashes"]);
+        if(fileData["hashes"] != null) {
+
+        
+        var res = await http.get(Uri.parse(
+            "https://api.modrinth.com/v2/version_file/${fileData["hashes"]["sha512"]}"));
+
+        if(res.statusCode != 200) return;
+
+        var projecthashRes = jsonDecode(utf8.decode(res.bodyBytes));
+        var res2 = await http.get(Uri.parse(
+            "https://api.modrinth.com/v2/project/${projecthashRes["project_id"]}"));
+
+         var author =jsonDecode(utf8.decode( (await http.get(Uri.parse(
+            "https://api.modrinth.com/v2/user/${projecthashRes["author_id"]}") ) ).bodyBytes))["username"];
+
+        var modpackData = jsonDecode(utf8.decode(res2.bodyBytes));
+
+        late ObjectType objectType;
+
+        switch (modpackData["project_type"]) {
+          case "mod":
+            objectType = ObjectType.mod;
+          case "modpack":
+            objectType = ObjectType.modpack;
+          case "shader":
+            objectType = ObjectType.shader;
+          case "world":
+            objectType = ObjectType.world;
+          case "resourcepack":
+            objectType = ObjectType.resource;
+          default:
+            throw "Couldnt find project Type";
+        }
+
+        installedDependencies.add(UMF.toJson(UMF(
+          objectPath: destination,
+            providerId: "modrinth",
+            author: author,
+            name: modpackData["title"],
+            slug: modpackData["slug"],
+            description: modpackData["description"],
+            downloads: modpackData["downloads"],
+            icon: modpackData["icon_url"],
+            type: objectType,
+            original: fileData)));}
       });
+      
       await Future.wait(downloads);
 
       i += downloads_at_same_time;
@@ -96,25 +121,28 @@ class ModrinthInstaller implements ProviderInstaller {
       installModel.setProgress(((_received / _total) * 100).ceilToDouble());
     }
 
+    var depManifest =
+        File(path.join(getInstancePath(), instanceName, "manifest.json"));
+
+    if (!depManifest.existsSync()) {
+      await depManifest.create();
+      await depManifest.writeAsString("[]");
+    }
+
+    var dependencies = jsonDecode(await depManifest.readAsString());
+
+    dependencies.addAll(installedDependencies);
+    depManifest.writeAsString(jsonEncode(dependencies));
+
+    umfData.MCVersion = depend["dependencies"]["minecraft"];
     if (depend["dependencies"]["fabric-loader"] != null) {
-      umfData.modloader = "fabric";
+      umfData.modloader = ModloaderType.fabric;
       umfData.MLVersion = "${depend["dependencies"]["fabric-loader"]}";
-      await FabricInstall.install(depend["dependencies"]["fabric-loader"],
-          depend["dependencies"]["minecraft"], getlibarypath(), installModel);
     } else if (depend["dependencies"]["forge"] != null) {
-      umfData.modloader = "forge";
+      umfData.modloader = ModloaderType.forge;
       umfData.MLVersion = "${depend["dependencies"]["forge"]}";
-      await ForgeInstall.install(
-          "${depend["dependencies"]["minecraft"]}-${depend["dependencies"]["forge"]}",
-          depend["dependencies"]["minecraft"],
-          getlibarypath(),
-          installModel);
     } else {
-      umfData.modloader = "none";
-      await MinecraftInstall.install(
-          Version.parse(depend["dependencies"]["minecraft"]),
-          getlibarypath(),
-          installModel);
+      umfData.modloader = ModloaderType.vanilla;
     }
     print(umfData.modloader);
   }
@@ -148,18 +176,11 @@ class ModrinthInstaller implements ProviderInstaller {
     Directory(path.join(filepath)).deleteSync(recursive: true);
   }
 
-  _downloadFiles(Map file, String instanceName) async {
-    String destination =
-        path.join(getInstancePath(), instanceName, file["path"]);
-
-    Downloader _downloader = Downloader(
-        file["downloads"][0], destination); //takes always the first download
-
-    await _downloader.startDownload();
-  }
-  
   @override
-  Future installFile({required UMF umfData, required String instanceName, required InstallModel installModel}) {
+  Future installFile(
+      {required UMF umfData,
+      required String instanceName,
+      required InstallModel installModel}) {
     // TODO: implement installFile
     throw UnimplementedError();
   }

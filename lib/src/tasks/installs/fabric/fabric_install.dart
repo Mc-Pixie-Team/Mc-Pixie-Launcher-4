@@ -112,7 +112,7 @@ class FabricInstall {
 
     var launchcommand =
         await MinecraftCommand.getlaunchCommand(versionData, path, processId);
-
+    print(processId);
     print(launchcommand);
     var result = await Process.start(
         Runtime.getExecutablePath(

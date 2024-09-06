@@ -42,7 +42,7 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
       height: 500,
       width: 350,
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(18)),
       child: Padding(
         padding: const EdgeInsets.only(left: 40.0, top: 30, right: 40.0),
@@ -107,7 +107,7 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                   width: double.infinity,
                   height: 55,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Theme.of(context).colorScheme.surfaceContainerHigh,
                       borderRadius: BorderRadius.circular(18)),
                 ),
               ),
@@ -174,7 +174,7 @@ class _LoginCardSupabaseState extends State<LoginCardSupabase> {
                   width: double.infinity,
                   height: 55,
                   decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Theme.of(context).colorScheme.surfaceContainerHigh,
                       borderRadius: BorderRadius.circular(18)),
                 ),
               ),

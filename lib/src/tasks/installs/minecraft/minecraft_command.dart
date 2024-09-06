@@ -1,16 +1,26 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
 import 'package:mclauncher4/src/tasks/installs/install_utils.dart';
 import 'package:mclauncher4/src/tasks/installs/java/rutime.dart';
+import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
 import 'package:mclauncher4/src/tasks/utils/path.dart';
 import 'package:path/path.dart' as p;
 
 class MinecraftCommand {
   static Future<List<String>> getlaunchCommand(
       Map versiondata, String path, String processId) async {
+  var settingsBox = Hive.box('settings');
     List command = [];
+
+    int minRam = (settingsBox.get(SettingsKeys.minRamUsage, defaultValue: 2048.0) as int).ceil();
+    int maxRam = (settingsBox.get(SettingsKeys.maxRamUsage, defaultValue: 2048.0) as int).ceil();
+      
+      command.add("-Xms${minRam}m");
+      command.add("-Xmx${maxRam}m");
 
     if (versiondata["arguments"] != null) {
       Map arguments = versiondata["arguments"];

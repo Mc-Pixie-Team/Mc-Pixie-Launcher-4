@@ -68,7 +68,7 @@ class _UserAndMSPageState extends State<UserAndMSPage> {
           height: 40,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).colorScheme.surface),
+              color: Theme.of(context).colorScheme.surfaceContainerHigh),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -189,7 +189,7 @@ class _MinecraftAccountsState extends State<MinecraftAccounts>
         curve: Curves.decelerate,
         duration: Duration(milliseconds: 300),
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(18)),
         margin: EdgeInsets.only(top: 5, bottom: 5),
         child: Padding(

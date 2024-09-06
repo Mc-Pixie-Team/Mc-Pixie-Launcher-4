@@ -50,7 +50,7 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
         right: 49,
       ),
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(14)),
       padding: EdgeInsets.all(9),
       child: Row(
@@ -73,11 +73,11 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
                         color: Color.fromARGB(73, 0, 0, 0), blurRadius: 10)
                   ],
                   borderRadius: BorderRadius.circular(5),
-                  color: Theme.of(context).colorScheme.surface),
+                  color: Theme.of(context).colorScheme.surfaceContainerHigh),
               child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Theme.of(context).colorScheme.surfaceVariant),
+                      color: Theme.of(context).colorScheme.surfaceContainer),
                   height: 34,
                   width: 34,
                   child: SvgButton.asset("assets/svg/trash-icon.svg",
@@ -98,11 +98,11 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
                         color: Color.fromARGB(83, 0, 0, 0), blurRadius: 10)
                   ],
                   borderRadius: BorderRadius.circular(5),
-                  color: Theme.of(context).colorScheme.surface),
+                  color: Theme.of(context).colorScheme.surfaceContainerHigh),
               child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Theme.of(context).colorScheme.surfaceVariant),
+                      color: Theme.of(context).colorScheme.surfaceContainer),
                   height: 34,
                   width: 34,
                   child: SvgButton.asset("assets/svg/switch-icon.svg",
@@ -122,11 +122,11 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
                         color: Color.fromARGB(83, 0, 0, 0), blurRadius: 10)
                   ],
                   borderRadius: BorderRadius.circular(5),
-                  color: Theme.of(context).colorScheme.surface),
+                  color: Theme.of(context).colorScheme.surfaceContainerHigh),
               child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Theme.of(context).colorScheme.surfaceVariant),
+                      color: Theme.of(context).colorScheme.surfaceContainer),
                   height: 34,
                   width: 34,
                   child: SvgButton.asset("assets/svg/upload-icon.svg",
@@ -138,7 +138,7 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
           Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  color: Theme.of(context).colorScheme.surfaceVariant),
+                  color: Theme.of(context).colorScheme.surfaceContainer),
               height: 34,
               width: 34,
               child: DropdownButtonHideUnderline(
@@ -167,7 +167,7 @@ class _ModpackActionsMenuState extends State<ModpackActionsMenu>
                         padding: EdgeInsets.zero,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.surfaceContainerHigh,
                         ),
                       ),
                       customButton: Icon(

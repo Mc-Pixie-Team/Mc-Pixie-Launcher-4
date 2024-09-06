@@ -52,7 +52,7 @@ class _ItemDrawerState extends State<ItemDrawer> with TickerProviderStateMixin {
         clipBehavior: Clip.hardEdge,
         width: widget.width,
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(18)),
         child: Column(children: [
           Padding(

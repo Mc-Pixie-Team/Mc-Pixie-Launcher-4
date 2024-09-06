@@ -30,10 +30,10 @@ class CurseforgeFiles {
     print(e);
   }
 
-  Future<UMF> getFileData(String filepath) async {
+  Future<UMF?> getFileData(String filepath) async {
     int fingerprint = await _getFingerprint(filepath);
     var body = jsonEncode({
-      "fingerprints": [fingerprint]
+      "fingerprints": [fingerprint] 
     });
     var client = http.Client();
     var res = await (client
@@ -46,16 +46,16 @@ class CurseforgeFiles {
     final file =
         jsonDecode(utf8.decode(res.bodyBytes))["data"]["exactMatches"] as List;
 
-    if (file.isEmpty) throw "Nothing Found!";
+    if (file.isEmpty) return null;
     var res2 = await http
         .get(Uri.parse('$baseUrl/v1/mods/${file[0]["id"]}'),
             headers: userHeader)
         .timeout(const Duration(seconds: 2));
 
     final mod = jsonDecode(utf8.decode(res2.bodyBytes))["data"];
-    mod["filepath"] = filepath;
-    mod["fileId"] = file[0]["file"]["id"];
+   // mod["filepath"] = filepath;
+   // mod["fileId"] = file[0]["file"]["id"];
     print("filepath: $filepath, fingerprint:$fingerprint, name: ${mod["name"]}");
-    return CurseforgeApi().convertToLiteUMF(mod);
+    return CurseforgeApi().convertToLiteUMF(mod).copyWith(objectPath: filepath, versionName: file[0]["file"]["id"].toString());
   }
 }

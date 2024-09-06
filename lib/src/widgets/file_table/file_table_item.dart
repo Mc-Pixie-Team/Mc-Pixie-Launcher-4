@@ -25,11 +25,11 @@ class FileTableItem extends StatefulWidget {
 
 class _FileTableItemState extends State<FileTableItem> {
   void ondownload() {
-    InstallController installController = InstallController(
-      handler: ApiHandler().getApi(widget.providerString),
-      modpackData: widget.umf,
-    );
-    installController.install();
+    // InstallController installController = InstallController(
+    //   handler: ApiHandler().getApi(widget.providerString),
+    //   modpackData: widget.umf,
+    // );
+    // installController.install();
   }
 
   @override
@@ -41,7 +41,7 @@ class _FileTableItemState extends State<FileTableItem> {
           EdgeInsets.only(left: 28, right: 28, top: widget.index == 0 ? 20 : 0),
       decoration: ShapeDecoration(
         color:
-            widget.index.isOdd ? null : Theme.of(context).colorScheme.surface,
+            widget.index.isOdd ? null : Theme.of(context).colorScheme.surfaceContainerHigh,
         shape: SmoothRectangleBorder(
           borderRadius: SmoothBorderRadius(
             cornerRadius: 7,

@@ -11,14 +11,17 @@ class CarouselItem extends StatefulWidget {
   VoidCallback onPressed;
   String name;
   String descripton;
-  bool isopened;
+  String pictureId;
+  bool isOpened;
 
   CarouselItem(
       {Key? key,
+      required this.isOpened,
       required this.onPressed,
       required this.name,
       required this.descripton,
-      required this.isopened})
+      required this.pictureId,
+      })
       : super(key: key);
 
   @override
@@ -27,71 +30,77 @@ class CarouselItem extends StatefulWidget {
 
 class _CarouselItemState extends State<CarouselItem>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation ani;
-
-  @override
-  void initState() {
-    _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 700));
-    ani = Tween(begin: 0.12, end: 1.0).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic));
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isopened) {
-      _controller.forward();
-    } else if (_controller.status != AnimationStatus.dismissed) {
-      _controller.reverse();
-    }
-    return AnimatedBuilder(
-        animation: ani,
-        builder: (context, child) => Container(
+    return GestureDetector(
+      onTapUp: (details) => widget.onPressed(),
+      child:  Container(
+              height: double.infinity,
+              width: double.infinity,
               clipBehavior: Clip.antiAlias,
               decoration: ShapeDecoration(
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).colorScheme.surfaceContainerHigh,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
                 ),
               ),
-              child: Sizetransitioncustom(
-                  axis: Axis.horizontal,
-                  axisAlignment: 0.0,
-                  sizeFactor: 1.0 * ani.value,
-                  child: Stack(children: [
-                    FadeInImage.memoryNetwork(
-                        fit: BoxFit.fill,
+              child:   Stack(children: [
+                  Positioned.fill(child: 
+        
+        
+          FadeInImage.memoryNetwork(
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.high,
                         placeholder: kTransparentImage,
                         image:
-                            'https://images.unsplash.com/photo-1622737133809-d95047b9e673?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1932&q=80'),
-                    Positioned(
-                      child: Opacity(
-                        opacity: _controller.value,
-                        child: Column(
+                           widget.pictureId)),
+                        Positioned.fill(child: AnimatedOpacity(
+                        duration: Duration(milliseconds: 400),
+                        opacity: widget.isOpened ? 1.0 : 0.0,
+                        child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            tileMode: TileMode.decal,
+            colors: [
+              Colors.transparent,
+              Colors.transparent,
+              Colors.transparent,
+              Color.fromARGB(183, 0, 0, 0)
+            ],
+            stops: [
+              0.0,
+              0.0,
+              0.54,
+              1.0
+            ], // 10% purple, 80% transparent, 10% purple
+          ))), )),   
+                   Positioned(
+                      child: AnimatedOpacity(
+                        duration: Duration(milliseconds: 400),
+                        opacity: widget.isOpened ? 1.0 : 0.0,
+                        child:  Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              SizedBox(
+                                  width: 430,
+                                  child:
                               Text(
+                                overflow: TextOverflow.ellipsis,
                                 widget.name,
                                 style: Theme.of(context)
                                     .typography
                                     .black
                                     .headlineMedium!
                                     .copyWith(fontWeight: FontWeight.w600),
-                              ),
+                              )),
                               SizedBox(
                                 height: 5,
                               ),
                               SizedBox(
-                                  width: 300,
+                                  width: 400,
                                   child: Text(
                                     widget.descripton,
                                     style: Theme.of(context)
@@ -100,12 +109,12 @@ class _CarouselItemState extends State<CarouselItem>
                                         .bodySmall!
                                         .copyWith(fontWeight: FontWeight.w600),
                                   ))
-                            ]),
-                      ),
+                            ])),
+                      
                       bottom: 40,
                       left: 20,
                     ),
-                  ])),
-            ));
+                  ],
+            )));
   }
 }

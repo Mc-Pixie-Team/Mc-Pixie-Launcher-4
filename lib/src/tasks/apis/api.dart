@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mclauncher4/src/tasks/models/modloader_type.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
 import 'package:mclauncher4/src/tasks/models/umf_model.dart';
@@ -15,7 +17,7 @@ abstract class Api {
   String? version = "";
   String query = "";
   ObjectType type = ObjectType.modpack;
-
+    List<ModloaderType> modloaderTypes = [];
   //
   void setObjectType(ObjectType type);
 
@@ -33,19 +35,19 @@ abstract class Api {
   //This method should add a category to the Search query of the provider
   void addCategory(String name);
 
-
+  void searchML(ModloaderType type);
 
   //This method should change the API query to search for a specific minecraft version.
   void searchMV(String version);
 
-
+  void resetPageIndex();
 
   //The method should return all minecraft version, that the provider has to offer
   Future<List<String>> getAllMV();
 
   //its called in the init, it should return a List of a specific amount of modpacks,
   //based on the limit the user set
- getModpackList();
+ Future<List> getModpackList();
 
   //This methode should return a sperate download object you created to download modpacks, if
   //thats not the case just return your custom api class
@@ -57,5 +59,5 @@ abstract class Api {
 
   Future<DUMF> getDUMF(Map modpackData);
 
-  Future<UMF> getLatestModpackVersionFromLiteUMF(UMF dum);
+  Future<UMF> getLatestModpackVersionFromLiteUMF(UMF dum, String? version);
 }

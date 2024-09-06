@@ -1,6 +1,9 @@
-import 'dart:io' show  Platform, exit;
+import 'dart:convert';
+import 'dart:io' show Directory, File, Platform, exit;
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mclauncher4/src/objects/accounts/minecraft.dart';
@@ -9,11 +12,17 @@ import 'package:mclauncher4/src/pages/debug_page.dart';
 import 'package:mclauncher4/src/pages/installed_objects_handlers.dart';
 import 'package:mclauncher4/src/pages/providers/modlist_page.dart';
 import 'package:mclauncher4/src/pages/settings_page/settings_page.dart';
+import 'package:mclauncher4/src/pages/splash/splash.dart';
 import 'package:mclauncher4/src/pages/user_page/MSPage.dart';
 import 'package:mclauncher4/src/pages/user_page/user_page.dart';
 import 'package:mclauncher4/src/tasks/apis/curseforge.api.dart';
 import 'package:mclauncher4/src/tasks/apis/modrinth.api.dart';
+import 'package:mclauncher4/src/tasks/install_object_handler.dart';
 import 'package:mclauncher4/src/tasks/models/navigator_key.dart';
+import 'package:mclauncher4/src/tasks/models/object_type.dart';
+import 'package:mclauncher4/src/tasks/models/settings_keys.dart';
+import 'package:mclauncher4/src/tasks/utils/path.dart';
+import 'package:mclauncher4/src/widgets/coming_in_beta.dart';
 import 'package:mclauncher4/src/widgets/internet_connection_checker.dart';
 import 'package:mclauncher4/src/widgets/recently_played_list.dart';
 import 'package:mclauncher4/src/widgets/side_panel/side_panel.dart';
@@ -26,7 +35,11 @@ import 'widgets/navigation_drawer/menu_item.dart';
 import 'widgets/divider.dart' as div;
 import 'package:animations/animations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as p;
+
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
@@ -48,7 +61,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   }
 }
 
-class McLauncher extends StatefulWidget  {
+class McLauncher extends StatefulWidget {
   const McLauncher({super.key});
 
   @override
@@ -59,7 +72,7 @@ class McLauncher extends StatefulWidget  {
       context.findAncestorStateOfType<_McLauncherState>()!;
 }
 
-class _McLauncherState extends State<McLauncher> with WindowListener{
+class _McLauncherState extends State<McLauncher> with WindowListener {
   Future<String> get customWait async {
     await Future.delayed(Duration(seconds: 10));
     return "done!";
@@ -78,9 +91,7 @@ class _McLauncherState extends State<McLauncher> with WindowListener{
   void initState() {
     super.initState();
     windowManager.addListener(this);
-    print(AppLocalizations.supportedLocales);
     mainWidget = buildMainWidget();
-   
   }
 
   @override
@@ -106,19 +117,18 @@ class _McLauncherState extends State<McLauncher> with WindowListener{
         routes: {
           "/test": (context) => Material(child: Debugpage()),
         },
-        localizationsDelegates: [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
         theme: ThemeData(
+            radioTheme: RadioThemeData(
+                overlayColor: MaterialStatePropertyAll(Colors.transparent)),
+            splashFactory: NoSplash.splashFactory,
             useMaterial3: true,
             colorScheme: lightColorScheme,
             typography: Typography(black: blackTextSchemes),
             scrollbarTheme: ScrollbarThemeData()),
         darkTheme: ThemeData(
+            radioTheme: RadioThemeData(
+                overlayColor: MaterialStatePropertyAll(Colors.transparent)),
+            splashFactory: NoSplash.splashFactory,
             useMaterial3: true,
             colorScheme: darkColorScheme,
             typography: Typography(black: blackTextSchemes)),
@@ -131,9 +141,7 @@ class _McLauncherState extends State<McLauncher> with WindowListener{
                 child: Align(
                     alignment: Alignment.topLeft,
                     child: Row(
-                      children: [
-                     
-                      ],
+                      children: [],
                     )),
               ),
             ]));
@@ -144,6 +152,10 @@ class _McLauncherState extends State<McLauncher> with WindowListener{
     rootContext = context;
     return mainWidget;
   }
+}
+
+class GlobalObjectHandler {
+  static late final InstallObjectHandler handler;
 }
 
 // ignore: must_be_immutable
@@ -165,40 +177,105 @@ class _MainPageState extends State<MainPage> {
   EdgeInsets edgeInsets =
       EdgeInsets.only(left: 10, top: 12, right: 10, bottom: 12);
 
+  late InstallObjectHandler installObjectHandler;
+
+  List<Map> publicList = [];
+
   List<Widget> _pages(context) => [
-    HomePage(),
-    ModListPage(
-     localInstallController: InstalledModpacksHandler.globalInstallControllers.value,
-     handler: new ModrinthApi(),
-     key: Key("modrinth"),
-    ),
-    Container(
-      key: Key('5'),
-      color: Color.fromARGB(255, 106, 218, 91),
-    ),
-    /* const Debugpage(), */
-    ModListPage(
-      localInstallController: InstalledModpacksHandler.globalInstallControllers.value,
-      handler: CurseforgeApi(),
-      key: Key("curseforge"),
-    ),
-    Container(
-      key: Key('5'),
-      color: Color.fromARGB(255, 146, 91, 218),
-    ),
-    const SettingsPage(),
-    const MSPage(),
-  ];
+        HomePage(
+          publicModpackList: publicList,
+          installObjectHandler: installObjectHandler,
+        ),
+        ModListPage(
+          installObjectHandler: installObjectHandler,
+          handler: new ModrinthApi(),
+          key: Key("modrinth"),
+        ),
+
+        /* const Debugpage(), */
+        ModListPage(
+          installObjectHandler: installObjectHandler,
+          handler: CurseforgeApi(),
+          key: Key("curseforge"),
+        ),
+        Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(18)),
+            child: ComingInBeta(
+              key: Key("pixie"),
+            )),
+        Container(
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(18)),
+            child: ComingInBeta(
+              key: Key("ftb"),
+            )),
+        const SettingsPage(),
+        const MSPage(),
+      ];
 
   @override
-  void initState() {
-    print("Main app init Called");
-    // TODO: implement initState
-    MinecraftAccountUtils().initOnFirstStart();
-    InstalledModpacksHandler.getPacksformManifest();
-  
-
+  initState() {
+    _preinit();
+    _init();
     super.initState();
+  }
+
+  _preinit() {
+    isSplashed = shouldSplashedDisplayed;
+    installObjectHandler = InstallObjectHandler(
+        types: [ObjectType.modpack], path: getInstancePath());
+    GlobalObjectHandler.handler = installObjectHandler;
+  }
+
+  _init() async {
+    await MinecraftAccountUtils().initOnFirstStart();
+    await installObjectHandler.initialize();
+    if (!(await Directory(getHTMLcachePath()).exists())) {
+      await Directory(getHTMLcachePath()).create(recursive: true);
+    }
+
+    List<String> htmlFiles = [
+      "index.html",
+      "styles.css"
+    ];
+    for (var file in htmlFiles) {
+      await _copyHtmlChache(file);
+    }
+
+    publicList = await getPublicList();
+    setState(() {
+      isSplashed = false;
+    });
+  }
+
+  Future _copyHtmlChache(String file) async {
+    ByteData data = await rootBundle.load("assets/htmlcache/$file");
+    List<int> bytes =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+
+    String path = p.join(getHTMLcachePath(), file);
+    await File(path).writeAsBytes(bytes);
+  }
+
+  Future<List<Map>> getPublicList() async {
+    print("test");
+    var res = await http
+        .get(Uri.parse("https://mc-pixie.com/api/modpacks/publiclist"))
+        .timeout(Duration(seconds: 20));
+    List publicList = await jsonDecode(utf8.decode(res.bodyBytes))["data"];
+    List<Map> return_value = [];
+
+    for (var listitem in publicList) {
+      if (listitem is Map) {
+        return_value.add(listitem);
+      }
+    }
+    ;
+
+    return return_value;
   }
 
   RectTween _createRectTween(Rect? begin, Rect? end) {
@@ -239,10 +316,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   void onDrawerChange(int index) async {
-    // if(Navigator.of(innercontext).canPop()){
-    //   Navigator.of(innercontext).pop();
-    // }
-
     widget.oldPageIndex = widget.pageIndex;
 
     if (index != widget.oldPageIndex) {
@@ -258,285 +331,214 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  String test() {
-    return "hi";
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        floatingActionButton: FloatingActionButton(onPressed: () async {
-          windowManager.setAsFrameless();
-          // print(await SecureStorage().readSecureData("accounts"));
-   
-          //  await SecureStorage.storage.delete(key: "test");
-          //  await SecureStorage.storage.write(key: "test", value: "[${math.Random.secure().nextInt(25)}]", mOptions: MacOsOptions(accessibility: KeychainAccessibility.first_unlock_this_device));
-          // await MinecraftAccountUtils().saveAccounts([]);
-          // //  await SecureStorage.storage.deleteAll();
-
-          // StaticSidePanelController.controller.push(
-          //     Container(
-          //       color: Colors.green,
-          //       width: 200.0,
-          //     ),
-          //     200.0);
-
-          // showDialog(
-          //     context:  navigatorKey.currentContext!,
-          //     builder: (context) {
-          //       return AlertDialog(
-          //         title: Text("Oh no an Error occured!"),
-          //         content:  SelectableText("t"),
-          //         actions: [
-          //          TextButton(
-          //               onPressed: () {
-          //                 Navigator.of(context).pop();
-          //               },
-          //               child: Text("Close"))
-
-          //         ],
-          //       );
-          //     });
-
-          // final SharedPreferences prefs = await SharedPreferences.getInstance();
-          //  print(prefs.getInt(SettingsKeys.minRamUsage));
-          //   print(prefs.getInt(SettingsKeys.maxRamUsage));
-          // InstalledModpacksUIHandler.installCardChildren.add(Container(height: 100, width: 100,color: Colors.green,));
-          //  print( InstalledModpacksUIHandler.installCardChildren.value.length);
-
-          // print(await SecureStorage.storage.read(key: "test"));
-          // print(await SecureStorage.isKeyRegistered("accounts"));
-          // print( await SecureStorage.storage.readAll());
-          //await MinecraftAccountUtils().saveAccounts([]);
-          //   print("start install");
-          // getDeviceInfos();
-          // print(SidePanel.state.gettest);
-          // SidePanel.push(Container(height: double.infinity, width: 100.0, color: Colors.green,), 100.0);
-          // await Minecraft().install(Version(1,18,2));
-          // print("start url");
-          //     Map res = await DownloadUtils().getJson(Version(1,21));
-          // //    List<dynamic> libraries = res["libraries"];
-          // //   await Installs.installLibraries(libraries, getlibarypath());
-          // //  await Installs.installAssets(res, getlibarypath());
-          // MinecraftCommand.getlaunchCommand(res, getlibarypath());
-
-          // await MinecraftInstall.run(Version(1, 21), installModel);
-          //  print(Utils.parseMaven("net.minecraftforge:forge:1.7.10-10.13.4.1614-1.7.10"));
-          // await ForgeInstall.install("1.16.5-36.2.40", getlibarypath(), installModel);
-          //   await FabricInstall.run("0.15.11", "1.21", getlibarypath(), installModel);
-          //Helpfull when a specific minecraft forge version wont load: https://www.minecraftforum.net/forums/support/java-edition-support/3048893-forge-1-7-2-crashes-with-no-error-message
-          //   print("Running minecraft");
-          //  await ForgeInstall.run("1.8.8-11.15.0.1654-1.8.8", getlibarypath());
-          //Runtime.installJvmRuntime("java-runtime-delta", getlibarypath());
-          // print(Platform.environment['PROCESSOR_ARCHITECTURE']);
-          //    Minecraft().run(res, '4656567332');
-          // print(getTempCommandPath());
-          //   supabaseHelpers().signoutUser();
-
-          //  DiscordRP().initCS();
-          // SidePanel().setSecondary(Container(color: Theme.of(context).colorScheme.primary));
-
-          // SidePanel().addToTaskWidget();
-          /* await Forge().install();
-          await Forge().run(); */
-          /* Microsoft().authenticate(); */
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => const pixieLoginScreen()),
-          // );
-
-          // Uint8List? buffer =
-          //     await murmur2.get_jar_contents("C:/Users/joshi/Documents/PixieLauncherInstances/test/resourcepacks/ComplementaryReimagined_r5.1.1.zip");
-          // int result = await murmur2.compute_hash(buffer);
-          // buffer = null;
-
-          // print(result);
-        }),
         body: Stack(children: [
-          Row(
-            children: [
-              //   NavigationDrawer(children: children)
-
-              Container(
-                height: double.infinity,
-                width: 200,
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
+      isSplashed
+          ? Container(
+              height: double.infinity,
+              width: double.infinity,
+              child: SplashScreen(),
+            )
+          : Container(),
+      AnimatedOpacity(
+          opacity: isSplashed ? 0.0 : 1.0,
+          curve: Curves.linear,
+          duration: Duration(milliseconds: 400),
+          child: isSplashed
+              ? SizedBox.shrink()
+              : Row(
                   children: [
                     Container(
-                      height: Platform.isMacOS ? 40 : 28,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 30),
-                      child: Align(
-                        child: MenuItem(
-                          onClick: () => onDrawerChange(6),
-                          title: AppLocalizations.of(context)!.profileButton,
-                          icon: Icon(
-                            Icons.person,
-                            size: 20,
-                            color: Theme.of(context).colorScheme.primary,
+                      height: double.infinity,
+                      width: 200,
+                      decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).colorScheme.surfaceContainer),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            height: Platform.isMacOS ? 40 : 28,
                           ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 15,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 30),
-                      child: MenuItem(
-                        onClick: () => onDrawerChange(5),
-                        title: AppLocalizations.of(context)!.settingsButton,
-                        icon: Icon(
-                          Icons.settings,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                        child: div.CustomDivider(
-                          size: 20,
-                        ),
-                        padding: EdgeInsets.only(top: 20, bottom: 20)),
-                    ItemDrawer(
-                        offset: 0,
-                        onChange: (index) {
-                          index = index + 1;
-                          onDrawerChange(index);
-                        },
-                        title: AppLocalizations.of(context)!.providers,
-                        children: <ItemDrawerItem>[
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'Modrinth',
-                          ),
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'Pixie',
-                          ),
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'Curseforge',
-                          ),
-                          ItemDrawerItem(
-                            icon: Icon(
-                              Icons.sms,
-                              size: 14,
-                            ),
-                            title: 'FTB',
-                          ),
-                        ]),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, top: 10, bottom: 17),
-                        child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.all(
-                                    Radius.elliptical(18, 18))),
-                            width: double.infinity,
+                          Padding(
+                            padding: EdgeInsets.only(left: 30),
                             child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  left: 15,
-                                  right: 15,
-                                ),
-                                child: MenuItem(
-                                  width: 140,
-                                  onClick: () async {
-                                    int index = 0;
-                                    print('change: ' + index.toString());
-                                    widget.oldPageIndex = widget.pageIndex;
-
-                                    if (Navigator.canPop(innercontext)) {
-                                      Navigator.popUntil(innercontext, (route) {
-                                        return route.settings.name == "/";
-                                      });
-
-                                      await Future.delayed(
-                                          Duration(milliseconds: 450));
-                                    }
-                                    if (index != widget.oldPageIndex) {
-                                      setState(() {
-                                        widget.pageIndex = index;
-                                      });
-                                    }
-                                  },
-                                  title:
-                                      AppLocalizations.of(context)!.myModpacks,
-                                  icon: Icon(
-                                    Icons.folder,
-                                    size: 20,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
+                              child: MenuItem(
+                                onClick: () => onDrawerChange(6),
+                                title: "Profile",
+                                icon: Icon(
+                                  Icons.person,
+                                  size: 20,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
-                            ))),
-                    div.CustomDivider(
-                      size: 20,
+                            ),
+                          ),
+                          Container(
+                            height: 15,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 30),
+                            child: MenuItem(
+                              onClick: () => onDrawerChange(5),
+                              title: "Settings",
+                              icon: Icon(
+                                Icons.settings,
+                                size: 20,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                              child: div.CustomDivider(
+                                size: 20,
+                              ),
+                              padding: EdgeInsets.only(top: 20, bottom: 20)),
+                          ItemDrawer(
+                              offset: 0,
+                              onChange: (index) {
+                                index = index + 1;
+                                onDrawerChange(index);
+                              },
+                              title: "providers",
+                              children: <ItemDrawerItem>[
+                                ItemDrawerItem(
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 14,
+                                  ),
+                                  title: 'Modrinth',
+                                ),
+                                ItemDrawerItem(
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 14,
+                                  ),
+                                  title: 'Curseforge',
+                                ),
+                                ItemDrawerItem(
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 14,
+                                  ),
+                                  title: 'Pixie',
+                                ),
+                                ItemDrawerItem(
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 14,
+                                  ),
+                                  title: 'FTB',
+                                ),
+                              ]),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  left: 15, right: 15, top: 10, bottom: 17),
+                              child: Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHigh,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.elliptical(18, 18))),
+                                  width: double.infinity,
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 15,
+                                        right: 15,
+                                      ),
+                                      child: MenuItem(
+                                        width: 140,
+                                        onClick: () async {
+                                          int index = 0;
+                                          print('change: ' + index.toString());
+                                          widget.oldPageIndex =
+                                              widget.pageIndex;
+
+                                          if (Navigator.canPop(innercontext)) {
+                                            Navigator.popUntil(innercontext,
+                                                (route) {
+                                              return route.settings.name == "/";
+                                            });
+
+                                            await Future.delayed(
+                                                Duration(milliseconds: 450));
+                                          }
+                                          if (index != widget.oldPageIndex) {
+                                            setState(() {
+                                              widget.pageIndex = index;
+                                            });
+                                          }
+                                        },
+                                        title: "My Modpacks",
+                                        icon: Icon(
+                                          Icons.folder,
+                                          size: 20,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ))),
+                          div.CustomDivider(
+                            size: 20,
+                          ),
+                          Expanded(child: SizedBox.expand()),
+                          // Expanded(child:Padding(padding: EdgeInsets.only(left: 15, right: 15, top: 23), child:
+                          // RecentlyPlayedList(installObjectHandler: installObjectHandler,))),
+                          Text(
+                            "Alpha Build!",
+                            textAlign: TextAlign.start,
+                            style: Theme.of(context)
+                                .typography
+                                .black
+                                .bodySmall!
+                                .copyWith(
+                                    color: Color.fromARGB(110, 197, 197, 197)),
+                          ),
+                          Text(
+                            "OS: ${Platform.operatingSystemVersion}, Lang: ${Platform.localeName}",
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .typography
+                                .black
+                                .bodySmall!
+                                .copyWith(
+                                    color: Color.fromARGB(69, 189, 189, 189)),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          )
+                        ],
+                      ),
                     ),
-                   
-                    Expanded(child:Padding(padding: EdgeInsets.only(left: 15, right: 15, top: 23), child: 
-                     RecentlyPlayedList())),
-                  
-                    //Text("OS: ${Platform.operatingSystemVersion}, Lang: ${Platform.localeName}", textAlign: TextAlign.center, style: Theme.of(context).typography.black.bodySmall!.copyWith(color: Color.fromARGB(69, 189, 189, 189)),),
-                    SizedBox(height:15,)
+                    Expanded(
+                        child: Padding(
+                            padding: edgeInsets,
+                            child: _getNavigator(context))),
+
+                    SidePanel(
+                      controller: StaticSidePanelController.controller,
+                    )
+
+                    // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
                   ],
-                ),
-              ),
-              Expanded(
-                  child: Padding(
-                      padding: edgeInsets, child: _getNavigator(context))),
-              
-              SidePanel(
-                controller: StaticSidePanelController.controller,
-              )
-
-              // SizeTransition(sizeFactor: 1, child: Padding(padding: edgeInsets,),)
-            ],
-          ),
-        SizedBox(height: 30, child: WindowCaption(brightness: Brightness.dark, backgroundColor: Colors.transparent,)) 
-        ])
-
-        // shouldSplashedDisplayed
-        //     ? AnimatedOpacity(
-        //         onEnd: () {
-        //           setState(() {
-        //             shouldSplashedDisplayed = false;
-        //           });
-
-        //         },
-        //         opacity: isSplashed ? 1.0 : 0.0,
-        //         curve: Curves.easeOutExpo,
-        //         duration: Duration(milliseconds: 800),
-        //         child: Container(
-        //           height: double.infinity,
-        //           width: double.infinity,
-        //           color: Theme.of(context).colorScheme.background,
-        //           child: SplashScreen(),
-        //         ),
-        //       )
-        //     : Container(),
-        );
+                )),
+      SizedBox(
+          height: 30,
+          child: WindowCaption(
+            brightness: Brightness.dark,
+            backgroundColor: Colors.transparent,
+          ))
+    ]));
   }
 }
-
 
 /* class WindowButtons extends StatelessWidget {
   
@@ -598,45 +600,44 @@ class _WindowButtonsState extends State<WindowButtons> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          //Code by Mc-PIXIE
-          !isConnected
-              ? IgnorePointer(child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 13,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        //Code by Mc-PIXIE
+        !isConnected
+            ? IgnorePointer(
+                child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 13,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.error,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.error,
+                          width: 3)),
+                  width: 90,
+                  height: 25,
+                  child: Center(
+                    child: (Text(
+                      "OFFLINE",
+                      style: Theme.of(context)
+                          .typography
+                          .black
+                          .labelMedium!
+                          .copyWith(
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 2),
+                    )),
                   ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.error,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                            color: Theme.of(context).colorScheme.error,
-                            width: 3)),
-                    width: 90,
-                    height: 25,
-                    child: Center(
-                      child: (Text(
-                        "OFFLINE",
-                        style: Theme.of(context)
-                            .typography
-                            .black
-                            .labelMedium!
-                            .copyWith(
-                                decoration: TextDecoration.none,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 2),
-                      )),
-                    ),
-                  ),
-                ))
-              : SizedBox.shrink(),
+                ),
+              ))
+            : SizedBox.shrink(),
 
 //HERE SE BUTTONS
-        ],
-      
+      ],
     );
   }
 }

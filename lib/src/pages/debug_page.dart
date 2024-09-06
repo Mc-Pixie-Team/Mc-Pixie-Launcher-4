@@ -20,7 +20,7 @@ class _DebugpageState extends State<Debugpage> {
       height: double.infinity,
       width: double.infinity,
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(18)),
       child: Column(
         children: [

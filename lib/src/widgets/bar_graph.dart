@@ -25,7 +25,7 @@ class _BarGraphState extends State<BarGraph> {
         height: 330,
         width: 500,
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(18)),
         child: Stack(children: [
           Row(

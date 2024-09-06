@@ -31,11 +31,11 @@ environment:
 
 msix_config:
   display_name: Mc-Pixie Launcher
-  publisher_display_name: Mc-Pixie 
+  publisher_display_name: Mc-Pixie
+  store: true 
   identity_name: Mc-Pixie.Mc-PixieLauncher
-  msix_version: 0.0.1.1
+  msix_version: 0.0.0.0
   logo_path: C:\Users\joshi\Documents\GitHub\Mc-Pixie-Launcher-4\logo.png
-  capabilities: internetClient, 
   publisher: CN=F7827B47-6515-4947-BED4-845A6E36960B
 
 dependencies:
@@ -43,6 +43,9 @@ dependencies:
     
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -87,12 +90,10 @@ dependencies:
   numeral: ^3.0.0
   dotted_border: ^2.1.0
   dropdown_button2: ^2.3.9
-  intl: any
-  flutter_localizations:
-    sdk: flutter
   internet_connection_checker: ^1.0.0+1
   package_info_plus: ^8.0.1
   window_manager: ^0.3.9
+  carousel_slider: ^5.0.0
       
 
 
@@ -138,6 +139,8 @@ flutter:
     - assets/svg/trash-icon.svg
     - assets/svg/export-import-icon.svg
     - assets/redirect.html
+    - assets/htmlcache/index.html
+    - assets/htmlcache/styles.css
      
 
   # An image asset can refer to one or more resolution-specific "variants", see

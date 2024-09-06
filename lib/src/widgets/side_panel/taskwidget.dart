@@ -27,7 +27,7 @@ class _TaskpageState extends State<TaskWidget> {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(18)),
       child: ListView.builder(
           itemCount: _key.length,

@@ -47,7 +47,7 @@ class _FileTableShiningState extends State<FileTableShining>
             left: 28, right: 28, top: widget.index == 0 ? 20 : 0),
         decoration: ShapeDecoration(
           color:
-              widget.index.isOdd ? null : Theme.of(context).colorScheme.surface,
+              widget.index.isOdd ? null : Theme.of(context).colorScheme.surfaceContainerHigh,
           shape: SmoothRectangleBorder(
             borderRadius: SmoothBorderRadius(
               cornerRadius: 7,

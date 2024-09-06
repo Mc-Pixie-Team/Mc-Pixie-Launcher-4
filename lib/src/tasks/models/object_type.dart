@@ -20,7 +20,7 @@ static String todir(ObjectType objectType) {
     case ObjectType.world:
       return "saves";
     case ObjectType.modpack:
-      throw "Type Modpack cannot be parsed to a Directory";
+      return "";
   }
 
 }

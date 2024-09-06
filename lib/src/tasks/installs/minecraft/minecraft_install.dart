@@ -17,6 +17,7 @@ class MinecraftInstall {
 //MARK: INSTALL
   static Future install(
       Version version, String path, InstallModel installModel) async {
+
     installModel.setInstallState(InstallState.installing);
     installModel.setState("Installing Minecraft");
     // Download and read versions.json

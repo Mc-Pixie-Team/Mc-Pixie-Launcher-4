@@ -1,10 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class Searchbar extends StatefulWidget {
   final Function(String text)? onchange;
   final Function? onsubmit;
   final String label;
-  Searchbar({Key? key, this.onchange, this.onsubmit, this.label = ""})
+  final double height;
+  final double width;
+  final double expandedWidth;
+  final Color? iconColor;
+  BorderRadiusGeometry? borderRadius;
+  Searchbar({Key? key, this.onchange, this.onsubmit, this.label = "", this.borderRadius, this.height = 39, this.expandedWidth = 200, this.width = 40, this.iconColor})
       : super(key: key);
 
   @override
@@ -21,6 +28,10 @@ class _SearchbarState extends State<Searchbar>
 
   @override
   void initState() {
+
+    if(widget.expandedWidth < widget.width) {
+      throw "expanded With to low";
+    }
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 400),
@@ -40,7 +51,7 @@ class _SearchbarState extends State<Searchbar>
 
     animation = _controller
         .drive(CurveTween(curve: Curves.easeInOutQuart))
-        .drive(Tween(begin: 40, end: 200));
+        .drive(Tween(begin: widget.width, end: widget.expandedWidth));
 
     _textController = TextEditingController();
     if (widget.onchange != null) {
@@ -82,9 +93,9 @@ class _SearchbarState extends State<Searchbar>
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(45)),
-        height: 39,
+            color: Theme.of(context).colorScheme.surfaceContainerHigh,
+            borderRadius: widget.borderRadius ?? BorderRadius.circular(45)),
+        height: widget.height,
         width: animation.value,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,10 +103,10 @@ class _SearchbarState extends State<Searchbar>
           children: [
             isfocused
                 ? Padding(
-                    padding: EdgeInsets.only(left: 20),
+                    padding: EdgeInsets.only(left: 10),
                     child: SizedBox(
                         height: 25,
-                        width: 135,
+                        width: max(widget.expandedWidth - 65, 1) ,
                         child: EditableText(
                           selectionColor: Theme.of(context)
                               .colorScheme
@@ -130,7 +141,7 @@ class _SearchbarState extends State<Searchbar>
                 padding: EdgeInsets.all(10),
                 child: Icon(
                   Icons.search,
-                  color: Theme.of(context).textTheme.bodySmall!.color,
+                  color: widget.iconColor ?? Theme.of(context).textTheme.bodySmall!.color,
                   size: 20,
                 ),
               ),

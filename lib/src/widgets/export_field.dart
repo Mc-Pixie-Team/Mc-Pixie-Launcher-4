@@ -51,7 +51,7 @@ class _ExportFieldState extends State<ExportField> {
       width: 550,
       height: 800,
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(18),
           border:
               Border.all(width: 1.0, color: Color.fromARGB(255, 56, 56, 56))),

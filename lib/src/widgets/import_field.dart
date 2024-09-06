@@ -47,7 +47,7 @@ class _ImportFieldState extends State<ImportField> {
         onDragDone: ondownload,
         child: Container(
           decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface.withAlpha(alpha),
+              color: Theme.of(context).colorScheme.surfaceContainerHigh.withAlpha(alpha),
               borderRadius: BorderRadius.circular(18)),
           height: 240,
           width: double.infinity,

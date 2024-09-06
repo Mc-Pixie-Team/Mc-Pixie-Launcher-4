@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:mclauncher4/src/tasks/apis/api.dart';
+import 'package:mclauncher4/src/tasks/models/modloader_type.dart';
 import 'package:mclauncher4/src/tasks/models/object_type.dart';
+import 'package:mclauncher4/src/tasks/models/version_object.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/curseforge/curseforge_install.dart';
 import 'package:mclauncher4/src/tasks/provider_installs/provider_installer.dart';
 import 'package:mclauncher4/src/tasks/models/dumf_model.dart';
@@ -15,6 +17,9 @@ class CurseforgeApi implements Api {
 
   @override
   String? version = "";
+
+  @override
+  List<ModloaderType> modloaderTypes = [ModloaderType.forge, ModloaderType.fabric ];
 
   @override
   ObjectType type = ObjectType.modpack;
@@ -31,6 +36,7 @@ class CurseforgeApi implements Api {
   int index = 0;
   int pageSize = 50;
   List categoriesSearch = [];
+  List modloaderSearch = [1,4];
   
   String getClassid() {
         var classid;
@@ -76,7 +82,6 @@ class CurseforgeApi implements Api {
         icon: modpackData["logo"]["thumbnailUrl"],
         author: modpackData["authors"][0]["name"],
         categories: categories,
-        MCVersion: modpackData["latestFiles"][0]["gameVersions"][0],
         providerId: getidname,
         type: this.type);
   }
@@ -118,10 +123,21 @@ class CurseforgeApi implements Api {
   Future<DUMF> getDUMF(Map modpackData) async {
     List<UMF> versions = [];
 
+    if(modpackData["modId"] != null ) {
+     
     final res = await http.get(
-        Uri.parse('$baseUrl/v1/mods/${modpackData["id"]}/files'),
+        Uri.parse( '$baseUrl/v1/mods/${modpackData["modId"]}'),
+        headers: userHeader);
+     modpackData = await jsonDecode(utf8.decode(res.bodyBytes))["data"];
+    }
+
+    var uri = Uri.parse('$baseUrl/v1/mods/${modpackData["id"]}/files?gameVersion=${this.version}&modLoaderTypes=$modloaderSearch');
+    print('$baseUrl/v1/mods/${modpackData["id"]}/files?gameVersion=${this.version}&modLoaderTypes=$modloaderSearch');
+    final res = await http.get(
+        uri,
         headers: userHeader);
     final hits = await jsonDecode(utf8.decode(res.bodyBytes))["data"] as List;
+
     print(modpackData["id"]);
     final res2 = await http.get(
         Uri.parse('$baseUrl/v1/mods/${modpackData["id"]}/description'),
@@ -130,7 +146,7 @@ class CurseforgeApi implements Api {
     print(hits[1]);
     for (var hit in hits) {
       if (hit["isServerPack"]) continue;
-
+      //7282832694109160555
       String mcVersion =
           hit["sortableGameVersions"][0]["gameVersionPadded"] == "0"
               ? hit["sortableGameVersions"][1]["gameVersionName"]
@@ -162,18 +178,33 @@ class CurseforgeApi implements Api {
   }
 
   @override
-  Future<UMF> getLatestModpackVersionFromLiteUMF(UMF umf) async {
+  Future<UMF> getLatestModpackVersionFromLiteUMF(UMF umf, String? version) async {
     if (umf.original["modId"] != null)
-      return umf; //if there are dependencies its not the lite version from the start anymore
-    Map? modpackVersion =
+      return umf; //if there are dependencies, its not the lite version, from the start anymore
+    Map? modpackVersion;
+    if(version == null) {
+      modpackVersion =
         (umf.original["latestFiles"] as List).firstWhere((element) {
       print(element["releaseType"]);
       return element["releaseType"] == 1;
     }, orElse: () => null); // gets the newest version of the modpack
 
+    }else {
+      final res = await http.get(
+        Uri.parse('$baseUrl/v1/mods/${umf.original["id"]}/files?gameVersion=${this.version}&modLoaderType=${modloaderSearch.first ?? 0}'),
+        headers: userHeader);
+      var hits  =  await jsonDecode(utf8.decode(res.bodyBytes))["data"] as List;
+     modpackVersion = hits.firstWhere((element) {
+      print(element["releaseType"]);
+      return element["releaseType"] == 1;
+    }, orElse: () => null);
+      
+    }
+    
     if (modpackVersion == null) {
       modpackVersion = umf.original["latestFiles"][0];
     }
+
 
     final res2 = await http.get(
         Uri.parse('$baseUrl/v1/mods/${modpackVersion!["modId"]}/description'),
@@ -185,6 +216,7 @@ class CurseforgeApi implements Api {
             ? modpackVersion["sortableGameVersions"][1]["gameVersionName"]
             : modpackVersion["sortableGameVersions"][0]["gameVersionName"];
 
+    print("RETURNING: $mcVersion " );
     return UMF(
         providerId: getidname,
         original: modpackVersion,
@@ -209,7 +241,12 @@ class CurseforgeApi implements Api {
   }
 
   @override
-  getModpackList() async {
+  void resetPageIndex() {
+    index = 0;
+  }
+
+  @override
+  Future<List> getModpackList() async {
     print("get list");
     
     List categories = [];
@@ -229,11 +266,13 @@ class CurseforgeApi implements Api {
 
     
      print(index);
+
     String url =
-        '$baseUrl/v1/mods/search?index=$index&pageSize=$pageSize&gameId=432&sortField=1&sortOrder=desc&classId=${getClassid()}&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categories';
+        '$baseUrl/v1/mods/search?index=$index&pageSize=$pageSize&gameId=432&sortField=1&sortOrder=desc&classId=${getClassid()}&searchFilter=$query&gameVersion=${this.version}&categoryIds=$categories&modLoaderTypes=$modloaderSearch';
     print(url);
     final res = await http.get(Uri.parse(url), headers: userHeader);
      index += pageSize;
+     
     print(res.statusCode);
     final hits = jsonDecode(utf8.decode(res.bodyBytes))["data"];
    
@@ -259,4 +298,17 @@ class CurseforgeApi implements Api {
   void searchMV(String version) async {
     this.version = version;
   }
+
+  @override
+  void searchML(ModloaderType? type) {
+    modloaderSearch.clear();
+    if(type == ModloaderType.forge) {
+        modloaderSearch.add(1);
+    }else if (type == ModloaderType.fabric){
+        modloaderSearch.add(4);
+    }else {
+      modloaderSearch.addAll([1, 4]);
+    }
+  }
+
 }
